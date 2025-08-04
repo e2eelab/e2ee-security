@@ -459,8 +459,14 @@ static void test_supply_opks() {
     E2ees__Account *account = NULL;
     get_e2ees_plugin()->db_handler.load_account_by_address(register_user_response->address, &account);
 
+    // use some opk
+    size_t i;
+    for (i = 0; i < (account->n_one_time_pre_key_list)/2; i++) {
+        get_e2ees_plugin()->db_handler.remove_one_time_pre_key(account->address, account->one_time_pre_key_list[i]->opk_id);
+    }
+    
     // the server asks the client to supply some one-time pre-keys
-    uint32_t supply_opks_num = 50;
+    uint32_t supply_opks_num = 100;
     E2ees__E2eeAddress *user_address = account->address;
     E2ees__ProtoMsg *proto_msg = mock_supply_opks_msg(user_address, supply_opks_num);
     size_t proto_msg_data_len = e2ees__proto_msg__get_packed_size(proto_msg);

@@ -20,6 +20,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "mock_server_sending.h"
@@ -105,6 +106,18 @@ static bool device_invited_record[user_data_max][group_data_max];
 static uint8_t user_data_set_insert_pos = 0;
 
 static uint8_t group_data_set_insert_pos = 0;
+
+static char file_path_buf[128] = "";
+static char *get_path(char *file_sub_path) {
+    memset(file_path_buf, 0, strlen(file_path_buf));
+    if (ENV_USING_XCODE != NULL) {
+        snprintf(file_path_buf, 128, "..%s", file_sub_path);
+    } else {
+        snprintf(file_path_buf, 128, ".%s", file_sub_path);
+    }
+    return file_path_buf;
+}
+
 
 static user_data *find_user(char *authenticator, uint8_t *position) {
     uint8_t i;
@@ -264,7 +277,8 @@ void mock_certificate() {
     size_t decoded_data_len = 0;
 
     // central private key
-    if ((fptr = fopen("./cert/central_private.txt", "r")) == NULL){
+    char *file_path = get_path("/cert/central_private.txt");
+    if ((fptr = fopen(file_path, "r")) == NULL){
         printf("Error! Opening file in the data folder failed!\n");
         printf("errorno: %d\n", errno);
         // program exits if the file pointer returns NULL.
@@ -292,7 +306,8 @@ void mock_certificate() {
     }
 
     // central certificate
-    if ((fptr = fopen("./cert/central_certificate.txt", "r")) == NULL){
+    file_path = get_path("/cert/central_certificate.txt");
+    if ((fptr = fopen(file_path, "r")) == NULL){
         printf("Error! Opening file in the data folder failed!\n");
         // program exits if the file pointer returns NULL.
         exit(1);
@@ -317,7 +332,8 @@ void mock_certificate() {
     }
 
     // server private key
-    if ((fptr = fopen("./cert/test_private.txt", "r")) == NULL){
+    file_path = get_path("/cert/test_private.txt");
+    if ((fptr = fopen(file_path, "r")) == NULL){
         printf("Error! Opening file in the data folder failed!\n");
         // program exits if the file pointer returns NULL.
         exit(1);
@@ -344,7 +360,8 @@ void mock_certificate() {
     }
 
     // server certificate
-    if ((fptr = fopen("./cert/test_certificate.txt", "r")) == NULL){
+    file_path = get_path("/cert/test_certificate.txt");
+    if ((fptr = fopen(file_path, "r")) == NULL){
         printf("Error! Opening file in the data folder failed!\n");
         // program exits if the file pointer returns NULL.
         exit(1);

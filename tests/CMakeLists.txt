@@ -38,6 +38,14 @@ target_include_directories(db
         $<BUILD_INTERFACE:${PROTO_DIS_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>)
 
+if (CMAKE_GENERATOR MATCHES "Xcode")
+    message(STATUS "CMake is generating for Xcode.")
+    # Add a definition to the C compiler
+    add_compile_definitions(ENV_USING_XCODE="1" DEBUG)
+else()
+    message(STATUS "CMake is not generating for Xcode.")
+endif()
+
 add_library(test_env STATIC
     mock_server.c
     mock_server_sending.c
