@@ -875,6 +875,14 @@ typedef struct e2ees_plugin_t {
 } e2ees_plugin_t;
 
 /**
+ * @brief A delegate function to generate random bytes
+ * 
+ * @param rand_data 
+ * @param rand_data_len 
+ */
+void e2ees_randombytes(uint8_t *rand_data, size_t rand_data_len);
+
+/**
  * @brief Get digital signature suite by ID.
  *
  * @param digital_signature_id

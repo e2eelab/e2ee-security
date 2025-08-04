@@ -86,6 +86,10 @@ void e2ees_end() {
 
 e2ees_plugin_t *get_e2ees_plugin() { return e2ees_plugin; }
 
+void e2ees_randombytes(uint8_t *rand_data, size_t rand_data_len) {
+    get_e2ees_plugin()->common_handler.gen_rand(rand_data, rand_data_len);
+}
+
 ds_suite_t *get_ds_suite(unsigned digital_signature_id) {
     if (digital_signature_id == E2EES_PACK_ALG_DS_CURVE25519) {
         return &E2EES_DS_CURVE25519;

@@ -1,10 +1,11 @@
 project(pqclean C ASM)
 
 set(PQCLEAN_COMMON_SRCS
+    randombytes.c
     src/common/aes.c
     src/common/fips202.c
     src/common/nistseedexpander.c
-    src/common/randombytes.c
+    #src/common/randombytes.c
     src/common/sha2.c
     src/common/sp800-185.c
 )
@@ -536,79 +537,414 @@ set(SPHINCS_SHAKE_256S_SRCS
 )
 
 add_library(
-    pqclean STATIC
-    ${HQC_128_SRCS}
-    ${HQC_192_SRCS}
-    ${HQC_256_SRCS}
-    ${MLKEM512_SRCS}
-    ${MLKEM768_SRCS}
-    ${MLKEM1024_SRCS}
-    ${MCELIECE348864_SRCS}
-    ${MCELIECE348864F_SRCS}
-    ${MCELIECE460896_SRCS}
-    ${MCELIECE460896F_SRCS}
-    ${MCELIECE6688128_SRCS}
-    ${MCELIECE6688128F_SRCS}
-    ${MCELIECE6960119_SRCS}
-    ${MCELIECE6960119F_SRCS}
-    ${MCELIECE8192128_SRCS}
-    ${MCELIECE8192128F_SRCS}
-    ${MLDSA44_SRCS}
-    ${MLDSA65_SRCS}
-    ${MLDSA87_SRCS}
-    ${FALCON_512_SRCS}
-    ${FALCON_1024_SRCS}
-    ${SPHINCS_SHA2_128F_SRCS}
-    ${SPHINCS_SHA2_128S_SRCS}
-    ${SPHINCS_SHA2_192F_SRCS}
-    ${SPHINCS_SHA2_192S_SRCS}
-    ${SPHINCS_SHA2_256F_SRCS}
-    ${SPHINCS_SHA2_256S_SRCS}
-    ${SPHINCS_SHAKE_128F_SRCS}
-    ${SPHINCS_SHAKE_128S_SRCS}
-    ${SPHINCS_SHAKE_192F_SRCS}
-    ${SPHINCS_SHAKE_192S_SRCS}
-    ${SPHINCS_SHAKE_256F_SRCS}
-    ${SPHINCS_SHAKE_256S_SRCS}
+    hqc_128 STATIC
     ${PQCLEAN_COMMON_SRCS}
+    ${HQC_128_SRCS}
 )
 
 target_include_directories(
-    pqclean
+    hqc_128
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/hqc-128/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    hqc_192 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${HQC_192_SRCS}
+)
+
+target_include_directories(
+    hqc_192
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/hqc-192/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    hqc_256 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${HQC_256_SRCS}
+)
+
+target_include_directories(
+    hqc_256
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/hqc-256/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mlkem512 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MLKEM512_SRCS}
+)
+
+target_include_directories(
+    mlkem512
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/ml-kem-512/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mlkem768 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MLKEM768_SRCS}
+)
+
+target_include_directories(
+    mlkem768
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/ml-kem-768/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mlkem1024 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MLKEM1024_SRCS}
+)
+
+target_include_directories(
+    mlkem1024
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/ml-kem-1024/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece348864 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE348864_SRCS}
+)
+
+target_include_directories(
+    mceliece348864
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece348864/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece348864f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE348864F_SRCS}
+)
+
+target_include_directories(
+    mceliece348864f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece348864f/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece460896 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE460896_SRCS}
+)
+
+target_include_directories(
+    mceliece460896
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece460896/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece460896f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE460896F_SRCS}
+)
+
+target_include_directories(
+    mceliece460896f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece460896f/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece6688128 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE6688128_SRCS}
+)
+
+target_include_directories(
+    mceliece6688128
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece6688128/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece6688128f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE6688128F_SRCS}
+)
+
+target_include_directories(
+    mceliece6688128f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece6688128f/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece6960119 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE6960119_SRCS}
+)
+
+target_include_directories(
+    mceliece6960119
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece6960119/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece6960119f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE6960119F_SRCS}
+)
+
+target_include_directories(
+    mceliece6960119f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece6960119f/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece8192128 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE8192128_SRCS}
+)
+
+target_include_directories(
+    mceliece8192128
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece8192128/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mceliece8192128f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MCELIECE8192128F_SRCS}
+)
+
+target_include_directories(
+    mceliece8192128f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece8192128f/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mldsa44 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MLDSA44_SRCS}
+)
+
+target_include_directories(
+    mldsa44
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/ml-dsa-44/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mldsa65 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MLDSA65_SRCS}
+)
+
+target_include_directories(
+    mldsa65
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/ml-dsa-65/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    mldsa87 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${MLDSA87_SRCS}
+)
+
+target_include_directories(
+    mldsa87
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/ml-dsa-87/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    falcon512 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${FALCON_512_SRCS}
+)
+
+target_include_directories(
+    falcon512
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/falcon-512/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    falcon1024 STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${FALCON_1024_SRCS}
+)
+
+target_include_directories(
+    falcon1024
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/falcon-1024/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_sha2_128f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHA2_128F_SRCS}
+)
+
+target_include_directories(
+    sphincs_sha2_128f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-sha2-128f-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_sha2_128s STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHA2_128S_SRCS}
+)
+
+target_include_directories(
+    sphincs_sha2_128s
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-sha2-128s-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_sha2_192f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHA2_192F_SRCS}
+)
+
+target_include_directories(
+    sphincs_sha2_192f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-sha2-192f-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_sha2_192s STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHA2_192S_SRCS}
+)
+
+target_include_directories(
+    sphincs_sha2_192s
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-sha2-192s-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_sha2_256f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHA2_256F_SRCS}
+)
+
+target_include_directories(
+    sphincs_sha2_256f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-sha2-256f-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_sha2_256s STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHA2_256S_SRCS}
+)
+
+target_include_directories(
+    sphincs_sha2_256s
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-sha2-256s-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_shake_128f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHAKE_128F_SRCS}
+)
+
+target_include_directories(
+    sphincs_shake_128f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-shake-128f-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_shake_128s STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHAKE_128S_SRCS}
+)
+
+target_include_directories(
+    sphincs_shake_128s
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-shake-128s-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_shake_192f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHAKE_192F_SRCS}
+)
+
+target_include_directories(
+    sphincs_shake_192f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-shake-192f-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_shake_192s STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHAKE_192S_SRCS}
+)
+
+target_include_directories(
+    sphincs_shake_192s
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-shake-192s-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_shake_256f STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHAKE_256F_SRCS}
+)
+
+target_include_directories(
+    sphincs_shake_256f
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-shake-256f-simple/clean>
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    sphincs_shake_256s STATIC
+    ${PQCLEAN_COMMON_SRCS}
+    ${SPHINCS_SHAKE_256S_SRCS}
+)
+
+target_include_directories(
+    sphincs_shake_256s
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-shake-256s-simple/clean>
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    pqclean INTERFACE
+)
+
+target_link_libraries(
+    pqclean 
+    INTERFACE 
+    hqc_128 hqc_192 hqc_256 mlkem512 mlkem768 mlkem1024
+    mceliece348864 mceliece348864f mceliece460896 mceliece460896f mceliece6688128 mceliece6688128f
+    mceliece6960119 mceliece6960119f mceliece8192128 mceliece8192128f
+    mldsa44 mldsa65 mldsa87 falcon512 falcon1024
+    sphincs_sha2_128f sphincs_sha2_128s sphincs_sha2_192f sphincs_sha2_192s sphincs_sha2_256f sphincs_sha2_256s
+    sphincs_shake_128f sphincs_shake_128s sphincs_shake_192f sphincs_shake_192s sphincs_shake_256f sphincs_shake_256s
 )
 
 install(TARGETS pqclean

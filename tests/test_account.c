@@ -249,6 +249,8 @@ static e2ees_event_handler_t test_event_handler = {
 static void test_generate_identity_key() {
     // test start
     printf("====== test_generate_identity_key ======\n");
+    tear_up();
+    get_e2ees_plugin()->event_handler = test_event_handler;
 
     uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
     int ret = 0;
@@ -291,6 +293,9 @@ static void test_generate_signed_pre_key() {
 static void test_generate_opks() {
     // test start
     printf("====== test_generate_opks ======\n");
+    tear_up();
+    get_e2ees_plugin()->event_handler = test_event_handler;
+
     uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
     int ret = 0;
     size_t number_of_keys = E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM, i;
