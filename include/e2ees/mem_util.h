@@ -494,12 +494,18 @@ void free_e2ee_addresses(E2ees__E2eeAddress ***dest, size_t e2ee_addresses_num);
 void free_invite_response_list(E2ees__InviteResponse ***dest, size_t invite_response_num);
 
 /**
+ * @brief Release memory of E2ees__OneTimePreKey array.
+ *
+ */
+void free_one_time_pre_key_list(E2ees__OneTimePreKey ***dest, uint32_t opks_num);
+
+/**
  * @brief Release memory of E2ees__GroupMember array.
  *
  * @param dest
  * @param group_members_num
  */
-void free_group_members(E2ees__GroupMember ***dest, size_t group_members_num);
+void free_group_member_list(E2ees__GroupMember ***dest, size_t group_members_num);
 
 /**
  * @brief Release memory of ProtobufCBinaryData.

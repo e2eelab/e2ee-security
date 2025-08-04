@@ -110,7 +110,7 @@ static uint8_t group_data_set_insert_pos = 0;
 static char file_path_buf[128] = "";
 static char *get_path(char *file_sub_path) {
     memset(file_path_buf, 0, strlen(file_path_buf));
-    if (ENV_USING_XCODE != NULL) {
+    if (ENV_USING_XCODE) {
         snprintf(file_path_buf, 128, "..%s", file_sub_path);
     } else {
         snprintf(file_path_buf, 128, ".%s", file_sub_path);

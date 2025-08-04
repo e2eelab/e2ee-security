@@ -263,13 +263,13 @@ int consume_publish_spk_response(
 
 int produce_supply_opks_request(
     E2ees__SupplyOpksRequest **request_out,
+    E2ees__OneTimePreKey ***one_time_pre_key_list_out,
     E2ees__Account *account,
     uint32_t opks_num
 ) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__SupplyOpksRequest *request = NULL;
-    E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
     uint32_t e2ees_pack_id;
     uint32_t cur_opk_id;
 
@@ -283,7 +283,7 @@ int produce_supply_opks_request(
 
     if (ret == E2EES_RESULT_SUCC) {
         // generate a given number of new one-time pre-keys
-        ret = generate_opks(&one_time_pre_key_list, opks_num, e2ees_pack_id, cur_opk_id);
+        ret = generate_opks(one_time_pre_key_list_out, opks_num, e2ees_pack_id, cur_opk_id);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -301,8 +301,8 @@ int produce_supply_opks_request(
         for (i = 0; i < opks_num; i++) {
             request->one_time_pre_key_public_list[i] = (E2ees__OneTimePreKeyPublic *)malloc(sizeof(E2ees__OneTimePreKeyPublic));
             e2ees__one_time_pre_key_public__init(request->one_time_pre_key_public_list[i]);
-            request->one_time_pre_key_public_list[i]->opk_id = one_time_pre_key_list[i]->opk_id;
-            copy_protobuf_from_protobuf(&(request->one_time_pre_key_public_list[i]->public_key), &(one_time_pre_key_list[i]->key_pair->public_key));
+            request->one_time_pre_key_public_list[i]->opk_id = (*one_time_pre_key_list_out)[i]->opk_id;
+            copy_protobuf_from_protobuf(&(request->one_time_pre_key_public_list[i]->public_key), &((*one_time_pre_key_list_out)[i]->key_pair->public_key));
         }
 
         *request_out = request;
@@ -311,7 +311,7 @@ int produce_supply_opks_request(
     return ret;
 }
 
-int consume_supply_opks_response(E2ees__Account *account, uint32_t opks_num, E2ees__SupplyOpksResponse *response) {
+int consume_supply_opks_response(E2ees__Account *account, E2ees__OneTimePreKey **one_time_pre_key_list, uint32_t opks_num, E2ees__SupplyOpksResponse *response) {
     int ret = E2EES_RESULT_SUCC;
 
     if (!is_valid_registered_account(account)) {
@@ -324,12 +324,12 @@ int consume_supply_opks_response(E2ees__Account *account, uint32_t opks_num, E2e
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        size_t old_opks_num = account->n_one_time_pre_key_list - opks_num;
         // save to db
         size_t i;
         for (i = 0; i < opks_num; i++) {
-            get_e2ees_plugin()->db_handler.add_one_time_pre_key(account->address, account->one_time_pre_key_list[old_opks_num + i]);
+            get_e2ees_plugin()->db_handler.add_one_time_pre_key(account->address, one_time_pre_key_list[i]);
         }
+        // skip saving one_time_pre_key_list to account
     }
 
     return ret;

@@ -122,6 +122,9 @@ int get_pre_key_bundle_internal(
                 );
 
                 // release
+                if (request_arg_list_len > 0 && request_arg_list != NULL) {
+                    free_protobuf_list(&request_arg_list, request_arg_list_len);
+                }
                 free_mem((void **)&get_pre_key_bundle_request_data, get_pre_key_bundle_request_data_len);
             }
         }
@@ -330,25 +333,38 @@ int supply_opks_internal(
         ret = E2EES_RESULT_FAIL;
     }
 
+    E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_supply_opks_request(&supply_opks_request, account, opks_num);
+        ret = produce_supply_opks_request(&supply_opks_request, &one_time_pre_key_list, account, opks_num);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         response = get_e2ees_plugin()->proto_handler.supply_opks(account->address, account->auth, supply_opks_request);
 
         if (is_valid_supply_opks_response(response)) {
-            ret = consume_supply_opks_response(account, opks_num, response);
+            ret = consume_supply_opks_response(account, one_time_pre_key_list, opks_num, response);
         } else {
             // pack request to request_data
             size_t request_data_len = e2ees__supply_opks_request__get_packed_size(supply_opks_request);
             uint8_t *request_data = (uint8_t *)malloc(sizeof(uint8_t) * request_data_len);
             e2ees__supply_opks_request__pack(supply_opks_request, request_data);
-            
+
+            size_t request_arg_list_len = opks_num;
+            ProtobufCBinaryData *request_arg_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData) * request_arg_list_len);
+            size_t i;
+            for(i = 0; i < opks_num; i++) {
+                E2ees__OneTimePreKey *one_time_pre_key = one_time_pre_key_list[i];
+                size_t one_time_pre_key_data_len = e2ees__one_time_pre_key__get_packed_size(one_time_pre_key);
+                uint8_t *one_time_pre_key_data = (uint8_t *)malloc(sizeof(uint8_t)*one_time_pre_key_data_len);
+                e2ees__one_time_pre_key__pack(one_time_pre_key, one_time_pre_key_data);
+                request_arg_list[i].data = one_time_pre_key_data;
+                request_arg_list[i].len = one_time_pre_key_data_len;
+            }
             store_pending_request_internal(
-                account->address, E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_SUPPLY_OPKS, request_data, request_data_len, NULL, 0
+                account->address, E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_SUPPLY_OPKS, request_data, request_data_len, request_arg_list, request_arg_list_len
             );
             // release
+            free_protobuf_list(&request_arg_list, opks_num);
             free_mem((void **)&request_data, request_data_len);
         }
     }
@@ -358,6 +374,7 @@ int supply_opks_internal(
     }
 
     // release
+    free_one_time_pre_key_list(&one_time_pre_key_list, opks_num);
     free_proto(supply_opks_request);
 
     // done
@@ -726,8 +743,19 @@ static void resend_pending_request(E2ees__Account *account) {
                 E2ees__SupplyOpksResponse *supply_opks_response = get_e2ees_plugin()->proto_handler.supply_opks(user_address, auth,  supply_opks_request);
                 succ = is_valid_supply_opks_response(supply_opks_response);
                 if (succ) {
-                    ret = consume_supply_opks_response(account, (uint32_t)supply_opks_request->n_one_time_pre_key_public_list, supply_opks_response);
-                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
+                    size_t opks_num = pending_request->n_request_arg_list;
+                    E2ees__OneTimePreKey **one_time_pre_key_list = (E2ees__OneTimePreKey **)malloc(sizeof(E2ees__OneTimePreKey *) * opks_num);
+                    for (j = 0; j < opks_num; j++) {
+                        size_t one_time_pre_key_data_len = pending_request->request_arg_list[j].len;
+                        uint8_t *one_time_pre_key_data = pending_request->request_arg_list[j].data;
+                        one_time_pre_key_list[j] = e2ees__one_time_pre_key__unpack(NULL, one_time_pre_key_data_len, one_time_pre_key_data);
+                    }
+                    ret = consume_supply_opks_response(account, one_time_pre_key_list, opks_num, supply_opks_response);
+                    if (ret == E2EES_RESULT_SUCC) {
+                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
+                    }
+                    // release
+                    free_one_time_pre_key_list(&one_time_pre_key_list, opks_num);
                 } else {
                     e2ees_notify_log(user_address, DEBUG_LOG, "handle pending supply_opks_request failed");
                 }

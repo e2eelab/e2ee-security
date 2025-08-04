@@ -77,12 +77,14 @@ int consume_publish_spk_response(
  * @brief Create a SupplyOpksRequest message to be sent to server.
  *
  * @param request_out
+ * @param one_time_pre_key_list_out
  * @param account
  * @param opks_num
  * @return 0 if success
  */
 int produce_supply_opks_request(
     E2ees__SupplyOpksRequest **request_out,
+    E2ees__OneTimePreKey ***one_time_pre_key_list_out,
     E2ees__Account *account,
     uint32_t opks_num
 );
@@ -91,11 +93,12 @@ int produce_supply_opks_request(
  * @brief Process an incoming SupplyOpksResponse message.
  *
  * @param account
+ * @param one_time_pre_key_list
  * @param opks_num
  * @param response
  * @return 0 if success
  */
-int consume_supply_opks_response(E2ees__Account *account, uint32_t opks_num, E2ees__SupplyOpksResponse *response);
+int consume_supply_opks_response(E2ees__Account *account, E2ees__OneTimePreKey **one_time_pre_key_list, uint32_t opks_num, E2ees__SupplyOpksResponse *response);
 
 /**
  * @brief Process an incoming SupplyOpksMsg message.

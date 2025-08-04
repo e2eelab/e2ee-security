@@ -41,9 +41,10 @@ target_include_directories(db
 if (CMAKE_GENERATOR MATCHES "Xcode")
     message(STATUS "CMake is generating for Xcode.")
     # Add a definition to the C compiler
-    add_compile_definitions(ENV_USING_XCODE="1" DEBUG)
+    add_compile_definitions(ENV_USING_XCODE=1 DEBUG)
 else()
     message(STATUS "CMake is not generating for Xcode.")
+    add_compile_definitions(ENV_USING_XCODE=0 DEBUG)
 endif()
 
 add_library(test_env STATIC

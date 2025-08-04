@@ -690,7 +690,7 @@ int new_outbound_group_session_invited(
         //         added_group_members_num
         //     );
         //     // release
-        //     free_group_members(&added_member_list, added_group_members_num);
+        //     free_group_member_list(&added_member_list, added_group_members_num);
         // }
 
         // release

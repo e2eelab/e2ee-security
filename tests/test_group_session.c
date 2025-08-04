@@ -576,7 +576,7 @@ static void test_create_group() {
     test_encryption(address_list[3], group_address, plaintext_4, plaintext_4_len);
 
     // release
-    free_group_members(&group_members, 4);
+    free_group_member_list(&group_members, 4);
     free_proto(create_group_response);
 
     // test stop
@@ -650,8 +650,8 @@ static void test_add_group_members() {
     test_encryption(address_list[3], group_address, plaintext_4, plaintext_4_len);
 
     // release
-    free_group_members(&group_members, 3);
-    free_group_members(&new_group_members, 1);
+    free_group_member_list(&group_members, 3);
+    free_group_member_list(&new_group_members, 1);
     free_proto(create_group_response);
     free_proto(add_group_members_response);
 
@@ -723,8 +723,8 @@ static void test_remove_group_members() {
     test_encryption(address_list[3], group_address, plaintext_4, plaintext_4_len);
 
     // release
-    free_group_members(&group_members, 4);
-    free_group_members(&removing_group_members, 1);
+    free_group_member_list(&group_members, 4);
+    free_group_member_list(&removing_group_members, 1);
     free_proto(create_group_response);
     free_proto(remove_group_members_response);
 
@@ -809,9 +809,9 @@ static void test_create_add_remove() {
     test_encryption(address_list[0], group_address, plaintext_3, plaintext_len_3);
 
     // release
-    free_group_members(&group_members, 2);
-    free_group_members(&new_group_members, 1);
-    free_group_members(&removing_group_members, 1);
+    free_group_member_list(&group_members, 2);
+    free_group_member_list(&new_group_members, 1);
+    free_group_member_list(&removing_group_members, 1);
     free_proto(create_group_response);
     free_proto(add_group_members_response);
     free_proto(remove_group_members_response);
@@ -873,7 +873,7 @@ static void test_leave_group() {
     test_encryption(address_list[3], group_address, plaintext_4, plaintext_4_len);
 
     // release
-    free_group_members(&group_members, 4);
+    free_group_member_list(&group_members, 4);
     free_proto(create_group_response);
     free_proto(leave_group_response);
 
@@ -937,7 +937,7 @@ static void test_continual() {
     }
 
     // release
-    free_group_members(&group_members, 3);
+    free_group_member_list(&group_members, 3);
     free_proto(create_group_response);
 
     // test stop
@@ -996,7 +996,7 @@ static void test_multiple_devices() {
     test_encryption(address_list[2], group_address, plaintext_3, plaintext_3_len);
 
     // release
-    free_group_members(&group_members, 3);
+    free_group_member_list(&group_members, 3);
     free_proto(create_group_response);
 
     // test stop
@@ -1045,7 +1045,7 @@ static void test_add_new_device() {
     test_encryption(address_list[0], group_address, plaintext_1, plaintext_1_len);
 
     // release
-    free_group_members(&group_members, 3);
+    free_group_member_list(&group_members, 3);
     free_proto(create_group_response);
 
     // test stop
@@ -1180,9 +1180,9 @@ static void test_medium_group() {
     test_encryption(address_list[12], group.group_address, plaintext_8, plaintext_8_len);
 
     // release
-    free_group_members(&group_members, 10);
-    free_group_members(&new_group_members, 4);
-    free_group_members(&removing_group_members, 4);
+    free_group_member_list(&group_members, 10);
+    free_group_member_list(&new_group_members, 4);
+    free_group_member_list(&removing_group_members, 4);
     free_proto(create_group_response);
     free_proto(add_group_members_response);
     free_proto(remove_group_members_response);

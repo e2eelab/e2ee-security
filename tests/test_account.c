@@ -460,8 +460,9 @@ static void test_supply_opks() {
     get_e2ees_plugin()->db_handler.load_account_by_address(register_user_response->address, &account);
 
     // use some opk
+    uint32_t rest_opks_num = (account->n_one_time_pre_key_list)/2;
     size_t i;
-    for (i = 0; i < (account->n_one_time_pre_key_list)/2; i++) {
+    for (i = rest_opks_num; i < account->n_one_time_pre_key_list; i++) {
         get_e2ees_plugin()->db_handler.remove_one_time_pre_key(account->address, account->one_time_pre_key_list[i]->opk_id);
     }
     
@@ -477,7 +478,7 @@ static void test_supply_opks() {
     // assert
     E2ees__Account *account_new = NULL;
     get_e2ees_plugin()->db_handler.load_account_by_address(register_user_response->address, &account_new);
-    assert(account_new->n_one_time_pre_key_list == (E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM + supply_opks_num));
+    assert(account_new->n_one_time_pre_key_list == (rest_opks_num + supply_opks_num));
 
     // release
     free_proto(register_user_response);

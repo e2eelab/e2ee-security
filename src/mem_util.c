@@ -711,30 +711,55 @@ size_t member_info_to_group_members(
 ///-----------------release-----------------///
 
 void free_e2ee_addresses(E2ees__E2eeAddress ***dest, size_t e2ee_addresses_num) {
-    size_t i;
-    for (i = 0; i < e2ee_addresses_num; i++) {
-        e2ees__e2ee_address__free_unpacked((*dest)[i], NULL);
-        (*dest)[i] = NULL;
+    if (*dest != NULL) {
+        size_t i;
+        for (i = 0; i < e2ee_addresses_num; i++) {
+            E2ees__E2eeAddress *temp = (*dest)[i];
+            if (temp != NULL) {
+                e2ees__e2ee_address__free_unpacked(temp, NULL);
+                temp = NULL;
+            }
+        }
+        free_mem((void **)&(*dest), sizeof(E2ees__E2eeAddress *) * e2ee_addresses_num);
     }
-    free_mem((void **)&(*dest), sizeof(E2ees__E2eeAddress *) * e2ee_addresses_num);
 }
 
 void free_invite_response_list(E2ees__InviteResponse ***dest, size_t invite_response_num) {
-    size_t i;
-    for (i = 0; i < invite_response_num; i++) {
-        e2ees__invite_response__free_unpacked((*dest)[i], NULL);
-        (*dest)[i] = NULL;
+    if (*dest != NULL) {
+        size_t i;
+        for (i = 0; i < invite_response_num; i++) {
+            E2ees__InviteResponse *temp = (*dest)[i];
+            if (temp != NULL) {
+                e2ees__invite_response__free_unpacked(temp, NULL);
+                temp = NULL;
+            }
+        }
+        free_mem((void **)&(*dest), sizeof(E2ees__InviteResponse *) * invite_response_num);
     }
-    free_mem((void **)&(*dest), sizeof(E2ees__InviteResponse *) * invite_response_num);
 }
 
-void free_group_members(E2ees__GroupMember ***dest, size_t group_members_num) {
-    size_t i;
-    for (i = 0; i < group_members_num; i++) {
-        e2ees__group_member__free_unpacked((*dest)[i], NULL);
-        (*dest)[i] = NULL;
+void free_one_time_pre_key_list(E2ees__OneTimePreKey ***dest, uint32_t opks_num) {
+    if (*dest != NULL) {
+        size_t i;
+        for (i = 0; i < opks_num; i++) {
+            E2ees__OneTimePreKey *temp = (*dest)[i];
+            e2ees__one_time_pre_key__free_unpacked(temp, NULL);
+            temp = NULL;
+        }
+        free_mem((void **)&(*dest), sizeof(E2ees__OneTimePreKey *) * opks_num);
     }
-    free_mem((void **)&(*dest), sizeof(E2ees__GroupMember *) * group_members_num);
+}
+
+void free_group_member_list(E2ees__GroupMember ***dest, size_t group_members_num) {
+    if (*dest != NULL) {
+        size_t i;
+        for (i = 0; i < group_members_num; i++) {
+            E2ees__GroupMember *temp = (*dest)[i];
+            e2ees__group_member__free_unpacked(temp, NULL);
+            temp = NULL;
+        }
+        free_mem((void **)&(*dest), sizeof(E2ees__GroupMember *) * group_members_num);
+    }
 }
 
 void free_protobuf(ProtobufCBinaryData *output) {
