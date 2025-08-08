@@ -933,12 +933,12 @@ target_include_directories(
 )
 
 add_library(
-    pqclean INTERFACE
+    pqclean STATIC pqclean.c
 )
 
 target_link_libraries(
     pqclean 
-    INTERFACE 
+    PUBLIC 
     hqc_128 hqc_192 hqc_256 mlkem512 mlkem768 mlkem1024
     mceliece348864 mceliece348864f mceliece460896 mceliece460896f mceliece6688128 mceliece6688128f
     mceliece6960119 mceliece6960119f mceliece8192128 mceliece8192128f
