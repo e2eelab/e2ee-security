@@ -537,8 +537,17 @@ set(SPHINCS_SHAKE_256S_SRCS
 )
 
 add_library(
-    hqc_128 STATIC
+    pqclean_common STATIC
     ${PQCLEAN_COMMON_SRCS}
+)
+
+target_include_directories(
+    pqclean_common
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+add_library(
+    hqc_128 STATIC
     ${HQC_128_SRCS}
 )
 
@@ -548,9 +557,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    hqc_128
+    PUBLIC pqclean_common
+)
+
 add_library(
     hqc_192 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${HQC_192_SRCS}
 )
 
@@ -560,9 +573,14 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+        hqc_192
+        PUBLIC pqclean_common
+)
+
+
 add_library(
     hqc_256 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${HQC_256_SRCS}
 )
 
@@ -572,9 +590,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    hqc_256
+    PUBLIC pqclean_common
+)
+
 add_library(
     mlkem512 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MLKEM512_SRCS}
 )
 
@@ -584,9 +606,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mlkem512
+    PUBLIC pqclean_common
+)
+
 add_library(
     mlkem768 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MLKEM768_SRCS}
 )
 
@@ -596,9 +622,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mlkem768
+    PUBLIC pqclean_common
+)
+
 add_library(
     mlkem1024 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MLKEM1024_SRCS}
 )
 
@@ -608,9 +638,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mlkem1024
+    PUBLIC pqclean_common
+)
+
 add_library(
     mceliece348864 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MCELIECE348864_SRCS}
 )
 
@@ -620,9 +654,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mceliece348864
+    PUBLIC pqclean_common
+)
+
 add_library(
     mceliece348864f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MCELIECE348864F_SRCS}
 )
 
@@ -632,9 +670,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mceliece348864f
+    PUBLIC pqclean_common
+)
+
 add_library(
     mceliece460896 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MCELIECE460896_SRCS}
 )
 
@@ -642,6 +684,11 @@ target_include_directories(
     mceliece460896
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_kem/mceliece460896/clean>
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
+)
+
+target_link_libraries(
+    mceliece460896
+    PUBLIC pqclean_common
 )
 
 add_library(
@@ -656,9 +703,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mceliece460896f
+    PUBLIC pqclean_common
+)
+
 add_library(
     mceliece6688128 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MCELIECE6688128_SRCS}
 )
 
@@ -668,9 +719,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mceliece6688128
+    PUBLIC pqclean_common
+)
+
 add_library(
     mceliece6688128f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MCELIECE6688128F_SRCS}
 )
 
@@ -680,9 +735,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mceliece6688128f
+    PUBLIC pqclean_common
+)
+
 add_library(
     mceliece6960119 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MCELIECE6960119_SRCS}
 )
 
@@ -692,9 +751,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mceliece6960119
+    PUBLIC pqclean_common
+)
+
 add_library(
     mceliece6960119f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MCELIECE6960119F_SRCS}
 )
 
@@ -704,9 +767,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mceliece6960119f
+    PUBLIC pqclean_common
+)
+
 add_library(
     mceliece8192128 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MCELIECE8192128_SRCS}
 )
 
@@ -716,9 +783,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mceliece8192128
+    PUBLIC pqclean_common
+)
+
 add_library(
     mceliece8192128f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MCELIECE8192128F_SRCS}
 )
 
@@ -728,9 +799,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mceliece8192128f
+    PUBLIC pqclean_common
+)
+
 add_library(
     mldsa44 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MLDSA44_SRCS}
 )
 
@@ -740,9 +815,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mldsa44
+    PUBLIC pqclean_common
+)
+
 add_library(
     mldsa65 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MLDSA65_SRCS}
 )
 
@@ -752,9 +831,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    mldsa65
+    PUBLIC pqclean_common
+)
+
 add_library(
     mldsa87 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${MLDSA87_SRCS}
 )
 
@@ -764,9 +847,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+        mldsa87
+        PUBLIC pqclean_common
+)
+
 add_library(
     falcon512 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${FALCON_512_SRCS}
 )
 
@@ -776,9 +863,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    falcon512
+    PUBLIC pqclean_common
+)
+
 add_library(
     falcon1024 STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${FALCON_1024_SRCS}
 )
 
@@ -788,9 +879,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    falcon1024
+    PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_sha2_128f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHA2_128F_SRCS}
 )
 
@@ -800,9 +895,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    sphincs_sha2_128f
+    PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_sha2_128s STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHA2_128S_SRCS}
 )
 
@@ -812,9 +911,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    sphincs_sha2_128s
+    PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_sha2_192f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHA2_192F_SRCS}
 )
 
@@ -824,9 +927,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    sphincs_sha2_192f
+    PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_sha2_192s STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHA2_192S_SRCS}
 )
 
@@ -836,9 +943,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+        sphincs_sha2_192s
+        PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_sha2_256f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHA2_256F_SRCS}
 )
 
@@ -848,9 +959,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    sphincs_sha2_256f
+    PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_sha2_256s STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHA2_256S_SRCS}
 )
 
@@ -860,9 +975,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    sphincs_sha2_256s
+    PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_shake_128f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHAKE_128F_SRCS}
 )
 
@@ -872,9 +991,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    sphincs_shake_128f
+    PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_shake_128s STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHAKE_128S_SRCS}
 )
 
@@ -884,9 +1007,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+        sphincs_shake_128s
+        PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_shake_192f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHAKE_192F_SRCS}
 )
 
@@ -896,9 +1023,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    sphincs_shake_192f
+    PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_shake_192s STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHAKE_192S_SRCS}
 )
 
@@ -908,9 +1039,13 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
+target_link_libraries(
+    sphincs_shake_192s
+    PUBLIC pqclean_common
+)
+
 add_library(
     sphincs_shake_256f STATIC
-    ${PQCLEAN_COMMON_SRCS}
     ${SPHINCS_SHAKE_256F_SRCS}
 )
 
@@ -920,31 +1055,35 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
-add_library(
-    sphincs_shake_256s STATIC
-    ${PQCLEAN_COMMON_SRCS}
+target_link_libraries(
+    sphincs_shake_256f
+    PUBLIC pqclean_common
+)
+
+add_library(pqclean STATIC #sphincs_shake_256s
     ${SPHINCS_SHAKE_256S_SRCS}
 )
 
 target_include_directories(
-    sphincs_shake_256s
+    pqclean # sphincs_shake_256s
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-shake-256s-simple/clean>
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
-add_library(
-    pqclean INTERFACE
+target_link_libraries(
+        pqclean # sphincs_shake_256s
+        PUBLIC pqclean_common
 )
 
 target_link_libraries(
-    pqclean 
-    INTERFACE 
+    pqclean
+    PUBLIC
     hqc_128 hqc_192 hqc_256 mlkem512 mlkem768 mlkem1024
     mceliece348864 mceliece348864f mceliece460896 mceliece460896f mceliece6688128 mceliece6688128f
     mceliece6960119 mceliece6960119f mceliece8192128 mceliece8192128f
     mldsa44 mldsa65 mldsa87 falcon512 falcon1024
     sphincs_sha2_128f sphincs_sha2_128s sphincs_sha2_192f sphincs_sha2_192s sphincs_sha2_256f sphincs_sha2_256s
-    sphincs_shake_128f sphincs_shake_128s sphincs_shake_192f sphincs_shake_192s sphincs_shake_256f sphincs_shake_256s
+    sphincs_shake_128f sphincs_shake_128s sphincs_shake_192f sphincs_shake_192s sphincs_shake_256f #sphincs_shake_256s
 )
 
 install(TARGETS pqclean
