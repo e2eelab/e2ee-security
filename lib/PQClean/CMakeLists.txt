@@ -1060,37 +1060,45 @@ target_link_libraries(
     PUBLIC pqclean_common
 )
 
-add_library(pqclean STATIC #sphincs_shake_256s
+add_library(sphincs_shake_256s STATIC
     ${SPHINCS_SHAKE_256S_SRCS}
 )
 
 target_include_directories(
-    pqclean # sphincs_shake_256s
+    sphincs_shake_256s
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/crypto_sign/sphincs-shake-256s-simple/clean>
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/common>
 )
 
 target_link_libraries(
-        pqclean # sphincs_shake_256s
-        PUBLIC pqclean_common
+    sphincs_shake_256s
+    PUBLIC pqclean_common
+)
+
+add_library(
+    pqclean INTERFACE
 )
 
 target_link_libraries(
-    pqclean
-    PUBLIC
+    pqclean INTERFACE
     hqc_128 hqc_192 hqc_256 mlkem512 mlkem768 mlkem1024
     mceliece348864 mceliece348864f mceliece460896 mceliece460896f mceliece6688128 mceliece6688128f
     mceliece6960119 mceliece6960119f mceliece8192128 mceliece8192128f
     mldsa44 mldsa65 mldsa87 falcon512 falcon1024
     sphincs_sha2_128f sphincs_sha2_128s sphincs_sha2_192f sphincs_sha2_192s sphincs_sha2_256f sphincs_sha2_256s
-    sphincs_shake_128f sphincs_shake_128s sphincs_shake_192f sphincs_shake_192s sphincs_shake_256f #sphincs_shake_256s
+    sphincs_shake_128f sphincs_shake_128s sphincs_shake_192f sphincs_shake_192s sphincs_shake_256f sphincs_shake_256s
 )
 
-install(TARGETS pqclean
+install(TARGETS pqclean hqc_128 hqc_192 hqc_256 mlkem512 mlkem768 mlkem1024
+        mceliece348864 mceliece348864f mceliece460896 mceliece460896f mceliece6688128 mceliece6688128f
+        mceliece6960119 mceliece6960119f mceliece8192128 mceliece8192128f
+        mldsa44 mldsa65 mldsa87 falcon512 falcon1024
+        sphincs_sha2_128f sphincs_sha2_128s sphincs_sha2_192f sphincs_sha2_192s sphincs_sha2_256f sphincs_sha2_256s
+        sphincs_shake_128f sphincs_shake_128s sphincs_shake_192f sphincs_shake_192s sphincs_shake_256f sphincs_shake_256s
   CONFIGURATIONS ${CMAKE_BUILD_TYPE}
   EXPORT pqcleanTargets
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  INCLUDES
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
