@@ -610,6 +610,10 @@ static const char *ADDRESS_ID_UPDATE_SIGNED_PRE_KEY = "UPDATE ACCOUNT "
                                                       "SET SIGNED_PRE_KEY = (?) "
                                                       "WHERE ADDRESS is (?);";
 
+static const char *ADDRESS_ID_UPDATE_NEXT_ONETIME_PRE_KEY_ID = "UPDATE ACCOUNT "
+                                                               "SET NEXT_ONETIME_PRE_KEY_ID = (?) "
+                                                               "WHERE ADDRESS is (?);";
+
 static const char *LOAD_OLD_SIGNED_PRE_KEY = "SELECT SIGNED_PRE_KEY.SPK_ID, "
                                              "KEYPAIR.PUBLIC_KEY, "
                                              "KEYPAIR.PRIVATE_KEY, "
@@ -1388,6 +1392,24 @@ bool remove_expired_signed_pre_key(E2ees__E2eeAddress *address) {
     return true;
 }
 
+static bool update_next_one_time_pre_key_id(uint64_t address_id, uint32_t next_opk_id) {
+    // prepare
+    sqlite3_stmt *stmt;
+    sqlite_prepare(ADDRESS_ID_UPDATE_NEXT_ONETIME_PRE_KEY_ID, &stmt);
+
+    // bind
+    sqlite3_bind_int64(stmt, 1, next_opk_id);
+    sqlite3_bind_int64(stmt, 2, address_id);
+
+    // step
+    sqlite_step(stmt, SQLITE_DONE);
+
+    // release
+    sqlite_finalize(stmt);
+
+    return true;
+}
+
 bool add_one_time_pre_key(E2ees__E2eeAddress *address, E2ees__OneTimePreKey *one_time_pre_key) {
     sqlite_int64 address_id;
     bool succ = load_address_id(address, &address_id);
@@ -1396,6 +1418,11 @@ bool add_one_time_pre_key(E2ees__E2eeAddress *address, E2ees__OneTimePreKey *one
         return false;
 
     sqlite_int64 one_time_pre_key_id = insert_one_time_pre_key(one_time_pre_key);
+
+    succ = update_next_one_time_pre_key_id(address_id, one_time_pre_key->opk_id + 1);
+
+    if (succ == false)
+        return false;
 
     // prepare
     sqlite3_stmt *stmt;

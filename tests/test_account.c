@@ -223,11 +223,23 @@
 #include "test_plugin.h"
 #include "test_util.h"
 
+enum test_case {
+    GENERATE_IDENTITY_KEY = 0,
+    GENERATE_SIGNED_PRE_KEY = 1,
+    GENERATE_OPKS = 2,
+    CREATE_ACCOUNT = 3,
+    CREATE_ACCOUNTS = 10,
+    REGISTER_USER = 11,
+    PUBLISH_SPK = 12,
+    SUPPLY_OPKS = 13,
+    FREE_OPKS = 14,
+};
+
 static void on_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg) {
     print_log((char *)log_msg, log_code);
 }
 
-static void on_user_registered(E2ees__Account *account){
+static void on_user_registered(E2ees__Account *account) {
     print_msg("on_user_registered: user_id", (uint8_t *)account->address->user->user_id, strlen(account->address->user->user_id));
 }
 
@@ -244,11 +256,154 @@ static e2ees_event_handler_t test_event_handler = {
     NULL
 };
 
+static void print_test_case_id(int case_num) {
+    if (case_num == GENERATE_IDENTITY_KEY) {
+        printf("\tv1.0ua01\n");
+    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
+        printf("\tv1.0ua02\n");
+    } else if (case_num == GENERATE_OPKS) {
+        printf("\tv1.0ua03\n");
+    } else if (case_num == CREATE_ACCOUNT) {
+        printf("\tv1.0ua04\n");
+    } else if (case_num == CREATE_ACCOUNTS) {
+        printf("\tv1.0ia01\n");
+    } else if (case_num == REGISTER_USER) {
+        printf("\tv1.0ia02\n");
+    } else if (case_num == PUBLISH_SPK) {
+        printf("\tv1.0ia03\n");
+    } else if (case_num == SUPPLY_OPKS) {
+        printf("\tv1.0ia04\n");
+    } else if (case_num == FREE_OPKS) {
+        printf("\tv1.0ia05\n");
+    } else {}
+}
+
+static void print_test_case_title(int case_num) {
+    if (case_num == GENERATE_IDENTITY_KEY) {
+        printf("\tgenerate_identity_key\n");
+    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
+        printf("\tgenerate_signed_pre_key\n");
+    } else if (case_num == GENERATE_OPKS) {
+        printf("\tgenerate_opks\n");
+    } else if (case_num == CREATE_ACCOUNT) {
+        printf("\tcreate_account\n");
+    } else if (case_num == CREATE_ACCOUNTS) {
+        printf("\tcreate_accounts\n");
+    } else if (case_num == REGISTER_USER) {
+        printf("\ttest_register_user\n");
+    } else if (case_num == PUBLISH_SPK) {
+        printf("\ttest_publish_spk\n");
+    } else if (case_num == SUPPLY_OPKS) {
+        printf("\ttest_supply_opks\n");
+    } else if (case_num == FREE_OPKS) {
+        printf("\ttest_free_opks\n");
+    } else {}
+}
+
+static void print_test_description(int case_num) {
+    if (case_num == GENERATE_IDENTITY_KEY) {
+        printf("\tGiven an e2ee pack ID, generate an identity key pair.\n");
+    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
+        printf("\tGiven an e2ee pack ID, generate a signed pre-key pair and a signature.\n");
+    } else if (case_num == GENERATE_OPKS) {
+        printf("\tGiven an e2ee pack ID, generate a certain number of one-time pre-key pairs.\n");
+    } else if (case_num == CREATE_ACCOUNT) {
+        printf("\tGiven an e2ee pack ID, create an account.\n");
+    } else if (case_num == CREATE_ACCOUNTS) {
+        printf("\tThis test case generates a certain number, given by the input, of accounts.\n");
+    } else if (case_num == REGISTER_USER) {
+        printf("\tTo call the function register_user with given inputs.\n");
+    } else if (case_num == PUBLISH_SPK) {
+        printf("\tA registered account will generate a new pair of signed pre-key pair and publish the public part of the key pair and the signature to the server.\n");
+    } else if (case_num == SUPPLY_OPKS) {
+        printf("\tThe server notifies the client to generate a number of one-time pre-keys.\n");
+    } else if (case_num == FREE_OPKS) {
+        printf("\n");
+    } else {}
+}
+
+static void print_test_objectives(int case_num) {
+    if (case_num == GENERATE_IDENTITY_KEY) {
+        printf("\tTo verify the functionality of the function generate_identity_key.\n");
+    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
+        printf("\tTo verify the functionality of the function generate_signed_pre_key.\n");
+    } else if (case_num == GENERATE_OPKS) {
+        printf("\tTo verify the functionality of the function generate_opks.\n");
+    } else if (case_num == CREATE_ACCOUNT) {
+        printf("\tTo verify the functionality of the function create_account.\n");
+    } else if (case_num == CREATE_ACCOUNTS) {
+        printf("\tTo assure that this device can create several accounts.\n");
+    } else if (case_num == REGISTER_USER) {
+        printf("\tTo verify the functionality of the function register_user.\n");
+    } else if (case_num == PUBLISH_SPK) {
+        printf("\tTo verify the functionality of the function publish_spk_internal.\n");
+    } else if (case_num == SUPPLY_OPKS) {
+        printf("\tTo assure that the procedure of supplying one-time pre-keys is correct.\n");
+    } else if (case_num == FREE_OPKS) {
+        printf("\n");
+    } else {}
+}
+
+static void print_test_steps(int case_num) {
+    if (case_num == GENERATE_IDENTITY_KEY) {
+        printf("\tStep 1: Determine an e2ee pack ID.\n");
+        printf("\tStep 2: Generate an identity key pair.\n");
+    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
+        printf("\tStep 1: Determine an e2ee pack ID.\n");
+        printf("\tStep 2: Generate an identity key pair.\n");
+        printf("\tStep 3: Generate a signed pre-key pair and a signature.\n");
+    } else if (case_num == GENERATE_OPKS) {
+        printf("\tStep 1: Determine an e2ee pack ID and the number of keys to be generated.\n");
+        printf("\tStep 2: Generate a certain number of one-time pre-key pairs.\n");
+    } else if (case_num == CREATE_ACCOUNT) {
+        printf("\tStep 1: Determine an e2ee pack ID.\n");
+        printf("\tStep 2: Generate an account.\n");
+    } else if (case_num == CREATE_ACCOUNTS) {
+        printf("\tStep 1: Input the parameter num, the number of accounts to be created.\n");
+        printf("\tStep 2: Create the accounts.\n");
+    } else if (case_num == REGISTER_USER) {
+        printf("\tStep 1: Generate the address, including the user name, user id, device id, etc.\n");
+        printf("\tStep 2: Register.\n");
+    } else if (case_num == PUBLISH_SPK) {
+        printf("\tStep 1: Register.\n");
+        printf("\tStep 2: Generate a new pair of signed pre-key.\n");
+        printf("\tStep 3: Pulish the public part of signed pre-key pair to the server.\n");
+    } else if (case_num == SUPPLY_OPKS) {
+        printf("\tStep 1: Register.\n");
+        printf("\tStep 2: Server notifies this device to generate some one-time pre-key pairs.\n");
+        printf("\tStep 3: Generate the one-time pre-key pairs and publish them to the server.\n");
+    } else if (case_num == FREE_OPKS) {
+        printf("\n");
+    } else {}
+}
+
+static void print_test_case_begin(int case_num) {
+    printf("Test Case ID:\n");
+    print_test_case_id(case_num);
+    printf("Test Case Title:\n");
+    print_test_case_title(case_num);
+    printf("Test Description:\n");
+    print_test_description(case_num);
+    printf("Test Objectives:\n");
+    print_test_objectives(case_num);
+    printf("Test Steps:\n");
+    print_test_steps(case_num);
+}
+
+static void print_test_case_final(int case_num) {
+    printf("Result:\n");
+    printf("\tSuccess!");
+    printf("\n\n");
+    printf("====================\n");
+}
+
 ///-----------------unit test-----------------///
 
 static void test_generate_identity_key() {
+    // print test case
+    print_test_case_begin(GENERATE_IDENTITY_KEY);
+
     // test start
-    printf("====== test_generate_identity_key ======\n");
     tear_up();
     get_e2ees_plugin()->event_handler = test_event_handler;
 
@@ -263,12 +418,15 @@ static void test_generate_identity_key() {
     free_proto(identity_key);
 
     // test stop
-    printf("====================================\n");
+    tear_down();
+    print_test_case_final(GENERATE_IDENTITY_KEY);
 }
 
 static void test_generate_signed_pre_key() {
+    // print test case
+    print_test_case_begin(GENERATE_SIGNED_PRE_KEY);
+
     // test start
-    printf("====== test_generate_signed_pre_key ======\n");
     tear_up();
     get_e2ees_plugin()->event_handler = test_event_handler;
 
@@ -287,12 +445,14 @@ static void test_generate_signed_pre_key() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final(GENERATE_SIGNED_PRE_KEY);
 }
 
 static void test_generate_opks() {
+    // print test case
+    print_test_case_begin(GENERATE_OPKS);
+
     // test start
-    printf("====== test_generate_opks ======\n");
     tear_up();
     get_e2ees_plugin()->event_handler = test_event_handler;
 
@@ -312,12 +472,16 @@ static void test_generate_opks() {
     free_mem((void **)&one_time_pre_key_list, sizeof(E2ees__OneTimePreKey *) * number_of_keys);
 
     // test stop
-    printf("====================================\n");
+    tear_down();
+    print_test_case_final(GENERATE_OPKS);
 }
 
-static void test_create_account() {
+static void test_create_account(bool unit) {
+    // print test case
+    if (unit)
+        print_test_case_begin(CREATE_ACCOUNT);
+
     // test start
-    printf("====== test_create_account ======\n");
     tear_up();
     get_e2ees_plugin()->event_handler = test_event_handler;
     uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
@@ -333,30 +497,35 @@ static void test_create_account() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    if (unit)
+        print_test_case_final(CREATE_ACCOUNT);
 }
 
 ///-----------------integration test-----------------///
 
 static void test_create_accounts(uint64_t num) {
+    // print test case
+    print_test_case_begin(CREATE_ACCOUNTS);
+
     // test start
-    printf("====== test_create_accounts ======\n");
     tear_up();
     get_e2ees_plugin()->event_handler = test_event_handler;
 
     uint64_t i;
     for (i = 1; i <= num; i++) {
-        test_create_account();
+        test_create_account(false);
     }
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final(CREATE_ACCOUNTS);
 }
 
 static void test_register_user() {
+    // print test case
+    print_test_case_begin(REGISTER_USER);
+
     // test start
-    printf("====== test_register_user ======\n");
     tear_up();
     get_e2ees_plugin()->event_handler = test_event_handler;
 
@@ -372,19 +541,20 @@ static void test_register_user() {
         &response, e2ees_pack_id, user_name, user_id, device_id, authenticator, auth_code
     );
     assert(ret == 0);
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     e2ees__register_user_response__free_unpacked(response, NULL);
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final(REGISTER_USER);
 }
 
 static void test_publish_spk() {
+    // print test case
+    print_test_case_begin(PUBLISH_SPK);
+
     // test start
-    printf("====== test_publish_spk ======\n");
     tear_up();
     get_e2ees_plugin()->event_handler = test_event_handler;
 
@@ -425,7 +595,7 @@ static void test_publish_spk() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final(PUBLISH_SPK);
 }
 
 E2ees__ProtoMsg *mock_supply_opks_msg(E2ees__E2eeAddress *user_address, uint32_t supply_opks_num) {
@@ -443,8 +613,10 @@ E2ees__ProtoMsg *mock_supply_opks_msg(E2ees__E2eeAddress *user_address, uint32_t
 }
 
 static void test_supply_opks() {
+    // print test case
+    print_test_case_begin(SUPPLY_OPKS);
+
     // test start
-    printf("====== test_supply_opks ======\n");
     tear_up();
     get_e2ees_plugin()->event_handler = test_event_handler;
 
@@ -484,6 +656,7 @@ static void test_supply_opks() {
     E2ees__Account *account_new = NULL;
     get_e2ees_plugin()->db_handler.load_account_by_address(register_user_response->address, &account_new);
     assert(account_new->n_one_time_pre_key_list == (rest_opks_num + supply_opks_num));
+    assert(account_new->next_one_time_pre_key_id == (E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM + supply_opks_num + 1));
 
     // release
     free_proto(register_user_response);
@@ -496,12 +669,14 @@ static void test_supply_opks() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final(SUPPLY_OPKS);
 }
 
 static void test_free_opks() {
+    // print test case
+    print_test_case_begin(FREE_OPKS);
+
     // test start
-    printf("====== test_free_opks ======\n");
     tear_up();
     get_e2ees_plugin()->event_handler = test_event_handler;
 
@@ -549,7 +724,7 @@ static void test_free_opks() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final(FREE_OPKS);
 }
 
 int main() {
@@ -557,7 +732,7 @@ int main() {
     test_generate_identity_key();
     test_generate_signed_pre_key();
     test_generate_opks();
-    test_create_account();
+    test_create_account(true);
 
     // integration test
     test_create_accounts(8);
