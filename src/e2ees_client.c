@@ -207,6 +207,15 @@ E2ees__InviteResponse *invite(
         );
     }
 
+    // done
+    invite_response = (E2ees__InviteResponse *)malloc(sizeof(E2ees__InviteResponse));
+    e2ees__invite_response__init(invite_response);
+    if (ret == E2EES_RESULT_SUCC) {
+        invite_response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_ACCEPTED;
+    } else {
+        invite_response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_BAD_REQUEST;
+    }
+
     // release
     free_string(auth);
     free_invite_response_list(&invite_response_list, invite_response_num);

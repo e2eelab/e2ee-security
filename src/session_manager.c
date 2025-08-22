@@ -832,7 +832,7 @@ bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *
     if (result != E2EES_RESULT_SUCC
         || safe_strcmp(inbound_session->session_id, invite_msg->session_id) == false
     ) {
-        e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_invite_msg()");
+        e2ees_notify_log(receiver_address, BAD_SESSION, "consume_invite_msg()");
         result = E2EES_RESULT_FAIL;
     } else {
         // notify
