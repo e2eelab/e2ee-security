@@ -2,7 +2,7 @@
 
 #include "randombytes.h"
 
-extern int e2ees_randombytes(uint8_t *, size_t);
+extern void e2ees_randombytes(uint8_t *, size_t);
 
 int randombytes(uint8_t *output, size_t output_len) {
     e2ees_randombytes(output, output_len);

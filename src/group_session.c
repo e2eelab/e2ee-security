@@ -408,7 +408,7 @@ int new_outbound_group_session_by_sender(
         // the sender needs to generate a random seed secret
         outbound_group_session->group_seed.len = SEED_SECRET_LEN;
         outbound_group_session->group_seed.data = (uint8_t *)malloc(sizeof(uint8_t) * outbound_group_session->group_seed.len);
-        get_e2ees_plugin()->common_handler.gen_rand(outbound_group_session->group_seed.data, outbound_group_session->group_seed.len);
+        e2ees_randombytes(outbound_group_session->group_seed.data, outbound_group_session->group_seed.len);
 
         insert_outbound_group_session_data(
             outbound_group_session, e2ees_pack_id,

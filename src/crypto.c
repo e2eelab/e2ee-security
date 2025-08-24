@@ -39,7 +39,7 @@ static const uint8_t CURVE25519_BASEPOINT[32] = {9};
 
 static void crypto_generate_private_key_curve25519(uint8_t *private_key) {
     uint8_t random[CURVE25519_RANDOM_LENGTH];
-    get_e2ees_plugin()->common_handler.gen_rand(random, sizeof(random));
+    e2ees_randombytes(random, sizeof(random));
 
     random[0] &= 248;
     random[31] &= 127;
@@ -102,7 +102,7 @@ int crypto_ds_sign_curve25519(
 ) {
     *signature_out_len = CURVE_SIGNATURE_LENGTH;
     uint8_t nonce[*signature_out_len];
-    get_e2ees_plugin()->common_handler.gen_rand(nonce, sizeof(nonce));
+    e2ees_randombytes(nonce, sizeof(nonce));
     return curve25519_sign(signature_out, private_key, msg, msg_len, nonce);
 }
 
@@ -128,7 +128,7 @@ void crypto_sign_curve25519(
     uint8_t *signature_out
 ) {
     uint8_t nonce[CURVE_SIGNATURE_LENGTH];
-    get_e2ees_plugin()->common_handler.gen_rand(nonce, sizeof(nonce));
+    e2ees_randombytes(nonce, sizeof(nonce));
     curve25519_sign(signature_out, private_key, msg, msg_len, nonce);
 }
 
