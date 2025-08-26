@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.4)
-project("mbedcrypto" LANGUAGES C)
+project(mbedcrypto LANGUAGES C)
 include(GNUInstallDirs)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 17)
 
 option(LINK_WITH_PTHREAD "Explicitly link mbed TLS library to pthread." OFF)
 option(LINK_WITH_TRUSTED_STORAGE

@@ -1,5 +1,8 @@
 project(pqclean C ASM)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 17)
+
 set(PQCLEAN_COMMON_SRCS
     randombytes.c
     src/common/aes.c
