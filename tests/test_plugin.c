@@ -61,6 +61,14 @@ static void gen_uuid(uint8_t uuid[E2EES_UUID_LEN]) {
 // ===============================================================
 // e2ees_event_handler_t
 // callback handlers
+static void on_log(
+    E2ees__E2eeAddress *user_address,
+    LogCode log_code,
+    const char *log_msg
+) {
+    print_log((char *)log_msg, log_code);
+}
+
 static void on_one2one_msg_received(
     E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *to_address,
     uint8_t *plaintext, size_t plaintext_len
@@ -140,7 +148,7 @@ struct e2ees_plugin_t mock_plugin = {
         mock_consume_proto_msg
     },
     {
-        NULL,
+        on_log,
         NULL,
         NULL,
         NULL,

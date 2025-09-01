@@ -701,7 +701,7 @@ int remove_group_members(
                     e2ees_notify_log(
                         sender_address,
                         BAD_GROUP_SESSION,
-                        "remove_group_members(), outbound_group_session is null, return a response with response code not found"
+                        "remove_group_members(), outbound_group_session is NULL, return a response with response code not found"
                     );        
                     response = (E2ees__RemoveGroupMembersResponse *)malloc(sizeof(E2ees__RemoveGroupMembersResponse));
                     e2ees__remove_group_members_response__init(response);

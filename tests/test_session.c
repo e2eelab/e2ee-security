@@ -283,7 +283,7 @@ static uint8_t test_plaintext[] = "Session test!!!";
 static size_t test_plaintext_len;
 
 static void on_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg) {
-    // print_log((char *)log_msg, log_code);
+    print_log((char *)log_msg, log_code);
 }
 
 static void on_user_registered(E2ees__Account *account) {

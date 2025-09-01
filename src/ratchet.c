@@ -85,7 +85,7 @@ static int create_chain_key(
         }
         if (ratchet_public_key != NULL) {
             // ratchet_public_key should be {0, NULL}
-            if (is_valid_protobuf(ratchet_public_key)) {
+            if (ratchet_public_key->len != 0 || ratchet_public_key->data != NULL) {
                 ret = E2EES_RESULT_FAIL;
             }
         }

@@ -774,7 +774,7 @@ int consume_remove_group_members_response(
             );
         } else {
             // user is removed from group
-            get_e2ees_plugin()->event_handler.on_log(sender_address, DEBUG_LOG, "consume_remove_group_members_response() skip renew outbound group session since user is not in group");
+            e2ees_notify_log(sender_address, DEBUG_LOG, "consume_remove_group_members_response() skip renew outbound group session since user is not in group");
         }
     }
 
@@ -832,7 +832,7 @@ bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ee
 
             // done
             // no need to renew outbound group session
-            get_e2ees_plugin()->event_handler.on_log(receiver_address, DEBUG_LOG, "consume_remove_group_members_msg() skip renew outbound group session because local user is removed");
+            e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_remove_group_members_msg() skip renew outbound group session because local user is removed");
             return true;
         }
     }
@@ -1210,7 +1210,7 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
     int sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
     if (inbound_group_session->associated_data.data == NULL || inbound_group_session->associated_data.len < sign_key_len){
-        e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_group_msg() inbound group session associated_data is null, just consume it");
+        e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_group_msg() inbound group session associated_data is NULL, just consume it");
         return true;
     }
 
