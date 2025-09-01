@@ -23,6 +23,7 @@
 
 #include "e2ees/account.h"
 #include "e2ees/mem_util.h"
+#include "e2ees/log_code.h"
 
 extern struct ds_suite_t E2EES_DS_CURVE25519;
 extern struct ds_suite_t E2EES_DS_MLDSA44;
@@ -243,13 +244,28 @@ void e2ees_randombytes(uint8_t *rand_data, size_t rand_data_len) {
 }
 
 void e2ees_notify_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *msg_fmt, ...) {
-    if (e2ees_plugin != NULL) {
-        char msg[256] = {0};
-        va_list arg;
-        va_start(arg, msg_fmt);
-        vsnprintf(msg, 256, msg_fmt, arg);
-        va_end(arg);
-        e2ees_plugin->event_handler.on_log(user_address, log_code, msg);
+    if (e2ees_plugin == NULL) {
+        return;
+    }
+
+    char msg[256] = {0};
+    va_list arg;
+    va_start(arg, msg_fmt);
+    vsnprintf(msg, 256, msg_fmt, arg);
+    va_end(arg);
+
+    const char *logcode_str = logcode_string(log_code);
+    if (log_code == DEBUG_LOG) {
+        char log_msg[256 + 36] = {0};
+        snprintf(log_msg, sizeof(log_msg), "<%s> %s", logcode_str, msg);
+        e2ees_plugin->event_handler.on_log(user_address, log_code, log_msg);
+    } else {
+        char stack_trace[256] = {0};
+        get_stack_trace(stack_trace, sizeof(stack_trace));
+
+        char log_msg[512] = {0};
+        snprintf(log_msg, sizeof(log_msg), "<%s> %s\nStack trace:\n%s", logcode_str, msg, stack_trace);
+        e2ees_plugin->event_handler.on_log(user_address, log_code, log_msg);
     }
 }
 

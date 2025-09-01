@@ -20,6 +20,8 @@
 #ifndef LOG_CODE_H_
 #define LOG_CODE_H_
 
+#include <stdio.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -131,7 +133,7 @@ enum LogCode {
   BAD_PLAINTEXT = 8001,
 
   // server signature
-  BAD_SERVER_SIGNATURE = 9001,
+  BAD_SERVER_SIGNATURE = 9001
 };
 
 typedef enum LogCode LogCode;
@@ -143,6 +145,13 @@ typedef enum LogCode LogCode;
  * @return The log code string
  */
 const char *logcode_string(LogCode log_code);
+
+/**
+ * @brief Capture and format stack trace
+ * @param buffer the buffer to keep stack trace msg
+ * @param buffer_len the length of buffer
+ */
+void get_stack_trace(char *buffer, size_t buffer_len);
 
 #ifdef __cplusplus
 }
