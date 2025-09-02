@@ -235,6 +235,7 @@ int crypto_curve25519_new_inbound_session(E2ees__Session *inbound_session, E2ees
         inbound_session->e2ees_pack_id,
         inbound_session->our_address,
         inbound_session->their_address,
+        inbound_session->session_id,
         NULL,
         &(bob_signed_pre_key->public_key)
     );

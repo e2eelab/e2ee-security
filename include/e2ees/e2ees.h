@@ -320,7 +320,7 @@ typedef struct e2ees_db_handler_t {
      * @param our_address
      * @param inbound_session
      */
-    void (*load_inbound_session)(
+    void (*load_session)(
         char *session_id,
         E2ees__E2eeAddress *our_address,
         E2ees__Session **inbound_session

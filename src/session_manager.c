@@ -352,7 +352,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
 
     // load the corresponding inbound session
     E2ees__Session *inbound_session = NULL;
-    get_e2ees_plugin()->db_handler.load_inbound_session(e2ee_msg->session_id, receiver_address, &inbound_session);
+    get_e2ees_plugin()->db_handler.load_session(e2ee_msg->session_id, receiver_address, &inbound_session);
     if (inbound_session == NULL) {
         e2ees_notify_log(receiver_address, BAD_SESSION, "consume_one2one_msg() inbound session not found, just consume it");
         // no inbound session, just consume it
@@ -743,7 +743,7 @@ int consume_invite_response(
     if (ret == E2EES_RESULT_SUCC) {
         // load the corresponding inbound session
         E2ees__Session *inbound_session = NULL;
-        get_e2ees_plugin()->db_handler.load_inbound_session(response->session_id, user_address, &inbound_session);
+        get_e2ees_plugin()->db_handler.load_session(response->session_id, user_address, &inbound_session);
         if (inbound_session != NULL) {
             // update invite_t
             inbound_session->invite_t = response->invite_t;
@@ -759,7 +759,7 @@ int consume_invite_response(
     //     if (response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
     //         // load the corresponding inbound session
     //         E2ees__Session *inbound_session = NULL;
-    //         get_e2ees_plugin()->db_handler.load_inbound_session(response->session_id, user_address, &inbound_session);
+    //         get_e2ees_plugin()->db_handler.load_session(response->session_id, user_address, &inbound_session);
     //         if (inbound_session != NULL) {
     //             // update invite_t
     //             inbound_session->invite_t = response->invite_t;
@@ -804,7 +804,7 @@ bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *
 
     // check if session ID has been used
     E2ees__Session *inbound_session = NULL;
-    get_e2ees_plugin()->db_handler.load_inbound_session(session_id, receiver_address, &inbound_session);
+    get_e2ees_plugin()->db_handler.load_session(session_id, receiver_address, &inbound_session);
     if (inbound_session != NULL) {
         e2ees_notify_log(receiver_address, BAD_SESSION, "consume_invite_msg() session ID has been used, just consume it");
         // release
@@ -851,6 +851,7 @@ int produce_accept_request(
     uint32_t e2ees_pack_id,
     E2ees__E2eeAddress *from,
     E2ees__E2eeAddress *to,
+    char *session_id,
     ProtobufCBinaryData *ciphertext_1,
     ProtobufCBinaryData *our_ratchet_key
 ) {
@@ -866,6 +867,9 @@ int produce_accept_request(
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(to)) {
+        ret = E2EES_RESULT_FAIL;
+    }
+    if (!is_valid_string(session_id)) {
         ret = E2EES_RESULT_FAIL;
     }
     if (ciphertext_1 != NULL) {
@@ -884,6 +888,7 @@ int produce_accept_request(
         msg->e2ees_pack_id = e2ees_pack_id;
         copy_address_from_address(&(msg->from), from);
         copy_address_from_address(&(msg->to), to);
+        msg->session_id = strdup(session_id);
 
         if (ciphertext_1 != NULL) {
             copy_protobuf_from_protobuf(&(msg->encaps_ciphertext), ciphertext_1);
@@ -958,6 +963,10 @@ bool consume_accept_msg(E2ees__E2eeAddress *receiver_address, E2ees__AcceptMsg *
 
         // try to send group pre-keys if necessary
         send_pending_plaintext_data(outbound_session);
+
+        // release
+        e2ees__session__free_unpacked(outbound_session, NULL);
+        outbound_session = NULL;
 
         // session built, consume accept_msg
         return true;

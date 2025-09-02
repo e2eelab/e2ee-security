@@ -301,13 +301,15 @@ static void test_pending_request_data() {
     mock_address(&alice_address, "alice", "alice's domain", "alice's device");
     mock_address(&bob_address, "bob", "bob's domain", "bob's device");
 
+    char *session_id = "session_id";
+
     ProtobufCBinaryData *our_ratchet_key = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
     our_ratchet_key->len = 32;
     our_ratchet_key->data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
     memcpy(our_ratchet_key->data, "abcdefghijklmnopqrstuvwxyz012345", 32);
 
     E2ees__AcceptRequest *accept_request = NULL;
-    produce_accept_request(&accept_request, e2ees_pack_id, alice_address, bob_address, NULL, our_ratchet_key);
+    produce_accept_request(&accept_request, e2ees_pack_id, alice_address, bob_address, session_id, NULL, our_ratchet_key);
 
     // pack request to request_data
     size_t request_data_len = e2ees__accept_request__get_packed_size(accept_request);

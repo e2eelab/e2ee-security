@@ -203,6 +203,7 @@ int accept_internal(
     uint32_t e2ees_pack_id,
     E2ees__E2eeAddress *from,
     E2ees__E2eeAddress *to,
+    char *session_id,
     ProtobufCBinaryData *ciphertext_1,
     ProtobufCBinaryData *our_ratchet_key
 ) {
@@ -230,6 +231,10 @@ int accept_internal(
         e2ees_notify_log(from, BAD_ADDRESS, "accept_internal()");
         ret = E2EES_RESULT_FAIL;
     }
+    if (!is_valid_string(session_id)) {
+        e2ees_notify_log(from, BAD_SESSION_ID, "accept_internal()");
+        ret = E2EES_RESULT_FAIL;
+    }
     if (!is_valid_protobuf(our_ratchet_key)) {
         e2ees_notify_log(from, BAD_RATCHET_KEY, "accept_internal()");
         ret = E2EES_RESULT_FAIL;
@@ -237,7 +242,7 @@ int accept_internal(
 
     // e2ees_notify_log(from, DEBUG_LOG, "accept_internal(): from [%s:%s] to [%s:%s]", from->user->user_id, from->user->device_id, to->user->user_id, to->user->device_id);
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_accept_request(&accept_request, e2ees_pack_id, from, to, ciphertext_1, our_ratchet_key);
+        ret = produce_accept_request(&accept_request, e2ees_pack_id, from, to, session_id, ciphertext_1, our_ratchet_key);
     }
 
     if (ret == E2EES_RESULT_SUCC) {

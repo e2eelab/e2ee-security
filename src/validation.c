@@ -1512,6 +1512,10 @@ bool is_valid_accept_msg(E2ees__AcceptMsg *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad to");
             return false;
         }
+        if (!is_valid_string(src->session_id)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad session_id");
+            return false;
+        }
         if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad e2ees_pack_id");
             return false;

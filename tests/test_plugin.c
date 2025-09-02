@@ -110,7 +110,7 @@ struct e2ees_plugin_t mock_plugin = {
         update_one_time_pre_key,
         load_auth,
         // session
-        load_inbound_session,
+        load_session,
         load_outbound_session,
         load_outbound_sessions,
         store_session,

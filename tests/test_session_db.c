@@ -175,7 +175,7 @@ void test_load_outbound_sessions(uint32_t e2ees_pack_id)
     tear_down();
 }
 
-void test_load_inbound_session(uint32_t e2ees_pack_id)
+void test_load_session(uint32_t e2ees_pack_id)
 {
     tear_up();
 
@@ -204,12 +204,12 @@ void test_load_inbound_session(uint32_t e2ees_pack_id)
     // insert to the db
     store_session(session);
 
-    // load_inbound_session
+    // load_session
     E2ees__Session *session_copy;
-    load_inbound_session(session->session_id, to, &session_copy);
+    load_session(session->session_id, to, &session_copy);
 
     // assert session equals to session_copy
-    print_result("test_load_inbound_session", is_equal_session(session, session_copy));
+    print_result("test_load_session", is_equal_session(session, session_copy));
 
     // free
     e2ees__e2ee_address__free_unpacked(from, NULL);
@@ -694,9 +694,9 @@ void test_equal_ratchet_inbound(uint32_t e2ees_pack_id)
     // store session again
     store_session(session);
 
-    // load_inbound_session
+    // load_session
     E2ees__Session *session_copy;
-    load_inbound_session(session->session_id, to, &session_copy);
+    load_session(session->session_id, to, &session_copy);
 
     // assert session equals to session_copy
     print_result("test_equal_ratchet_inbound", is_equal_ratchet(session->ratchet, session_copy->ratchet));
@@ -766,7 +766,7 @@ int main(){
 
     test_load_outbound_session(e2ees_pack_id);
     test_load_outbound_sessions(e2ees_pack_id);
-    test_load_inbound_session(e2ees_pack_id);
+    test_load_session(e2ees_pack_id);
     test_load_group_session_by_address(e2ees_pack_id);
     test_load_group_session_by_id(e2ees_pack_id);
     test_load_group_addresses(e2ees_pack_id);

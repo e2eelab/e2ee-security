@@ -70,6 +70,7 @@ int invite_internal(
  * @param e2ees_pack_id
  * @param from
  * @param to
+ * @param session_id
  * @param ciphertext_1
  * @param our_ratchet_key
  * @return 0 if success
@@ -79,6 +80,7 @@ int accept_internal(
     uint32_t e2ees_pack_id,
     E2ees__E2eeAddress *from,
     E2ees__E2eeAddress *to,
+    char *session_id,
     ProtobufCBinaryData *ciphertext_1,
     ProtobufCBinaryData *our_ratchet_key
 );

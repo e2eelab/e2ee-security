@@ -1660,7 +1660,7 @@ size_t load_accounts(E2ees__Account ***accounts) {
 }
 
 // session related handlers
-void load_inbound_session(
+void load_session(
     char *session_id, E2ees__E2eeAddress *our_address, E2ees__Session **session
 ) {
     // prepare

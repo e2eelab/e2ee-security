@@ -422,6 +422,7 @@ int pqc_new_inbound_session(
             session->e2ees_pack_id,
             session->our_address,
             session->their_address,
+            session->session_id,
             &ciphertext_1,
             &(session->ratchet->sender_chain->our_ratchet_public_key)
         );
@@ -455,7 +456,7 @@ int pqc_complete_outbound_session(E2ees__Session **outbound_session_out, E2ees__
     ProtobufCBinaryData their_ratchet_key = {0, NULL};
 
     if (is_valid_accept_msg(msg)) {
-        get_e2ees_plugin()->db_handler.load_outbound_session(msg->to, msg->from, &session);
+        get_e2ees_plugin()->db_handler.load_session(msg->session_id, msg->to, &session);
         if (is_valid_uncompleted_session(session)) {
             load_identity_key_from_cache(&identity_key, session->our_address);
 
@@ -504,7 +505,7 @@ int pqc_complete_outbound_session(E2ees__Session **outbound_session_out, E2ees__
     if (ret == E2EES_RESULT_SUCC) {
         *outbound_session_out = session;
         // TODO: remove old outbound sessions
-        // store the established outbount sesson
+        // store the established outbound session
         get_e2ees_plugin()->db_handler.store_session(session);
     } else {
         free_proto(session);

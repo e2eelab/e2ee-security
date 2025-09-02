@@ -63,7 +63,7 @@ void load_account_by_address_id(uint64_t address_id, E2ees__Account **account);
 void load_auth(E2ees__E2eeAddress *address, char **auth); // new added
 void load_account_by_address(E2ees__E2eeAddress *address, E2ees__Account **account);
 size_t load_accounts(E2ees__Account ***accounts);
-void load_inbound_session(char *session_id, E2ees__E2eeAddress *our_address, E2ees__Session **session);
+void load_session(char *session_id, E2ees__E2eeAddress *our_address, E2ees__Session **session);
 void load_outbound_session(E2ees__E2eeAddress *our_address, E2ees__E2eeAddress *their_address, E2ees__Session **session);
 int load_n_outbound_sessions(E2ees__E2eeAddress *our_address, const char *their_user_id);
 size_t load_outbound_sessions(E2ees__E2eeAddress *our_address, const char *their_user_id, const char *their_domain, E2ees__Session ***outbound_sessions);
