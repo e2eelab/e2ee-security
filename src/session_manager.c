@@ -926,10 +926,12 @@ int consume_accept_response(E2ees__E2eeAddress *user_address, E2ees__AcceptRespo
 
 bool consume_accept_msg(E2ees__E2eeAddress *receiver_address, E2ees__AcceptMsg *accept_msg) {
     if (!is_valid_address(receiver_address)) {
-        return false;
+        // just consume it
+        return true;
     }
     if (!is_valid_accept_msg(accept_msg)) {
-        return false;
+        // just consume it
+        return true;
     }
 
     e2ees_notify_log(
@@ -956,7 +958,16 @@ bool consume_accept_msg(E2ees__E2eeAddress *receiver_address, E2ees__AcceptMsg *
 
         // try to send group pre-keys if necessary
         send_pending_plaintext_data(outbound_session);
-    }
 
-    return result == E2EES_RESULT_SUCC;
+        // session built, consume accept_msg
+        return true;
+    } else {
+        e2ees_notify_log(
+            receiver_address,
+            DEBUG_LOG,
+            "consume_accept_msg(): complete_outbound_session error, just consume the accept_msg"
+        );
+        // just consume it
+        return true;
+    }
 }

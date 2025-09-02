@@ -503,7 +503,8 @@ int pqc_complete_outbound_session(E2ees__Session **outbound_session_out, E2ees__
 
     if (ret == E2EES_RESULT_SUCC) {
         *outbound_session_out = session;
-        // store sesson state
+        // TODO: remove old outbound sessions
+        // store the established outbount sesson
         get_e2ees_plugin()->db_handler.store_session(session);
     } else {
         free_proto(session);
