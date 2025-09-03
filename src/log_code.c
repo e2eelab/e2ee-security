@@ -18,14 +18,10 @@
  */
 #include "e2ees/log_code.h"
 
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#else
-#include <execinfo.h>
-#endif
-
 #include <stdlib.h>
 #include <string.h>
+
+__thread stack_frame_t *current_stack_top = NULL;
 
 const char* logcode_string(LogCode log_code) {
     switch (log_code) {
@@ -131,38 +127,32 @@ const char* logcode_string(LogCode log_code) {
 }
 
 void get_stack_trace(char* buffer, size_t buffer_len) {
-#ifdef __EMSCRIPTEN__
-    char* stack = emscripten_run_script_string("stackTrace()");
-    if (stack == NULL) {
-        snprintf(buffer, buffer_len, "Failed to get stack trace\n");
-    }
-    else {
-        snprintf(buffer, buffer_len, "%s", stack);
-        free(stack);
-    }
-    buffer[buffer_len - 1] = '\0';
-#else
-    void* stack[64];
-    int stack_size = backtrace(stack, 64);
-    char** symbols = backtrace_symbols(stack, stack_size);
+#ifdef ENABLE_TRACE
+    stack_frame_t *frame = current_stack_top;
 
-    if (symbols == NULL) {
-        strncpy(buffer, "Failed to get stack trace", buffer_len);
+    if (frame == NULL) {
+        strncpy(buffer, "no stack trace", buffer_len);
         buffer[buffer_len - 1] = '\0';
         return;
     }
 
     size_t offset = 0;
-    for (int i = 0; i < stack_size; i++) {
+    while (frame != NULL) {
         size_t remaining = buffer_len - offset;
         if (remaining <= 1) break;
-        int written = snprintf(buffer + offset, remaining, "%s\n", symbols[i]);
+        int written = snprintf(buffer + offset, remaining, "  at %s (%s:%d)\n", frame->function_name, frame->file_name, frame->line_number);
         if (written < 0 || (size_t)written >= remaining) break;
         offset += written;
+
+        frame = frame->prev;
     }
     buffer[buffer_len - 1] = '\0';
 
-    // release
-    free(symbols);
+    while (frame != NULL) {
+        printf("  at %s (%s:%d)\n", frame->function_name, frame->file_name, frame->line_number);
+        frame = frame->prev;
+    }
+#else
+    // Stack tracing is disabled
 #endif
 }

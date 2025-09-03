@@ -21,6 +21,7 @@
 #define LOG_CODE_H_
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -137,6 +138,34 @@ enum LogCode {
 };
 
 typedef enum LogCode LogCode;
+
+typedef struct stack_frame {
+    const char *function_name;
+    const char *file_name;
+    int line_number;
+    struct stack_frame *prev;
+} stack_frame_t;
+
+// Global stack top
+extern __thread stack_frame_t *current_stack_top;
+
+#ifdef ENABLE_TRACE
+#define TRACE_ENTER() \
+        do { \
+            stack_frame_t new_frame = {__func__, __FILE__, __LINE__, current_stack_top}; \
+            current_stack_top = &new_frame; \
+        } while(0)
+
+#define TRACE_EXIT() \
+        do { \
+            if (current_stack_top != NULL) { \
+                current_stack_top = current_stack_top->prev; \
+            } \
+        } while(0)
+#else
+#define TRACE_ENTER() do { } while(0)
+#define TRACE_EXIT() do { } while(0)
+#endif
 
 /**
  * @brief Get the string representation of a given log code.
