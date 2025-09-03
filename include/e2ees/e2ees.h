@@ -166,7 +166,10 @@ extern "C" {
 #define E2EES_PACK_ALG_HASH_SHAKE_256                         13
 
 #define E2EES_PACK_ID_UNSPECIFIED                             0
-#define E2EES_PACK_ID_V_0_DEFAULT                             0x113101
+#define E2EES_PACK_ID_V_0                                     0
+// default e2ees pack id:
+//   E2EES_PACK_ID_V_0 || E2EES_PACK_ALG_KEM_MLKEM1024 || E2EES_PACK_ALG_SE_AES256GCM || E2EES_PACK_ALG_HASH_SHA2_256
+#define E2EES_PACK_ID_DEFAULT                             0x113101
 
 #define E2EES_CIPHER_SUITE_PART_LEN_IN_BITS                   8
 #define E2EES_CIPHER_SUITE_PART_HALF_LEN_IN_BITS              4

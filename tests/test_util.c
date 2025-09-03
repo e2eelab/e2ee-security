@@ -617,7 +617,7 @@ void pre_key_bundle_hash(
     size_t address_data_len, ik_data_len, spk_data_len, opk_data_len, input_len;
 
     uint32_t e2ees_pack_id_raw = gen_e2ees_pack_id_raw(
-        0,
+        E2EES_PACK_ID_V_0,
         E2EES_PACK_ALG_DS_MLDSA87,
         E2EES_PACK_ALG_KEM_MLKEM1024,
         E2EES_PACK_ALG_SE_AES256GCM,
@@ -683,7 +683,7 @@ void proto_msg_hash(
     size_t tag_data_len, from_data_len, to_data_len, payload_data_len, input_len;
 
     uint32_t e2ees_pack_id_raw = gen_e2ees_pack_id_raw(
-        0,
+        E2EES_PACK_ID_V_0,
         E2EES_PACK_ALG_DS_MLDSA87,
         E2EES_PACK_ALG_KEM_MLKEM1024,
         E2EES_PACK_ALG_SE_AES256GCM,
