@@ -1119,10 +1119,10 @@ int produce_send_group_msg_request(
         e2ees__e2ee_msg__init(e2ee_msg);
         e2ee_msg->version = strdup(outbound_group_session->version);
         e2ee_msg->session_id = strdup(outbound_group_session->session_id);
-        e2ee_msg->msg_id = generate_uuid_str();
-        e2ee_msg->notif_level = notif_level;
         copy_address_from_address(&(e2ee_msg->from), outbound_group_session->session_owner);
         copy_address_from_address(&(e2ee_msg->to), outbound_group_session->group_info->group_address);
+        e2ee_msg->msg_id = generate_uuid_str();
+        e2ee_msg->notif_level = notif_level;
         e2ee_msg->payload_case = E2EES__E2EE_MSG__PAYLOAD_GROUP_MSG;
 
         // optional allow_list and denny_list

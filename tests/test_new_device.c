@@ -38,7 +38,7 @@ static uint8_t account_data_insert_pos;
 static uint8_t test_plaintext[] = "New devices test!!!";
 
 static void on_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg) {
-    print_log((char *)log_msg, log_code);
+    // print_log((char *)log_msg, log_code);
 }
 
 static void on_user_registered(E2ees__Account *account){
@@ -47,23 +47,23 @@ static void on_user_registered(E2ees__Account *account){
 }
 
 static void on_inbound_session_invited(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from) {
-    printf("on_inbound_session_invited\n");
+    // printf("on_inbound_session_invited\n");
 }
 
 static void on_inbound_session_ready(E2ees__E2eeAddress *user_address, E2ees__Session *inbound_session){
-    if (inbound_session->f2f == true) {
-        printf("the face-to-face inbound session is ready\n");
-    } else {
-        printf("on_inbound_session_ready\n");
-    }
+    // if (inbound_session->f2f == true) {
+    //     printf("the face-to-face inbound session is ready\n");
+    // } else {
+    //     printf("on_inbound_session_ready\n");
+    // }
 }
 
 static void on_outbound_session_ready(E2ees__E2eeAddress *user_address, E2ees__Session *outbound_session){
-    if (outbound_session->f2f == true) {
-        printf("the face-to-face outbound session is ready\n");
-    } else {
-        printf("on_outbound_session_ready\n");
-    }
+    // if (outbound_session->f2f == true) {
+    //     printf("the face-to-face outbound session is ready\n");
+    // } else {
+    //     printf("on_outbound_session_ready\n");
+    // }
 }
 
 static void on_one2one_msg_received(
@@ -73,7 +73,7 @@ static void on_one2one_msg_received(
     uint8_t *plaintext, size_t plaintext_len
 ) {
     assert(memcmp(plaintext, test_plaintext, plaintext_len) == 0);
-    printf("%s received the message!\n", to_address->user->user_name);
+    // printf("%s received the message!\n", to_address->user->user_name);
 }
 
 static void on_other_device_msg_received(
@@ -83,19 +83,19 @@ static void on_other_device_msg_received(
     uint8_t *plaintext, size_t plaintext_len
 ) {
     assert(memcmp(plaintext, test_plaintext, plaintext_len) == 0);
-    printf("%s received the message from other devices!\n", to_address->user->user_name);
+    // printf("%s received the message from other devices!\n", to_address->user->user_name);
 }
 
 static void on_group_msg_received(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *group_address, uint8_t *plaintext, size_t plaintext_len) {
     assert(memcmp(plaintext, test_plaintext, plaintext_len) == 0);
-    printf("%s received the message from a group member!\n", user_address->user->user_name);
+    // printf("%s received the message from a group member!\n", user_address->user->user_name);
 }
 
 static void on_group_created(
     E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *group_address, const char *group_name,
     E2ees__GroupMember **group_members, size_t group_members_num
 ) {
-    print_msg("on_group_created: group_name", (uint8_t *)group_name, strlen(group_name));
+    // print_msg("on_group_created: group_name", (uint8_t *)group_name, strlen(group_name));
 }
 
 static void on_group_members_added(
@@ -103,11 +103,11 @@ static void on_group_members_added(
     E2ees__GroupMember **group_members, size_t group_members_num,
     E2ees__GroupMember **added_group_members, size_t added_group_members_num
 ) {
-    print_msg("on_group_members_added: group_name", (uint8_t *)group_name, strlen(group_name));
-    size_t i;
-    for (i = 0; i < added_group_members_num; i++) {
-        print_msg("    member_id", (uint8_t *)(added_group_members[i]->user_id), strlen(added_group_members[i]->user_id));
-    }
+    // print_msg("on_group_members_added: group_name", (uint8_t *)group_name, strlen(group_name));
+    // size_t i;
+    // for (i = 0; i < added_group_members_num; i++) {
+    //     print_msg("    member_id", (uint8_t *)(added_group_members[i]->user_id), strlen(added_group_members[i]->user_id));
+    // }
 }
 
 static void on_group_members_removed(
@@ -115,11 +115,11 @@ static void on_group_members_removed(
     E2ees__GroupMember **group_members, size_t group_members_num,
     E2ees__GroupMember **removed_group_members, size_t removed_group_members_num
 ) {
-    print_msg("on_group_members_removed: group_name", (uint8_t *)group_name, strlen(group_name));
-    size_t i;
-    for (i = 0; i < removed_group_members_num; i++) {
-        print_msg("    member_id", (uint8_t *)(removed_group_members[i]->user_id), strlen(removed_group_members[i]->user_id));
-    }
+    // print_msg("on_group_members_removed: group_name", (uint8_t *)group_name, strlen(group_name));
+    // size_t i;
+    // for (i = 0; i < removed_group_members_num; i++) {
+    //     print_msg("    member_id", (uint8_t *)(removed_group_members[i]->user_id), strlen(removed_group_members[i]->user_id));
+    // }
 }
 
 static e2ees_event_handler_t test_event_handler = {
@@ -177,7 +177,7 @@ static void mock_alice_account(const char *user_name) {
         auth_code
     );
     assert(safe_strcmp(device_id, response->address->user->device_id));
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
+    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 }
 
 static void mock_bob_account(const char *user_name) {
@@ -196,7 +196,7 @@ static void mock_bob_account(const char *user_name) {
         auth_code
     );
     assert(safe_strcmp(device_id, response->address->user->device_id));
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
+    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 }
 
 static void mock_claire_account(const char *user_name) {
@@ -215,7 +215,7 @@ static void mock_claire_account(const char *user_name) {
         auth_code
     );
     assert(safe_strcmp(device_id, response->address->user->device_id));
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
+    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 }
 
 static void mock_alice_pqc_account(const char *user_name) {
@@ -234,7 +234,7 @@ static void mock_alice_pqc_account(const char *user_name) {
         auth_code
     );
     assert(safe_strcmp(device_id, response->address->user->device_id));
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
+    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     free(device_id);
@@ -257,7 +257,7 @@ static void mock_bob_pqc_account(const char *user_name) {
         auth_code
     );
     assert(safe_strcmp(device_id, response->address->user->device_id));
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
+    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     free(device_id);
@@ -279,7 +279,7 @@ static void mock_user_pqc_account(const char *user_name, const char *authenticat
         auth_code
     );
     assert(ret == 0);
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
+    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     free(device_id);

@@ -283,7 +283,7 @@ static uint8_t test_plaintext[] = "Session test!!!";
 static size_t test_plaintext_len;
 
 static void on_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg) {
-    print_log((char *)log_msg, log_code);
+    // print_log((char *)log_msg, log_code);
 }
 
 static void on_user_registered(E2ees__Account *account) {
@@ -493,7 +493,7 @@ static void mock_alice_account(const char *user_name) {
         &response, e2ees_pack_id, user_name, user_name, device_id, authenticator, auth_code
     );
     assert(ret == 0);
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
+    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     free(device_id);
@@ -510,7 +510,7 @@ static void mock_bob_account(const char *user_name) {
         &response, e2ees_pack_id, user_name, user_name, device_id, authenticator, auth_code
     );
     assert(ret == 0);
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
+    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     free(device_id);

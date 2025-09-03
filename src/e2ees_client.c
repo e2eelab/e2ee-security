@@ -85,12 +85,12 @@ int register_user(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
+        register_user_request->e2ees_pack_id = e2ees_pack_id;
         register_user_request->user_name = strdup(user_name);
         register_user_request->user_id = strdup(user_id);
         register_user_request->device_id = strdup(device_id);
         register_user_request->authenticator = strdup(authenticator);
         register_user_request->auth_code = strdup(auth_code);
-        register_user_request->e2ees_pack_id = e2ees_pack_id;
 
         response = get_e2ees_plugin()->proto_handler.register_user(register_user_request);
 

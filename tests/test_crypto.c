@@ -239,18 +239,18 @@ static void test_encryption(
 static void test_e2ees_pack_id() {
     // test start
     printf("test_e2ees_pack_id begin!!!\n");
-    uint32_t default_2ee_pack_id_raw = E2EES_PACK_ID_DEFAULT;
+    uint32_t default_e2ee_pack_id_raw = E2EES_PACK_ID_DEFAULT;
     uint32_t e2ees_pack_id_raw = gen_e2ees_pack_id_pqc();
 
-    assert(e2ees_pack_id_raw == default_2ee_pack_id_raw);
-    printf("default_2ee_pack_id_raw test ok: 0x%x\n", default_2ee_pack_id_raw);
+    assert(e2ees_pack_id_raw == default_e2ee_pack_id_raw);
+    printf("default_e2ee_pack_id_raw test ok: 0x%x\n", default_e2ee_pack_id_raw);
 
-    e2ees_pack_id_t e2ees_pack_id = raw_to_e2ees_pack_id(default_2ee_pack_id_raw);
+    e2ees_pack_id_t e2ees_pack_id = raw_to_e2ees_pack_id(default_e2ee_pack_id_raw);
     assert(e2ees_pack_id.ds == E2EES_PACK_ALG_DS_MLDSA87);
     assert(e2ees_pack_id.kem == E2EES_PACK_ALG_KEM_MLKEM1024);
     assert(e2ees_pack_id.se == E2EES_PACK_ALG_SE_AES256GCM);
     assert(e2ees_pack_id.hash == E2EES_PACK_ALG_HASH_SHA2_256);
-    printf("default_2ee_pack_id_raw to e2ees_pack_id test ok\n");
+    printf("default_e2ee_pack_id_raw to e2ees_pack_id test ok\n");
 
     printf("====================================\n");
 }

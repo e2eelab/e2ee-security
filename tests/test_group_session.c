@@ -353,52 +353,58 @@ typedef struct store_group {
 
 store_group group = {NULL, NULL};
 
+static uint8_t test_plaintext[] = "Group session test!!!";
+static size_t test_plaintext_len;
+
 static void on_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg) {
     if (log_code == 0)
         return;
-    print_log((char *)log_msg, log_code);
+    // print_log((char *)log_msg, log_code);
 }
 
 static void on_user_registered(E2ees__Account *account) {
-    print_msg("on_user_registered: user_id", (uint8_t *)account->address->user->user_id, strlen(account->address->user->user_id));
+    // print_msg("on_user_registered: user_id", (uint8_t *)account->address->user->user_id, strlen(account->address->user->user_id));
 
     copy_account_from_account(&(account_data[account_data_insert_pos]), account);
     account_data_insert_pos++;
 }
 
 static void on_inbound_session_invited(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from){
-    printf("on_inbound_session_invited\n");
+    // printf("on_inbound_session_invited\n");
 }
 
 static void on_inbound_session_ready(E2ees__E2eeAddress *user_address, E2ees__Session *inbound_session){
-    printf("on_inbound_session_ready\n");
+    // printf("on_inbound_session_ready\n");
 }
 
 static void on_outbound_session_ready(E2ees__E2eeAddress *user_address, E2ees__Session *outbound_session){
-    printf("on_outbound_session_ready\n");
+    // printf("on_outbound_session_ready\n");
 }
 
 static void on_one2one_msg_received(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *to_address, uint8_t *plaintext, size_t plaintext_len) {
-    print_msg("on_one2one_msg_received: plaintext", plaintext, plaintext_len);
+    // print_msg("on_one2one_msg_received: plaintext", plaintext, plaintext_len);
+    assert(memcmp(plaintext, test_plaintext, plaintext_len) == 0);
 }
 
 static void on_other_device_msg_received(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *to_address, uint8_t *plaintext, size_t plaintext_len) {
-    print_msg("on_other_device_msg_received: plaintext", plaintext, plaintext_len);
+    // print_msg("on_other_device_msg_received: plaintext", plaintext, plaintext_len);
+    assert(memcmp(plaintext, test_plaintext, plaintext_len) == 0);
 }
 
 static void on_group_msg_received(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *group_address, uint8_t *plaintext, size_t plaintext_len) {
-    if (safe_strcmp(user_address->user->user_id, from_address->user->user_id)) {
-        print_msg("on_group_msg_received(from other devices): plaintext", plaintext, plaintext_len);
-    } else {
-        print_msg("on_group_msg_received(from other users): plaintext", plaintext, plaintext_len);
-    }
+    // if (safe_strcmp(user_address->user->user_id, from_address->user->user_id)) {
+    //     print_msg("on_group_msg_received(from other devices): plaintext", plaintext, plaintext_len);
+    // } else {
+    //     print_msg("on_group_msg_received(from other users): plaintext", plaintext, plaintext_len);
+    // }
+    assert(memcmp(plaintext, test_plaintext, plaintext_len) == 0);
 }
 
 static void on_group_created(
     E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *group_address, const char *group_name,
     E2ees__GroupMember **group_members, size_t group_members_num
 ) {
-    print_msg("on_group_created: group_name", (uint8_t *)group_name, strlen(group_name));
+    // print_msg("on_group_created: group_name", (uint8_t *)group_name, strlen(group_name));
 
     copy_address_from_address(&(group.group_address), group_address);
     group.group_name = strdup(group_name);
@@ -409,11 +415,11 @@ static void on_group_members_added(
     E2ees__GroupMember **group_members, size_t group_members_num,
     E2ees__GroupMember **added_group_members, size_t added_group_members_num
 ) {
-    print_msg("on_group_members_added: group_name", (uint8_t *)group_name, strlen(group_name));
-    size_t i;
-    for (i = 0; i < added_group_members_num; i++) {
-        print_msg("    member_id", (uint8_t *)(added_group_members[i]->user_id), strlen(added_group_members[i]->user_id));
-    }
+    // print_msg("on_group_members_added: group_name", (uint8_t *)group_name, strlen(group_name));
+    // size_t i;
+    // for (i = 0; i < added_group_members_num; i++) {
+    //     print_msg("    member_id", (uint8_t *)(added_group_members[i]->user_id), strlen(added_group_members[i]->user_id));
+    // }
 }
 
 static void on_group_members_removed(
@@ -421,11 +427,11 @@ static void on_group_members_removed(
     E2ees__GroupMember **group_members, size_t group_members_num,
     E2ees__GroupMember **removed_group_members, size_t removed_group_members_num
 ) {
-    print_msg("on_group_members_removed: group_name", (uint8_t *)group_name, strlen(group_name));
-    size_t i;
-    for (i = 0; i < removed_group_members_num; i++) {
-        print_msg("    member_id", (uint8_t *)(removed_group_members[i]->user_id), strlen(removed_group_members[i]->user_id));
-    }
+    // print_msg("on_group_members_removed: group_name", (uint8_t *)group_name, strlen(group_name));
+    // size_t i;
+    // for (i = 0; i < removed_group_members_num; i++) {
+    //     print_msg("    member_id", (uint8_t *)(removed_group_members[i]->user_id), strlen(removed_group_members[i]->user_id));
+    // }
 }
 
 static e2ees_event_handler_t test_event_handler = {
@@ -443,6 +449,8 @@ static e2ees_event_handler_t test_event_handler = {
 };
 
 static void test_begin() {
+    test_plaintext_len = sizeof(test_plaintext) - 1;
+
     ret = 0;
 
     int i;
@@ -495,7 +503,7 @@ static void mock_user_pqc_account(const char *user_name, const char *authenticat
         auth_code
     );
     assert(ret == 0);
-    printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
+    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     free(device_id);
@@ -559,21 +567,13 @@ static void test_create_group() {
 
     sleep(5);
     // Everyone sends a message to the group
-    uint8_t plaintext_1[] = "Alice's message(PQC version).";
-    size_t plaintext_1_len = sizeof(plaintext_1) - 1;
-    test_encryption(address_list[0], group_address, plaintext_1, plaintext_1_len);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_2[] = "Bob's message(PQC version).";
-    size_t plaintext_2_len = sizeof(plaintext_2) - 1;
-    test_encryption(address_list[1], group_address, plaintext_2, plaintext_2_len);
+    test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_3[] = "Claire's message(PQC version).";
-    size_t plaintext_3_len = sizeof(plaintext_3) - 1;
-    test_encryption(address_list[2], group_address, plaintext_3, plaintext_3_len);
+    test_encryption(address_list[2], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_4[] = "David's message(PQC version).";
-    size_t plaintext_4_len = sizeof(plaintext_4) - 1;
-    test_encryption(address_list[3], group_address, plaintext_4, plaintext_4_len);
+    test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 4);
@@ -633,21 +633,13 @@ static void test_add_group_members() {
 
     sleep(3);
     // Everyone sends a message to the group
-    uint8_t plaintext_1[] = "Alice's message(David joined).";
-    size_t plaintext_1_len = sizeof(plaintext_1) - 1;
-    test_encryption(address_list[0], group_address, plaintext_1, plaintext_1_len);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_2[] = "Bob's message(David joined).";
-    size_t plaintext_2_len = sizeof(plaintext_2) - 1;
-    test_encryption(address_list[1], group_address, plaintext_2, plaintext_2_len);
+    test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_3[] = "Claire's message(David joined).";
-    size_t plaintext_3_len = sizeof(plaintext_3) - 1;
-    test_encryption(address_list[2], group_address, plaintext_3, plaintext_3_len);
+    test_encryption(address_list[2], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_4[] = "David's message(David joined).";
-    size_t plaintext_4_len = sizeof(plaintext_4) - 1;
-    test_encryption(address_list[3], group_address, plaintext_4, plaintext_4_len);
+    test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 3);
@@ -710,17 +702,11 @@ static void test_remove_group_members() {
 
     sleep(4);
     // Everyone sends a message to the group
-    uint8_t plaintext_1[] = "Alice's message(Claire removed).";
-    size_t plaintext_1_len = sizeof(plaintext_1) - 1;
-    test_encryption(address_list[0], group_address, plaintext_1, plaintext_1_len);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_2[] = "Bob's message(Claire removed).";
-    size_t plaintext_2_len = sizeof(plaintext_2) - 1;
-    test_encryption(address_list[1], group_address, plaintext_2, plaintext_2_len);
+    test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_4[] = "David's message(Claire removed).";
-    size_t plaintext_4_len = sizeof(plaintext_4) - 1;
-    test_encryption(address_list[3], group_address, plaintext_4, plaintext_4_len);
+    test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 4);
@@ -777,9 +763,7 @@ static void test_create_add_remove() {
 
     sleep(2);
     // Alice sends a message to the group
-    uint8_t plaintext[] = "Group: Alice and Bob.";
-    size_t plaintext_len = sizeof(plaintext) - 1;
-    test_encryption(address_list[0], group_address, plaintext, plaintext_len);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
     sleep(1);
     E2ees__GroupMember **new_group_members = NULL;
@@ -791,9 +775,7 @@ static void test_create_add_remove() {
 
     sleep(4);
     // Alice sends a message to the group
-    uint8_t plaintext_2[] = "Group: Alice, Bob and Claire.";
-    size_t plaintext_len_2 = sizeof(plaintext_2) - 1;
-    test_encryption(address_list[0], group_address, plaintext_2, plaintext_len_2);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
     sleep(1);
     E2ees__GroupMember **removing_group_members = NULL;
@@ -804,9 +786,7 @@ static void test_create_add_remove() {
 
     sleep(2);
     // Alice sends a message to the group
-    uint8_t plaintext_3[] = "Group: Alice and Claire.";
-    size_t plaintext_len_3 = sizeof(plaintext_3) - 1;
-    test_encryption(address_list[0], group_address, plaintext_3, plaintext_len_3);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 2);
@@ -860,17 +840,11 @@ static void test_leave_group() {
 
     sleep(4);
     // Everyone sends a message to the group
-    uint8_t plaintext_1[] = "Alice's message(Claire removed her self).";
-    size_t plaintext_1_len = sizeof(plaintext_1) - 1;
-    test_encryption(address_list[0], group_address, plaintext_1, plaintext_1_len);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_2[] = "Bob's message(Claire removed her self).";
-    size_t plaintext_2_len = sizeof(plaintext_2) - 1;
-    test_encryption(address_list[1], group_address, plaintext_2, plaintext_2_len);
+    test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_4[] = "David's message(Claire removed her self).";
-    size_t plaintext_4_len = sizeof(plaintext_4) - 1;
-    test_encryption(address_list[3], group_address, plaintext_4, plaintext_4_len);
+    test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 4);
@@ -916,24 +890,18 @@ static void test_continual() {
     sleep(2);
 
     // Alice sends a message to the group
-    uint8_t plaintext_data_a[] = "This message will be sent to Bob and Claire by 1000 times.";
-    size_t plaintext_data_a_len = sizeof(plaintext_data_a) - 1;
     for (i = 0; i < 1000; i++) {
-        test_encryption(address_list[0], group_address, plaintext_data_a, plaintext_data_a_len);
+        test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
     }
 
     // Bob sends a message to the group
-    uint8_t plaintext_data_b[] = "This message will be sent to Alice and Claire by 1000 times.";
-    size_t plaintext_data_b_len = sizeof(plaintext_data_b) - 1;
     for (i = 0; i < 1000; i++) {
-        test_encryption(address_list[1], group_address, plaintext_data_b, plaintext_data_b_len);
+        test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
     }
 
     // Claire sends a message to the group
-    uint8_t plaintext_data_c[] = "This message will be sent to Alice and Bob by 1000 times.";
-    size_t plaintext_data_c_len = sizeof(plaintext_data_c) - 1;
     for (i = 0; i < 1000; i++) {
-        test_encryption(address_list[2], group_address, plaintext_data_c, plaintext_data_c_len);
+        test_encryption(address_list[2], group_address, test_plaintext, test_plaintext_len);
     }
 
     // release
@@ -981,19 +949,13 @@ static void test_multiple_devices() {
 
     sleep(2);
     // Alice sends a message to the group via the first device
-    uint8_t plaintext_1[] = "This message is from Alice's first device via pqc session.";
-    size_t plaintext_1_len = sizeof(plaintext_1) - 1;
-    test_encryption(address_list[0], group_address, plaintext_1, plaintext_1_len);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
     // Bob sends a message to the group via the second device
-    uint8_t plaintext_2[] = "This message is from Bob's second device via pqc session.";
-    size_t plaintext_2_len = sizeof(plaintext_2) - 1;
-    test_encryption(address_list[1], group_address, plaintext_2, plaintext_2_len);
+    test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
     // Claire sends a message to the group via the second device
-    uint8_t plaintext_3[] = "This message is from Claire's second device via pqc session.";
-    size_t plaintext_3_len = sizeof(plaintext_3) - 1;
-    test_encryption(address_list[2], group_address, plaintext_3, plaintext_3_len);
+    test_encryption(address_list[2], group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 3);
@@ -1040,9 +1002,7 @@ static void test_add_new_device() {
 
     sleep(2);
     // Alice sends a message to the group via the first device
-    uint8_t plaintext_1[] = "This message is from Alice's first device via pqc session.";
-    size_t plaintext_1_len = sizeof(plaintext_1) - 1;
-    test_encryption(address_list[0], group_address, plaintext_1, plaintext_1_len);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 3);
@@ -1116,17 +1076,11 @@ static void test_medium_group() {
     sleep(10);
 
     // group message
-    uint8_t plaintext_1[] = "Alice's message.";
-    size_t plaintext_1_len = sizeof(plaintext_1) - 1;
-    test_encryption(address_list[0], group_address, plaintext_1, plaintext_1_len);
+    test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_2[] = "David's message.";
-    size_t plaintext_2_len = sizeof(plaintext_2) - 1;
-    test_encryption(address_list[3], group_address, plaintext_2, plaintext_2_len);
+    test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_3[] = "Grace's message.";
-    size_t plaintext_3_len = sizeof(plaintext_3) - 1;
-    test_encryption(address_list[6], group_address, plaintext_3, plaintext_3_len);
+    test_encryption(address_list[6], group_address, test_plaintext, test_plaintext_len);
 
     sleep(3);
 
@@ -1144,17 +1098,11 @@ static void test_medium_group() {
     sleep(10);
 
     // group message
-    uint8_t plaintext_4[] = "Jack's message.";
-    size_t plaintext_4_len = sizeof(plaintext_4) - 1;
-    test_encryption(address_list[9], group.group_address, plaintext_4, plaintext_4_len);
+    test_encryption(address_list[9], group.group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_5[] = "Karen's message.";
-    size_t plaintext_5_len = sizeof(plaintext_5) - 1;
-    test_encryption(address_list[10], group.group_address, plaintext_5, plaintext_5_len);
+    test_encryption(address_list[10], group.group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_6[] = "Nick's message.";
-    size_t plaintext_6_len = sizeof(plaintext_6) - 1;
-    test_encryption(address_list[13], group.group_address, plaintext_6, plaintext_6_len);
+    test_encryption(address_list[13], group.group_address, test_plaintext, test_plaintext_len);
 
     sleep(5);
 
@@ -1171,13 +1119,9 @@ static void test_medium_group() {
     sleep(10);
 
     // group message
-    uint8_t plaintext_7[] = "Bob's message.";
-    size_t plaintext_7_len = sizeof(plaintext_7) - 1;
-    test_encryption(address_list[1], group.group_address, plaintext_7, plaintext_7_len);
+    test_encryption(address_list[1], group.group_address, test_plaintext, test_plaintext_len);
 
-    uint8_t plaintext_8[] = "Mary's message.";
-    size_t plaintext_8_len = sizeof(plaintext_8) - 1;
-    test_encryption(address_list[12], group.group_address, plaintext_8, plaintext_8_len);
+    test_encryption(address_list[12], group.group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 10);

@@ -1059,12 +1059,12 @@ bool is_valid_group_update_key_bundle(E2ees__GroupUpdateKeyBundle *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_update_key_bundle() bad e2ees_pack_id");
             return false;
         }
-        if (!is_valid_address(src->sender)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_update_key_bundle() bad sender");
-            return false;
-        }
         if (!is_valid_string(src->session_id)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_update_key_bundle() bad session_id");
+            return false;
+        }
+        if (!is_valid_address(src->sender)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_update_key_bundle() bad sender");
             return false;
         }
         if (!is_valid_group_info(src->group_info)) {
@@ -1104,12 +1104,12 @@ bool is_valid_group_pre_key_bundle(E2ees__GroupPreKeyBundle *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_pre_key_bundle() bad e2ees_pack_id");
             return false;
         }
-        if (!is_valid_address(src->sender)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_pre_key_bundle() bad sender");
-            return false;
-        }
         if (!is_valid_string(src->session_id)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_pre_key_bundle() bad session_id");
+            return false;
+        }
+        if (!is_valid_address(src->sender)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_pre_key_bundle() bad sender");
             return false;
         }
         if (!is_valid_group_info(src->group_info)) {
@@ -1504,20 +1504,20 @@ bool is_valid_invite_msg(E2ees__InviteMsg *src) {
 
 bool is_valid_accept_msg(E2ees__AcceptMsg *src) {
     if (src != NULL) {
-        if (!is_valid_address(src->from)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad from");
-            return false;
-        }
-        if (!is_valid_address(src->to)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad to");
+        if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad e2ees_pack_id");
             return false;
         }
         if (!is_valid_string(src->session_id)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad session_id");
             return false;
         }
-        if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad e2ees_pack_id");
+        if (!is_valid_address(src->from)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad from");
+            return false;
+        }
+        if (!is_valid_address(src->to)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_msg() bad to");
             return false;
         }
         if (!is_valid_protobuf(&(src->encaps_ciphertext))) {
@@ -1542,16 +1542,16 @@ bool is_valid_e2ee_msg(E2ees__E2eeMsg *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_e2ee_msg() bad version");
             return false;
         }
+        if (!is_valid_string(src->session_id)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_e2ee_msg() bad session_id");
+            return false;
+        }
         if (!is_valid_address(src->from)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_e2ee_msg() bad from");
             return false;
         }
         if (!is_valid_address(src->to)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_e2ee_msg() bad to");
-            return false;
-        }
-        if (!is_valid_string(src->session_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_e2ee_msg() bad session_id");
             return false;
         }
         if (src->payload_case == E2EES__E2EE_MSG__PAYLOAD_ONE2ONE_MSG) {

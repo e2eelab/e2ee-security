@@ -250,9 +250,9 @@ size_t crypto_encrypt_aes_data_with_iv(
 }
 
 size_t crypto_encrypt_aes_data(
-        const uint8_t *plaintext_data, size_t plaintext_data_len,
-        const uint8_t aes_key[AES256_KEY_LENGTH],
-        uint8_t **ciphertext_data
+    const uint8_t *plaintext_data, size_t plaintext_data_len,
+    const uint8_t aes_key[AES256_KEY_LENGTH],
+    uint8_t **ciphertext_data
 ) {
     uint8_t iv[AES256_DATA_IV_LENGTH] = {0};
     return crypto_encrypt_aes_data_with_iv(plaintext_data, plaintext_data_len, aes_key, iv, ciphertext_data);

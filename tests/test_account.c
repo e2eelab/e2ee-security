@@ -236,11 +236,11 @@ enum test_case {
 };
 
 static void on_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg) {
-    print_log((char *)log_msg, log_code);
+    // print_log((char *)log_msg, log_code);
 }
 
 static void on_user_registered(E2ees__Account *account) {
-    print_msg("on_user_registered: user_id", (uint8_t *)account->address->user->user_id, strlen(account->address->user->user_id));
+    // print_msg("on_user_registered: user_id", (uint8_t *)account->address->user->user_id, strlen(account->address->user->user_id));
 }
 
 static e2ees_event_handler_t test_event_handler = {
@@ -300,94 +300,11 @@ static void print_test_case_title(int case_num) {
     } else {}
 }
 
-static void print_test_description(int case_num) {
-    if (case_num == GENERATE_IDENTITY_KEY) {
-        printf("\tGiven an e2ee pack ID, generate an identity key pair.\n");
-    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
-        printf("\tGiven an e2ee pack ID, generate a signed pre-key pair and a signature.\n");
-    } else if (case_num == GENERATE_OPKS) {
-        printf("\tGiven an e2ee pack ID, generate a certain number of one-time pre-key pairs.\n");
-    } else if (case_num == CREATE_ACCOUNT) {
-        printf("\tGiven an e2ee pack ID, create an account.\n");
-    } else if (case_num == CREATE_ACCOUNTS) {
-        printf("\tThis test case generates a certain number, given by the input, of accounts.\n");
-    } else if (case_num == REGISTER_USER) {
-        printf("\tTo call the function register_user with given inputs.\n");
-    } else if (case_num == PUBLISH_SPK) {
-        printf("\tA registered account will generate a new pair of signed pre-key pair and publish the public part of the key pair and the signature to the server.\n");
-    } else if (case_num == SUPPLY_OPKS) {
-        printf("\tThe server notifies the client to generate a number of one-time pre-keys.\n");
-    } else if (case_num == FREE_OPKS) {
-        printf("\n");
-    } else {}
-}
-
-static void print_test_objectives(int case_num) {
-    if (case_num == GENERATE_IDENTITY_KEY) {
-        printf("\tTo verify the functionality of the function generate_identity_key.\n");
-    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
-        printf("\tTo verify the functionality of the function generate_signed_pre_key.\n");
-    } else if (case_num == GENERATE_OPKS) {
-        printf("\tTo verify the functionality of the function generate_opks.\n");
-    } else if (case_num == CREATE_ACCOUNT) {
-        printf("\tTo verify the functionality of the function create_account.\n");
-    } else if (case_num == CREATE_ACCOUNTS) {
-        printf("\tTo assure that this device can create several accounts.\n");
-    } else if (case_num == REGISTER_USER) {
-        printf("\tTo verify the functionality of the function register_user.\n");
-    } else if (case_num == PUBLISH_SPK) {
-        printf("\tTo verify the functionality of the function publish_spk_internal.\n");
-    } else if (case_num == SUPPLY_OPKS) {
-        printf("\tTo assure that the procedure of supplying one-time pre-keys is correct.\n");
-    } else if (case_num == FREE_OPKS) {
-        printf("\n");
-    } else {}
-}
-
-static void print_test_steps(int case_num) {
-    if (case_num == GENERATE_IDENTITY_KEY) {
-        printf("\tStep 1: Determine an e2ee pack ID.\n");
-        printf("\tStep 2: Generate an identity key pair.\n");
-    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
-        printf("\tStep 1: Determine an e2ee pack ID.\n");
-        printf("\tStep 2: Generate an identity key pair.\n");
-        printf("\tStep 3: Generate a signed pre-key pair and a signature.\n");
-    } else if (case_num == GENERATE_OPKS) {
-        printf("\tStep 1: Determine an e2ee pack ID and the number of keys to be generated.\n");
-        printf("\tStep 2: Generate a certain number of one-time pre-key pairs.\n");
-    } else if (case_num == CREATE_ACCOUNT) {
-        printf("\tStep 1: Determine an e2ee pack ID.\n");
-        printf("\tStep 2: Generate an account.\n");
-    } else if (case_num == CREATE_ACCOUNTS) {
-        printf("\tStep 1: Input the parameter num, the number of accounts to be created.\n");
-        printf("\tStep 2: Create the accounts.\n");
-    } else if (case_num == REGISTER_USER) {
-        printf("\tStep 1: Generate the address, including the user name, user id, device id, etc.\n");
-        printf("\tStep 2: Register.\n");
-    } else if (case_num == PUBLISH_SPK) {
-        printf("\tStep 1: Register.\n");
-        printf("\tStep 2: Generate a new pair of signed pre-key.\n");
-        printf("\tStep 3: Pulish the public part of signed pre-key pair to the server.\n");
-    } else if (case_num == SUPPLY_OPKS) {
-        printf("\tStep 1: Register.\n");
-        printf("\tStep 2: Server notifies this device to generate some one-time pre-key pairs.\n");
-        printf("\tStep 3: Generate the one-time pre-key pairs and publish them to the server.\n");
-    } else if (case_num == FREE_OPKS) {
-        printf("\n");
-    } else {}
-}
-
 static void print_test_case_begin(int case_num) {
     printf("Test Case ID:\n");
     print_test_case_id(case_num);
     printf("Test Case Title:\n");
     print_test_case_title(case_num);
-    printf("Test Description:\n");
-    print_test_description(case_num);
-    printf("Test Objectives:\n");
-    print_test_objectives(case_num);
-    printf("Test Steps:\n");
-    print_test_steps(case_num);
 }
 
 static void print_test_case_final(int case_num) {

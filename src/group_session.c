@@ -147,13 +147,13 @@ size_t pack_group_pre_key_plaintext(
 
     group_pre_key_bundle->e2ees_pack_id = outbound_group_session->e2ees_pack_id;
 
-    copy_address_from_address(&(group_pre_key_bundle->sender), outbound_group_session->sender);
-
     group_pre_key_bundle->session_id = strdup(outbound_group_session->session_id);
 
     if (old_session_id != NULL) {
         group_pre_key_bundle->old_session_id = strdup(old_session_id);
     }
+
+    copy_address_from_address(&(group_pre_key_bundle->sender), outbound_group_session->sender);
 
     copy_group_info(&(group_pre_key_bundle->group_info), outbound_group_session->group_info);
 
@@ -209,11 +209,11 @@ size_t pack_group_ratchet_state_plaintext(
     group_update_key_bundle->version = strdup(outbound_group_session->version);
     group_update_key_bundle->e2ees_pack_id = outbound_group_session->e2ees_pack_id;
 
+    group_update_key_bundle->session_id = strdup(outbound_group_session->session_id);
+
     copy_address_from_address(&(group_update_key_bundle->sender), outbound_group_session->sender);
 
     group_update_key_bundle->adding = adding;
-
-    group_update_key_bundle->session_id = strdup(outbound_group_session->session_id);
 
     copy_group_info(&(group_update_key_bundle->group_info), outbound_group_session->group_info);
 

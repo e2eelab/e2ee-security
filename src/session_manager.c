@@ -293,10 +293,10 @@ int produce_send_one2one_msg_request(
 
         e2ee_msg->version = strdup(E2EES_PROTOCOL_VERSION);
         e2ee_msg->session_id = strdup(outbound_session->session_id);
-        e2ee_msg->msg_id = generate_uuid_str();
-        e2ee_msg->notif_level = notif_level;
         copy_address_from_address(&(e2ee_msg->from), outbound_session->our_address);
         copy_address_from_address(&(e2ee_msg->to), outbound_session->their_address);
+        e2ee_msg->msg_id = generate_uuid_str();
+        e2ee_msg->notif_level = notif_level;
         e2ee_msg->payload_case = E2EES__E2EE_MSG__PAYLOAD_ONE2ONE_MSG;
         e2ee_msg->one2one_msg = payload_out;
 
@@ -886,9 +886,9 @@ int produce_accept_request(
         e2ees__accept_msg__init(msg);
 
         msg->e2ees_pack_id = e2ees_pack_id;
+        msg->session_id = strdup(session_id);
         copy_address_from_address(&(msg->from), from);
         copy_address_from_address(&(msg->to), to);
-        msg->session_id = strdup(session_id);
 
         if (ciphertext_1 != NULL) {
             copy_protobuf_from_protobuf(&(msg->encaps_ciphertext), ciphertext_1);
