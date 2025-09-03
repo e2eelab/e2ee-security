@@ -115,6 +115,10 @@ endforeach(proto)
 add_library(e2ees_static STATIC ${e2ees_src} ${src_headers}
                                   ${proto_gen_src} ${proto_gen_header})
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_compile_definitions(e2ees_static PRIVATE ENABLE_TRACE)
+endif()
+
 add_dependencies(e2ees_static curve25519 mbedcrypto protobuf::libprotobuf
                   protobuf-c)
 
