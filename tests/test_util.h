@@ -22,12 +22,10 @@
 #include "e2ees/e2ees.h"
 
 #define E2EELAB_DOMAIN          "e2eelab.org"
-#define TEST_e2ees_pack_id_ECC       "0"
-#define TEST_e2ees_pack_id_PQC       "1"
 
 #define gen_e2ees_pack_id_ecc() \
     gen_e2ees_pack_id_raw( \
-        0, \
+        E2EES_PACK_ID_V_0, \
         E2EES_PACK_ALG_DS_CURVE25519, \
         E2EES_PACK_ALG_KEM_CURVE25519, \
         E2EES_PACK_ALG_SE_AES256GCM, \
@@ -36,7 +34,7 @@
 
 #define gen_e2ees_pack_id_pqc() \
     gen_e2ees_pack_id_raw( \
-        0, \
+        E2EES_PACK_ID_V_0, \
         E2EES_PACK_ALG_DS_MLDSA87, \
         E2EES_PACK_ALG_KEM_MLKEM1024, \
         E2EES_PACK_ALG_SE_AES256GCM, \

@@ -73,16 +73,17 @@ static unsigned kem_data_all[] = {
     E2EES_PACK_ALG_KEM_MLKEM512,
     E2EES_PACK_ALG_KEM_MLKEM768,
     E2EES_PACK_ALG_KEM_MLKEM1024,
-    // E2EES_PACK_ALG_KEM_MCELIECE348864,
-    // E2EES_PACK_ALG_KEM_MCELIECE348864F,
-    // E2EES_PACK_ALG_KEM_MCELIECE460896,
-    // E2EES_PACK_ALG_KEM_MCELIECE460896F,
-    // E2EES_PACK_ALG_KEM_MCELIECE6688128,
-    // E2EES_PACK_ALG_KEM_MCELIECE6688128F,
-    // E2EES_PACK_ALG_KEM_MCELIECE6960119,
-    // E2EES_PACK_ALG_KEM_MCELIECE6960119F,
-    // E2EES_PACK_ALG_KEM_MCELIECE8192128,
-    // E2EES_PACK_ALG_KEM_MCELIECE8192128F
+    // Too Slow:
+    //   E2EES_PACK_ALG_KEM_MCELIECE348864,
+    //   E2EES_PACK_ALG_KEM_MCELIECE348864F,
+    //   E2EES_PACK_ALG_KEM_MCELIECE460896,
+    //   E2EES_PACK_ALG_KEM_MCELIECE460896F,
+    //   E2EES_PACK_ALG_KEM_MCELIECE6688128,
+    //   E2EES_PACK_ALG_KEM_MCELIECE6688128F,
+    //   E2EES_PACK_ALG_KEM_MCELIECE6960119,
+    //   E2EES_PACK_ALG_KEM_MCELIECE6960119F,
+    //   E2EES_PACK_ALG_KEM_MCELIECE8192128,
+    //   E2EES_PACK_ALG_KEM_MCELIECE8192128F
 };
 
 #define account_data_max 10
@@ -171,7 +172,7 @@ static void test_end(){
 
 static uint32_t mock_e2ees_pack_id(unsigned digital_signature_choice, unsigned kem_choice) {
     return gen_e2ees_pack_id_raw(
-        0,
+        E2EES_PACK_ID_V_0,
         digital_signature_choice,
         kem_choice,
         E2EES_PACK_ALG_SE_AES256GCM,
@@ -238,7 +239,7 @@ static void test_encryption(
 static void test_e2ees_pack_id() {
     // test start
     printf("test_e2ees_pack_id begin!!!\n");
-    uint32_t default_2ee_pack_id_raw = E2EES_PACK_ID_V_0_DEFAULT;
+    uint32_t default_2ee_pack_id_raw = E2EES_PACK_ID_DEFAULT;
     uint32_t e2ees_pack_id_raw = gen_e2ees_pack_id_pqc();
 
     assert(e2ees_pack_id_raw == default_2ee_pack_id_raw);
