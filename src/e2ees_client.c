@@ -1072,51 +1072,53 @@ E2ees__ConsumeProtoMsgResponse *process_proto_msg(uint8_t *proto_msg_data, size_
                 consumed = true;
                 break;
         };
-    }
 
-    // notify server that the proto_msg has been consumed
-    if (consumed) {
-        if (proto_msg->tag != NULL) {
-            response = consume_proto_msg(receiver_address, proto_msg->tag->proto_msg_id);
-            bool save_pending_request = false;
-            if (response != NULL) {
-                if (response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK ||
-                    response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
-                    // server consumed
+        // notify server that the proto_msg has been consumed
+        if (consumed) {
+            if (proto_msg->tag != NULL) {
+                response = consume_proto_msg(receiver_address, proto_msg->tag->proto_msg_id);
+                bool save_pending_request = false;
+                if (response != NULL) {
+                    if (response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK ||
+                        response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
+                        // server consumed
+                    } else {
+                        save_pending_request = true;
+                    }
                 } else {
                     save_pending_request = true;
+                    response = (E2ees__ConsumeProtoMsgResponse *)malloc(sizeof(E2ees__ConsumeProtoMsgResponse));
+                    e2ees__consume_proto_msg_response__init(response);
+                    response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_SERVICE_UNAVAILABLE;
+                }
+                if (save_pending_request) {
+                    // pack and save as pending request
+                    size_t request_data_len = e2ees__proto_msg__get_packed_size(proto_msg);
+                    uint8_t *request_data = (uint8_t *)malloc(sizeof(uint8_t) * request_data_len);
+                    e2ees__proto_msg__pack(proto_msg, request_data);
+
+                    store_pending_request_internal(proto_msg->to, E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_PROTO_MSG, request_data, request_data_len, NULL, 0);
+                    // release
+                    free_mem((void **)&request_data, request_data_len);
                 }
             } else {
-                save_pending_request = true;
                 response = (E2ees__ConsumeProtoMsgResponse *)malloc(sizeof(E2ees__ConsumeProtoMsgResponse));
                 e2ees__consume_proto_msg_response__init(response);
-                response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_SERVICE_UNAVAILABLE;
-            }
-            if (save_pending_request) {
-                // pack and save as pending request
-                size_t request_data_len = e2ees__proto_msg__get_packed_size(proto_msg);
-                uint8_t *request_data = (uint8_t *)malloc(sizeof(uint8_t) * request_data_len);
-                e2ees__proto_msg__pack(proto_msg, request_data);
-                
-                store_pending_request_internal(proto_msg->to, E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_PROTO_MSG, request_data, request_data_len, NULL, 0);
-                // release
-                free_mem((void **)&request_data, request_data_len);
+                response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_OK;
             }
         } else {
-            response = (E2ees__ConsumeProtoMsgResponse *)malloc(sizeof(E2ees__ConsumeProtoMsgResponse));
-            e2ees__consume_proto_msg_response__init(response);
-            response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_OK;
+            e2ees_notify_log(
+                receiver_address, DEBUG_LOG, "process_proto_msg() proto_msg is not consumed payload_case: %d, proto_msg_id: %s",
+                proto_msg->payload_case,
+                proto_msg->tag == NULL ? "" : proto_msg->tag->proto_msg_id
+            );
         }
-    } else {
-        e2ees_notify_log(
-            receiver_address, DEBUG_LOG, "process_proto_msg() proto_msg is not consumed payload_case: %d, proto_msg_id: %s",
-            proto_msg->payload_case,
-            proto_msg->tag == NULL ? "" : proto_msg->tag->proto_msg_id
-        );
     }
 
     // release
-    free_proto(proto_msg);
+    if (proto_msg != NULL) {
+        free_proto(proto_msg);
+    }
 
     // done
     return response;
