@@ -8,6 +8,7 @@
 #include "e2ees/validation.h"
 #include "e2ees/session_manager.h"
 #include "e2ees/e2ees_client.h"
+#include "e2ees/account_cache.h"
 
 int get_pre_key_bundle_internal(
     E2ees__InviteResponse ***invite_response_list_out,
@@ -122,7 +123,7 @@ int get_pre_key_bundle_internal(
                 );
 
                 // release
-                if (request_arg_list_len > 0 && request_arg_list != NULL) {
+                if (request_arg_list != NULL) {
                     free_protobuf_list(&request_arg_list, request_arg_list_len);
                 }
                 free_mem((void **)&get_pre_key_bundle_request_data, get_pre_key_bundle_request_data_len);
@@ -152,7 +153,7 @@ int invite_internal(
 
     if (is_valid_uncompleted_session(outbound_session)) {
         user_address = outbound_session->our_address;
-        get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
+        load_auth_from_cache(&auth, user_address);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(user_address, BAD_AUTH, "invite_internal()");
             ret = E2EES_RESULT_FAIL;
@@ -218,7 +219,7 @@ int accept_internal(
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_address(from)) {
-        get_e2ees_plugin()->db_handler.load_auth(from, &auth);
+        load_auth_from_cache(&auth, from);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(from, BAD_AUTH, "accept_internal()");
             ret = E2EES_RESULT_FAIL;
@@ -397,7 +398,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
 
     E2ees__E2eeAddress *user_address = outbound_session->our_address;
     char *auth = NULL;
-    get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
+    load_auth_from_cache( &auth, user_address);
 
     if (auth == NULL) {
         e2ees_notify_log(outbound_session->our_address, BAD_AUTH, "send_one2one_msg_internal()");
@@ -450,7 +451,7 @@ int add_group_member_device_internal(
     char *auth = NULL;
 
     if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
+        load_auth_from_cache( &auth, sender_address);
 
         if (auth != NULL) {
             if (is_valid_address(group_address)) {

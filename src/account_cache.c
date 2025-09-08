@@ -31,6 +31,7 @@ void store_account_into_cache(E2ees__Account *account) {
         account_cacheer_list->version = strdup(account->version);
         account_cacheer_list->e2ees_pack_id = account->e2ees_pack_id;
         copy_address_from_address(&(account_cacheer_list->address), account->address);
+        account_cacheer_list->auth = strdup(account->auth);
         copy_ik_from_ik(&(account_cacheer_list->identity_key), account->identity_key);
         copy_spk_from_spk(&(account_cacheer_list->signed_pre_key), account->signed_pre_key);
 
@@ -57,6 +58,7 @@ void store_account_into_cache(E2ees__Account *account) {
         cur->next->version = strdup(account->version);
         cur->next->e2ees_pack_id = account->e2ees_pack_id;
         copy_address_from_address(&(cur->next->address), account->address);
+        cur->next->auth = strdup(account->auth);
         copy_ik_from_ik(&(cur->next->identity_key), account->identity_key);
         copy_spk_from_spk(&(cur->next->signed_pre_key), account->signed_pre_key);
 
@@ -79,6 +81,25 @@ void load_version_from_cache(char **version_out, E2ees__E2eeAddress *address) {
         cur = cur->next;
     }
     *version_out = NULL;
+}
+
+void load_auth_from_cache(char **auth_out, E2ees__E2eeAddress *address) {
+    *auth_out = NULL;
+    account_cacheer *cur = account_cacheer_list;
+    while (cur != NULL) {
+        if (compare_address(cur->address, address)) {
+            if (cur->auth != NULL) {
+                *auth_out = strdup(cur->auth);
+            } else {
+                *auth_out = NULL;
+            }
+            break;
+        }
+        cur = cur->next;
+    }
+    if (*auth_out == NULL) {
+        get_e2ees_plugin()->db_handler.load_auth(address, auth_out);
+    }
 }
 
 void load_e2ees_pack_id_from_cache(uint32_t *e2ees_pack_id_out, E2ees__E2eeAddress *address) {

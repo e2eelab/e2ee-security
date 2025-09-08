@@ -164,7 +164,7 @@ E2ees__InviteResponse *invite(
     size_t invite_response_num = 0;
 
     if (is_valid_address(from)) {
-        get_e2ees_plugin()->db_handler.load_auth(from, &auth);
+        load_auth_from_cache(&auth, from);
         if (auth == NULL) {
             e2ees_notify_log(
                 from, BAD_ACCOUNT, "invite() from [%s:%s] to [%s@%s]",
@@ -226,7 +226,7 @@ E2ees__InviteResponse *invite(
 
 // E2ees__InviteResponse *new_invite(E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain) {
 //     char *auth = NULL;
-//     get_e2ees_plugin()->db_handler.load_auth(from, &auth);
+//     load_auth_from_cache(&auth, from);
 
 //     if (auth == NULL) {
 //         e2ees_notify_log(from, BAD_ACCOUNT, "invite() from [%s:%s] to [%s@%s]",
@@ -542,7 +542,7 @@ int create_group(
             e2ees_pack_id = account->e2ees_pack_id;
             auth = strdup(account->auth);
         } else {
-            get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
+            load_auth_from_cache(&auth, sender_address);
         }
     }
 
@@ -600,7 +600,7 @@ int add_group_members(
     char *auth = NULL;
 
     if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
+        load_auth_from_cache(&auth, sender_address);
         if (auth != NULL) {
             if (is_valid_address(group_address)) {
                 get_e2ees_plugin()->db_handler.load_group_session_by_address(
@@ -690,7 +690,7 @@ int remove_group_members(
     char *auth = NULL;
 
     if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
+        load_auth_from_cache(&auth, sender_address);
         if (auth != NULL) {
             if (is_valid_address(group_address)) {
                 get_e2ees_plugin()->db_handler.load_group_session_by_address(
@@ -776,7 +776,7 @@ int leave_group(
     char *auth = NULL;
 
     if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
+        load_auth_from_cache(&auth, sender_address);
 
         if (auth == NULL) {
             e2ees_notify_log(sender_address, BAD_AUTH, "leave_group()");
@@ -846,7 +846,7 @@ int send_group_msg_with_filter(
     char *auth = NULL;
 
     if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
+        load_auth_from_cache(&auth, sender_address);
         if (auth != NULL) {
             if (is_valid_address(group_address)) {
                 get_e2ees_plugin()->db_handler.load_group_session_by_address(
@@ -976,7 +976,7 @@ int send_group_msg(
 
 E2ees__ConsumeProtoMsgResponse *consume_proto_msg(E2ees__E2eeAddress *sender_address, const char *proto_msg_id) {
     char *auth = NULL;
-    get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
+    load_auth_from_cache(&auth, sender_address);
 
     if (auth == NULL) {
         e2ees_notify_log(sender_address, BAD_ACCOUNT, "consume_proto_msg()");

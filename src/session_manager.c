@@ -388,7 +388,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                     char *to_domain = their_device_id_list->domain;
 
                     char *auth = NULL;
-                    get_e2ees_plugin()->db_handler.load_auth(receiver_address, &auth);
+                    load_auth_from_cache(&auth, receiver_address);
 
                     if (auth == NULL) {
                         e2ees_notify_log(

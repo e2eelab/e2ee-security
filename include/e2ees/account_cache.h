@@ -33,6 +33,7 @@ typedef struct account_cacheer {
     char *version;
     uint32_t e2ees_pack_id;
     E2ees__E2eeAddress *address;
+    char *auth;
     E2ees__IdentityKey *identity_key;
     E2ees__SignedPreKey *signed_pre_key;
     ProtobufCBinaryData server_public_key;
@@ -42,6 +43,8 @@ typedef struct account_cacheer {
 void store_account_into_cache(E2ees__Account *account);
 
 void load_version_from_cache(char **version_out, E2ees__E2eeAddress *address);
+
+void load_auth_from_cache(char **auth_out, E2ees__E2eeAddress *address);
 
 void load_e2ees_pack_id_from_cache(uint32_t *e2ees_pack_id_out, E2ees__E2eeAddress *address);
 
