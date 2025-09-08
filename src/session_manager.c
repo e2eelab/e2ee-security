@@ -398,7 +398,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                             to_user_id,
                             to_domain
                         );
-                        return NULL;
+                        return true;
                     }
 
                     E2ees__InviteResponse *invite_response = NULL;
@@ -598,8 +598,8 @@ bool consume_add_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__Ad
         ret = E2EES_RESULT_FAIL;
     }
 
-    if (ret == -1) {
-        return false;
+    if (ret == E2EES_RESULT_FAIL) {
+        return true;
     }
 
     for (i = 0; i < old_address_list_number; i++) {
@@ -666,10 +666,10 @@ bool consume_add_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__Ad
 
 bool consume_remove_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__RemoveUserDeviceMsg *msg) {
     if (!is_valid_address(receiver_address)) {
-        return false;
+        return true;
     }
     if (!is_valid_remove_user_device_msg(msg)) {
-        return false;
+        return true;
     }
     // delete the corresponding session
     get_e2ees_plugin()->db_handler.unload_session(receiver_address, msg->user_address);
@@ -754,32 +754,15 @@ int consume_invite_response(
         }
     }
 
-    // if (response != NULL) {
-    //     e2ees_notify_log(user_address, DEBUG_LOG, "consume_invite_response() response code: %d", response->code);
-    //     if (response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
-    //         // load the corresponding inbound session
-    //         E2ees__Session *inbound_session = NULL;
-    //         get_e2ees_plugin()->db_handler.load_session(response->session_id, user_address, &inbound_session);
-    //         if (inbound_session != NULL) {
-    //             // update invite_t
-    //             inbound_session->invite_t = response->invite_t;
-    //             get_e2ees_plugin()->db_handler.store_session(inbound_session);
-    //         }
-    //         return true;
-    //     } else if (response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
-    //         return true;
-    //     }
-    // }
-
     return ret;
 }
 
 bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *invite_msg) {
     if (!is_valid_address(receiver_address)) {
-        return false;
+        return true;
     }
     if (!is_valid_invite_msg(invite_msg)) {
-        return false;
+        return true;
     }
 
     e2ees_notify_log(
@@ -821,7 +804,7 @@ bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *
     get_e2ees_plugin()->db_handler.load_account_by_address(to, &account);
     if (account == NULL) {
         e2ees_notify_log(receiver_address, BAD_ACCOUNT, "consume_invite_msg()");
-        return false;
+        return true;
     }
 
     inbound_session = NULL;
@@ -843,7 +826,7 @@ bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *
     e2ees__session__free_unpacked(inbound_session, NULL);
 
     // done
-    return result == E2EES_RESULT_SUCC;
+    return true;
 }
 
 int produce_accept_request(

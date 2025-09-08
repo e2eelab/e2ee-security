@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -142,72 +142,72 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac56ee8caaea1c4a8f22133d577fa083c" id="r_ac56ee8caaea1c4a8f22133d577fa083c"><td class="memItemLeft" align="right" valign="top"><a id="ac56ee8caaea1c4a8f22133d577fa083c" name="ac56ee8caaea1c4a8f22133d577fa083c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>CURVE25519_crypto_sign_keypair</b> (ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key)</td></tr>
-<tr class="separator:ac56ee8caaea1c4a8f22133d577fa083c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65624437d7f4f49cf630954dda2e4ef5" id="r_a65624437d7f4f49cf630954dda2e4ef5"><td class="memItemLeft" align="right" valign="top"><a id="a65624437d7f4f49cf630954dda2e4ef5" name="a65624437d7f4f49cf630954dda2e4ef5"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>CURVE25519_crypto_keypair</b> (ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key)</td></tr>
-<tr class="separator:a65624437d7f4f49cf630954dda2e4ef5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ebc35d7b4bb05bb929166e6091664f6" id="r_a3ebc35d7b4bb05bb929166e6091664f6"><td class="memItemLeft" align="right" valign="top"><a id="a3ebc35d7b4bb05bb929166e6091664f6" name="a3ebc35d7b4bb05bb929166e6091664f6"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>CURVE25519_crypto_sign_signature</b> (uint8_t *signature_out, size_t *signature_out_len, const uint8_t *msg, size_t msg_len, const uint8_t *private_key)</td></tr>
-<tr class="separator:a3ebc35d7b4bb05bb929166e6091664f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a734a089f76a3dff47de01d2d79eee9b7" id="r_a734a089f76a3dff47de01d2d79eee9b7"><td class="memItemLeft" align="right" valign="top"><a id="a734a089f76a3dff47de01d2d79eee9b7" name="a734a089f76a3dff47de01d2d79eee9b7"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>CURVE25519_crypto_sign_verify</b> (const uint8_t *signature_in, size_t signature_in_len, const uint8_t *msg, size_t msg_len, const uint8_t *public_key)</td></tr>
-<tr class="separator:a734a089f76a3dff47de01d2d79eee9b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3de60a04782f3247947a01adada18cc" id="r_aa3de60a04782f3247947a01adada18cc"><td class="memItemLeft" align="right" valign="top"><a id="aa3de60a04782f3247947a01adada18cc" name="aa3de60a04782f3247947a01adada18cc"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_dh</b> (uint8_t *shared_secret, const ProtobufCBinaryData *our_key, const ProtobufCBinaryData *ciphertext)</td></tr>
-<tr class="separator:aa3de60a04782f3247947a01adada18cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f6aa8d05151aa0879b7be7ddd1f52c0" id="r_a5f6aa8d05151aa0879b7be7ddd1f52c0"><td class="memItemLeft" align="right" valign="top"><a id="a5f6aa8d05151aa0879b7be7ddd1f52c0" name="a5f6aa8d05151aa0879b7be7ddd1f52c0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_sign</b> (uint8_t *private_key, uint8_t *msg, size_t msg_len, uint8_t *signature_out)</td></tr>
-<tr class="separator:a5f6aa8d05151aa0879b7be7ddd1f52c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91c2ee82b8037a91d1df32c106387633" id="r_a91c2ee82b8037a91d1df32c106387633"><td class="memItemLeft" align="right" valign="top"><a id="a91c2ee82b8037a91d1df32c106387633" name="a91c2ee82b8037a91d1df32c106387633"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_verify</b> (uint8_t *signature_in, uint8_t *public_key, uint8_t *msg, size_t msg_len)</td></tr>
-<tr class="separator:a91c2ee82b8037a91d1df32c106387633"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcefe49359b60a5ac8ff77973306d56d" id="r_abcefe49359b60a5ac8ff77973306d56d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abcefe49359b60a5ac8ff77973306d56d">crypto_hkdf_sha256</a> (const uint8_t *input, size_t input_len, const uint8_t *salt, size_t salt_len, const uint8_t *info, size_t info_len, uint8_t *output, size_t output_len)</td></tr>
-<tr class="memdesc:abcefe49359b60a5ac8ff77973306d56d"><td class="mdescLeft">&#160;</td><td class="mdescRight">HMAC-based Key Derivation Function (HKDF). <a href="https://tools.ietf.org/html/rfc5869">https://tools.ietf.org/html/rfc5869</a> Derives key material from the input bytes.  <br /></td></tr>
-<tr class="separator:abcefe49359b60a5ac8ff77973306d56d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adef4a9c555eb2fff679128a08a43da7d" id="r_adef4a9c555eb2fff679128a08a43da7d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adef4a9c555eb2fff679128a08a43da7d">crypto_hmac_sha256</a> (const uint8_t *key, size_t key_len, const uint8_t *input, size_t input_len, uint8_t *output)</td></tr>
-<tr class="memdesc:adef4a9c555eb2fff679128a08a43da7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keyed-Hashing for Message Authentication (HMAC). <a href="http://tools.ietf.org/html/rfc2104">http://tools.ietf.org/html/rfc2104</a> Computes HMAC-SHA-256 of the input for the key. The output buffer must be at least SHA256_OUTPUT_LENGTH (32) bytes long.  <br /></td></tr>
-<tr class="separator:adef4a9c555eb2fff679128a08a43da7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc1ba4ed4300cb5b7dd5dd9bba2491c4" id="r_abc1ba4ed4300cb5b7dd5dd9bba2491c4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc1ba4ed4300cb5b7dd5dd9bba2491c4">crypto_sha256</a> (const uint8_t *msg, size_t msg_len, uint8_t *hash_out)</td></tr>
-<tr class="memdesc:abc1ba4ed4300cb5b7dd5dd9bba2491c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Secure Hash Algorithms (SHAs) <a href="https://www.rfc-editor.org/rfc/rfc6234">https://www.rfc-editor.org/rfc/rfc6234</a> Computes HMAC-SHA-256 of the input for the key. The output buffer must be at least SHA256_OUTPUT_LENGTH (32) bytes long.  <br /></td></tr>
-<tr class="separator:abc1ba4ed4300cb5b7dd5dd9bba2491c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59b605f5c322947803e2187a2984f7de" id="r_a59b605f5c322947803e2187a2984f7de"><td class="memItemLeft" align="right" valign="top"><a id="a59b605f5c322947803e2187a2984f7de" name="a59b605f5c322947803e2187a2984f7de"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_ds_key_gen_curve25519</b> (ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key)</td></tr>
+<tr class="separator:a59b605f5c322947803e2187a2984f7de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e96d5297d18636c09b1fdf77c69a381" id="r_a8e96d5297d18636c09b1fdf77c69a381"><td class="memItemLeft" align="right" valign="top"><a id="a8e96d5297d18636c09b1fdf77c69a381" name="a8e96d5297d18636c09b1fdf77c69a381"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_kem_asym_key_gen_curve25519</b> (ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key)</td></tr>
+<tr class="separator:a8e96d5297d18636c09b1fdf77c69a381"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0ccd190886a60d6f56567fc05cd575d" id="r_ab0ccd190886a60d6f56567fc05cd575d"><td class="memItemLeft" align="right" valign="top"><a id="ab0ccd190886a60d6f56567fc05cd575d" name="ab0ccd190886a60d6f56567fc05cd575d"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_ds_sign_curve25519</b> (uint8_t *signature_out, size_t *signature_out_len, const uint8_t *msg, size_t msg_len, const uint8_t *private_key)</td></tr>
+<tr class="separator:ab0ccd190886a60d6f56567fc05cd575d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a911a62d7c16a6cc2ae4fcb9803a744b0" id="r_a911a62d7c16a6cc2ae4fcb9803a744b0"><td class="memItemLeft" align="right" valign="top"><a id="a911a62d7c16a6cc2ae4fcb9803a744b0" name="a911a62d7c16a6cc2ae4fcb9803a744b0"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_ds_verify_curve25519</b> (const uint8_t *signature_in, size_t signature_in_len, const uint8_t *msg, size_t msg_len, const uint8_t *public_key)</td></tr>
+<tr class="separator:a911a62d7c16a6cc2ae4fcb9803a744b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a012767afb422b189b632a740e31fa89b" id="r_a012767afb422b189b632a740e31fa89b"><td class="memItemLeft" align="right" valign="top"><a id="a012767afb422b189b632a740e31fa89b" name="a012767afb422b189b632a740e31fa89b"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_kem_decaps_curve25519</b> (uint8_t *shared_secret, const ProtobufCBinaryData *our_key, const ProtobufCBinaryData *ciphertext)</td></tr>
+<tr class="separator:a012767afb422b189b632a740e31fa89b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2de2a5af501efc4c23856d04ba9c24ed" id="r_a2de2a5af501efc4c23856d04ba9c24ed"><td class="memItemLeft" align="right" valign="top"><a id="a2de2a5af501efc4c23856d04ba9c24ed" name="a2de2a5af501efc4c23856d04ba9c24ed"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_sign_curve25519</b> (uint8_t *private_key, uint8_t *msg, size_t msg_len, uint8_t *signature_out)</td></tr>
+<tr class="separator:a2de2a5af501efc4c23856d04ba9c24ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a413144e17ba1da630c481fb6864fd6be" id="r_a413144e17ba1da630c481fb6864fd6be"><td class="memItemLeft" align="right" valign="top"><a id="a413144e17ba1da630c481fb6864fd6be" name="a413144e17ba1da630c481fb6864fd6be"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_verify_curve25519</b> (uint8_t *signature_in, uint8_t *public_key, uint8_t *msg, size_t msg_len)</td></tr>
+<tr class="separator:a413144e17ba1da630c481fb6864fd6be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bde3ae9ff02290c77bec3fcba9f4b92" id="r_a8bde3ae9ff02290c77bec3fcba9f4b92"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bde3ae9ff02290c77bec3fcba9f4b92">crypto_hf_hkdf_sha256</a> (const uint8_t *input, size_t input_len, const uint8_t *salt, size_t salt_len, const uint8_t *info, size_t info_len, uint8_t *output, size_t output_len)</td></tr>
+<tr class="memdesc:a8bde3ae9ff02290c77bec3fcba9f4b92"><td class="mdescLeft">&#160;</td><td class="mdescRight">HMAC-based Key Derivation Function (HKDF). <a href="https://tools.ietf.org/html/rfc5869">https://tools.ietf.org/html/rfc5869</a> Derives key material from the input bytes.  <br /></td></tr>
+<tr class="separator:a8bde3ae9ff02290c77bec3fcba9f4b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1eb3057155dda3bc6a6e2a454e69ab3c" id="r_a1eb3057155dda3bc6a6e2a454e69ab3c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1eb3057155dda3bc6a6e2a454e69ab3c">crypto_hf_hmac_sha256</a> (const uint8_t *key, size_t key_len, const uint8_t *input, size_t input_len, uint8_t *output)</td></tr>
+<tr class="memdesc:a1eb3057155dda3bc6a6e2a454e69ab3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keyed-Hashing for Message Authentication (HMAC). <a href="http://tools.ietf.org/html/rfc2104">http://tools.ietf.org/html/rfc2104</a> Computes HMAC-SHA-256 of the input for the key. The output buffer must be at least SHA256_OUTPUT_LENGTH (32) bytes long.  <br /></td></tr>
+<tr class="separator:a1eb3057155dda3bc6a6e2a454e69ab3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59132bad95b25fc8afb403d6488f0dab" id="r_a59132bad95b25fc8afb403d6488f0dab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59132bad95b25fc8afb403d6488f0dab">crypto_hf_sha256</a> (const uint8_t *msg, size_t msg_len, uint8_t *hash_out)</td></tr>
+<tr class="memdesc:a59132bad95b25fc8afb403d6488f0dab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Secure Hash Algorithms (SHAs) <a href="https://www.rfc-editor.org/rfc/rfc6234">https://www.rfc-editor.org/rfc/rfc6234</a> Computes HMAC-SHA-256 of the input for the key. The output buffer must be at least SHA256_OUTPUT_LENGTH (32) bytes long.  <br /></td></tr>
+<tr class="separator:a59132bad95b25fc8afb403d6488f0dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ecbc7f2cf34bcec4b5d3853bd504bad" id="r_a1ecbc7f2cf34bcec4b5d3853bd504bad"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ecbc7f2cf34bcec4b5d3853bd504bad">crypto_aes_encrypt_gcm</a> (const uint8_t *plaintext_data, size_t plaintext_data_len, const uint8_t *aes_key, const uint8_t *iv, const uint8_t *add, size_t add_len, uint8_t *ciphertext_data)</td></tr>
 <tr class="memdesc:a1ecbc7f2cf34bcec4b5d3853bd504bad"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 encrypt function in GCM mode.  <br /></td></tr>
 <tr class="separator:a1ecbc7f2cf34bcec4b5d3853bd504bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0abf54c9a3f3c89e4552ea50b87afde3" id="r_a0abf54c9a3f3c89e4552ea50b87afde3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0abf54c9a3f3c89e4552ea50b87afde3">crypto_aes_decrypt_gcm</a> (const uint8_t *ciphertext_data, size_t ciphertext_data_len, const uint8_t *aes_key, const uint8_t *iv, const uint8_t *add, size_t add_len, uint8_t *plaintext_data, size_t *plaintext_data_len)</td></tr>
 <tr class="memdesc:a0abf54c9a3f3c89e4552ea50b87afde3"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 decrypt function in GCM mode.  <br /></td></tr>
 <tr class="separator:a0abf54c9a3f3c89e4552ea50b87afde3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad449cbcd6449c8cff0b8de22bcc9baa0" id="r_ad449cbcd6449c8cff0b8de22bcc9baa0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad449cbcd6449c8cff0b8de22bcc9baa0">aes256_gcm_ciphertext_data_len</a> (size_t plaintext_data_length)</td></tr>
-<tr class="memdesc:ad449cbcd6449c8cff0b8de22bcc9baa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate ciphertext data len for AES GCM.  <br /></td></tr>
-<tr class="separator:ad449cbcd6449c8cff0b8de22bcc9baa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c9d322f09b8b9e997838fee395a09a6" id="r_a0c9d322f09b8b9e997838fee395a09a6"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c9d322f09b8b9e997838fee395a09a6">aes256_gcm_plaintext_data_len</a> (size_t ciphertext_data_len)</td></tr>
-<tr class="memdesc:a0c9d322f09b8b9e997838fee395a09a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate plaintext data len for AES GCM.  <br /></td></tr>
-<tr class="separator:a0c9d322f09b8b9e997838fee395a09a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc26d7ca538bd3f7fec38b2c1959beb0" id="r_afc26d7ca538bd3f7fec38b2c1959beb0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc26d7ca538bd3f7fec38b2c1959beb0">encrypt_aes_data_with_iv</a> (const uint8_t *plaintext_data, size_t plaintext_data_len, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>], const uint8_t iv[<a class="el" href="#adbbbf1c1be8a7fb625cf3879c3168dc3">AES256_DATA_IV_LENGTH</a>], uint8_t **ciphertext_data)</td></tr>
-<tr class="memdesc:afc26d7ca538bd3f7fec38b2c1959beb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 encrypt data in GCM mode.  <br /></td></tr>
-<tr class="separator:afc26d7ca538bd3f7fec38b2c1959beb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9239e4f32141c64f2ed409902253db2e" id="r_a9239e4f32141c64f2ed409902253db2e"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9239e4f32141c64f2ed409902253db2e">encrypt_aes_data</a> (const uint8_t *plaintext_data, size_t plaintext_data_len, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>], uint8_t **ciphertext_data)</td></tr>
-<tr class="memdesc:a9239e4f32141c64f2ed409902253db2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 encrypt data in GCM mode. The initial vector iv is designated to zeros.  <br /></td></tr>
-<tr class="separator:a9239e4f32141c64f2ed409902253db2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a831ecc64b494384eeef10f02f0c5432c" id="r_a831ecc64b494384eeef10f02f0c5432c"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a831ecc64b494384eeef10f02f0c5432c">decrypt_aes_data_with_iv</a> (const uint8_t *ciphertext_data, size_t ciphertext_data_len, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>], const uint8_t iv[<a class="el" href="#adbbbf1c1be8a7fb625cf3879c3168dc3">AES256_DATA_IV_LENGTH</a>], uint8_t **plaintext_data)</td></tr>
-<tr class="memdesc:a831ecc64b494384eeef10f02f0c5432c"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 decrypt data in GCM mode.  <br /></td></tr>
-<tr class="separator:a831ecc64b494384eeef10f02f0c5432c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a272ff8f6ce4ccfeb3fe4b94858d16ac7" id="r_a272ff8f6ce4ccfeb3fe4b94858d16ac7"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a272ff8f6ce4ccfeb3fe4b94858d16ac7">decrypt_aes_data</a> (const uint8_t *ciphertext_data, size_t ciphertext_data_len, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>], uint8_t **plaintext_data)</td></tr>
-<tr class="memdesc:a272ff8f6ce4ccfeb3fe4b94858d16ac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 decrypt data in GCM mode. The initial vector iv is designated to zeros.  <br /></td></tr>
-<tr class="separator:a272ff8f6ce4ccfeb3fe4b94858d16ac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa06fbcdf5dc0b8f1c2bb4ad5eb70a6b9" id="r_aa06fbcdf5dc0b8f1c2bb4ad5eb70a6b9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa06fbcdf5dc0b8f1c2bb4ad5eb70a6b9">encrypt_aes_file</a> (const char *in_file_path, const char *out_file_path, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>])</td></tr>
-<tr class="memdesc:aa06fbcdf5dc0b8f1c2bb4ad5eb70a6b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 encrypt file in GCM mode. The initial vector iv is designated to zeros.  <br /></td></tr>
-<tr class="separator:aa06fbcdf5dc0b8f1c2bb4ad5eb70a6b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc58ceff0d85193ef70700f828959123" id="r_afc58ceff0d85193ef70700f828959123"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc58ceff0d85193ef70700f828959123">decrypt_aes_file</a> (const char *in_file_path, const char *out_file_path, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>])</td></tr>
-<tr class="memdesc:afc58ceff0d85193ef70700f828959123"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 decrypt file in GCM mode. The initial vector iv is designated to zeros.  <br /></td></tr>
-<tr class="separator:afc58ceff0d85193ef70700f828959123"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a450cb7660c7518fa1387b4e73696b464" id="r_a450cb7660c7518fa1387b4e73696b464"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a450cb7660c7518fa1387b4e73696b464">encrypt_file</a> (const char *in_file_path, const char *out_file_path, const uint8_t *password, const size_t password_len)</td></tr>
-<tr class="memdesc:a450cb7660c7518fa1387b4e73696b464"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 encrypt file in GCM mode. The initial vector iv is designated to zeros. The password is an arbitrary vector with non-zero length.  <br /></td></tr>
-<tr class="separator:a450cb7660c7518fa1387b4e73696b464"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7b60f90ce2bf7b0f3ac50a837ad043a" id="r_ac7b60f90ce2bf7b0f3ac50a837ad043a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7b60f90ce2bf7b0f3ac50a837ad043a">decrypt_file</a> (const char *in_file_path, const char *out_file_path, const uint8_t *password, const size_t password_len)</td></tr>
-<tr class="memdesc:ac7b60f90ce2bf7b0f3ac50a837ad043a"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 decrypt file in GCM mode. The initial vector iv is designated to zeros. The password is an arbitrary vector with non-zero length.  <br /></td></tr>
-<tr class="separator:ac7b60f90ce2bf7b0f3ac50a837ad043a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a880d1365f5d7ecd30815b46d0ef99496" id="r_a880d1365f5d7ecd30815b46d0ef99496"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a880d1365f5d7ecd30815b46d0ef99496">crypto_aes256_gcm_ciphertext_data_len</a> (size_t plaintext_data_length)</td></tr>
+<tr class="memdesc:a880d1365f5d7ecd30815b46d0ef99496"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate ciphertext data len for AES GCM.  <br /></td></tr>
+<tr class="separator:a880d1365f5d7ecd30815b46d0ef99496"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3106644f3a5c299fa6993787ef520446" id="r_a3106644f3a5c299fa6993787ef520446"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3106644f3a5c299fa6993787ef520446">crypto_aes256_gcm_plaintext_data_len</a> (size_t ciphertext_data_len)</td></tr>
+<tr class="memdesc:a3106644f3a5c299fa6993787ef520446"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate plaintext data len for AES GCM.  <br /></td></tr>
+<tr class="separator:a3106644f3a5c299fa6993787ef520446"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62652f6a164799f54bee65e35e3cd91f" id="r_a62652f6a164799f54bee65e35e3cd91f"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62652f6a164799f54bee65e35e3cd91f">crypto_encrypt_aes_data_with_iv</a> (const uint8_t *plaintext_data, size_t plaintext_data_len, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>], const uint8_t iv[<a class="el" href="#adbbbf1c1be8a7fb625cf3879c3168dc3">AES256_DATA_IV_LENGTH</a>], uint8_t **ciphertext_data)</td></tr>
+<tr class="memdesc:a62652f6a164799f54bee65e35e3cd91f"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 encrypt data in GCM mode.  <br /></td></tr>
+<tr class="separator:a62652f6a164799f54bee65e35e3cd91f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8129e896fd125bf223d5d60e00e4dd93" id="r_a8129e896fd125bf223d5d60e00e4dd93"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8129e896fd125bf223d5d60e00e4dd93">crypto_encrypt_aes_data</a> (const uint8_t *plaintext_data, size_t plaintext_data_len, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>], uint8_t **ciphertext_data)</td></tr>
+<tr class="memdesc:a8129e896fd125bf223d5d60e00e4dd93"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 encrypt data in GCM mode. The initial vector iv is designated to zeros.  <br /></td></tr>
+<tr class="separator:a8129e896fd125bf223d5d60e00e4dd93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace37cd4490e68d9fc8496acdd6ce8419" id="r_ace37cd4490e68d9fc8496acdd6ce8419"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace37cd4490e68d9fc8496acdd6ce8419">crypto_decrypt_aes_data_with_iv</a> (const uint8_t *ciphertext_data, size_t ciphertext_data_len, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>], const uint8_t iv[<a class="el" href="#adbbbf1c1be8a7fb625cf3879c3168dc3">AES256_DATA_IV_LENGTH</a>], uint8_t **plaintext_data)</td></tr>
+<tr class="memdesc:ace37cd4490e68d9fc8496acdd6ce8419"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 decrypt data in GCM mode.  <br /></td></tr>
+<tr class="separator:ace37cd4490e68d9fc8496acdd6ce8419"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3eb9d04b46d1c543ef5021a8912fd6ea" id="r_a3eb9d04b46d1c543ef5021a8912fd6ea"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3eb9d04b46d1c543ef5021a8912fd6ea">crypto_decrypt_aes_data</a> (const uint8_t *ciphertext_data, size_t ciphertext_data_len, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>], uint8_t **plaintext_data)</td></tr>
+<tr class="memdesc:a3eb9d04b46d1c543ef5021a8912fd6ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 decrypt data in GCM mode. The initial vector iv is designated to zeros.  <br /></td></tr>
+<tr class="separator:a3eb9d04b46d1c543ef5021a8912fd6ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab279653852653fea5e88121603698b5d" id="r_ab279653852653fea5e88121603698b5d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab279653852653fea5e88121603698b5d">crypto_encrypt_aes_file</a> (const char *in_file_path, const char *out_file_path, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>])</td></tr>
+<tr class="memdesc:ab279653852653fea5e88121603698b5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 encrypt file in GCM mode. The initial vector iv is designated to zeros.  <br /></td></tr>
+<tr class="separator:ab279653852653fea5e88121603698b5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96c26c75ff912d1b181d0412fa20b970" id="r_a96c26c75ff912d1b181d0412fa20b970"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96c26c75ff912d1b181d0412fa20b970">crypto_decrypt_aes_file</a> (const char *in_file_path, const char *out_file_path, const uint8_t aes_key[<a class="el" href="#af36200aa1d4d85292b027b6d811263ad">AES256_KEY_LENGTH</a>])</td></tr>
+<tr class="memdesc:a96c26c75ff912d1b181d0412fa20b970"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 decrypt file in GCM mode. The initial vector iv is designated to zeros.  <br /></td></tr>
+<tr class="separator:a96c26c75ff912d1b181d0412fa20b970"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a165c16ff654d7efcbd54b5b5be8de1d5" id="r_a165c16ff654d7efcbd54b5b5be8de1d5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a165c16ff654d7efcbd54b5b5be8de1d5">crypto_encrypt_file</a> (const char *in_file_path, const char *out_file_path, const uint8_t *password, const size_t password_len)</td></tr>
+<tr class="memdesc:a165c16ff654d7efcbd54b5b5be8de1d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 encrypt file in GCM mode. The initial vector iv is designated to zeros. The password is an arbitrary vector with non-zero length.  <br /></td></tr>
+<tr class="separator:a165c16ff654d7efcbd54b5b5be8de1d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a517b6623c3623d50214a7e584922eef1" id="r_a517b6623c3623d50214a7e584922eef1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a517b6623c3623d50214a7e584922eef1">crypto_decrypt_file</a> (const char *in_file_path, const char *out_file_path, const uint8_t *password, const size_t password_len)</td></tr>
+<tr class="memdesc:a517b6623c3623d50214a7e584922eef1"><td class="mdescLeft">&#160;</td><td class="mdescRight">AES256 decrypt file in GCM mode. The initial vector iv is designated to zeros. The password is an arbitrary vector with non-zero length.  <br /></td></tr>
+<tr class="separator:a517b6623c3623d50214a7e584922eef1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fbde9fbb7fd0c6ffc949e1384b84906" id="r_a5fbde9fbb7fd0c6ffc949e1384b84906"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5fbde9fbb7fd0c6ffc949e1384b84906">crypto_base64_encode</a> (const uint8_t *msg, size_t msg_len)</td></tr>
 <tr class="memdesc:a5fbde9fbb7fd0c6ffc949e1384b84906"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode to base64 string.  <br /></td></tr>
 <tr class="separator:a5fbde9fbb7fd0c6ffc949e1384b84906"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -370,14 +370,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_veri
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ad449cbcd6449c8cff0b8de22bcc9baa0" name="ad449cbcd6449c8cff0b8de22bcc9baa0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad449cbcd6449c8cff0b8de22bcc9baa0">&#9670;&#160;</a></span>aes256_gcm_ciphertext_data_len()</h2>
+<a id="a880d1365f5d7ecd30815b46d0ef99496" name="a880d1365f5d7ecd30815b46d0ef99496"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a880d1365f5d7ecd30815b46d0ef99496">&#9670;&#160;</a></span>crypto_aes256_gcm_ciphertext_data_len()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">size_t aes256_gcm_ciphertext_data_len </td>
+          <td class="memname">size_t crypto_aes256_gcm_ciphertext_data_len </td>
           <td>(</td>
           <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>plaintext_data_length</em></span></td><td>)</td>
           <td></td>
@@ -396,14 +396,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_veri
 
 </div>
 </div>
-<a id="a0c9d322f09b8b9e997838fee395a09a6" name="a0c9d322f09b8b9e997838fee395a09a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c9d322f09b8b9e997838fee395a09a6">&#9670;&#160;</a></span>aes256_gcm_plaintext_data_len()</h2>
+<a id="a3106644f3a5c299fa6993787ef520446" name="a3106644f3a5c299fa6993787ef520446"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3106644f3a5c299fa6993787ef520446">&#9670;&#160;</a></span>crypto_aes256_gcm_plaintext_data_len()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">size_t aes256_gcm_plaintext_data_len </td>
+          <td class="memname">size_t crypto_aes256_gcm_plaintext_data_len </td>
           <td>(</td>
           <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data_len</em></span></td><td>)</td>
           <td></td>
@@ -613,6 +613,178 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_veri
 
 </div>
 </div>
+<a id="a3eb9d04b46d1c543ef5021a8912fd6ea" name="a3eb9d04b46d1c543ef5021a8912fd6ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3eb9d04b46d1c543ef5021a8912fd6ea">&#9670;&#160;</a></span>crypto_decrypt_aes_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t crypto_decrypt_aes_data </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t **</td>          <td class="paramname"><span class="paramname"><em>plaintext_data</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>AES256 decrypt data in GCM mode. The initial vector iv is designated to zeros. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ciphertext_data</td><td></td></tr>
+    <tr><td class="paramname">ciphertext_data_len</td><td></td></tr>
+    <tr><td class="paramname">aes_key</td><td></td></tr>
+    <tr><td class="paramname">plaintext_data</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>size_t plaintext data length </dd></dl>
+
+</div>
+</div>
+<a id="ace37cd4490e68d9fc8496acdd6ce8419" name="ace37cd4490e68d9fc8496acdd6ce8419"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace37cd4490e68d9fc8496acdd6ce8419">&#9670;&#160;</a></span>crypto_decrypt_aes_data_with_iv()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t crypto_decrypt_aes_data_with_iv </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>iv</em></span>[AES256_DATA_IV_LENGTH], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t **</td>          <td class="paramname"><span class="paramname"><em>plaintext_data</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>AES256 decrypt data in GCM mode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ciphertext_data</td><td></td></tr>
+    <tr><td class="paramname">ciphertext_data_len</td><td></td></tr>
+    <tr><td class="paramname">aes_key</td><td></td></tr>
+    <tr><td class="paramname">iv</td><td></td></tr>
+    <tr><td class="paramname">plaintext_data</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="a96c26c75ff912d1b181d0412fa20b970" name="a96c26c75ff912d1b181d0412fa20b970"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96c26c75ff912d1b181d0412fa20b970">&#9670;&#160;</a></span>crypto_decrypt_aes_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int crypto_decrypt_aes_file </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>in_file_path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>out_file_path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH]&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>AES256 decrypt file in GCM mode. The initial vector iv is designated to zeros. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in_file_path</td><td></td></tr>
+    <tr><td class="paramname">out_file_path</td><td></td></tr>
+    <tr><td class="paramname">aes_key</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int 0 for success </dd></dl>
+
+</div>
+</div>
+<a id="a517b6623c3623d50214a7e584922eef1" name="a517b6623c3623d50214a7e584922eef1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a517b6623c3623d50214a7e584922eef1">&#9670;&#160;</a></span>crypto_decrypt_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int crypto_decrypt_file </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>in_file_path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>out_file_path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>password</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const size_t</td>          <td class="paramname"><span class="paramname"><em>password_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>AES256 decrypt file in GCM mode. The initial vector iv is designated to zeros. The password is an arbitrary vector with non-zero length. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in_file_path</td><td></td></tr>
+    <tr><td class="paramname">out_file_path</td><td></td></tr>
+    <tr><td class="paramname">password</td><td></td></tr>
+    <tr><td class="paramname">password_len</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int 0 for success </dd></dl>
+
+</div>
+</div>
 <a id="a8345083dac081465341bff062a51aa9c" name="a8345083dac081465341bff062a51aa9c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8345083dac081465341bff062a51aa9c">&#9670;&#160;</a></span>crypto_ds_key_gen_by_e2ees_pack_id()</h2>
 
@@ -772,6 +944,178 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_veri
 
 </div>
 </div>
+<a id="a8129e896fd125bf223d5d60e00e4dd93" name="a8129e896fd125bf223d5d60e00e4dd93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8129e896fd125bf223d5d60e00e4dd93">&#9670;&#160;</a></span>crypto_encrypt_aes_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t crypto_encrypt_aes_data </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>plaintext_data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>plaintext_data_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t **</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>AES256 encrypt data in GCM mode. The initial vector iv is designated to zeros. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">plaintext_data</td><td></td></tr>
+    <tr><td class="paramname">plaintext_data_len</td><td></td></tr>
+    <tr><td class="paramname">aes_key</td><td></td></tr>
+    <tr><td class="paramname">ciphertext_data</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>size_t ciphertext data length </dd></dl>
+
+</div>
+</div>
+<a id="a62652f6a164799f54bee65e35e3cd91f" name="a62652f6a164799f54bee65e35e3cd91f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62652f6a164799f54bee65e35e3cd91f">&#9670;&#160;</a></span>crypto_encrypt_aes_data_with_iv()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t crypto_encrypt_aes_data_with_iv </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>plaintext_data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>plaintext_data_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>iv</em></span>[AES256_DATA_IV_LENGTH], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t **</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>AES256 encrypt data in GCM mode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">plaintext_data</td><td></td></tr>
+    <tr><td class="paramname">plaintext_data_len</td><td></td></tr>
+    <tr><td class="paramname">aes_key</td><td></td></tr>
+    <tr><td class="paramname">iv</td><td></td></tr>
+    <tr><td class="paramname">ciphertext_data</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="ab279653852653fea5e88121603698b5d" name="ab279653852653fea5e88121603698b5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab279653852653fea5e88121603698b5d">&#9670;&#160;</a></span>crypto_encrypt_aes_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int crypto_encrypt_aes_file </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>in_file_path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>out_file_path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH]&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>AES256 encrypt file in GCM mode. The initial vector iv is designated to zeros. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in_file_path</td><td></td></tr>
+    <tr><td class="paramname">out_file_path</td><td></td></tr>
+    <tr><td class="paramname">aes_key</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int 0 for success </dd></dl>
+
+</div>
+</div>
+<a id="a165c16ff654d7efcbd54b5b5be8de1d5" name="a165c16ff654d7efcbd54b5b5be8de1d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a165c16ff654d7efcbd54b5b5be8de1d5">&#9670;&#160;</a></span>crypto_encrypt_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int crypto_encrypt_file </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>in_file_path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>out_file_path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>password</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const size_t</td>          <td class="paramname"><span class="paramname"><em>password_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>AES256 encrypt file in GCM mode. The initial vector iv is designated to zeros. The password is an arbitrary vector with non-zero length. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in_file_path</td><td></td></tr>
+    <tr><td class="paramname">out_file_path</td><td></td></tr>
+    <tr><td class="paramname">password</td><td></td></tr>
+    <tr><td class="paramname">password_len</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int 0 for success </dd></dl>
+
+</div>
+</div>
 <a id="a79bd3406be3772ecc1eb6191e49faf65" name="a79bd3406be3772ecc1eb6191e49faf65"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a79bd3406be3772ecc1eb6191e49faf65">&#9670;&#160;</a></span>crypto_hash_by_e2ees_pack_id()</h2>
 
@@ -821,14 +1165,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_veri
 
 </div>
 </div>
-<a id="abcefe49359b60a5ac8ff77973306d56d" name="abcefe49359b60a5ac8ff77973306d56d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcefe49359b60a5ac8ff77973306d56d">&#9670;&#160;</a></span>crypto_hkdf_sha256()</h2>
+<a id="a8bde3ae9ff02290c77bec3fcba9f4b92" name="a8bde3ae9ff02290c77bec3fcba9f4b92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8bde3ae9ff02290c77bec3fcba9f4b92">&#9670;&#160;</a></span>crypto_hf_hkdf_sha256()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int crypto_hkdf_sha256 </td>
+          <td class="memname">int crypto_hf_hkdf_sha256 </td>
           <td>(</td>
           <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>input</em></span>, </td>
         </tr>
@@ -887,14 +1231,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_veri
 
 </div>
 </div>
-<a id="adef4a9c555eb2fff679128a08a43da7d" name="adef4a9c555eb2fff679128a08a43da7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adef4a9c555eb2fff679128a08a43da7d">&#9670;&#160;</a></span>crypto_hmac_sha256()</h2>
+<a id="a1eb3057155dda3bc6a6e2a454e69ab3c" name="a1eb3057155dda3bc6a6e2a454e69ab3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1eb3057155dda3bc6a6e2a454e69ab3c">&#9670;&#160;</a></span>crypto_hf_hmac_sha256()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int crypto_hmac_sha256 </td>
+          <td class="memname">int crypto_hf_hmac_sha256 </td>
           <td>(</td>
           <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
         </tr>
@@ -935,14 +1279,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_veri
 
 </div>
 </div>
-<a id="abc1ba4ed4300cb5b7dd5dd9bba2491c4" name="abc1ba4ed4300cb5b7dd5dd9bba2491c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc1ba4ed4300cb5b7dd5dd9bba2491c4">&#9670;&#160;</a></span>crypto_sha256()</h2>
+<a id="a59132bad95b25fc8afb403d6488f0dab" name="a59132bad95b25fc8afb403d6488f0dab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59132bad95b25fc8afb403d6488f0dab">&#9670;&#160;</a></span>crypto_hf_sha256()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int crypto_sha256 </td>
+          <td class="memname">int crypto_hf_sha256 </td>
           <td>(</td>
           <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span>, </td>
         </tr>
@@ -968,350 +1312,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>crypto_curve25519_veri
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="a272ff8f6ce4ccfeb3fe4b94858d16ac7" name="a272ff8f6ce4ccfeb3fe4b94858d16ac7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a272ff8f6ce4ccfeb3fe4b94858d16ac7">&#9670;&#160;</a></span>decrypt_aes_data()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t decrypt_aes_data </td>
-          <td>(</td>
-          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data_len</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t **</td>          <td class="paramname"><span class="paramname"><em>plaintext_data</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>AES256 decrypt data in GCM mode. The initial vector iv is designated to zeros. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ciphertext_data</td><td></td></tr>
-    <tr><td class="paramname">ciphertext_data_len</td><td></td></tr>
-    <tr><td class="paramname">aes_key</td><td></td></tr>
-    <tr><td class="paramname">plaintext_data</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>size_t plaintext data length </dd></dl>
-
-</div>
-</div>
-<a id="a831ecc64b494384eeef10f02f0c5432c" name="a831ecc64b494384eeef10f02f0c5432c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a831ecc64b494384eeef10f02f0c5432c">&#9670;&#160;</a></span>decrypt_aes_data_with_iv()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t decrypt_aes_data_with_iv </td>
-          <td>(</td>
-          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data_len</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>iv</em></span>[AES256_DATA_IV_LENGTH], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t **</td>          <td class="paramname"><span class="paramname"><em>plaintext_data</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>AES256 decrypt data in GCM mode. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ciphertext_data</td><td></td></tr>
-    <tr><td class="paramname">ciphertext_data_len</td><td></td></tr>
-    <tr><td class="paramname">aes_key</td><td></td></tr>
-    <tr><td class="paramname">iv</td><td></td></tr>
-    <tr><td class="paramname">plaintext_data</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
-
-</div>
-</div>
-<a id="afc58ceff0d85193ef70700f828959123" name="afc58ceff0d85193ef70700f828959123"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc58ceff0d85193ef70700f828959123">&#9670;&#160;</a></span>decrypt_aes_file()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int decrypt_aes_file </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>in_file_path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>out_file_path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH]&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>AES256 decrypt file in GCM mode. The initial vector iv is designated to zeros. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">in_file_path</td><td></td></tr>
-    <tr><td class="paramname">out_file_path</td><td></td></tr>
-    <tr><td class="paramname">aes_key</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>int 0 for success </dd></dl>
-
-</div>
-</div>
-<a id="ac7b60f90ce2bf7b0f3ac50a837ad043a" name="ac7b60f90ce2bf7b0f3ac50a837ad043a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac7b60f90ce2bf7b0f3ac50a837ad043a">&#9670;&#160;</a></span>decrypt_file()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int decrypt_file </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>in_file_path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>out_file_path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>password</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t</td>          <td class="paramname"><span class="paramname"><em>password_len</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>AES256 decrypt file in GCM mode. The initial vector iv is designated to zeros. The password is an arbitrary vector with non-zero length. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">in_file_path</td><td></td></tr>
-    <tr><td class="paramname">out_file_path</td><td></td></tr>
-    <tr><td class="paramname">password</td><td></td></tr>
-    <tr><td class="paramname">password_len</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>int 0 for success </dd></dl>
-
-</div>
-</div>
-<a id="a9239e4f32141c64f2ed409902253db2e" name="a9239e4f32141c64f2ed409902253db2e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9239e4f32141c64f2ed409902253db2e">&#9670;&#160;</a></span>encrypt_aes_data()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t encrypt_aes_data </td>
-          <td>(</td>
-          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>plaintext_data</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>plaintext_data_len</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t **</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>AES256 encrypt data in GCM mode. The initial vector iv is designated to zeros. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">plaintext_data</td><td></td></tr>
-    <tr><td class="paramname">plaintext_data_len</td><td></td></tr>
-    <tr><td class="paramname">aes_key</td><td></td></tr>
-    <tr><td class="paramname">ciphertext_data</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>size_t ciphertext data length </dd></dl>
-
-</div>
-</div>
-<a id="afc26d7ca538bd3f7fec38b2c1959beb0" name="afc26d7ca538bd3f7fec38b2c1959beb0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc26d7ca538bd3f7fec38b2c1959beb0">&#9670;&#160;</a></span>encrypt_aes_data_with_iv()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t encrypt_aes_data_with_iv </td>
-          <td>(</td>
-          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>plaintext_data</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>plaintext_data_len</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>iv</em></span>[AES256_DATA_IV_LENGTH], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t **</td>          <td class="paramname"><span class="paramname"><em>ciphertext_data</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>AES256 encrypt data in GCM mode. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">plaintext_data</td><td></td></tr>
-    <tr><td class="paramname">plaintext_data_len</td><td></td></tr>
-    <tr><td class="paramname">aes_key</td><td></td></tr>
-    <tr><td class="paramname">iv</td><td></td></tr>
-    <tr><td class="paramname">ciphertext_data</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
-
-</div>
-</div>
-<a id="aa06fbcdf5dc0b8f1c2bb4ad5eb70a6b9" name="aa06fbcdf5dc0b8f1c2bb4ad5eb70a6b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa06fbcdf5dc0b8f1c2bb4ad5eb70a6b9">&#9670;&#160;</a></span>encrypt_aes_file()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int encrypt_aes_file </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>in_file_path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>out_file_path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>aes_key</em></span>[AES256_KEY_LENGTH]&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>AES256 encrypt file in GCM mode. The initial vector iv is designated to zeros. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">in_file_path</td><td></td></tr>
-    <tr><td class="paramname">out_file_path</td><td></td></tr>
-    <tr><td class="paramname">aes_key</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>int 0 for success </dd></dl>
-
-</div>
-</div>
-<a id="a450cb7660c7518fa1387b4e73696b464" name="a450cb7660c7518fa1387b4e73696b464"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a450cb7660c7518fa1387b4e73696b464">&#9670;&#160;</a></span>encrypt_file()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int encrypt_file </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>in_file_path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>out_file_path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>password</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t</td>          <td class="paramname"><span class="paramname"><em>password_len</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>AES256 encrypt file in GCM mode. The initial vector iv is designated to zeros. The password is an arbitrary vector with non-zero length. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">in_file_path</td><td></td></tr>
-    <tr><td class="paramname">out_file_path</td><td></td></tr>
-    <tr><td class="paramname">password</td><td></td></tr>
-    <tr><td class="paramname">password_len</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>int 0 for success </dd></dl>
 
 </div>
 </div>

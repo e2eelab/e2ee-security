@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -129,9 +129,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a129a04ed272f21e7cfa91d3769eeabf6" id="r_a129a04ed272f21e7cfa91d3769eeabf6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a129a04ed272f21e7cfa91d3769eeabf6">load_auth</a> )(E2ees__E2eeAddress *user_address, char **auth)</td></tr>
 <tr class="memdesc:a129a04ed272f21e7cfa91d3769eeabf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">load auth from the account given by the user address  <br /></td></tr>
 <tr class="separator:a129a04ed272f21e7cfa91d3769eeabf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3377d516fe86d53f2f16fc48efed55d6" id="r_a3377d516fe86d53f2f16fc48efed55d6"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3377d516fe86d53f2f16fc48efed55d6">load_inbound_session</a> )(char *session_id, E2ees__E2eeAddress *our_address, E2ees__Session **inbound_session)</td></tr>
-<tr class="memdesc:a3377d516fe86d53f2f16fc48efed55d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">find inbound session  <br /></td></tr>
-<tr class="separator:a3377d516fe86d53f2f16fc48efed55d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc70e3e3477bb313769e58a784b55d18" id="r_afc70e3e3477bb313769e58a784b55d18"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc70e3e3477bb313769e58a784b55d18">load_session</a> )(char *session_id, E2ees__E2eeAddress *our_address, E2ees__Session **inbound_session)</td></tr>
+<tr class="memdesc:afc70e3e3477bb313769e58a784b55d18"><td class="mdescLeft">&#160;</td><td class="mdescRight">find inbound session  <br /></td></tr>
+<tr class="separator:afc70e3e3477bb313769e58a784b55d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99795726002a1917610af63531c62b36" id="r_a99795726002a1917610af63531c62b36"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99795726002a1917610af63531c62b36">load_outbound_session</a> )(E2ees__E2eeAddress *our_address, E2ees__E2eeAddress *their_address, E2ees__Session **outbound_session)</td></tr>
 <tr class="memdesc:a99795726002a1917610af63531c62b36"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the lastest outbound session  <br /></td></tr>
 <tr class="separator:a99795726002a1917610af63531c62b36"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -380,30 +380,6 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a3377d516fe86d53f2f16fc48efed55d6" name="a3377d516fe86d53f2f16fc48efed55d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3377d516fe86d53f2f16fc48efed55d6">&#9670;&#160;</a></span>load_inbound_session</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* e2ees_db_handler_t::load_inbound_session) (char *session_id, E2ees__E2eeAddress *our_address, E2ees__Session **inbound_session)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>find inbound session </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">session_id</td><td></td></tr>
-    <tr><td class="paramname">our_address</td><td></td></tr>
-    <tr><td class="paramname">inbound_session</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a99795726002a1917610af63531c62b36" name="a99795726002a1917610af63531c62b36"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a99795726002a1917610af63531c62b36">&#9670;&#160;</a></span>load_outbound_session</h2>
 
@@ -505,6 +481,30 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>number of loaded request_data list </dd></dl>
+
+</div>
+</div>
+<a id="afc70e3e3477bb313769e58a784b55d18" name="afc70e3e3477bb313769e58a784b55d18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc70e3e3477bb313769e58a784b55d18">&#9670;&#160;</a></span>load_session</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void(* e2ees_db_handler_t::load_session) (char *session_id, E2ees__E2eeAddress *our_address, E2ees__Session **inbound_session)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>find inbound session </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">session_id</td><td></td></tr>
+    <tr><td class="paramname">our_address</td><td></td></tr>
+    <tr><td class="paramname">inbound_session</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

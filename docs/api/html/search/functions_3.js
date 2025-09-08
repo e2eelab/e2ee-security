@@ -14,9 +14,6 @@ var searchData=
   ['e2ees_5fnotify_5foutbound_5fsession_5fready_11',['e2ees_notify_outbound_session_ready',['../e2ees_8h.html#ab9f1c2e947303eaeaa39f9c99eccace3',1,'e2ees.h']]],
   ['e2ees_5fnotify_5fuser_5fregistered_12',['e2ees_notify_user_registered',['../e2ees_8h.html#a1e6d50f9cd4fe8271a3a36403787b69f',1,'e2ees.h']]],
   ['e2ees_5fpack_5fid_5fto_5fraw_13',['e2ees_pack_id_to_raw',['../e2ees_8h.html#a582ff99ead0f4a8801806c1390395f33',1,'e2ees.h']]],
-  ['encrypt_5faes_5fdata_14',['encrypt_aes_data',['../crypto_8h.html#a9239e4f32141c64f2ed409902253db2e',1,'crypto.h']]],
-  ['encrypt_5faes_5fdata_5fwith_5fiv_15',['encrypt_aes_data_with_iv',['../crypto_8h.html#afc26d7ca538bd3f7fec38b2c1959beb0',1,'crypto.h']]],
-  ['encrypt_5faes_5ffile_16',['encrypt_aes_file',['../crypto_8h.html#aa06fbcdf5dc0b8f1c2bb4ad5eb70a6b9',1,'crypto.h']]],
-  ['encrypt_5ffile_17',['encrypt_file',['../crypto_8h.html#a450cb7660c7518fa1387b4e73696b464',1,'crypto.h']]],
-  ['encrypt_5fratchet_18',['encrypt_ratchet',['../ratchet_8h.html#a1734ea0d35087b89e5e417f525a6dfb4',1,'ratchet.h']]]
+  ['e2ees_5frandombytes_14',['e2ees_randombytes',['../e2ees_8h.html#a0db5d4d5c62157aee96a9e3f542f9c04',1,'e2ees.h']]],
+  ['encrypt_5fratchet_15',['encrypt_ratchet',['../ratchet_8h.html#a1734ea0d35087b89e5e417f525a6dfb4',1,'ratchet.h']]]
 ];

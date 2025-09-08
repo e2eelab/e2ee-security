@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -106,9 +106,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a86fe9790a809a7a685c53a8bc0c31a57" id="r_a86fe9790a809a7a685c53a8bc0c31a57"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86fe9790a809a7a685c53a8bc0c31a57">invite_internal</a> (E2ees__InviteResponse **response_out, E2ees__Session *outbound_session)</td></tr>
 <tr class="memdesc:a86fe9790a809a7a685c53a8bc0c31a57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send invite request to server.  <br /></td></tr>
 <tr class="separator:a86fe9790a809a7a685c53a8bc0c31a57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a79fb36b35ba3b60a2d78751fd125fc" id="r_a2a79fb36b35ba3b60a2d78751fd125fc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a79fb36b35ba3b60a2d78751fd125fc">accept_internal</a> (E2ees__AcceptResponse **response_out, uint32_t e2ees_pack_id, E2ees__E2eeAddress *from, E2ees__E2eeAddress *to, ProtobufCBinaryData *ciphertext_1, ProtobufCBinaryData *our_ratchet_key)</td></tr>
-<tr class="memdesc:a2a79fb36b35ba3b60a2d78751fd125fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send accept request to server.  <br /></td></tr>
-<tr class="separator:a2a79fb36b35ba3b60a2d78751fd125fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad557cdabcf945b82a6ccbf55e90ead2f" id="r_ad557cdabcf945b82a6ccbf55e90ead2f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad557cdabcf945b82a6ccbf55e90ead2f">accept_internal</a> (E2ees__AcceptResponse **response_out, uint32_t e2ees_pack_id, E2ees__E2eeAddress *from, E2ees__E2eeAddress *to, char *session_id, ProtobufCBinaryData *ciphertext_1, ProtobufCBinaryData *our_ratchet_key)</td></tr>
+<tr class="memdesc:ad557cdabcf945b82a6ccbf55e90ead2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send accept request to server.  <br /></td></tr>
+<tr class="separator:ad557cdabcf945b82a6ccbf55e90ead2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade9955d1e5c3dbb4a55ef45d67935b5c" id="r_ade9955d1e5c3dbb4a55ef45d67935b5c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade9955d1e5c3dbb4a55ef45d67935b5c">publish_spk_internal</a> (E2ees__PublishSpkResponse **response_out, E2ees__Account *account)</td></tr>
 <tr class="memdesc:ade9955d1e5c3dbb4a55ef45d67935b5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send publish_spk request to server.  <br /></td></tr>
 <tr class="separator:ade9955d1e5c3dbb4a55ef45d67935b5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,8 +138,8 @@ Functions</h2></td></tr>
 <p>E2EE Security is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
 <p>You should have received a copy of the GNU General Public License along with E2EE Security. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a2a79fb36b35ba3b60a2d78751fd125fc" name="a2a79fb36b35ba3b60a2d78751fd125fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a79fb36b35ba3b60a2d78751fd125fc">&#9670;&#160;</a></span>accept_internal()</h2>
+<a id="ad557cdabcf945b82a6ccbf55e90ead2f" name="ad557cdabcf945b82a6ccbf55e90ead2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad557cdabcf945b82a6ccbf55e90ead2f">&#9670;&#160;</a></span>accept_internal()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,6 +167,11 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>session_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">ProtobufCBinaryData *</td>          <td class="paramname"><span class="paramname"><em>ciphertext_1</em></span>, </td>
         </tr>
         <tr>
@@ -184,6 +189,7 @@ Functions</h2></td></tr>
     <tr><td class="paramname">e2ees_pack_id</td><td></td></tr>
     <tr><td class="paramname">from</td><td></td></tr>
     <tr><td class="paramname">to</td><td></td></tr>
+    <tr><td class="paramname">session_id</td><td></td></tr>
     <tr><td class="paramname">ciphertext_1</td><td></td></tr>
     <tr><td class="paramname">our_ratchet_key</td><td></td></tr>
   </table>

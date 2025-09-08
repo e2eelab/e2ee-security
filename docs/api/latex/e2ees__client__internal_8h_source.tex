@@ -30,62 +30,63 @@
 \DoxyCodeLine{00064\ \ \ \ \ E2ees\_\_Session\ *outbound\_session}
 \DoxyCodeLine{00065\ );}
 \DoxyCodeLine{00066\ }
-\DoxyCodeLine{00077\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{e2ees__client__internal_8h_a2a79fb36b35ba3b60a2d78751fd125fc}{accept\_internal}}(}
-\DoxyCodeLine{00078\ \ \ \ \ E2ees\_\_AcceptResponse\ **response\_out,}
-\DoxyCodeLine{00079\ \ \ \ \ uint32\_t\ e2ees\_pack\_id,}
-\DoxyCodeLine{00080\ \ \ \ \ E2ees\_\_E2eeAddress\ *from,}
-\DoxyCodeLine{00081\ \ \ \ \ E2ees\_\_E2eeAddress\ *to,}
-\DoxyCodeLine{00082\ \ \ \ \ ProtobufCBinaryData\ *ciphertext\_1,}
-\DoxyCodeLine{00083\ \ \ \ \ ProtobufCBinaryData\ *our\_ratchet\_key}
-\DoxyCodeLine{00084\ );}
-\DoxyCodeLine{00085\ }
-\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{e2ees__client__internal_8h_ade9955d1e5c3dbb4a55ef45d67935b5c}{publish\_spk\_internal}}(}
-\DoxyCodeLine{00093\ \ \ \ \ E2ees\_\_PublishSpkResponse\ **response\_out,}
-\DoxyCodeLine{00094\ \ \ \ \ E2ees\_\_Account\ *account}
-\DoxyCodeLine{00095\ );}
-\DoxyCodeLine{00096\ }
-\DoxyCodeLine{00104\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{e2ees__client__internal_8h_a78efec3d5ea5974ec3a4888bf1c431a6}{supply\_opks\_internal}}(}
-\DoxyCodeLine{00105\ \ \ \ \ E2ees\_\_SupplyOpksResponse\ **response\_out,}
-\DoxyCodeLine{00106\ \ \ \ \ E2ees\_\_Account\ *account,}
-\DoxyCodeLine{00107\ \ \ \ \ uint32\_t\ opks\_num}
-\DoxyCodeLine{00108\ );}
-\DoxyCodeLine{00109\ }
-\DoxyCodeLine{00118\ E2ees\_\_SendOne2oneMsgResponse\ *\mbox{\hyperlink{e2ees__client__internal_8h_ad66792b25ba7529ae907a7637534c7b1}{send\_one2one\_msg\_internal}}(}
-\DoxyCodeLine{00119\ \ \ \ \ E2ees\_\_Session\ *outbound\_session,}
-\DoxyCodeLine{00120\ \ \ \ \ uint32\_t\ notif\_level,}
-\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *plaintext\_data,\ \textcolor{keywordtype}{size\_t}\ plaintext\_data\_len}
-\DoxyCodeLine{00122\ );}
-\DoxyCodeLine{00123\ }
-\DoxyCodeLine{00132\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{e2ees__client__internal_8h_a1acdab48acaf3233f5978ff9938f9dba}{add\_group\_member\_device\_internal}}(}
-\DoxyCodeLine{00133\ \ \ \ \ E2ees\_\_AddGroupMemberDeviceResponse\ **response\_out,}
-\DoxyCodeLine{00134\ \ \ \ \ E2ees\_\_E2eeAddress\ *sender\_address,}
-\DoxyCodeLine{00135\ \ \ \ \ E2ees\_\_E2eeAddress\ *group\_address,}
-\DoxyCodeLine{00136\ \ \ \ \ E2ees\_\_E2eeAddress\ *new\_device\_address}
-\DoxyCodeLine{00137\ );}
-\DoxyCodeLine{00138\ }
-\DoxyCodeLine{00147\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{e2ees__client__internal_8h_ac636096712e843ef7bb2c4d260991161}{store\_pending\_common\_plaintext\_data\_internal}}(}
-\DoxyCodeLine{00148\ \ \ \ \ E2ees\_\_E2eeAddress\ *from,}
-\DoxyCodeLine{00149\ \ \ \ \ E2ees\_\_E2eeAddress\ *to,}
-\DoxyCodeLine{00150\ \ \ \ \ uint8\_t\ *common\_plaintext\_data,}
-\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ common\_plaintext\_data\_len,}
-\DoxyCodeLine{00152\ \ \ \ \ E2ees\_\_NotifLevel\ notif\_level}
-\DoxyCodeLine{00153\ );}
-\DoxyCodeLine{00154\ }
-\DoxyCodeLine{00164\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{e2ees__client__internal_8h_a4cf58de4adc93ee4991b48880e405a08}{store\_pending\_request\_internal}}(}
-\DoxyCodeLine{00165\ \ \ \ \ E2ees\_\_E2eeAddress\ *user\_address,}
-\DoxyCodeLine{00166\ \ \ \ \ E2ees\_\_PendingRequestType\ type,}
-\DoxyCodeLine{00167\ \ \ \ \ uint8\_t\ *request\_data,}
-\DoxyCodeLine{00168\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ request\_data\_len,}
-\DoxyCodeLine{00169\ \ \ \ \ ProtobufCBinaryData\ *request\_arg\_list,}
-\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ request\_arg\_list\_len}
-\DoxyCodeLine{00171\ );}
-\DoxyCodeLine{00172\ }
-\DoxyCodeLine{00177\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{e2ees__client__internal_8h_a3b72bf6e21c14d07255ec6fe6e052f9b}{resume\_connection\_internal}}(E2ees\_\_Account\ *account);}
-\DoxyCodeLine{00178\ }
-\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
-\DoxyCodeLine{00180\ \}}
-\DoxyCodeLine{00181\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00182\ }
-\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ E2EES\_CLIENT\_INTERNAL\_H\_}}
+\DoxyCodeLine{00078\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{e2ees__client__internal_8h_ad557cdabcf945b82a6ccbf55e90ead2f}{accept\_internal}}(}
+\DoxyCodeLine{00079\ \ \ \ \ E2ees\_\_AcceptResponse\ **response\_out,}
+\DoxyCodeLine{00080\ \ \ \ \ uint32\_t\ e2ees\_pack\_id,}
+\DoxyCodeLine{00081\ \ \ \ \ E2ees\_\_E2eeAddress\ *from,}
+\DoxyCodeLine{00082\ \ \ \ \ E2ees\_\_E2eeAddress\ *to,}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{char}\ *session\_id,}
+\DoxyCodeLine{00084\ \ \ \ \ ProtobufCBinaryData\ *ciphertext\_1,}
+\DoxyCodeLine{00085\ \ \ \ \ ProtobufCBinaryData\ *our\_ratchet\_key}
+\DoxyCodeLine{00086\ );}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{e2ees__client__internal_8h_ade9955d1e5c3dbb4a55ef45d67935b5c}{publish\_spk\_internal}}(}
+\DoxyCodeLine{00095\ \ \ \ \ E2ees\_\_PublishSpkResponse\ **response\_out,}
+\DoxyCodeLine{00096\ \ \ \ \ E2ees\_\_Account\ *account}
+\DoxyCodeLine{00097\ );}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{e2ees__client__internal_8h_a78efec3d5ea5974ec3a4888bf1c431a6}{supply\_opks\_internal}}(}
+\DoxyCodeLine{00107\ \ \ \ \ E2ees\_\_SupplyOpksResponse\ **response\_out,}
+\DoxyCodeLine{00108\ \ \ \ \ E2ees\_\_Account\ *account,}
+\DoxyCodeLine{00109\ \ \ \ \ uint32\_t\ opks\_num}
+\DoxyCodeLine{00110\ );}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00120\ E2ees\_\_SendOne2oneMsgResponse\ *\mbox{\hyperlink{e2ees__client__internal_8h_ad66792b25ba7529ae907a7637534c7b1}{send\_one2one\_msg\_internal}}(}
+\DoxyCodeLine{00121\ \ \ \ \ E2ees\_\_Session\ *outbound\_session,}
+\DoxyCodeLine{00122\ \ \ \ \ uint32\_t\ notif\_level,}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *plaintext\_data,\ \textcolor{keywordtype}{size\_t}\ plaintext\_data\_len}
+\DoxyCodeLine{00124\ );}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{e2ees__client__internal_8h_a1acdab48acaf3233f5978ff9938f9dba}{add\_group\_member\_device\_internal}}(}
+\DoxyCodeLine{00135\ \ \ \ \ E2ees\_\_AddGroupMemberDeviceResponse\ **response\_out,}
+\DoxyCodeLine{00136\ \ \ \ \ E2ees\_\_E2eeAddress\ *sender\_address,}
+\DoxyCodeLine{00137\ \ \ \ \ E2ees\_\_E2eeAddress\ *group\_address,}
+\DoxyCodeLine{00138\ \ \ \ \ E2ees\_\_E2eeAddress\ *new\_device\_address}
+\DoxyCodeLine{00139\ );}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{e2ees__client__internal_8h_ac636096712e843ef7bb2c4d260991161}{store\_pending\_common\_plaintext\_data\_internal}}(}
+\DoxyCodeLine{00150\ \ \ \ \ E2ees\_\_E2eeAddress\ *from,}
+\DoxyCodeLine{00151\ \ \ \ \ E2ees\_\_E2eeAddress\ *to,}
+\DoxyCodeLine{00152\ \ \ \ \ uint8\_t\ *common\_plaintext\_data,}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ common\_plaintext\_data\_len,}
+\DoxyCodeLine{00154\ \ \ \ \ E2ees\_\_NotifLevel\ notif\_level}
+\DoxyCodeLine{00155\ );}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00166\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{e2ees__client__internal_8h_a4cf58de4adc93ee4991b48880e405a08}{store\_pending\_request\_internal}}(}
+\DoxyCodeLine{00167\ \ \ \ \ E2ees\_\_E2eeAddress\ *user\_address,}
+\DoxyCodeLine{00168\ \ \ \ \ E2ees\_\_PendingRequestType\ type,}
+\DoxyCodeLine{00169\ \ \ \ \ uint8\_t\ *request\_data,}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ request\_data\_len,}
+\DoxyCodeLine{00171\ \ \ \ \ ProtobufCBinaryData\ *request\_arg\_list,}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ request\_arg\_list\_len}
+\DoxyCodeLine{00173\ );}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00179\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{e2ees__client__internal_8h_a3b72bf6e21c14d07255ec6fe6e052f9b}{resume\_connection\_internal}}(E2ees\_\_Account\ *account);}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00182\ \}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ E2EES\_CLIENT\_INTERNAL\_H\_}}
 
 \end{DoxyCode}

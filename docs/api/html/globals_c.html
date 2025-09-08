@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -121,7 +121,7 @@ $(function(){ initResizable(false); });
 <li>consume_send_group_msg_response()&#160;:&#160;<a class="el" href="group__session__manager_8h.html#a02e42059ac52ddbad69468a29a1e3889">group_session_manager.h</a></li>
 <li>consume_send_one2one_msg_response()&#160;:&#160;<a class="el" href="session__manager_8h.html#a461c50d0ae08793fd773a895be217227">session_manager.h</a></li>
 <li>consume_supply_opks_msg()&#160;:&#160;<a class="el" href="account__manager_8h.html#aee6d38f1417029686db5725f526e2d1d">account_manager.h</a></li>
-<li>consume_supply_opks_response()&#160;:&#160;<a class="el" href="account__manager_8h.html#a512e1107d35ed9da79bece0126c5e601">account_manager.h</a></li>
+<li>consume_supply_opks_response()&#160;:&#160;<a class="el" href="account__manager_8h.html#a05c5cc35235af3874a3744dd415958e7">account_manager.h</a></li>
 <li>copy_account_from_account()&#160;:&#160;<a class="el" href="mem__util_8h.html#ab76b8ca376dc2f0699502219873f6bc1">mem_util.h</a></li>
 <li>copy_add_group_member_device_msg()&#160;:&#160;<a class="el" href="mem__util_8h.html#abd1ab95bc9a1a886fb19b61616105ea0">mem_util.h</a></li>
 <li>copy_add_group_members_msg()&#160;:&#160;<a class="el" href="mem__util_8h.html#a546fd7b945514ef3c36da79567e4bb63">mem_util.h</a></li>
@@ -158,21 +158,33 @@ $(function(){ initResizable(false); });
 <li>create_account()&#160;:&#160;<a class="el" href="account_8h.html#af9a31a508531bb1a2398c3c47c7899f1">account.h</a></li>
 <li>create_group()&#160;:&#160;<a class="el" href="e2ees__client_8h.html#a1b4fa82bbf3dc84129fadc02029c5b08">e2ees_client.h</a></li>
 <li>create_group_message_key()&#160;:&#160;<a class="el" href="group__session_8h.html#af7d9c8115657c99a78962c9a4b3eafdc">group_session.h</a></li>
+<li>crypto_aes256_gcm_ciphertext_data_len()&#160;:&#160;<a class="el" href="crypto_8h.html#a880d1365f5d7ecd30815b46d0ef99496">crypto.h</a></li>
+<li>crypto_aes256_gcm_plaintext_data_len()&#160;:&#160;<a class="el" href="crypto_8h.html#a3106644f3a5c299fa6993787ef520446">crypto.h</a></li>
 <li>crypto_aes_decrypt_gcm()&#160;:&#160;<a class="el" href="crypto_8h.html#a0abf54c9a3f3c89e4552ea50b87afde3">crypto.h</a></li>
 <li>crypto_aes_encrypt_gcm()&#160;:&#160;<a class="el" href="crypto_8h.html#a1ecbc7f2cf34bcec4b5d3853bd504bad">crypto.h</a></li>
 <li>crypto_base64_decode()&#160;:&#160;<a class="el" href="crypto_8h.html#a4f5e0daca1f3aca72b3e6e0c35a18de6">crypto.h</a></li>
 <li>crypto_base64_encode()&#160;:&#160;<a class="el" href="crypto_8h.html#a5fbde9fbb7fd0c6ffc949e1384b84906">crypto.h</a></li>
+<li>crypto_decrypt_aes_data()&#160;:&#160;<a class="el" href="crypto_8h.html#a3eb9d04b46d1c543ef5021a8912fd6ea">crypto.h</a></li>
+<li>crypto_decrypt_aes_data_with_iv()&#160;:&#160;<a class="el" href="crypto_8h.html#ace37cd4490e68d9fc8496acdd6ce8419">crypto.h</a></li>
+<li>crypto_decrypt_aes_file()&#160;:&#160;<a class="el" href="crypto_8h.html#a96c26c75ff912d1b181d0412fa20b970">crypto.h</a></li>
+<li>crypto_decrypt_file()&#160;:&#160;<a class="el" href="crypto_8h.html#a517b6623c3623d50214a7e584922eef1">crypto.h</a></li>
 <li>crypto_ds_key_gen_by_e2ees_pack_id()&#160;:&#160;<a class="el" href="crypto_8h.html#a8345083dac081465341bff062a51aa9c">crypto.h</a></li>
 <li>crypto_ds_param_t&#160;:&#160;<a class="el" href="cipher_8h.html#a3a5946bb59ef37e260551ccd156dda5e">cipher.h</a></li>
 <li>crypto_ds_sign_by_e2ees_pack_id()&#160;:&#160;<a class="el" href="crypto_8h.html#a07c3e7cb3179f803c2f5447353fb09aa">crypto.h</a></li>
 <li>crypto_ds_verify_by_e2ees_pack_id()&#160;:&#160;<a class="el" href="crypto_8h.html#a7c2d6f9fac817fe5f7451cf5dd84dea7">crypto.h</a></li>
+<li>crypto_encrypt_aes_data()&#160;:&#160;<a class="el" href="crypto_8h.html#a8129e896fd125bf223d5d60e00e4dd93">crypto.h</a></li>
+<li>crypto_encrypt_aes_data_with_iv()&#160;:&#160;<a class="el" href="crypto_8h.html#a62652f6a164799f54bee65e35e3cd91f">crypto.h</a></li>
+<li>crypto_encrypt_aes_file()&#160;:&#160;<a class="el" href="crypto_8h.html#ab279653852653fea5e88121603698b5d">crypto.h</a></li>
+<li>crypto_encrypt_file()&#160;:&#160;<a class="el" href="crypto_8h.html#a165c16ff654d7efcbd54b5b5be8de1d5">crypto.h</a></li>
 <li>crypto_hash_by_e2ees_pack_id()&#160;:&#160;<a class="el" href="crypto_8h.html#a79bd3406be3772ecc1eb6191e49faf65">crypto.h</a></li>
+<li>crypto_hf_hkdf_sha256()&#160;:&#160;<a class="el" href="crypto_8h.html#a8bde3ae9ff02290c77bec3fcba9f4b92">crypto.h</a></li>
+<li>crypto_hf_hmac_sha256()&#160;:&#160;<a class="el" href="crypto_8h.html#a1eb3057155dda3bc6a6e2a454e69ab3c">crypto.h</a></li>
 <li>crypto_hf_param_t&#160;:&#160;<a class="el" href="cipher_8h.html#a1d059ddbbd7878dbf7dd749a9321444c">cipher.h</a></li>
-<li>crypto_hkdf_sha256()&#160;:&#160;<a class="el" href="crypto_8h.html#abcefe49359b60a5ac8ff77973306d56d">crypto.h</a></li>
-<li>crypto_hmac_sha256()&#160;:&#160;<a class="el" href="crypto_8h.html#adef4a9c555eb2fff679128a08a43da7d">crypto.h</a></li>
+<li>crypto_hf_sha256()&#160;:&#160;<a class="el" href="crypto_8h.html#a59132bad95b25fc8afb403d6488f0dab">crypto.h</a></li>
 <li>crypto_kem_param_t&#160;:&#160;<a class="el" href="cipher_8h.html#ae20eb84b8db760dff90fb80506043872">cipher.h</a></li>
+<li>crypto_se_decrypt_aes256_gcm()&#160;:&#160;<a class="el" href="cipher__se_8h.html#a31e99386cc5d6a082c75697d7bc75181">cipher_se.h</a></li>
+<li>crypto_se_encrypt_aes256_gcm()&#160;:&#160;<a class="el" href="cipher__se_8h.html#a0d6c1b1972af239b56603c833605a0f7">cipher_se.h</a></li>
 <li>crypto_se_param_t&#160;:&#160;<a class="el" href="cipher_8h.html#a72627fa90ca017b9a58e32122e1492ef">cipher.h</a></li>
-<li>crypto_sha256()&#160;:&#160;<a class="el" href="crypto_8h.html#abc1ba4ed4300cb5b7dd5dd9bba2491c4">crypto.h</a></li>
 <li>CURVE25519_KEY_LENGTH&#160;:&#160;<a class="el" href="cipher__ecc_8h.html#af267d8aed138e3cdf5cc4b635ab6fd12">cipher_ecc.h</a>, <a class="el" href="crypto_8h.html#af267d8aed138e3cdf5cc4b635ab6fd12">crypto.h</a></li>
 <li>CURVE25519_RANDOM_LENGTH&#160;:&#160;<a class="el" href="cipher__ecc_8h.html#a8a2b042788dd7df27281676080f9d6cc">cipher_ecc.h</a>, <a class="el" href="crypto_8h.html#a8a2b042788dd7df27281676080f9d6cc">crypto.h</a></li>
 <li>CURVE_SIGNATURE_LENGTH&#160;:&#160;<a class="el" href="cipher__ecc_8h.html#a5a2bb125ad5cf2351de9cb070d78bcc6">cipher_ecc.h</a>, <a class="el" href="crypto_8h.html#a5a2bb125ad5cf2351de9cb070d78bcc6">crypto.h</a></li>

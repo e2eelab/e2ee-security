@@ -25,7 +25,7 @@ int \mbox{\hyperlink{session__manager_8h_a9814eb6c730eca7bb558d4617437b5d9}{cons
 \begin{DoxyCompactList}\small\item\em Process an incoming Invite\+Response message. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{session__manager_8h_a5364b74e5b5d05aa05822a0abfea8c89}{consume\+\_\+invite\+\_\+msg}} (E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}receiver\+\_\+address, E2ees\+\_\+\+\_\+\+Invite\+Msg \texorpdfstring{$\ast$}{*}invite\+\_\+msg)
 \begin{DoxyCompactList}\small\item\em Process an incoming E2ees\+\_\+\+\_\+\+Invite\+Msg message. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{session__manager_8h_a74a7d473e01a8a5ac10ff90b23f37b30}{produce\+\_\+accept\+\_\+request}} (E2ees\+\_\+\+\_\+\+Accept\+Request \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}request\+\_\+out, uint32\+\_\+t e2ees\+\_\+pack\+\_\+id, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}from, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}to, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}ciphertext\+\_\+1, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}our\+\_\+ratchet\+\_\+key)
+int \mbox{\hyperlink{session__manager_8h_a49808e3362e3835c398f82e806bc6dac}{produce\+\_\+accept\+\_\+request}} (E2ees\+\_\+\+\_\+\+Accept\+Request \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}request\+\_\+out, uint32\+\_\+t e2ees\+\_\+pack\+\_\+id, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}from, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}to, char \texorpdfstring{$\ast$}{*}session\+\_\+id, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}ciphertext\+\_\+1, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}our\+\_\+ratchet\+\_\+key)
 \begin{DoxyCompactList}\small\item\em Create a E2ees\+\_\+\+\_\+\+Accept\+Request message to be sent to server. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{session__manager_8h_a0748577e14fbde7d89aa3facf6b792ba}{consume\+\_\+accept\+\_\+response}} (E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}user\+\_\+address, E2ees\+\_\+\+\_\+\+Accept\+Response \texorpdfstring{$\ast$}{*}response)
 \begin{DoxyCompactList}\small\item\em Process an incoming Accept\+Response message. \end{DoxyCompactList}\item 
@@ -249,11 +249,11 @@ true
 
 false 
 \end{DoxyReturn}
-\Hypertarget{session__manager_8h_a74a7d473e01a8a5ac10ff90b23f37b30}\index{session\_manager.h@{session\_manager.h}!produce\_accept\_request@{produce\_accept\_request}}
+\Hypertarget{session__manager_8h_a49808e3362e3835c398f82e806bc6dac}\index{session\_manager.h@{session\_manager.h}!produce\_accept\_request@{produce\_accept\_request}}
 \index{produce\_accept\_request@{produce\_accept\_request}!session\_manager.h@{session\_manager.h}}
 \doxysubsubsection{\texorpdfstring{produce\_accept\_request()}{produce\_accept\_request()}}
-{\footnotesize\ttfamily \label{session__manager_8h_a74a7d473e01a8a5ac10ff90b23f37b30} 
-int produce\+\_\+accept\+\_\+request (\begin{DoxyParamCaption}\item[{E2ees\+\_\+\+\_\+\+Accept\+Request \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{request\+\_\+out}{, }\item[{uint32\+\_\+t}]{e2ees\+\_\+pack\+\_\+id}{, }\item[{E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}}]{from}{, }\item[{E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}}]{to}{, }\item[{Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+1}{, }\item[{Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{our\+\_\+ratchet\+\_\+key}{}\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{session__manager_8h_a49808e3362e3835c398f82e806bc6dac} 
+int produce\+\_\+accept\+\_\+request (\begin{DoxyParamCaption}\item[{E2ees\+\_\+\+\_\+\+Accept\+Request \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{request\+\_\+out}{, }\item[{uint32\+\_\+t}]{e2ees\+\_\+pack\+\_\+id}{, }\item[{E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}}]{from}{, }\item[{E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}}]{to}{, }\item[{char \texorpdfstring{$\ast$}{*}}]{session\+\_\+id}{, }\item[{Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+1}{, }\item[{Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{our\+\_\+ratchet\+\_\+key}{}\end{DoxyParamCaption})}
 
 
 
@@ -269,7 +269,11 @@ Create a E2ees\+\_\+\+\_\+\+Accept\+Request message to be sent to server.
 \hline
 {\em to} & \\
 \hline
+{\em session\+\_\+id} & \\
+\hline
 {\em ciphertext\+\_\+1} & \\
+\hline
+{\em our\+\_\+ratchet\+\_\+key} & \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}

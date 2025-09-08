@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -266,9 +266,13 @@ ProtobufCBinaryData *&#160;</td><td class="memItemRight" valign="bottom"><b>get_
 <tr class="memitem:ad7095642feac3fab03741092bd0b9d57" id="r_ad7095642feac3fab03741092bd0b9d57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7095642feac3fab03741092bd0b9d57">free_invite_response_list</a> (E2ees__InviteResponse ***dest, size_t invite_response_num)</td></tr>
 <tr class="memdesc:ad7095642feac3fab03741092bd0b9d57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release memory of E2ees__InviteResponse array.  <br /></td></tr>
 <tr class="separator:ad7095642feac3fab03741092bd0b9d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c10eac67e024133537afb794d5af7e6" id="r_a0c10eac67e024133537afb794d5af7e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c10eac67e024133537afb794d5af7e6">free_group_members</a> (E2ees__GroupMember ***dest, size_t group_members_num)</td></tr>
-<tr class="memdesc:a0c10eac67e024133537afb794d5af7e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release memory of E2ees__GroupMember array.  <br /></td></tr>
-<tr class="separator:a0c10eac67e024133537afb794d5af7e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfb787886911e3b42a8d4f34c103284b" id="r_acfb787886911e3b42a8d4f34c103284b"><td class="memItemLeft" align="right" valign="top"><a id="acfb787886911e3b42a8d4f34c103284b" name="acfb787886911e3b42a8d4f34c103284b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>free_one_time_pre_key_list</b> (E2ees__OneTimePreKey ***dest, uint32_t opks_num)</td></tr>
+<tr class="memdesc:acfb787886911e3b42a8d4f34c103284b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release memory of E2ees__OneTimePreKey array. <br /></td></tr>
+<tr class="separator:acfb787886911e3b42a8d4f34c103284b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc0e4e7baae5fcb581ac78a343dcf165" id="r_afc0e4e7baae5fcb581ac78a343dcf165"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc0e4e7baae5fcb581ac78a343dcf165">free_group_member_list</a> (E2ees__GroupMember ***dest, size_t group_members_num)</td></tr>
+<tr class="memdesc:afc0e4e7baae5fcb581ac78a343dcf165"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release memory of E2ees__GroupMember array.  <br /></td></tr>
+<tr class="separator:afc0e4e7baae5fcb581ac78a343dcf165"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad355289d6c6909bc963d40220d32f2a4" id="r_ad355289d6c6909bc963d40220d32f2a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad355289d6c6909bc963d40220d32f2a4">free_protobuf</a> (ProtobufCBinaryData *output)</td></tr>
 <tr class="memdesc:ad355289d6c6909bc963d40220d32f2a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release memory of ProtobufCBinaryData.  <br /></td></tr>
 <tr class="separator:ad355289d6c6909bc963d40220d32f2a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1579,14 +1583,14 @@ false </dd></dl>
 
 </div>
 </div>
-<a id="a0c10eac67e024133537afb794d5af7e6" name="a0c10eac67e024133537afb794d5af7e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c10eac67e024133537afb794d5af7e6">&#9670;&#160;</a></span>free_group_members()</h2>
+<a id="afc0e4e7baae5fcb581ac78a343dcf165" name="afc0e4e7baae5fcb581ac78a343dcf165"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc0e4e7baae5fcb581ac78a343dcf165">&#9670;&#160;</a></span>free_group_member_list()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void free_group_members </td>
+          <td class="memname">void free_group_member_list </td>
           <td>(</td>
           <td class="paramtype">E2ees__GroupMember ***</td>          <td class="paramname"><span class="paramname"><em>dest</em></span>, </td>
         </tr>

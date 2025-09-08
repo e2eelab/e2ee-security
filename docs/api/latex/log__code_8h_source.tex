@@ -6,128 +6,161 @@
 \DoxyCodeLine{00020\ \textcolor{preprocessor}{\#ifndef\ LOG\_CODE\_H\_}}
 \DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ LOG\_CODE\_H\_}}
 \DoxyCodeLine{00022\ }
-\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
-\DoxyCodeLine{00024\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
-\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00026\ }
-\DoxyCodeLine{00027\ \textcolor{keyword}{enum}\ LogCode\ \{}
-\DoxyCodeLine{00028\ \ \ DEBUG\_LOG\ =\ 0,}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00027\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#endif}}
 \DoxyCodeLine{00029\ }
-\DoxyCodeLine{00030\ \ \ \textcolor{comment}{//\ cipher\ suite}}
-\DoxyCodeLine{00031\ \ \ BAD\_CIPHER\_SUITE\ =\ 1001,}
-\DoxyCodeLine{00032\ \ \ BAD\_E2EES\_PACK\ =\ 1002,}
-\DoxyCodeLine{00033\ }
-\DoxyCodeLine{00034\ \ \ \textcolor{comment}{//\ account}}
-\DoxyCodeLine{00035\ \ \ BAD\_ACCOUNT\ =\ 2001,}
-\DoxyCodeLine{00036\ \ \ BAD\_KEY\_PAIR\ =\ 2002,}
-\DoxyCodeLine{00037\ \ \ BAD\_SIGNED\_PRE\_KEY\ =\ 2003,}
-\DoxyCodeLine{00038\ \ \ BAD\_SIGNATURE\ =\ 2004,}
-\DoxyCodeLine{00039\ \ \ BAD\_ONE\_TIME\_PRE\_KEY\ =\ 2005,}
-\DoxyCodeLine{00040\ \ \ BAD\_AUTH\ =\ 2006,}
-\DoxyCodeLine{00041\ \ \ BAD\_AUTHENTICATOR\ =\ 2007,}
-\DoxyCodeLine{00042\ \ \ BAD\_PRIVATE\_KEY\ =\ 2008,}
-\DoxyCodeLine{00043\ \ \ BAD\_PUBLIC\_KEY\ =\ 2009,}
-\DoxyCodeLine{00044\ \ \ BAD\_REMOVE\_OPK\ =\ 2010,}
-\DoxyCodeLine{00045\ }
-\DoxyCodeLine{00046\ \ \ \textcolor{comment}{//\ address}}
-\DoxyCodeLine{00047\ \ \ BAD\_ADDRESS\ =\ 3001,}
-\DoxyCodeLine{00048\ \ \ BAD\_USER\_ID\ =\ 3002,}
-\DoxyCodeLine{00049\ \ \ BAD\_DEVICE\_ID\ =\ 3003,}
-\DoxyCodeLine{00050\ \ \ BAD\_DOMAIN\ =\ 3004,}
-\DoxyCodeLine{00051\ \ \ BAD\_USER\_NAME\ =\ 3005,}
-\DoxyCodeLine{00052\ }
-\DoxyCodeLine{00053\ \ \ \textcolor{comment}{//\ ratchet}}
-\DoxyCodeLine{00054\ \ \ BAD\_MESSAGE\_ENCRYPTION\ =\ 4001,}
-\DoxyCodeLine{00055\ \ \ BAD\_MESSAGE\_DECRYPTION\ =\ 4002,}
-\DoxyCodeLine{00056\ \ \ BAD\_FILE\_ENCRYPTION\ =\ 4003,}
-\DoxyCodeLine{00057\ \ \ BAD\_FILE\_DECRYPTION\ =\ 4004,}
-\DoxyCodeLine{00058\ \ \ BAD\_MESSAGE\_KEY\ =\ 4005,}
-\DoxyCodeLine{00059\ \ \ BAD\_MESSAGE\_SEQUENCE\ =\ 4006,}
-\DoxyCodeLine{00060\ \ \ BAD\_RATCHET\_KEY\ =\ 4007,}
-\DoxyCodeLine{00061\ }
-\DoxyCodeLine{00062\ \ \ \textcolor{comment}{//\ session}}
-\DoxyCodeLine{00063\ \ \ BAD\_SESSION\ =\ 5001,}
-\DoxyCodeLine{00064\ \ \ BAD\_SESSION\_ID\ =\ 5002,}
-\DoxyCodeLine{00065\ \ \ BAD\_PRE\_KEY\_BUNDLE\ =\ 5101,}
-\DoxyCodeLine{00066\ }
-\DoxyCodeLine{00067\ \ \ \textcolor{comment}{//\ group\ session}}
-\DoxyCodeLine{00068\ \ \ BAD\_GROUP\_SESSION\ =\ 6001,}
-\DoxyCodeLine{00069\ \ \ BAD\_GROUP\_SESSION\_ID\ =\ 6002,}
-\DoxyCodeLine{00070\ \ \ BAD\_GROUP\_NAME\ =\ 6003,}
-\DoxyCodeLine{00071\ \ \ BAD\_GROUP\_ADDRESS\ =\ 6004,}
-\DoxyCodeLine{00072\ \ \ BAD\_GROUP\_MEMBERS\ =\ 6005,}
-\DoxyCodeLine{00073\ \ \ BAD\_GROUP\_MEMBER\_INFO\ =\ 6006,}
-\DoxyCodeLine{00074\ \ \ BAD\_GROUP\_INFO\ =\ 6007,}
-\DoxyCodeLine{00075\ \ \ BAD\_GROUP\_SEED\ =\ 6008,}
-\DoxyCodeLine{00076\ \ \ BAD\_GROUP\_CHAIN\_KEY\ =\ 6009,}
-\DoxyCodeLine{00077\ \ \ BAD\_GROUP\_PRE\_KEY\_BUNDLE\ =\ 6101,}
-\DoxyCodeLine{00078\ \ \ BAD\_GROUP\_UPDATE\_KEY\_BUNDLE\ =\ 6102,}
-\DoxyCodeLine{00079\ }
-\DoxyCodeLine{00080\ \ \ \textcolor{comment}{//\ request}}
-\DoxyCodeLine{00081\ \ \ BAD\_ACCEPT\_REQUEST\ =\ 7001,}
-\DoxyCodeLine{00082\ \ \ BAD\_ADD\_GROUP\_MEMBER\_DEVICE\_REQUEST\ =\ 7011,}
-\DoxyCodeLine{00083\ \ \ BAD\_ADD\_GROUP\_MEMBERS\_REQUEST\ =\ 7021,}
-\DoxyCodeLine{00084\ \ \ BAD\_CONSUME\_PROTO\_MSG\_REQUEST\ =\ 7031,}
-\DoxyCodeLine{00085\ \ \ BAD\_CREATE\_GROUP\_REQUEST\ =\ 7041,}
-\DoxyCodeLine{00086\ \ \ BAD\_GET\_GROUP\_REQUEST\ =\ 7051,}
-\DoxyCodeLine{00087\ \ \ BAD\_GET\_PRE\_KEY\_BUNDLE\_REQUEST\ =\ 7061,}
-\DoxyCodeLine{00088\ \ \ BAD\_INVITE\_REQUEST\ =\ 7071,}
-\DoxyCodeLine{00089\ \ \ BAD\_LEAVE\_GROUP\_REQUEST\ =\ 7081,}
-\DoxyCodeLine{00090\ \ \ BAD\_PUBLISH\_SPK\_REQUEST\ =\ 7091,}
-\DoxyCodeLine{00091\ \ \ BAD\_REGISTER\_USER\_REQUEST\ =\ 7101,}
-\DoxyCodeLine{00092\ \ \ BAD\_REMOVE\_GROUP\_MEMBERS\_REQUEST\ =\ 7111,}
-\DoxyCodeLine{00093\ \ \ BAD\_SEND\_GROUP\_MSG\_REQUEST\ =\ 7121,}
-\DoxyCodeLine{00094\ \ \ BAD\_SEND\_ONE2ONE\_MSG\_REQUEST\ =\ 7131,}
-\DoxyCodeLine{00095\ \ \ BAD\_SUPPLY\_OPKS\_REQUEST\ =\ 7141,}
-\DoxyCodeLine{00096\ \ \ BAD\_UPDATE\_USER\_REQUEST\ =\ 7151,}
-\DoxyCodeLine{00097\ \ \ \textcolor{comment}{//\ response}}
-\DoxyCodeLine{00098\ \ \ BAD\_ACCEPT\_RESPONSE\ =\ 7301,}
-\DoxyCodeLine{00099\ \ \ BAD\_ADD\_GROUP\_MEMBER\_DEVICE\_RESPONSE\ =\ 7311,}
-\DoxyCodeLine{00100\ \ \ BAD\_ADD\_GROUP\_MEMBERS\_RESPONSE\ =\ 7321,}
-\DoxyCodeLine{00101\ \ \ BAD\_CONSUME\_PROTO\_MSG\_RESPONSE\ =\ 7331,}
-\DoxyCodeLine{00102\ \ \ BAD\_CREATE\_GROUP\_RESPONSE\ =\ 7341,}
-\DoxyCodeLine{00103\ \ \ BAD\_GET\_GROUP\_RESPONSE\ =\ 7351,}
-\DoxyCodeLine{00104\ \ \ BAD\_GET\_PRE\_KEY\_BUNDLE\_RESPONSE\ =\ 7361,}
-\DoxyCodeLine{00105\ \ \ BAD\_INVITE\_RESPONSE\ =\ 7371,}
-\DoxyCodeLine{00106\ \ \ BAD\_LEAVE\_GROUP\_RESPONSE\ =\ 7381,}
-\DoxyCodeLine{00107\ \ \ BAD\_PUBLISH\_SPK\_RESPONSE\ =\ 7391,}
-\DoxyCodeLine{00108\ \ \ BAD\_REGISTER\_USER\_RESPONSE\ =\ 7401,}
-\DoxyCodeLine{00109\ \ \ BAD\_REMOVE\_GROUP\_MEMBERS\_RESPONSE\ =\ 7411,}
-\DoxyCodeLine{00110\ \ \ BAD\_SEND\_GROUP\_MSG\_RESPONSE\ =\ 7421,}
-\DoxyCodeLine{00111\ \ \ BAD\_SEND\_ONE2ONE\_MSG\_RESPONSE\ =\ 7431,}
-\DoxyCodeLine{00112\ \ \ BAD\_SUPPLY\_OPKS\_RESPONSE\ =\ 7441,}
-\DoxyCodeLine{00113\ \ \ BAD\_UPDATE\_USER\_RESPONSE\ =\ 7451,}
-\DoxyCodeLine{00114\ \ \ \textcolor{comment}{//\ msg}}
-\DoxyCodeLine{00115\ \ \ BAD\_ACCEPT\_MSG\ =\ 7601,}
-\DoxyCodeLine{00116\ \ \ BAD\_ADD\_GROUP\_MEMBER\_DEVICE\_MSG\ =\ 7611,}
-\DoxyCodeLine{00117\ \ \ BAD\_ADD\_GROUP\_MEMBERS\_MSG\ =\ 7621,}
-\DoxyCodeLine{00118\ \ \ BAD\_ADD\_USER\_DEVICE\_MSG\ =\ 7631,}
-\DoxyCodeLine{00119\ \ \ BAD\_CREATE\_GROUP\_MSG\ =\ 7641,}
-\DoxyCodeLine{00120\ \ \ BAD\_GET\_GROUP\_MSG\ =\ 7651,}
-\DoxyCodeLine{00121\ \ \ BAD\_GET\_PRE\_KEY\_BUNDLE\_MSG\ =\ 7661,}
-\DoxyCodeLine{00122\ \ \ BAD\_INVITE\_MSG\ =\ 7671,}
-\DoxyCodeLine{00123\ \ \ BAD\_LEAVE\_GROUP\_MSG\ =\ 7681,}
-\DoxyCodeLine{00124\ \ \ BAD\_PUBLISH\_SPK\_MSG\ =\ 7691,}
-\DoxyCodeLine{00125\ \ \ BAD\_REGISTER\_USER\_MSG\ =\ 7701,}
-\DoxyCodeLine{00126\ \ \ BAD\_REMOVE\_GROUP\_MEMBERS\_MSG\ =\ 7711,}
-\DoxyCodeLine{00127\ \ \ BAD\_SUPPLY\_OPKS\_MSG\ =\ 7741,}
-\DoxyCodeLine{00128\ \ \ BAD\_UPDATE\_USER\_MSG\ =\ 7751,}
-\DoxyCodeLine{00129\ }
-\DoxyCodeLine{00130\ \ \ \textcolor{comment}{//\ plaintext}}
-\DoxyCodeLine{00131\ \ \ BAD\_PLAINTEXT\ =\ 8001,}
+\DoxyCodeLine{00030\ \textcolor{keyword}{enum}\ LogCode\ \{}
+\DoxyCodeLine{00031\ \ \ DEBUG\_LOG\ =\ 0,}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \textcolor{comment}{//\ cipher\ suite}}
+\DoxyCodeLine{00034\ \ \ BAD\_CIPHER\_SUITE\ =\ 1001,}
+\DoxyCodeLine{00035\ \ \ BAD\_E2EES\_PACK\ =\ 1002,}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \textcolor{comment}{//\ account}}
+\DoxyCodeLine{00038\ \ \ BAD\_ACCOUNT\ =\ 2001,}
+\DoxyCodeLine{00039\ \ \ BAD\_KEY\_PAIR\ =\ 2002,}
+\DoxyCodeLine{00040\ \ \ BAD\_SIGNED\_PRE\_KEY\ =\ 2003,}
+\DoxyCodeLine{00041\ \ \ BAD\_SIGNATURE\ =\ 2004,}
+\DoxyCodeLine{00042\ \ \ BAD\_ONE\_TIME\_PRE\_KEY\ =\ 2005,}
+\DoxyCodeLine{00043\ \ \ BAD\_AUTH\ =\ 2006,}
+\DoxyCodeLine{00044\ \ \ BAD\_AUTHENTICATOR\ =\ 2007,}
+\DoxyCodeLine{00045\ \ \ BAD\_PRIVATE\_KEY\ =\ 2008,}
+\DoxyCodeLine{00046\ \ \ BAD\_PUBLIC\_KEY\ =\ 2009,}
+\DoxyCodeLine{00047\ \ \ BAD\_REMOVE\_OPK\ =\ 2010,}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \textcolor{comment}{//\ address}}
+\DoxyCodeLine{00050\ \ \ BAD\_ADDRESS\ =\ 3001,}
+\DoxyCodeLine{00051\ \ \ BAD\_USER\_ID\ =\ 3002,}
+\DoxyCodeLine{00052\ \ \ BAD\_DEVICE\_ID\ =\ 3003,}
+\DoxyCodeLine{00053\ \ \ BAD\_DOMAIN\ =\ 3004,}
+\DoxyCodeLine{00054\ \ \ BAD\_USER\_NAME\ =\ 3005,}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \textcolor{comment}{//\ ratchet}}
+\DoxyCodeLine{00057\ \ \ BAD\_MESSAGE\_ENCRYPTION\ =\ 4001,}
+\DoxyCodeLine{00058\ \ \ BAD\_MESSAGE\_DECRYPTION\ =\ 4002,}
+\DoxyCodeLine{00059\ \ \ BAD\_FILE\_ENCRYPTION\ =\ 4003,}
+\DoxyCodeLine{00060\ \ \ BAD\_FILE\_DECRYPTION\ =\ 4004,}
+\DoxyCodeLine{00061\ \ \ BAD\_MESSAGE\_KEY\ =\ 4005,}
+\DoxyCodeLine{00062\ \ \ BAD\_MESSAGE\_SEQUENCE\ =\ 4006,}
+\DoxyCodeLine{00063\ \ \ BAD\_RATCHET\_KEY\ =\ 4007,}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \textcolor{comment}{//\ session}}
+\DoxyCodeLine{00066\ \ \ BAD\_SESSION\ =\ 5001,}
+\DoxyCodeLine{00067\ \ \ BAD\_SESSION\_ID\ =\ 5002,}
+\DoxyCodeLine{00068\ \ \ BAD\_PRE\_KEY\_BUNDLE\ =\ 5101,}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \textcolor{comment}{//\ group\ session}}
+\DoxyCodeLine{00071\ \ \ BAD\_GROUP\_SESSION\ =\ 6001,}
+\DoxyCodeLine{00072\ \ \ BAD\_GROUP\_SESSION\_ID\ =\ 6002,}
+\DoxyCodeLine{00073\ \ \ BAD\_GROUP\_NAME\ =\ 6003,}
+\DoxyCodeLine{00074\ \ \ BAD\_GROUP\_ADDRESS\ =\ 6004,}
+\DoxyCodeLine{00075\ \ \ BAD\_GROUP\_MEMBERS\ =\ 6005,}
+\DoxyCodeLine{00076\ \ \ BAD\_GROUP\_MEMBER\_INFO\ =\ 6006,}
+\DoxyCodeLine{00077\ \ \ BAD\_GROUP\_INFO\ =\ 6007,}
+\DoxyCodeLine{00078\ \ \ BAD\_GROUP\_SEED\ =\ 6008,}
+\DoxyCodeLine{00079\ \ \ BAD\_GROUP\_CHAIN\_KEY\ =\ 6009,}
+\DoxyCodeLine{00080\ \ \ BAD\_GROUP\_PRE\_KEY\_BUNDLE\ =\ 6101,}
+\DoxyCodeLine{00081\ \ \ BAD\_GROUP\_UPDATE\_KEY\_BUNDLE\ =\ 6102,}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \textcolor{comment}{//\ request}}
+\DoxyCodeLine{00084\ \ \ BAD\_ACCEPT\_REQUEST\ =\ 7001,}
+\DoxyCodeLine{00085\ \ \ BAD\_ADD\_GROUP\_MEMBER\_DEVICE\_REQUEST\ =\ 7011,}
+\DoxyCodeLine{00086\ \ \ BAD\_ADD\_GROUP\_MEMBERS\_REQUEST\ =\ 7021,}
+\DoxyCodeLine{00087\ \ \ BAD\_CONSUME\_PROTO\_MSG\_REQUEST\ =\ 7031,}
+\DoxyCodeLine{00088\ \ \ BAD\_CREATE\_GROUP\_REQUEST\ =\ 7041,}
+\DoxyCodeLine{00089\ \ \ BAD\_GET\_GROUP\_REQUEST\ =\ 7051,}
+\DoxyCodeLine{00090\ \ \ BAD\_GET\_PRE\_KEY\_BUNDLE\_REQUEST\ =\ 7061,}
+\DoxyCodeLine{00091\ \ \ BAD\_INVITE\_REQUEST\ =\ 7071,}
+\DoxyCodeLine{00092\ \ \ BAD\_LEAVE\_GROUP\_REQUEST\ =\ 7081,}
+\DoxyCodeLine{00093\ \ \ BAD\_PUBLISH\_SPK\_REQUEST\ =\ 7091,}
+\DoxyCodeLine{00094\ \ \ BAD\_REGISTER\_USER\_REQUEST\ =\ 7101,}
+\DoxyCodeLine{00095\ \ \ BAD\_REMOVE\_GROUP\_MEMBERS\_REQUEST\ =\ 7111,}
+\DoxyCodeLine{00096\ \ \ BAD\_SEND\_GROUP\_MSG\_REQUEST\ =\ 7121,}
+\DoxyCodeLine{00097\ \ \ BAD\_SEND\_ONE2ONE\_MSG\_REQUEST\ =\ 7131,}
+\DoxyCodeLine{00098\ \ \ BAD\_SUPPLY\_OPKS\_REQUEST\ =\ 7141,}
+\DoxyCodeLine{00099\ \ \ BAD\_UPDATE\_USER\_REQUEST\ =\ 7151,}
+\DoxyCodeLine{00100\ \ \ \textcolor{comment}{//\ response}}
+\DoxyCodeLine{00101\ \ \ BAD\_ACCEPT\_RESPONSE\ =\ 7301,}
+\DoxyCodeLine{00102\ \ \ BAD\_ADD\_GROUP\_MEMBER\_DEVICE\_RESPONSE\ =\ 7311,}
+\DoxyCodeLine{00103\ \ \ BAD\_ADD\_GROUP\_MEMBERS\_RESPONSE\ =\ 7321,}
+\DoxyCodeLine{00104\ \ \ BAD\_CONSUME\_PROTO\_MSG\_RESPONSE\ =\ 7331,}
+\DoxyCodeLine{00105\ \ \ BAD\_CREATE\_GROUP\_RESPONSE\ =\ 7341,}
+\DoxyCodeLine{00106\ \ \ BAD\_GET\_GROUP\_RESPONSE\ =\ 7351,}
+\DoxyCodeLine{00107\ \ \ BAD\_GET\_PRE\_KEY\_BUNDLE\_RESPONSE\ =\ 7361,}
+\DoxyCodeLine{00108\ \ \ BAD\_INVITE\_RESPONSE\ =\ 7371,}
+\DoxyCodeLine{00109\ \ \ BAD\_LEAVE\_GROUP\_RESPONSE\ =\ 7381,}
+\DoxyCodeLine{00110\ \ \ BAD\_PUBLISH\_SPK\_RESPONSE\ =\ 7391,}
+\DoxyCodeLine{00111\ \ \ BAD\_REGISTER\_USER\_RESPONSE\ =\ 7401,}
+\DoxyCodeLine{00112\ \ \ BAD\_REMOVE\_GROUP\_MEMBERS\_RESPONSE\ =\ 7411,}
+\DoxyCodeLine{00113\ \ \ BAD\_SEND\_GROUP\_MSG\_RESPONSE\ =\ 7421,}
+\DoxyCodeLine{00114\ \ \ BAD\_SEND\_ONE2ONE\_MSG\_RESPONSE\ =\ 7431,}
+\DoxyCodeLine{00115\ \ \ BAD\_SUPPLY\_OPKS\_RESPONSE\ =\ 7441,}
+\DoxyCodeLine{00116\ \ \ BAD\_UPDATE\_USER\_RESPONSE\ =\ 7451,}
+\DoxyCodeLine{00117\ \ \ \textcolor{comment}{//\ msg}}
+\DoxyCodeLine{00118\ \ \ BAD\_ACCEPT\_MSG\ =\ 7601,}
+\DoxyCodeLine{00119\ \ \ BAD\_ADD\_GROUP\_MEMBER\_DEVICE\_MSG\ =\ 7611,}
+\DoxyCodeLine{00120\ \ \ BAD\_ADD\_GROUP\_MEMBERS\_MSG\ =\ 7621,}
+\DoxyCodeLine{00121\ \ \ BAD\_ADD\_USER\_DEVICE\_MSG\ =\ 7631,}
+\DoxyCodeLine{00122\ \ \ BAD\_CREATE\_GROUP\_MSG\ =\ 7641,}
+\DoxyCodeLine{00123\ \ \ BAD\_GET\_GROUP\_MSG\ =\ 7651,}
+\DoxyCodeLine{00124\ \ \ BAD\_GET\_PRE\_KEY\_BUNDLE\_MSG\ =\ 7661,}
+\DoxyCodeLine{00125\ \ \ BAD\_INVITE\_MSG\ =\ 7671,}
+\DoxyCodeLine{00126\ \ \ BAD\_LEAVE\_GROUP\_MSG\ =\ 7681,}
+\DoxyCodeLine{00127\ \ \ BAD\_PUBLISH\_SPK\_MSG\ =\ 7691,}
+\DoxyCodeLine{00128\ \ \ BAD\_REGISTER\_USER\_MSG\ =\ 7701,}
+\DoxyCodeLine{00129\ \ \ BAD\_REMOVE\_GROUP\_MEMBERS\_MSG\ =\ 7711,}
+\DoxyCodeLine{00130\ \ \ BAD\_SUPPLY\_OPKS\_MSG\ =\ 7741,}
+\DoxyCodeLine{00131\ \ \ BAD\_UPDATE\_USER\_MSG\ =\ 7751,}
 \DoxyCodeLine{00132\ }
-\DoxyCodeLine{00133\ \ \ \textcolor{comment}{//\ server\ signature}}
-\DoxyCodeLine{00134\ \ \ BAD\_SERVER\_SIGNATURE\ =\ 9001,}
-\DoxyCodeLine{00135\ \};}
-\DoxyCodeLine{00136\ }
-\DoxyCodeLine{00137\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ LogCode\ LogCode;}
-\DoxyCodeLine{00138\ }
-\DoxyCodeLine{00145\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{log__code_8h_a197c539ddf287bb08e9f4d3ea3a813af}{logcode\_string}}(LogCode\ log\_code);}
-\DoxyCodeLine{00146\ }
-\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
-\DoxyCodeLine{00148\ \}}
-\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00150\ }
-\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ LOG\_CODE\_H\_\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00133\ \ \ \textcolor{comment}{//\ plaintext}}
+\DoxyCodeLine{00134\ \ \ BAD\_PLAINTEXT\ =\ 8001,}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \textcolor{comment}{//\ server\ signature}}
+\DoxyCodeLine{00137\ \ \ BAD\_SERVER\_SIGNATURE\ =\ 9001}
+\DoxyCodeLine{00138\ \};}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ LogCode\ LogCode;}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structstack__frame}{stack\_frame}}\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *function\_name;}
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file\_name;}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{int}\ line\_number;}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structstack__frame}{stack\_frame}}\ *prev;}
+\DoxyCodeLine{00147\ \}\ \mbox{\hyperlink{structstack__frame}{stack\_frame\_t}};}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{comment}{//\ Global\ stack\ top}}
+\DoxyCodeLine{00150\ \textcolor{keyword}{extern}\ \_\_thread\ \mbox{\hyperlink{structstack__frame}{stack\_frame\_t}}\ *current\_stack\_top;}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#ifdef\ ENABLE\_TRACE}}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#define\ TRACE\_ENTER()\ \(\backslash\)}}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ do\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ stack\_frame\_t\ new\_frame\ =\ \{\_\_func\_\_,\ \_\_FILE\_\_,\ \_\_LINE\_\_,\ current\_stack\_top\};\ \(\backslash\)}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ current\_stack\_top\ =\ \&new\_frame;\ \(\backslash\)}}
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#define\ TRACE\_EXIT()\ \(\backslash\)}}
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ do\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (current\_stack\_top\ !=\ NULL)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_stack\_top\ =\ current\_stack\_top-\/>prev;\ \(\backslash\)}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \}\ \(\backslash\)}}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ while(0)}}
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#define\ TRACE\_ENTER()\ do\ \{\ \}\ while(0)}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#define\ TRACE\_EXIT()\ do\ \{\ \}\ while(0)}}
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00176\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{log__code_8h_a197c539ddf287bb08e9f4d3ea3a813af}{logcode\_string}}(LogCode\ log\_code);}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00183\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{log__code_8h_ad535f7dc200caad603513cb261fbee4d}{get\_stack\_trace}}(\textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_len);}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00186\ \}}
+\DoxyCodeLine{00187\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ LOG\_CODE\_H\_\ */}\textcolor{preprocessor}{}}
 
 \end{DoxyCode}

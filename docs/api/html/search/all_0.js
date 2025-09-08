@@ -1,7 +1,7 @@
 var searchData=
 [
   ['accept_0',['accept',['../structe2ees__proto__handler__t.html#acd99a87b29a2edc5867444ce4f9ba546',1,'e2ees_proto_handler_t']]],
-  ['accept_5finternal_1',['accept_internal',['../e2ees__client__internal_8h.html#a2a79fb36b35ba3b60a2d78751fd125fc',1,'e2ees_client_internal.h']]],
+  ['accept_5finternal_1',['accept_internal',['../e2ees__client__internal_8h.html#ad557cdabcf945b82a6ccbf55e90ead2f',1,'e2ees_client_internal.h']]],
   ['account_2eh_2',['account.h',['../account_8h.html',1,'']]],
   ['account_5fcacheer_3',['account_cacheer',['../structaccount__cacheer.html',1,'']]],
   ['account_5fmanager_2eh_4',['account_manager.h',['../account__manager_8h.html',1,'']]],
@@ -12,12 +12,8 @@ var searchData=
   ['add_5fone_5ftime_5fpre_5fkey_9',['add_one_time_pre_key',['../structe2ees__db__handler__t.html#ac66b7ba5a6b6cd3c898bbd854cd1b229',1,'e2ees_db_handler_t']]],
   ['advance_5fgroup_5fchain_5fkey_10',['advance_group_chain_key',['../group__session_8h.html#a92489a129519dfc9a8168075cc7b4c11',1,'group_session.h']]],
   ['aes256_5fdata_5fiv_5flength_11',['AES256_DATA_IV_LENGTH',['../crypto_8h.html#adbbbf1c1be8a7fb625cf3879c3168dc3',1,'crypto.h']]],
-  ['aes256_5fgcm_5fciphertext_5fdata_5flen_12',['aes256_gcm_ciphertext_data_len',['../crypto_8h.html#ad449cbcd6449c8cff0b8de22bcc9baa0',1,'crypto.h']]],
-  ['aes256_5fgcm_5fdecrypt_13',['aes256_gcm_decrypt',['../cipher__se_8h.html#ade62c4239668838b57e54a5169028bdd',1,'cipher_se.h']]],
-  ['aes256_5fgcm_5fencrypt_14',['aes256_gcm_encrypt',['../cipher__se_8h.html#a1bff7c10814e8a777dd1a106f436406a',1,'cipher_se.h']]],
-  ['aes256_5fgcm_5fplaintext_5fdata_5flen_15',['aes256_gcm_plaintext_data_len',['../crypto_8h.html#a0c9d322f09b8b9e997838fee395a09a6',1,'crypto.h']]],
-  ['aes256_5fgcm_5ftag_5flength_16',['AES256_GCM_TAG_LENGTH',['../crypto_8h.html#a8c63fc2cbdf1811a42513c959ca5b15a',1,'crypto.h']]],
-  ['aes256_5fiv_5flength_17',['AES256_IV_LENGTH',['../crypto_8h.html#a1395a9ebbdaeedb00807f52f8cf9381a',1,'crypto.h']]],
-  ['aes256_5fkey_5flength_18',['AES256_KEY_LENGTH',['../crypto_8h.html#af36200aa1d4d85292b027b6d811263ad',1,'crypto.h']]],
-  ['asym_5fkey_5fgen_19',['asym_key_gen',['../structkem__suite__t.html#a8cb7fafa56b33c45a717e4a2d358335f',1,'kem_suite_t']]]
+  ['aes256_5fgcm_5ftag_5flength_12',['AES256_GCM_TAG_LENGTH',['../crypto_8h.html#a8c63fc2cbdf1811a42513c959ca5b15a',1,'crypto.h']]],
+  ['aes256_5fiv_5flength_13',['AES256_IV_LENGTH',['../crypto_8h.html#a1395a9ebbdaeedb00807f52f8cf9381a',1,'crypto.h']]],
+  ['aes256_5fkey_5flength_14',['AES256_KEY_LENGTH',['../crypto_8h.html#af36200aa1d4d85292b027b6d811263ad',1,'crypto.h']]],
+  ['asym_5fkey_5fgen_15',['asym_key_gen',['../structkem__suite__t.html#a8cb7fafa56b33c45a717e4a2d358335f',1,'kem_suite_t']]]
 ];

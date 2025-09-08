@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -120,72 +120,73 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    E2ees__Session *outbound_session</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>);</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#a2a79fb36b35ba3b60a2d78751fd125fc">   77</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#a2a79fb36b35ba3b60a2d78751fd125fc">accept_internal</a>(</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    E2ees__AcceptResponse **response_out,</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    uint32_t e2ees_pack_id,</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    E2ees__E2eeAddress *from,</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    E2ees__E2eeAddress *to,</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    ProtobufCBinaryData *ciphertext_1,</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    ProtobufCBinaryData *our_ratchet_key</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>);</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#ade9955d1e5c3dbb4a55ef45d67935b5c">   92</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#ade9955d1e5c3dbb4a55ef45d67935b5c">publish_spk_internal</a>(</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    E2ees__PublishSpkResponse **response_out,</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    E2ees__Account *account</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>);</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#a78efec3d5ea5974ec3a4888bf1c431a6">  104</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#a78efec3d5ea5974ec3a4888bf1c431a6">supply_opks_internal</a>(</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    E2ees__SupplyOpksResponse **response_out,</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    E2ees__Account *account,</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    uint32_t opks_num</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>);</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#ad66792b25ba7529ae907a7637534c7b1">  118</a></span>E2ees__SendOne2oneMsgResponse *<a class="code hl_function" href="e2ees__client__internal_8h.html#ad66792b25ba7529ae907a7637534c7b1">send_one2one_msg_internal</a>(</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    E2ees__Session *outbound_session,</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    uint32_t notif_level,</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keyword">const</span> uint8_t *plaintext_data, <span class="keywordtype">size_t</span> plaintext_data_len</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>);</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#a1acdab48acaf3233f5978ff9938f9dba">  132</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#a1acdab48acaf3233f5978ff9938f9dba">add_group_member_device_internal</a>(</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    E2ees__AddGroupMemberDeviceResponse **response_out,</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    E2ees__E2eeAddress *sender_address,</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    E2ees__E2eeAddress *group_address,</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    E2ees__E2eeAddress *new_device_address</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>);</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#ac636096712e843ef7bb2c4d260991161">  147</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#ac636096712e843ef7bb2c4d260991161">store_pending_common_plaintext_data_internal</a>(</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    E2ees__E2eeAddress *from,</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    E2ees__E2eeAddress *to,</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    uint8_t *common_plaintext_data,</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    <span class="keywordtype">size_t</span> common_plaintext_data_len,</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    E2ees__NotifLevel notif_level</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>);</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#a4cf58de4adc93ee4991b48880e405a08">  164</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#a4cf58de4adc93ee4991b48880e405a08">store_pending_request_internal</a>(</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    E2ees__E2eeAddress *user_address,</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    E2ees__PendingRequestType type,</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    uint8_t *request_data,</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    <span class="keywordtype">size_t</span> request_data_len,</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    ProtobufCBinaryData *request_arg_list,</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keywordtype">size_t</span> request_arg_list_len</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>);</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#a3b72bf6e21c14d07255ec6fe6e052f9b">  177</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#a3b72bf6e21c14d07255ec6fe6e052f9b">resume_connection_internal</a>(E2ees__Account *account);</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>}</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span> </div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="preprocessor">#endif </span><span class="comment">// E2EES_CLIENT_INTERNAL_H_</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#ad557cdabcf945b82a6ccbf55e90ead2f">   78</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#ad557cdabcf945b82a6ccbf55e90ead2f">accept_internal</a>(</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    E2ees__AcceptResponse **response_out,</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    uint32_t e2ees_pack_id,</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    E2ees__E2eeAddress *from,</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    E2ees__E2eeAddress *to,</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordtype">char</span> *session_id,</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    ProtobufCBinaryData *ciphertext_1,</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    ProtobufCBinaryData *our_ratchet_key</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>);</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#ade9955d1e5c3dbb4a55ef45d67935b5c">   94</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#ade9955d1e5c3dbb4a55ef45d67935b5c">publish_spk_internal</a>(</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    E2ees__PublishSpkResponse **response_out,</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    E2ees__Account *account</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>);</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#a78efec3d5ea5974ec3a4888bf1c431a6">  106</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#a78efec3d5ea5974ec3a4888bf1c431a6">supply_opks_internal</a>(</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    E2ees__SupplyOpksResponse **response_out,</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    E2ees__Account *account,</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    uint32_t opks_num</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>);</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#ad66792b25ba7529ae907a7637534c7b1">  120</a></span>E2ees__SendOne2oneMsgResponse *<a class="code hl_function" href="e2ees__client__internal_8h.html#ad66792b25ba7529ae907a7637534c7b1">send_one2one_msg_internal</a>(</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    E2ees__Session *outbound_session,</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    uint32_t notif_level,</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <span class="keyword">const</span> uint8_t *plaintext_data, <span class="keywordtype">size_t</span> plaintext_data_len</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>);</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#a1acdab48acaf3233f5978ff9938f9dba">  134</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#a1acdab48acaf3233f5978ff9938f9dba">add_group_member_device_internal</a>(</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    E2ees__AddGroupMemberDeviceResponse **response_out,</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    E2ees__E2eeAddress *sender_address,</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    E2ees__E2eeAddress *group_address,</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    E2ees__E2eeAddress *new_device_address</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>);</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#ac636096712e843ef7bb2c4d260991161">  149</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#ac636096712e843ef7bb2c4d260991161">store_pending_common_plaintext_data_internal</a>(</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    E2ees__E2eeAddress *from,</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    E2ees__E2eeAddress *to,</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    uint8_t *common_plaintext_data,</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="keywordtype">size_t</span> common_plaintext_data_len,</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    E2ees__NotifLevel notif_level</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span> </div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#a4cf58de4adc93ee4991b48880e405a08">  166</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#a4cf58de4adc93ee4991b48880e405a08">store_pending_request_internal</a>(</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    E2ees__E2eeAddress *user_address,</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    E2ees__PendingRequestType type,</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    uint8_t *request_data,</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keywordtype">size_t</span> request_data_len,</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    ProtobufCBinaryData *request_arg_list,</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    <span class="keywordtype">size_t</span> request_arg_list_len</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>);</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="e2ees__client__internal_8h.html#a3b72bf6e21c14d07255ec6fe6e052f9b">  179</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="e2ees__client__internal_8h.html#a3b72bf6e21c14d07255ec6fe6e052f9b">resume_connection_internal</a>(E2ees__Account *account);</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>}</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="preprocessor">#endif </span><span class="comment">// E2EES_CLIENT_INTERNAL_H_</span></div>
 <div class="ttc" id="ae2ees_8h_html"><div class="ttname"><a href="e2ees_8h.html">e2ees.h</a></div></div>
 <div class="ttc" id="ae2ees__client__internal_8h_html_a129cb7a651cfda6b150eb8cd6c2c869f"><div class="ttname"><a href="e2ees__client__internal_8h.html#a129cb7a651cfda6b150eb8cd6c2c869f">get_pre_key_bundle_internal</a></div><div class="ttdeci">int get_pre_key_bundle_internal(E2ees__InviteResponse ***invite_response_list_out, size_t *invite_response_num_out, E2ees__E2eeAddress *from, const char *auth, const char *to_user_id, const char *to_domain, const char *to_device_id, bool active, uint8_t *group_pre_key_plaintext_data, size_t group_pre_key_plaintext_data_len)</div><div class="ttdoc">Get the pre-key bundle internal object.</div></div>
 <div class="ttc" id="ae2ees__client__internal_8h_html_a1acdab48acaf3233f5978ff9938f9dba"><div class="ttname"><a href="e2ees__client__internal_8h.html#a1acdab48acaf3233f5978ff9938f9dba">add_group_member_device_internal</a></div><div class="ttdeci">int add_group_member_device_internal(E2ees__AddGroupMemberDeviceResponse **response_out, E2ees__E2eeAddress *sender_address, E2ees__E2eeAddress *group_address, E2ees__E2eeAddress *new_device_address)</div><div class="ttdoc">Send add_group_member_device request to server.</div></div>
-<div class="ttc" id="ae2ees__client__internal_8h_html_a2a79fb36b35ba3b60a2d78751fd125fc"><div class="ttname"><a href="e2ees__client__internal_8h.html#a2a79fb36b35ba3b60a2d78751fd125fc">accept_internal</a></div><div class="ttdeci">int accept_internal(E2ees__AcceptResponse **response_out, uint32_t e2ees_pack_id, E2ees__E2eeAddress *from, E2ees__E2eeAddress *to, ProtobufCBinaryData *ciphertext_1, ProtobufCBinaryData *our_ratchet_key)</div><div class="ttdoc">Send accept request to server.</div></div>
 <div class="ttc" id="ae2ees__client__internal_8h_html_a3b72bf6e21c14d07255ec6fe6e052f9b"><div class="ttname"><a href="e2ees__client__internal_8h.html#a3b72bf6e21c14d07255ec6fe6e052f9b">resume_connection_internal</a></div><div class="ttdeci">void resume_connection_internal(E2ees__Account *account)</div><div class="ttdoc">Resume connection with a given account.</div></div>
 <div class="ttc" id="ae2ees__client__internal_8h_html_a4cf58de4adc93ee4991b48880e405a08"><div class="ttname"><a href="e2ees__client__internal_8h.html#a4cf58de4adc93ee4991b48880e405a08">store_pending_request_internal</a></div><div class="ttdeci">void store_pending_request_internal(E2ees__E2eeAddress *user_address, E2ees__PendingRequestType type, uint8_t *request_data, size_t request_data_len, ProtobufCBinaryData *request_arg_list, size_t request_arg_list_len)</div><div class="ttdoc">Store pending request to db.</div></div>
 <div class="ttc" id="ae2ees__client__internal_8h_html_a78efec3d5ea5974ec3a4888bf1c431a6"><div class="ttname"><a href="e2ees__client__internal_8h.html#a78efec3d5ea5974ec3a4888bf1c431a6">supply_opks_internal</a></div><div class="ttdeci">int supply_opks_internal(E2ees__SupplyOpksResponse **response_out, E2ees__Account *account, uint32_t opks_num)</div><div class="ttdoc">Send supply_opks request to server.</div></div>
 <div class="ttc" id="ae2ees__client__internal_8h_html_a86fe9790a809a7a685c53a8bc0c31a57"><div class="ttname"><a href="e2ees__client__internal_8h.html#a86fe9790a809a7a685c53a8bc0c31a57">invite_internal</a></div><div class="ttdeci">int invite_internal(E2ees__InviteResponse **response_out, E2ees__Session *outbound_session)</div><div class="ttdoc">Send invite request to server.</div></div>
 <div class="ttc" id="ae2ees__client__internal_8h_html_ac636096712e843ef7bb2c4d260991161"><div class="ttname"><a href="e2ees__client__internal_8h.html#ac636096712e843ef7bb2c4d260991161">store_pending_common_plaintext_data_internal</a></div><div class="ttdeci">void store_pending_common_plaintext_data_internal(E2ees__E2eeAddress *from, E2ees__E2eeAddress *to, uint8_t *common_plaintext_data, size_t common_plaintext_data_len, E2ees__NotifLevel notif_level)</div><div class="ttdoc">Store pending plain text data to db.</div></div>
+<div class="ttc" id="ae2ees__client__internal_8h_html_ad557cdabcf945b82a6ccbf55e90ead2f"><div class="ttname"><a href="e2ees__client__internal_8h.html#ad557cdabcf945b82a6ccbf55e90ead2f">accept_internal</a></div><div class="ttdeci">int accept_internal(E2ees__AcceptResponse **response_out, uint32_t e2ees_pack_id, E2ees__E2eeAddress *from, E2ees__E2eeAddress *to, char *session_id, ProtobufCBinaryData *ciphertext_1, ProtobufCBinaryData *our_ratchet_key)</div><div class="ttdoc">Send accept request to server.</div></div>
 <div class="ttc" id="ae2ees__client__internal_8h_html_ad66792b25ba7529ae907a7637534c7b1"><div class="ttname"><a href="e2ees__client__internal_8h.html#ad66792b25ba7529ae907a7637534c7b1">send_one2one_msg_internal</a></div><div class="ttdeci">E2ees__SendOne2oneMsgResponse * send_one2one_msg_internal(E2ees__Session *outbound_session, uint32_t notif_level, const uint8_t *plaintext_data, size_t plaintext_data_len)</div><div class="ttdoc">Send one2one_msg request to server.</div></div>
 <div class="ttc" id="ae2ees__client__internal_8h_html_ade9955d1e5c3dbb4a55ef45d67935b5c"><div class="ttname"><a href="e2ees__client__internal_8h.html#ade9955d1e5c3dbb4a55ef45d67935b5c">publish_spk_internal</a></div><div class="ttdeci">int publish_spk_internal(E2ees__PublishSpkResponse **response_out, E2ees__Account *account)</div><div class="ttdoc">Send publish_spk request to server.</div></div>
 </div><!-- fragment --></div><!-- contents -->

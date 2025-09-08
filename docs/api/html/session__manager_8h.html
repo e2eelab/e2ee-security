@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -131,9 +131,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a5364b74e5b5d05aa05822a0abfea8c89" id="r_a5364b74e5b5d05aa05822a0abfea8c89"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5364b74e5b5d05aa05822a0abfea8c89">consume_invite_msg</a> (E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *invite_msg)</td></tr>
 <tr class="memdesc:a5364b74e5b5d05aa05822a0abfea8c89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process an incoming E2ees__InviteMsg message.  <br /></td></tr>
 <tr class="separator:a5364b74e5b5d05aa05822a0abfea8c89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74a7d473e01a8a5ac10ff90b23f37b30" id="r_a74a7d473e01a8a5ac10ff90b23f37b30"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74a7d473e01a8a5ac10ff90b23f37b30">produce_accept_request</a> (E2ees__AcceptRequest **request_out, uint32_t e2ees_pack_id, E2ees__E2eeAddress *from, E2ees__E2eeAddress *to, ProtobufCBinaryData *ciphertext_1, ProtobufCBinaryData *our_ratchet_key)</td></tr>
-<tr class="memdesc:a74a7d473e01a8a5ac10ff90b23f37b30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a E2ees__AcceptRequest message to be sent to server.  <br /></td></tr>
-<tr class="separator:a74a7d473e01a8a5ac10ff90b23f37b30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49808e3362e3835c398f82e806bc6dac" id="r_a49808e3362e3835c398f82e806bc6dac"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49808e3362e3835c398f82e806bc6dac">produce_accept_request</a> (E2ees__AcceptRequest **request_out, uint32_t e2ees_pack_id, E2ees__E2eeAddress *from, E2ees__E2eeAddress *to, char *session_id, ProtobufCBinaryData *ciphertext_1, ProtobufCBinaryData *our_ratchet_key)</td></tr>
+<tr class="memdesc:a49808e3362e3835c398f82e806bc6dac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a E2ees__AcceptRequest message to be sent to server.  <br /></td></tr>
+<tr class="separator:a49808e3362e3835c398f82e806bc6dac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0748577e14fbde7d89aa3facf6b792ba" id="r_a0748577e14fbde7d89aa3facf6b792ba"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0748577e14fbde7d89aa3facf6b792ba">consume_accept_response</a> (E2ees__E2eeAddress *user_address, E2ees__AcceptResponse *response)</td></tr>
 <tr class="memdesc:a0748577e14fbde7d89aa3facf6b792ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process an incoming AcceptResponse message.  <br /></td></tr>
 <tr class="separator:a0748577e14fbde7d89aa3facf6b792ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -467,8 +467,8 @@ false </dd></dl>
 
 </div>
 </div>
-<a id="a74a7d473e01a8a5ac10ff90b23f37b30" name="a74a7d473e01a8a5ac10ff90b23f37b30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74a7d473e01a8a5ac10ff90b23f37b30">&#9670;&#160;</a></span>produce_accept_request()</h2>
+<a id="a49808e3362e3835c398f82e806bc6dac" name="a49808e3362e3835c398f82e806bc6dac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49808e3362e3835c398f82e806bc6dac">&#9670;&#160;</a></span>produce_accept_request()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -496,6 +496,11 @@ false </dd></dl>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>session_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">ProtobufCBinaryData *</td>          <td class="paramname"><span class="paramname"><em>ciphertext_1</em></span>, </td>
         </tr>
         <tr>
@@ -513,7 +518,9 @@ false </dd></dl>
     <tr><td class="paramname">e2ees_pack_id</td><td></td></tr>
     <tr><td class="paramname">from</td><td></td></tr>
     <tr><td class="paramname">to</td><td></td></tr>
+    <tr><td class="paramname">session_id</td><td></td></tr>
     <tr><td class="paramname">ciphertext_1</td><td></td></tr>
+    <tr><td class="paramname">our_ratchet_key</td><td></td></tr>
   </table>
   </dd>
 </dl>

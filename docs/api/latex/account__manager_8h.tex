@@ -12,9 +12,9 @@ int \mbox{\hyperlink{account__manager_8h_a71017e163c3f8eea92b73a0314c5a9ea}{prod
 \begin{DoxyCompactList}\small\item\em Create a Publish\+Spk\+Request message to be sent to server. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{account__manager_8h_a91b6d6b7915cf09edaa4279d42bc0e21}{consume\+\_\+publish\+\_\+spk\+\_\+response}} (E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}account, E2ees\+\_\+\+\_\+\+Publish\+Spk\+Response \texorpdfstring{$\ast$}{*}response)
 \begin{DoxyCompactList}\small\item\em Process an incoming Publish\+Spk\+Response message. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{account__manager_8h_a75cc15d31e43ea2fcf77fb22461e87d9}{produce\+\_\+supply\+\_\+opks\+\_\+request}} (E2ees\+\_\+\+\_\+\+Supply\+Opks\+Request \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}request\+\_\+out, E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}account, uint32\+\_\+t opks\+\_\+num)
+int \mbox{\hyperlink{account__manager_8h_a578094313858a76a5fd9d3b2148b1a4e}{produce\+\_\+supply\+\_\+opks\+\_\+request}} (E2ees\+\_\+\+\_\+\+Supply\+Opks\+Request \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}request\+\_\+out, E2ees\+\_\+\+\_\+\+One\+Time\+Pre\+Key \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}one\+\_\+time\+\_\+pre\+\_\+key\+\_\+list\+\_\+out, E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}account, uint32\+\_\+t opks\+\_\+num)
 \begin{DoxyCompactList}\small\item\em Create a Supply\+Opks\+Request message to be sent to server. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{account__manager_8h_a512e1107d35ed9da79bece0126c5e601}{consume\+\_\+supply\+\_\+opks\+\_\+response}} (E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}account, uint32\+\_\+t opks\+\_\+num, E2ees\+\_\+\+\_\+\+Supply\+Opks\+Response \texorpdfstring{$\ast$}{*}response)
+int \mbox{\hyperlink{account__manager_8h_a05c5cc35235af3874a3744dd415958e7}{consume\+\_\+supply\+\_\+opks\+\_\+response}} (E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}account, E2ees\+\_\+\+\_\+\+One\+Time\+Pre\+Key \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}one\+\_\+time\+\_\+pre\+\_\+key\+\_\+list, uint32\+\_\+t opks\+\_\+num, E2ees\+\_\+\+\_\+\+Supply\+Opks\+Response \texorpdfstring{$\ast$}{*}response)
 \begin{DoxyCompactList}\small\item\em Process an incoming Supply\+Opks\+Response message. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{account__manager_8h_aee6d38f1417029686db5725f526e2d1d}{consume\+\_\+supply\+\_\+opks\+\_\+msg}} (E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}receiver\+\_\+address, E2ees\+\_\+\+\_\+\+Supply\+Opks\+Msg \texorpdfstring{$\ast$}{*}msg)
 \begin{DoxyCompactList}\small\item\em Process an incoming Supply\+Opks\+Msg message. \end{DoxyCompactList}\end{DoxyCompactItemize}
@@ -96,11 +96,11 @@ true
 
 false 
 \end{DoxyReturn}
-\Hypertarget{account__manager_8h_a512e1107d35ed9da79bece0126c5e601}\index{account\_manager.h@{account\_manager.h}!consume\_supply\_opks\_response@{consume\_supply\_opks\_response}}
+\Hypertarget{account__manager_8h_a05c5cc35235af3874a3744dd415958e7}\index{account\_manager.h@{account\_manager.h}!consume\_supply\_opks\_response@{consume\_supply\_opks\_response}}
 \index{consume\_supply\_opks\_response@{consume\_supply\_opks\_response}!account\_manager.h@{account\_manager.h}}
 \doxysubsubsection{\texorpdfstring{consume\_supply\_opks\_response()}{consume\_supply\_opks\_response()}}
-{\footnotesize\ttfamily \label{account__manager_8h_a512e1107d35ed9da79bece0126c5e601} 
-int consume\+\_\+supply\+\_\+opks\+\_\+response (\begin{DoxyParamCaption}\item[{E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}}]{account}{, }\item[{uint32\+\_\+t}]{opks\+\_\+num}{, }\item[{E2ees\+\_\+\+\_\+\+Supply\+Opks\+Response \texorpdfstring{$\ast$}{*}}]{response}{}\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{account__manager_8h_a05c5cc35235af3874a3744dd415958e7} 
+int consume\+\_\+supply\+\_\+opks\+\_\+response (\begin{DoxyParamCaption}\item[{E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}}]{account}{, }\item[{E2ees\+\_\+\+\_\+\+One\+Time\+Pre\+Key \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{one\+\_\+time\+\_\+pre\+\_\+key\+\_\+list}{, }\item[{uint32\+\_\+t}]{opks\+\_\+num}{, }\item[{E2ees\+\_\+\+\_\+\+Supply\+Opks\+Response \texorpdfstring{$\ast$}{*}}]{response}{}\end{DoxyParamCaption})}
 
 
 
@@ -109,6 +109,8 @@ Process an incoming Supply\+Opks\+Response message.
 
 \begin{DoxyParams}{Parameters}
 {\em account} & \\
+\hline
+{\em one\+\_\+time\+\_\+pre\+\_\+key\+\_\+list} & \\
 \hline
 {\em opks\+\_\+num} & \\
 \hline
@@ -158,11 +160,11 @@ Create a Register\+User\+Request message to be sent to server.
 \begin{DoxyReturn}{Returns}
 0 if success 
 \end{DoxyReturn}
-\Hypertarget{account__manager_8h_a75cc15d31e43ea2fcf77fb22461e87d9}\index{account\_manager.h@{account\_manager.h}!produce\_supply\_opks\_request@{produce\_supply\_opks\_request}}
+\Hypertarget{account__manager_8h_a578094313858a76a5fd9d3b2148b1a4e}\index{account\_manager.h@{account\_manager.h}!produce\_supply\_opks\_request@{produce\_supply\_opks\_request}}
 \index{produce\_supply\_opks\_request@{produce\_supply\_opks\_request}!account\_manager.h@{account\_manager.h}}
 \doxysubsubsection{\texorpdfstring{produce\_supply\_opks\_request()}{produce\_supply\_opks\_request()}}
-{\footnotesize\ttfamily \label{account__manager_8h_a75cc15d31e43ea2fcf77fb22461e87d9} 
-int produce\+\_\+supply\+\_\+opks\+\_\+request (\begin{DoxyParamCaption}\item[{E2ees\+\_\+\+\_\+\+Supply\+Opks\+Request \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{request\+\_\+out}{, }\item[{E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}}]{account}{, }\item[{uint32\+\_\+t}]{opks\+\_\+num}{}\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{account__manager_8h_a578094313858a76a5fd9d3b2148b1a4e} 
+int produce\+\_\+supply\+\_\+opks\+\_\+request (\begin{DoxyParamCaption}\item[{E2ees\+\_\+\+\_\+\+Supply\+Opks\+Request \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{request\+\_\+out}{, }\item[{E2ees\+\_\+\+\_\+\+One\+Time\+Pre\+Key \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{one\+\_\+time\+\_\+pre\+\_\+key\+\_\+list\+\_\+out}{, }\item[{E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}}]{account}{, }\item[{uint32\+\_\+t}]{opks\+\_\+num}{}\end{DoxyParamCaption})}
 
 
 
@@ -171,6 +173,8 @@ Create a Supply\+Opks\+Request message to be sent to server.
 
 \begin{DoxyParams}{Parameters}
 {\em request\+\_\+out} & \\
+\hline
+{\em one\+\_\+time\+\_\+pre\+\_\+key\+\_\+list\+\_\+out} & \\
 \hline
 {\em account} & \\
 \hline

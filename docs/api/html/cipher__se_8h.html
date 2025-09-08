@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -103,12 +103,12 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1bff7c10814e8a777dd1a106f436406a" id="r_a1bff7c10814e8a777dd1a106f436406a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1bff7c10814e8a777dd1a106f436406a">aes256_gcm_encrypt</a> (const ProtobufCBinaryData *ad, const uint8_t *aes_key, const uint8_t *plaintext_data, size_t plaintext_data_len, uint8_t **ciphertext_data, size_t *ciphertext_data_len)</td></tr>
-<tr class="memdesc:a1bff7c10814e8a777dd1a106f436406a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encrypt plaintext with AES GCM.  <br /></td></tr>
-<tr class="separator:a1bff7c10814e8a777dd1a106f436406a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade62c4239668838b57e54a5169028bdd" id="r_ade62c4239668838b57e54a5169028bdd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade62c4239668838b57e54a5169028bdd">aes256_gcm_decrypt</a> (uint8_t **decrypted_data_out, size_t *decrypted_data_len_out, const ProtobufCBinaryData *ad, const uint8_t *aes_key, const uint8_t *ciphertext_data, size_t ciphertext_data_len)</td></tr>
-<tr class="memdesc:ade62c4239668838b57e54a5169028bdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrypt a ciphertext with AES GCM.  <br /></td></tr>
-<tr class="separator:ade62c4239668838b57e54a5169028bdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d6c1b1972af239b56603c833605a0f7" id="r_a0d6c1b1972af239b56603c833605a0f7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d6c1b1972af239b56603c833605a0f7">crypto_se_encrypt_aes256_gcm</a> (const ProtobufCBinaryData *ad, const uint8_t *aes_key, const uint8_t *plaintext_data, size_t plaintext_data_len, uint8_t **ciphertext_data, size_t *ciphertext_data_len)</td></tr>
+<tr class="memdesc:a0d6c1b1972af239b56603c833605a0f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encrypt plaintext with AES GCM.  <br /></td></tr>
+<tr class="separator:a0d6c1b1972af239b56603c833605a0f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31e99386cc5d6a082c75697d7bc75181" id="r_a31e99386cc5d6a082c75697d7bc75181"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31e99386cc5d6a082c75697d7bc75181">crypto_se_decrypt_aes256_gcm</a> (uint8_t **decrypted_data_out, size_t *decrypted_data_len_out, const ProtobufCBinaryData *ad, const uint8_t *aes_key, const uint8_t *ciphertext_data, size_t ciphertext_data_len)</td></tr>
+<tr class="memdesc:a31e99386cc5d6a082c75697d7bc75181"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrypt a ciphertext with AES GCM.  <br /></td></tr>
+<tr class="separator:a31e99386cc5d6a082c75697d7bc75181"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Copyright © 2021 Academia Sinica. All Rights Reserved.</p>
@@ -117,14 +117,14 @@ Functions</h2></td></tr>
 <p>E2EE Security is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
 <p>You should have received a copy of the GNU General Public License along with E2EE Security. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ade62c4239668838b57e54a5169028bdd" name="ade62c4239668838b57e54a5169028bdd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade62c4239668838b57e54a5169028bdd">&#9670;&#160;</a></span>aes256_gcm_decrypt()</h2>
+<a id="a31e99386cc5d6a082c75697d7bc75181" name="a31e99386cc5d6a082c75697d7bc75181"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31e99386cc5d6a082c75697d7bc75181">&#9670;&#160;</a></span>crypto_se_decrypt_aes256_gcm()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int aes256_gcm_decrypt </td>
+          <td class="memname">int crypto_se_decrypt_aes256_gcm </td>
           <td>(</td>
           <td class="paramtype">uint8_t **</td>          <td class="paramname"><span class="paramname"><em>decrypted_data_out</em></span>, </td>
         </tr>
@@ -172,14 +172,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a1bff7c10814e8a777dd1a106f436406a" name="a1bff7c10814e8a777dd1a106f436406a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bff7c10814e8a777dd1a106f436406a">&#9670;&#160;</a></span>aes256_gcm_encrypt()</h2>
+<a id="a0d6c1b1972af239b56603c833605a0f7" name="a0d6c1b1972af239b56603c833605a0f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d6c1b1972af239b56603c833605a0f7">&#9670;&#160;</a></span>crypto_se_encrypt_aes256_gcm()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int aes256_gcm_encrypt </td>
+          <td class="memname">int crypto_se_encrypt_aes256_gcm </td>
           <td>(</td>
           <td class="paramtype">const ProtobufCBinaryData *</td>          <td class="paramname"><span class="paramname"><em>ad</em></span>, </td>
         </tr>

@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -99,12 +99,12 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a905d20de8a77174d2c6430a50d505e96" id="r_a905d20de8a77174d2c6430a50d505e96"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structcrypto__ds__param__t.html">crypto_ds_param_t</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a905d20de8a77174d2c6430a50d505e96">get_crypto_param</a> )(void)</td></tr>
-<tr class="memdesc:a905d20de8a77174d2c6430a50d505e96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the parameters of this digital signature suite.  <br /></td></tr>
-<tr class="separator:a905d20de8a77174d2c6430a50d505e96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54cd6cd0f027601ddf44a4fa1581e970" id="r_a54cd6cd0f027601ddf44a4fa1581e970"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54cd6cd0f027601ddf44a4fa1581e970">sign_key_gen</a> )(ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key)</td></tr>
-<tr class="memdesc:a54cd6cd0f027601ddf44a4fa1581e970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a random key pair that will be used to generate or verify a signature.  <br /></td></tr>
-<tr class="separator:a54cd6cd0f027601ddf44a4fa1581e970"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77fb72906d5833310d3f2d1809313c68" id="r_a77fb72906d5833310d3f2d1809313c68"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structcrypto__ds__param__t.html">crypto_ds_param_t</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a77fb72906d5833310d3f2d1809313c68">get_param</a> )(void)</td></tr>
+<tr class="memdesc:a77fb72906d5833310d3f2d1809313c68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the parameters of this digital signature algorithm suite.  <br /></td></tr>
+<tr class="separator:a77fb72906d5833310d3f2d1809313c68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e3b815bfea5cbd0319393f94f8d9cb9" id="r_a0e3b815bfea5cbd0319393f94f8d9cb9"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0e3b815bfea5cbd0319393f94f8d9cb9">ds_key_gen</a> )(ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key)</td></tr>
+<tr class="memdesc:a0e3b815bfea5cbd0319393f94f8d9cb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a random key pair that will be used to generate or verify a signature.  <br /></td></tr>
+<tr class="separator:a0e3b815bfea5cbd0319393f94f8d9cb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46d695f2d62249196166f79052141229" id="r_a46d695f2d62249196166f79052141229"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46d695f2d62249196166f79052141229">sign</a> )(uint8_t *signature_out, size_t *signature_out_len, const uint8_t *msg, size_t msg_len, const uint8_t *private_key)</td></tr>
 <tr class="memdesc:a46d695f2d62249196166f79052141229"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sign a message.  <br /></td></tr>
 <tr class="separator:a46d695f2d62249196166f79052141229"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -115,19 +115,43 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Type definition of digital signature algorithm suite. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="a905d20de8a77174d2c6430a50d505e96" name="a905d20de8a77174d2c6430a50d505e96"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a905d20de8a77174d2c6430a50d505e96">&#9670;&#160;</a></span>get_crypto_param</h2>
+<a id="a0e3b815bfea5cbd0319393f94f8d9cb9" name="a0e3b815bfea5cbd0319393f94f8d9cb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e3b815bfea5cbd0319393f94f8d9cb9">&#9670;&#160;</a></span>ds_key_gen</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">struct <a class="el" href="structcrypto__ds__param__t.html">crypto_ds_param_t</a>(* ds_suite_t::get_crypto_param) (void)</td>
+          <td class="memname">int(* ds_suite_t::ds_key_gen) (ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get the parameters of this digital signature suite. </p>
+<p>Generate a random key pair that will be used to generate or verify a signature. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pub_key</td><td></td></tr>
+    <tr><td class="paramname">priv_key</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>value &lt; 0 for error </dd></dl>
+
+</div>
+</div>
+<a id="a77fb72906d5833310d3f2d1809313c68" name="a77fb72906d5833310d3f2d1809313c68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77fb72906d5833310d3f2d1809313c68">&#9670;&#160;</a></span>get_param</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structcrypto__ds__param__t.html">crypto_ds_param_t</a>(* ds_suite_t::get_param) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the parameters of this digital signature algorithm suite. </p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structcrypto__ds__param__t.html" title="Type definition of digital signature algorithm parameters.">crypto_ds_param_t</a> </dd></dl>
 
 </div>
@@ -152,30 +176,6 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">msg</td><td></td></tr>
     <tr><td class="paramname">msg_len</td><td></td></tr>
     <tr><td class="paramname">private_key</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>value &lt; 0 for error </dd></dl>
-
-</div>
-</div>
-<a id="a54cd6cd0f027601ddf44a4fa1581e970" name="a54cd6cd0f027601ddf44a4fa1581e970"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54cd6cd0f027601ddf44a4fa1581e970">&#9670;&#160;</a></span>sign_key_gen</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int(* ds_suite_t::sign_key_gen) (ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Generate a random key pair that will be used to generate or verify a signature. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">pub_key</td><td></td></tr>
-    <tr><td class="paramname">priv_key</td><td></td></tr>
   </table>
   </dd>
 </dl>

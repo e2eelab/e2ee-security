@@ -109,13 +109,18 @@ bool compare_group_member(E2ees__GroupMember **group_members_1, size_t group_mem
     if (group_member_num_1 != group_member_num_2)
         return false;
 
-    size_t i;
+    size_t i, j;
+    bool matched = true;
     for (i = 0; i < group_member_num_1; i++) {
-        if ((group_members_1[i]->role != group_members_2[i]->role)
-            || !safe_strcmp(group_members_1[i]->user_id, group_members_2[i]->user_id)
-            || !safe_strcmp(group_members_1[i]->domain, group_members_2[i]->domain)
-        ) {
-            // skip comparing member role ?
+        if (matched) {
+            matched = false;
+            for (j = 0; j < group_member_num_2; j++) {
+                if (safe_strcmp(group_members_1[i]->user_id, group_members_2[j]->user_id) && safe_strcmp(group_members_1[i]->domain, group_members_2[j]->domain)) {
+                    matched = true;
+                    break;
+                }
+            }
+        } else {
             return false;
         }
     }

@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -106,13 +106,13 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &quot;<a class="code" href="e2ees_8h.html">e2ees/e2ees.h</a>&quot;</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="cipher__se_8h.html#a1bff7c10814e8a777dd1a106f436406a">   44</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="cipher__se_8h.html#a1bff7c10814e8a777dd1a106f436406a">aes256_gcm_encrypt</a>(</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="cipher__se_8h.html#a0d6c1b1972af239b56603c833605a0f7">   44</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="cipher__se_8h.html#a0d6c1b1972af239b56603c833605a0f7">crypto_se_encrypt_aes256_gcm</a>(</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">const</span> ProtobufCBinaryData *ad, <span class="keyword">const</span> uint8_t *aes_key,</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">const</span> uint8_t *plaintext_data, <span class="keywordtype">size_t</span> plaintext_data_len,</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    uint8_t **ciphertext_data, <span class="keywordtype">size_t</span> *ciphertext_data_len</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>);</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="cipher__se_8h.html#ade62c4239668838b57e54a5169028bdd">   61</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="cipher__se_8h.html#ade62c4239668838b57e54a5169028bdd">aes256_gcm_decrypt</a>(</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="cipher__se_8h.html#a31e99386cc5d6a082c75697d7bc75181">   61</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="cipher__se_8h.html#a31e99386cc5d6a082c75697d7bc75181">crypto_se_decrypt_aes256_gcm</a>(</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    uint8_t **decrypted_data_out, <span class="keywordtype">size_t</span> *decrypted_data_len_out,</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keyword">const</span> ProtobufCBinaryData *ad, <span class="keyword">const</span> uint8_t *aes_key,</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keyword">const</span> uint8_t *ciphertext_data, <span class="keywordtype">size_t</span> ciphertext_data_len</div>
@@ -123,8 +123,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="preprocessor">#endif </span><span class="comment">/* CIPHER_SE_H_ */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="acipher__se_8h_html_a1bff7c10814e8a777dd1a106f436406a"><div class="ttname"><a href="cipher__se_8h.html#a1bff7c10814e8a777dd1a106f436406a">aes256_gcm_encrypt</a></div><div class="ttdeci">int aes256_gcm_encrypt(const ProtobufCBinaryData *ad, const uint8_t *aes_key, const uint8_t *plaintext_data, size_t plaintext_data_len, uint8_t **ciphertext_data, size_t *ciphertext_data_len)</div><div class="ttdoc">Encrypt plaintext with AES GCM.</div></div>
-<div class="ttc" id="acipher__se_8h_html_ade62c4239668838b57e54a5169028bdd"><div class="ttname"><a href="cipher__se_8h.html#ade62c4239668838b57e54a5169028bdd">aes256_gcm_decrypt</a></div><div class="ttdeci">int aes256_gcm_decrypt(uint8_t **decrypted_data_out, size_t *decrypted_data_len_out, const ProtobufCBinaryData *ad, const uint8_t *aes_key, const uint8_t *ciphertext_data, size_t ciphertext_data_len)</div><div class="ttdoc">Decrypt a ciphertext with AES GCM.</div></div>
+<div class="ttc" id="acipher__se_8h_html_a0d6c1b1972af239b56603c833605a0f7"><div class="ttname"><a href="cipher__se_8h.html#a0d6c1b1972af239b56603c833605a0f7">crypto_se_encrypt_aes256_gcm</a></div><div class="ttdeci">int crypto_se_encrypt_aes256_gcm(const ProtobufCBinaryData *ad, const uint8_t *aes_key, const uint8_t *plaintext_data, size_t plaintext_data_len, uint8_t **ciphertext_data, size_t *ciphertext_data_len)</div><div class="ttdoc">Encrypt plaintext with AES GCM.</div></div>
+<div class="ttc" id="acipher__se_8h_html_a31e99386cc5d6a082c75697d7bc75181"><div class="ttname"><a href="cipher__se_8h.html#a31e99386cc5d6a082c75697d7bc75181">crypto_se_decrypt_aes256_gcm</a></div><div class="ttdeci">int crypto_se_decrypt_aes256_gcm(uint8_t **decrypted_data_out, size_t *decrypted_data_len_out, const ProtobufCBinaryData *ad, const uint8_t *aes_key, const uint8_t *ciphertext_data, size_t ciphertext_data_len)</div><div class="ttdoc">Decrypt a ciphertext with AES GCM.</div></div>
 <div class="ttc" id="ae2ees_8h_html"><div class="ttname"><a href="e2ees_8h.html">e2ees.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

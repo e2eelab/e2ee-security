@@ -153,10 +153,10 @@ int consume_create_group_response(
 
 bool consume_create_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__CreateGroupMsg *msg) {
     if (!is_valid_address(receiver_address)) {
-        return false;
+        return true;
     }
     if (!is_valid_create_group_msg(msg)) {
-        return false;
+        return true;
     }
 
     uint32_t e2ees_pack_id = msg->e2ees_pack_id;
@@ -397,10 +397,10 @@ int consume_add_group_members_response(
 
 bool consume_add_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ees__AddGroupMembersMsg *msg) {
     if (!is_valid_address(receiver_address)) {
-        return false;
+        return true;
     }
     if (!is_valid_add_group_members_msg(msg)) {
-        return false;
+        return true;
     }
 
     E2ees__E2eeAddress *group_address = msg->group_info->group_address;
@@ -426,7 +426,7 @@ bool consume_add_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ees__
         if (inbound_group_session == NULL) {
             e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_add_group_members_msg()");
             e2ees__group_session__free_unpacked(outbound_group_session, NULL);
-            return false;
+            return true;
         }
         const cipher_suite_t *cipher_suite = get_e2ees_pack(inbound_group_session->e2ees_pack_id)->cipher_suite;
         uint32_t their_sequence = msg->sequence;
@@ -588,10 +588,10 @@ bool consume_add_group_member_device_msg(
     E2ees__AddGroupMemberDeviceMsg *msg
 ) {
     if (!is_valid_address(receiver_address)) {
-        return false;
+        return true;
     }
     if (!is_valid_add_group_member_device_msg(msg)) {
-        return false;
+        return true;
     }
 
     E2ees__E2eeAddress *group_address = msg->group_info->group_address;
@@ -618,7 +618,7 @@ bool consume_add_group_member_device_msg(
             e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_add_group_member_device_msg()");
             // release
             e2ees__group_session__free_unpacked(outbound_group_session, NULL);
-            return false;
+            return true;
         }
         const cipher_suite_t *cipher_suite = get_e2ees_pack(inbound_group_session->e2ees_pack_id)->cipher_suite;
         uint32_t their_sequence = msg->sequence;
@@ -798,10 +798,10 @@ int consume_remove_group_members_response(
 
 bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ees__RemoveGroupMembersMsg *msg) {
     if (!is_valid_address(receiver_address)) {
-        return false;
+        return true;
     }
     if (!is_valid_remove_group_members_msg(msg)) {
-        return false;
+        return true;
     }
 
     uint32_t e2ees_pack_id = msg->e2ees_pack_id;
@@ -971,10 +971,10 @@ int consume_leave_group_response(
 
 bool consume_leave_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__LeaveGroupMsg *msg) {
     if (!is_valid_address(receiver_address)) {
-        return false;
+        return true;
     }
     if (!is_valid_leave_group_msg(msg)) {
-        return false;
+        return true;
     }
 
     // prepare the removing group member
@@ -991,15 +991,12 @@ bool consume_leave_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__LeaveG
         &remove_group_members_response, receiver_address, msg->group_address, removing_group_members, removing_group_member_num
     );
 
-    bool succ = false;
     if (remove_group_members_response != NULL) {
         if (remove_group_members_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
             e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_leave_group_msg() succes");
-            succ = true;
         } else if(remove_group_members_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
             // member already removed, just consume it
             e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_leave_group_msg(), group session nnot found or no such member");
-            succ = true;
         }
         // release
         e2ees__remove_group_members_response__free_unpacked(remove_group_members_response, NULL);
@@ -1009,7 +1006,7 @@ bool consume_leave_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__LeaveG
     free_mem((void **)&removing_group_members, sizeof(E2ees__GroupMember *));
 
     // done
-    return succ;
+    return true;
 }
 
 int produce_send_group_msg_request(
@@ -1231,7 +1228,7 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
         // release
         e2ees__group_session__free_unpacked(inbound_group_session, NULL);
         free_mem((void **)&identity_public_key, sign_key_len);
-        return false;
+        return true;
     }
 
     // advance the chain key
@@ -1273,5 +1270,5 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
     free_mem((void **)&identity_public_key, sign_key_len);
     e2ees__msg_key__free_unpacked(msg_key, NULL);
 
-    return succ>=0;
+    return true;
 }

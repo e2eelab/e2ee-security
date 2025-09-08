@@ -23,9 +23,13 @@ bool is_valid_protobuf_list(ProtobufCBinaryData *src, size_t len);
 
 bool is_valid_string(const char *src);
 
+bool is_invalid_string(const char *src);
+
 bool is_valid_string_list(char **src, size_t len);
 
 bool is_valid_address(E2ees__E2eeAddress *src);
+
+bool is_invalid_address(E2ees__E2eeAddress *src);
 
 bool is_valid_address_list(E2ees__E2eeAddress **src, size_t len);
 

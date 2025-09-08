@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -106,6 +106,7 @@ $(function(){ initResizable(false); });
 <h3><a id="index_d" name="index_d"></a>- d -</h3><ul>
 <li>decaps&#160;:&#160;<a class="el" href="structkem__suite__t.html#a275cda3e1962677ce05f492bcd6de467">kem_suite_t</a></li>
 <li>decrypt&#160;:&#160;<a class="el" href="structse__suite__t.html#a28075d5db728fcdf04bce0519b093915">se_suite_t</a></li>
+<li>ds_key_gen&#160;:&#160;<a class="el" href="structds__suite__t.html#a0e3b815bfea5cbd0319393f94f8d9cb9">ds_suite_t</a></li>
 </ul>
 
 
@@ -118,7 +119,7 @@ $(function(){ initResizable(false); });
 <h3><a id="index_g" name="index_g"></a>- g -</h3><ul>
 <li>gen_rand&#160;:&#160;<a class="el" href="structe2ees__common__handler__t.html#a817cb99fc9aaae98100a4d241e6d5e44">e2ees_common_handler_t</a></li>
 <li>gen_ts&#160;:&#160;<a class="el" href="structe2ees__common__handler__t.html#af28dc729e62dbc679d0e45971e8ec445">e2ees_common_handler_t</a></li>
-<li>get_crypto_param&#160;:&#160;<a class="el" href="structds__suite__t.html#a905d20de8a77174d2c6430a50d505e96">ds_suite_t</a>, <a class="el" href="structhf__suite__t.html#a9b0890a198c5a96920736ad2cc636cb4">hf_suite_t</a>, <a class="el" href="structkem__suite__t.html#a2c102cdde7c6f66a97c1192ae845f7f6">kem_suite_t</a>, <a class="el" href="structse__suite__t.html#a5cff7596803766b01571fe0a4a873718">se_suite_t</a></li>
+<li>get_param&#160;:&#160;<a class="el" href="structds__suite__t.html#a77fb72906d5833310d3f2d1809313c68">ds_suite_t</a>, <a class="el" href="structhf__suite__t.html#a5fe7edc28daaacafb7e199c0574eefe2">hf_suite_t</a>, <a class="el" href="structkem__suite__t.html#a84855aff777c88aee9a6500a0b96d43d">kem_suite_t</a>, <a class="el" href="structse__suite__t.html#aeddd3fa0eb34df118328631df5ce0c47">se_suite_t</a></li>
 <li>get_pre_key_bundle&#160;:&#160;<a class="el" href="structe2ees__proto__handler__t.html#ade4354875b0fea0f082ed3331a8dfa7c">e2ees_proto_handler_t</a></li>
 </ul>
 
@@ -144,11 +145,11 @@ $(function(){ initResizable(false); });
 <li>load_group_session_by_address&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#a05bca2a2767b6266128663d381171b91">e2ees_db_handler_t</a></li>
 <li>load_group_session_by_id&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#acda5dd9769a1fde5b940032fb79b14f4">e2ees_db_handler_t</a></li>
 <li>load_group_sessions&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#a4916e90fd483a765a7f60b45941c5b30">e2ees_db_handler_t</a></li>
-<li>load_inbound_session&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#a3377d516fe86d53f2f16fc48efed55d6">e2ees_db_handler_t</a></li>
 <li>load_outbound_session&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#a99795726002a1917610af63531c62b36">e2ees_db_handler_t</a></li>
 <li>load_outbound_sessions&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#a0a3c048a2f81a47af4b5345e92e7a470">e2ees_db_handler_t</a></li>
 <li>load_pending_plaintext_data&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#af40284269198938a68cee0ab0f014402">e2ees_db_handler_t</a></li>
 <li>load_pending_request_data&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#a90be51cb62e65cf270d9a98166e46477">e2ees_db_handler_t</a></li>
+<li>load_session&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#afc70e3e3477bb313769e58a784b55d18">e2ees_db_handler_t</a></li>
 <li>load_signed_pre_key&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#a7b3bbeca5e4ee584d86d9352f94973f9">e2ees_db_handler_t</a></li>
 </ul>
 
@@ -191,7 +192,6 @@ $(function(){ initResizable(false); });
 <li>send_group_msg&#160;:&#160;<a class="el" href="structe2ees__proto__handler__t.html#aaefb30fdad3bf63d00013be968ae197b">e2ees_proto_handler_t</a></li>
 <li>send_one2one_msg&#160;:&#160;<a class="el" href="structe2ees__proto__handler__t.html#ad0d03b367e1454f5ecf7ae50c3ad0587">e2ees_proto_handler_t</a></li>
 <li>sign&#160;:&#160;<a class="el" href="structds__suite__t.html#a46d695f2d62249196166f79052141229">ds_suite_t</a></li>
-<li>sign_key_gen&#160;:&#160;<a class="el" href="structds__suite__t.html#a54cd6cd0f027601ddf44a4fa1581e970">ds_suite_t</a></li>
 <li>store_account&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#a20d0c78cf05163df22b63d20bdf07f42">e2ees_db_handler_t</a></li>
 <li>store_group_session&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#aa115d5399c46deab9ad2f337eef56fb6">e2ees_db_handler_t</a></li>
 <li>store_pending_plaintext_data&#160;:&#160;<a class="el" href="structe2ees__db__handler__t.html#a73a467804013eae0eec2154ce63d38ee">e2ees_db_handler_t</a></li>

@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -90,20 +90,40 @@ $(function(){ initResizable(false); });
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">log_code.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
+<div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;stdlib.h&gt;</code><br />
+</div>
 <p><a href="log__code_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstack__frame.html">stack_frame</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a714add1a27ad97774f9eb23f7a25f47c" id="r_a714add1a27ad97774f9eb23f7a25f47c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a714add1a27ad97774f9eb23f7a25f47c">TRACE_ENTER</a>()</td></tr>
+<tr class="separator:a714add1a27ad97774f9eb23f7a25f47c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24c7bc81107a8d0c9530fb636e2a5771" id="r_a24c7bc81107a8d0c9530fb636e2a5771"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24c7bc81107a8d0c9530fb636e2a5771">TRACE_EXIT</a>()</td></tr>
+<tr class="separator:a24c7bc81107a8d0c9530fb636e2a5771"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:a19cca64717360388c5b7cf9e2d8403bb" id="r_a19cca64717360388c5b7cf9e2d8403bb"><td class="memItemLeft" align="right" valign="top"><a id="a19cca64717360388c5b7cf9e2d8403bb" name="a19cca64717360388c5b7cf9e2d8403bb"></a>
 typedef enum LogCode&#160;</td><td class="memItemRight" valign="bottom"><b>LogCode</b></td></tr>
 <tr class="separator:a19cca64717360388c5b7cf9e2d8403bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec9a61c7e37b0e1d70eb9d5f50303217" id="r_aec9a61c7e37b0e1d70eb9d5f50303217"><td class="memItemLeft" align="right" valign="top"><a id="aec9a61c7e37b0e1d70eb9d5f50303217" name="aec9a61c7e37b0e1d70eb9d5f50303217"></a>
+typedef struct <a class="el" href="structstack__frame.html">stack_frame</a>&#160;</td><td class="memItemRight" valign="bottom"><b>stack_frame_t</b></td></tr>
+<tr class="separator:aec9a61c7e37b0e1d70eb9d5f50303217"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -225,6 +245,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a197c539ddf287bb08e9f4d3ea3a813af" id="r_a197c539ddf287bb08e9f4d3ea3a813af"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a197c539ddf287bb08e9f4d3ea3a813af">logcode_string</a> (LogCode log_code)</td></tr>
 <tr class="memdesc:a197c539ddf287bb08e9f4d3ea3a813af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the string representation of a given log code.  <br /></td></tr>
 <tr class="separator:a197c539ddf287bb08e9f4d3ea3a813af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad535f7dc200caad603513cb261fbee4d" id="r_ad535f7dc200caad603513cb261fbee4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad535f7dc200caad603513cb261fbee4d">get_stack_trace</a> (char *buffer, size_t buffer_len)</td></tr>
+<tr class="memdesc:ad535f7dc200caad603513cb261fbee4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Capture and format stack trace.  <br /></td></tr>
+<tr class="separator:ad535f7dc200caad603513cb261fbee4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:aeb7633afa0084b118fea5ebffd350487" id="r_aeb7633afa0084b118fea5ebffd350487"><td class="memItemLeft" align="right" valign="top"><a id="aeb7633afa0084b118fea5ebffd350487" name="aeb7633afa0084b118fea5ebffd350487"></a>
+__thread <a class="el" href="structstack__frame.html">stack_frame_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>current_stack_top</b></td></tr>
+<tr class="separator:aeb7633afa0084b118fea5ebffd350487"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Copyright © 2021 Academia Sinica. All Rights Reserved.</p>
@@ -232,7 +261,74 @@ Functions</h2></td></tr>
 <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
 <p>E2EE Security is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
 <p>You should have received a copy of the GNU General Public License along with E2EE Security. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>. </p>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a714add1a27ad97774f9eb23f7a25f47c" name="a714add1a27ad97774f9eb23f7a25f47c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a714add1a27ad97774f9eb23f7a25f47c">&#9670;&#160;</a></span>TRACE_ENTER</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRACE_ENTER</td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> { } <span class="keywordflow">while</span>(0)</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a24c7bc81107a8d0c9530fb636e2a5771" name="a24c7bc81107a8d0c9530fb636e2a5771"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24c7bc81107a8d0c9530fb636e2a5771">&#9670;&#160;</a></span>TRACE_EXIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRACE_EXIT</td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span> { } <span class="keywordflow">while</span>(0)</div>
+</div><!-- fragment -->
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ad535f7dc200caad603513cb261fbee4d" name="ad535f7dc200caad603513cb261fbee4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad535f7dc200caad603513cb261fbee4d">&#9670;&#160;</a></span>get_stack_trace()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void get_stack_trace </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>buffer_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Capture and format stack trace. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>the buffer to keep stack trace msg </td></tr>
+    <tr><td class="paramname">buffer_len</td><td>the length of buffer </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a197c539ddf287bb08e9f4d3ea3a813af" name="a197c539ddf287bb08e9f4d3ea3a813af"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a197c539ddf287bb08e9f4d3ea3a813af">&#9670;&#160;</a></span>logcode_string()</h2>
 

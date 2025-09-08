@@ -7,9 +7,9 @@
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-int \mbox{\hyperlink{cipher__se_8h_a1bff7c10814e8a777dd1a106f436406a}{aes256\+\_\+gcm\+\_\+encrypt}} (const Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}ad, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}aes\+\_\+key, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}plaintext\+\_\+data, size\+\_\+t plaintext\+\_\+data\+\_\+len, uint8\+\_\+t \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}ciphertext\+\_\+data, size\+\_\+t \texorpdfstring{$\ast$}{*}ciphertext\+\_\+data\+\_\+len)
+int \mbox{\hyperlink{cipher__se_8h_a0d6c1b1972af239b56603c833605a0f7}{crypto\+\_\+se\+\_\+encrypt\+\_\+aes256\+\_\+gcm}} (const Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}ad, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}aes\+\_\+key, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}plaintext\+\_\+data, size\+\_\+t plaintext\+\_\+data\+\_\+len, uint8\+\_\+t \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}ciphertext\+\_\+data, size\+\_\+t \texorpdfstring{$\ast$}{*}ciphertext\+\_\+data\+\_\+len)
 \begin{DoxyCompactList}\small\item\em Encrypt plaintext with AES GCM. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{cipher__se_8h_ade62c4239668838b57e54a5169028bdd}{aes256\+\_\+gcm\+\_\+decrypt}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}decrypted\+\_\+data\+\_\+out, size\+\_\+t \texorpdfstring{$\ast$}{*}decrypted\+\_\+data\+\_\+len\+\_\+out, const Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}ad, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}aes\+\_\+key, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}ciphertext\+\_\+data, size\+\_\+t ciphertext\+\_\+data\+\_\+len)
+int \mbox{\hyperlink{cipher__se_8h_a31e99386cc5d6a082c75697d7bc75181}{crypto\+\_\+se\+\_\+decrypt\+\_\+aes256\+\_\+gcm}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}decrypted\+\_\+data\+\_\+out, size\+\_\+t \texorpdfstring{$\ast$}{*}decrypted\+\_\+data\+\_\+len\+\_\+out, const Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}ad, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}aes\+\_\+key, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}ciphertext\+\_\+data, size\+\_\+t ciphertext\+\_\+data\+\_\+len)
 \begin{DoxyCompactList}\small\item\em Decrypt a ciphertext with AES GCM. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
@@ -25,11 +25,11 @@ E2\+EE Security is distributed in the hope that it will be useful, but WITHOUT A
 You should have received a copy of the GNU General Public License along with E2\+EE Security. If not, see \href{http://www.gnu.org/licenses/}{\texttt{ http\+://www.\+gnu.\+org/licenses/}}. 
 
 \doxysubsection{Function Documentation}
-\Hypertarget{cipher__se_8h_ade62c4239668838b57e54a5169028bdd}\index{cipher\_se.h@{cipher\_se.h}!aes256\_gcm\_decrypt@{aes256\_gcm\_decrypt}}
-\index{aes256\_gcm\_decrypt@{aes256\_gcm\_decrypt}!cipher\_se.h@{cipher\_se.h}}
-\doxysubsubsection{\texorpdfstring{aes256\_gcm\_decrypt()}{aes256\_gcm\_decrypt()}}
-{\footnotesize\ttfamily \label{cipher__se_8h_ade62c4239668838b57e54a5169028bdd} 
-int aes256\+\_\+gcm\+\_\+decrypt (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{decrypted\+\_\+data\+\_\+out}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{decrypted\+\_\+data\+\_\+len\+\_\+out}{, }\item[{const Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{ad}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{aes\+\_\+key}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+data}{, }\item[{size\+\_\+t}]{ciphertext\+\_\+data\+\_\+len}{}\end{DoxyParamCaption})}
+\Hypertarget{cipher__se_8h_a31e99386cc5d6a082c75697d7bc75181}\index{cipher\_se.h@{cipher\_se.h}!crypto\_se\_decrypt\_aes256\_gcm@{crypto\_se\_decrypt\_aes256\_gcm}}
+\index{crypto\_se\_decrypt\_aes256\_gcm@{crypto\_se\_decrypt\_aes256\_gcm}!cipher\_se.h@{cipher\_se.h}}
+\doxysubsubsection{\texorpdfstring{crypto\_se\_decrypt\_aes256\_gcm()}{crypto\_se\_decrypt\_aes256\_gcm()}}
+{\footnotesize\ttfamily \label{cipher__se_8h_a31e99386cc5d6a082c75697d7bc75181} 
+int crypto\+\_\+se\+\_\+decrypt\+\_\+aes256\+\_\+gcm (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{decrypted\+\_\+data\+\_\+out}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{decrypted\+\_\+data\+\_\+len\+\_\+out}{, }\item[{const Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{ad}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{aes\+\_\+key}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+data}{, }\item[{size\+\_\+t}]{ciphertext\+\_\+data\+\_\+len}{}\end{DoxyParamCaption})}
 
 
 
@@ -53,11 +53,11 @@ Decrypt a ciphertext with AES GCM.
 \begin{DoxyReturn}{Returns}
 The length of plaintext\+\_\+data or -\/1 for decryption error 
 \end{DoxyReturn}
-\Hypertarget{cipher__se_8h_a1bff7c10814e8a777dd1a106f436406a}\index{cipher\_se.h@{cipher\_se.h}!aes256\_gcm\_encrypt@{aes256\_gcm\_encrypt}}
-\index{aes256\_gcm\_encrypt@{aes256\_gcm\_encrypt}!cipher\_se.h@{cipher\_se.h}}
-\doxysubsubsection{\texorpdfstring{aes256\_gcm\_encrypt()}{aes256\_gcm\_encrypt()}}
-{\footnotesize\ttfamily \label{cipher__se_8h_a1bff7c10814e8a777dd1a106f436406a} 
-int aes256\+\_\+gcm\+\_\+encrypt (\begin{DoxyParamCaption}\item[{const Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{ad}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{aes\+\_\+key}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{plaintext\+\_\+data}{, }\item[{size\+\_\+t}]{plaintext\+\_\+data\+\_\+len}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+data}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+data\+\_\+len}{}\end{DoxyParamCaption})}
+\Hypertarget{cipher__se_8h_a0d6c1b1972af239b56603c833605a0f7}\index{cipher\_se.h@{cipher\_se.h}!crypto\_se\_encrypt\_aes256\_gcm@{crypto\_se\_encrypt\_aes256\_gcm}}
+\index{crypto\_se\_encrypt\_aes256\_gcm@{crypto\_se\_encrypt\_aes256\_gcm}!cipher\_se.h@{cipher\_se.h}}
+\doxysubsubsection{\texorpdfstring{crypto\_se\_encrypt\_aes256\_gcm()}{crypto\_se\_encrypt\_aes256\_gcm()}}
+{\footnotesize\ttfamily \label{cipher__se_8h_a0d6c1b1972af239b56603c833605a0f7} 
+int crypto\+\_\+se\+\_\+encrypt\+\_\+aes256\+\_\+gcm (\begin{DoxyParamCaption}\item[{const Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{ad}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{aes\+\_\+key}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{plaintext\+\_\+data}{, }\item[{size\+\_\+t}]{plaintext\+\_\+data\+\_\+len}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+data}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+data\+\_\+len}{}\end{DoxyParamCaption})}
 
 
 

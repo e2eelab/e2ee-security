@@ -341,12 +341,12 @@ bool consume_supply_opks_msg(E2ees__E2eeAddress *receiver_address, E2ees__Supply
 
     if (!is_valid_address(receiver_address)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "consume_supply_opks_msg()");
-        return false;
+        return true;
     }
     if (is_valid_supply_opks_msg(msg)) {
         if (!compare_address(receiver_address, msg->user_address)){
             e2ees_notify_log(receiver_address, BAD_SUPPLY_OPKS_MSG, "consume_supply_opks_msg()");
-            return false;
+            return true;
         }
     }
 
@@ -356,7 +356,7 @@ bool consume_supply_opks_msg(E2ees__E2eeAddress *receiver_address, E2ees__Supply
 
     if (!is_valid_registered_account(account)) {
         e2ees_notify_log(receiver_address, BAD_ACCOUNT, "consume_supply_opks_msg()");
-        return false;
+        return true;
     }
 
     E2ees__SupplyOpksResponse *supply_opks_response = NULL;

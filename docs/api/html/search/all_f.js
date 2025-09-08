@@ -13,7 +13,7 @@ var searchData=
   ['session_5fsuite_5ft_10',['session_suite_t',['../structsession__suite__t.html',1,'session_suite_t'],['../session_8h.html#acacb2ffb4b01513b805aba08b266a2ab',1,'session_suite_t:&#160;session.h']]],
   ['sha256_5foutput_5flength_11',['SHA256_OUTPUT_LENGTH',['../crypto_8h.html#ab1bd3ef9b594e851769e8d7baf17f0f1',1,'crypto.h']]],
   ['sign_12',['sign',['../structds__suite__t.html#a46d695f2d62249196166f79052141229',1,'ds_suite_t']]],
-  ['sign_5fkey_5fgen_13',['sign_key_gen',['../structds__suite__t.html#a54cd6cd0f027601ddf44a4fa1581e970',1,'ds_suite_t']]],
+  ['stack_5fframe_13',['stack_frame',['../structstack__frame.html',1,'']]],
   ['store_5faccount_14',['store_account',['../structe2ees__db__handler__t.html#a20d0c78cf05163df22b63d20bdf07f42',1,'e2ees_db_handler_t']]],
   ['store_5fgroup_5fsession_15',['store_group_session',['../structe2ees__db__handler__t.html#aa115d5399c46deab9ad2f337eef56fb6',1,'e2ees_db_handler_t']]],
   ['store_5fpending_5fcommon_5fplaintext_5fdata_5finternal_16',['store_pending_common_plaintext_data_internal',['../e2ees__client__internal_8h.html#ac636096712e843ef7bb2c4d260991161',1,'e2ees_client_internal.h']]],

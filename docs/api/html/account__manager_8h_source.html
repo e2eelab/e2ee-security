@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -119,24 +119,25 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    E2ees__PublishSpkResponse *response</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>);</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="account__manager_8h.html#a75cc15d31e43ea2fcf77fb22461e87d9">   84</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="account__manager_8h.html#a75cc15d31e43ea2fcf77fb22461e87d9">produce_supply_opks_request</a>(</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    E2ees__SupplyOpksRequest **request_out,</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    E2ees__Account *account,</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    uint32_t opks_num</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>);</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="account__manager_8h.html#a512e1107d35ed9da79bece0126c5e601">   98</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="account__manager_8h.html#a512e1107d35ed9da79bece0126c5e601">consume_supply_opks_response</a>(E2ees__Account *account, uint32_t opks_num, E2ees__SupplyOpksResponse *response);</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="account__manager_8h.html#aee6d38f1417029686db5725f526e2d1d">  108</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="account__manager_8h.html#aee6d38f1417029686db5725f526e2d1d">consume_supply_opks_msg</a>(E2ees__E2eeAddress *receiver_address, E2ees__SupplyOpksMsg *msg);</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>}</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="preprocessor">#endif </span><span class="comment">// ACCOUNT_MANAGER_H_</span></div>
-<div class="ttc" id="aaccount__manager_8h_html_a512e1107d35ed9da79bece0126c5e601"><div class="ttname"><a href="account__manager_8h.html#a512e1107d35ed9da79bece0126c5e601">consume_supply_opks_response</a></div><div class="ttdeci">int consume_supply_opks_response(E2ees__Account *account, uint32_t opks_num, E2ees__SupplyOpksResponse *response)</div><div class="ttdoc">Process an incoming SupplyOpksResponse message.</div></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="account__manager_8h.html#a578094313858a76a5fd9d3b2148b1a4e">   85</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="account__manager_8h.html#a578094313858a76a5fd9d3b2148b1a4e">produce_supply_opks_request</a>(</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    E2ees__SupplyOpksRequest **request_out,</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    E2ees__OneTimePreKey ***one_time_pre_key_list_out,</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    E2ees__Account *account,</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    uint32_t opks_num</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="account__manager_8h.html#a05c5cc35235af3874a3744dd415958e7">  101</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="account__manager_8h.html#a05c5cc35235af3874a3744dd415958e7">consume_supply_opks_response</a>(E2ees__Account *account, E2ees__OneTimePreKey **one_time_pre_key_list, uint32_t opks_num, E2ees__SupplyOpksResponse *response);</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno"><a class="line" href="account__manager_8h.html#aee6d38f1417029686db5725f526e2d1d">  111</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="account__manager_8h.html#aee6d38f1417029686db5725f526e2d1d">consume_supply_opks_msg</a>(E2ees__E2eeAddress *receiver_address, E2ees__SupplyOpksMsg *msg);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>}</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="preprocessor">#endif </span><span class="comment">// ACCOUNT_MANAGER_H_</span></div>
+<div class="ttc" id="aaccount__manager_8h_html_a05c5cc35235af3874a3744dd415958e7"><div class="ttname"><a href="account__manager_8h.html#a05c5cc35235af3874a3744dd415958e7">consume_supply_opks_response</a></div><div class="ttdeci">int consume_supply_opks_response(E2ees__Account *account, E2ees__OneTimePreKey **one_time_pre_key_list, uint32_t opks_num, E2ees__SupplyOpksResponse *response)</div><div class="ttdoc">Process an incoming SupplyOpksResponse message.</div></div>
+<div class="ttc" id="aaccount__manager_8h_html_a578094313858a76a5fd9d3b2148b1a4e"><div class="ttname"><a href="account__manager_8h.html#a578094313858a76a5fd9d3b2148b1a4e">produce_supply_opks_request</a></div><div class="ttdeci">int produce_supply_opks_request(E2ees__SupplyOpksRequest **request_out, E2ees__OneTimePreKey ***one_time_pre_key_list_out, E2ees__Account *account, uint32_t opks_num)</div><div class="ttdoc">Create a SupplyOpksRequest message to be sent to server.</div></div>
 <div class="ttc" id="aaccount__manager_8h_html_a71017e163c3f8eea92b73a0314c5a9ea"><div class="ttname"><a href="account__manager_8h.html#a71017e163c3f8eea92b73a0314c5a9ea">produce_publish_spk_request</a></div><div class="ttdeci">int produce_publish_spk_request(E2ees__PublishSpkRequest **request_out, E2ees__Account *account)</div><div class="ttdoc">Create a PublishSpkRequest message to be sent to server.</div></div>
-<div class="ttc" id="aaccount__manager_8h_html_a75cc15d31e43ea2fcf77fb22461e87d9"><div class="ttname"><a href="account__manager_8h.html#a75cc15d31e43ea2fcf77fb22461e87d9">produce_supply_opks_request</a></div><div class="ttdeci">int produce_supply_opks_request(E2ees__SupplyOpksRequest **request_out, E2ees__Account *account, uint32_t opks_num)</div><div class="ttdoc">Create a SupplyOpksRequest message to be sent to server.</div></div>
 <div class="ttc" id="aaccount__manager_8h_html_a91b6d6b7915cf09edaa4279d42bc0e21"><div class="ttname"><a href="account__manager_8h.html#a91b6d6b7915cf09edaa4279d42bc0e21">consume_publish_spk_response</a></div><div class="ttdeci">int consume_publish_spk_response(E2ees__Account *account, E2ees__PublishSpkResponse *response)</div><div class="ttdoc">Process an incoming PublishSpkResponse message.</div></div>
 <div class="ttc" id="aaccount__manager_8h_html_aa8b2297e68b8b39545b72181ceabcbb4"><div class="ttname"><a href="account__manager_8h.html#aa8b2297e68b8b39545b72181ceabcbb4">consume_register_response</a></div><div class="ttdeci">bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserResponse *payload)</div><div class="ttdoc">Process an incoming RegisterUserResponse message.</div></div>
 <div class="ttc" id="aaccount__manager_8h_html_acc28e8dbb44d4b655a38376850197efe"><div class="ttname"><a href="account__manager_8h.html#acc28e8dbb44d4b655a38376850197efe">produce_register_request</a></div><div class="ttdeci">int produce_register_request(E2ees__RegisterUserRequest **request_out, E2ees__Account *account)</div><div class="ttdoc">Create a RegisterUserRequest message to be sent to server.</div></div>

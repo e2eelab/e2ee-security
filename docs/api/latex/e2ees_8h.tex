@@ -262,8 +262,11 @@ struct \mbox{\hyperlink{structe2ees__plugin__t}{e2ees\+\_\+plugin\+\_\+t}}
 \Hypertarget{e2ees_8h_afe6a5064e2da3283352d46d8be1c4525}\label{e2ees_8h_afe6a5064e2da3283352d46d8be1c4525} 
 \#define {\bfseries E2\+EES\+\_\+\+PACK\+\_\+\+ID\+\_\+\+UNSPECIFIED}~0
 \item 
-\Hypertarget{e2ees_8h_a56c0b165ba482104fe96bac3bd845557}\label{e2ees_8h_a56c0b165ba482104fe96bac3bd845557} 
-\#define {\bfseries E2\+EES\+\_\+\+PACK\+\_\+\+ID\+\_\+\+V\+\_\+0\+\_\+\+DEFAULT}~0x113101
+\Hypertarget{e2ees_8h_ab1a4491ad60e54cadad68082f463b004}\label{e2ees_8h_ab1a4491ad60e54cadad68082f463b004} 
+\#define {\bfseries E2\+EES\+\_\+\+PACK\+\_\+\+ID\+\_\+\+V\+\_\+0}~0
+\item 
+\Hypertarget{e2ees_8h_ae81543d947f09e68c5ceab79c30f1cea}\label{e2ees_8h_ae81543d947f09e68c5ceab79c30f1cea} 
+\#define {\bfseries E2\+EES\+\_\+\+PACK\+\_\+\+ID\+\_\+\+DEFAULT}~0x113101
 \item 
 \Hypertarget{e2ees_8h_a3d92942c52099ca101aa4c88882ea721}\label{e2ees_8h_a3d92942c52099ca101aa4c88882ea721} 
 \#define {\bfseries E2\+EES\+\_\+\+CIPHER\+\_\+\+SUITE\+\_\+\+PART\+\_\+\+LEN\+\_\+\+IN\+\_\+\+BITS}~8
@@ -324,6 +327,8 @@ uint32\+\_\+t {\bfseries e2ees\+\_\+pack\+\_\+id\+\_\+to\+\_\+raw} (\mbox{\hyper
 \Hypertarget{e2ees_8h_a2e96dc208ad14bb697227160ef5cf64e}\label{e2ees_8h_a2e96dc208ad14bb697227160ef5cf64e} 
 \mbox{\hyperlink{structe2ees__pack__id__t}{e2ees\+\_\+pack\+\_\+id\+\_\+t}} {\bfseries raw\+\_\+to\+\_\+e2ees\+\_\+pack\+\_\+id} (uint32\+\_\+t e2ees\+\_\+pack\+\_\+id\+\_\+raw)
 \begin{DoxyCompactList}\small\item\em Convert raw number to \doxylink{structe2ees__pack__id__t}{e2ees\+\_\+pack\+\_\+id\+\_\+t}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{e2ees_8h_a0db5d4d5c62157aee96a9e3f542f9c04}{e2ees\+\_\+randombytes}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}rand\+\_\+data, size\+\_\+t rand\+\_\+data\+\_\+len)
+\begin{DoxyCompactList}\small\item\em A delegate function to generate random bytes. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{e2ees_8h_af2e416dd499204d6116336d67397ea25}{e2ees\+\_\+notify\+\_\+log}} (E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}user\+\_\+address, Log\+Code log\+\_\+code, const char \texorpdfstring{$\ast$}{*}log\+\_\+msg,...)
 \begin{DoxyCompactList}\small\item\em Log function with additional arguments. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{e2ees_8h_a1e6d50f9cd4fe8271a3a36403787b69f}{e2ees\+\_\+notify\+\_\+user\+\_\+registered}} (E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}account)
@@ -604,6 +609,23 @@ Event for notifying that user is registered.
 
 \begin{DoxyParams}{Parameters}
 {\em account} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{e2ees_8h_a0db5d4d5c62157aee96a9e3f542f9c04}\index{e2ees.h@{e2ees.h}!e2ees\_randombytes@{e2ees\_randombytes}}
+\index{e2ees\_randombytes@{e2ees\_randombytes}!e2ees.h@{e2ees.h}}
+\doxysubsubsection{\texorpdfstring{e2ees\_randombytes()}{e2ees\_randombytes()}}
+{\footnotesize\ttfamily \label{e2ees_8h_a0db5d4d5c62157aee96a9e3f542f9c04} 
+void e2ees\+\_\+randombytes (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{rand\+\_\+data}{, }\item[{size\+\_\+t}]{rand\+\_\+data\+\_\+len}{}\end{DoxyParamCaption})}
+
+
+
+A delegate function to generate random bytes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rand\+\_\+data} & \\
+\hline
+{\em rand\+\_\+data\+\_\+len} & \\
 \hline
 \end{DoxyParams}
 \Hypertarget{e2ees_8h_a10508002144034d1aeabaca872ca5589}\index{e2ees.h@{e2ees.h}!gen\_e2ees\_pack\_id\_raw@{gen\_e2ees\_pack\_id\_raw}}

@@ -32,7 +32,7 @@ bool(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structe2ees__db__handler__t_a3a
 \begin{DoxyCompactList}\small\item\em update an one time pre-\/key of acount from db \end{DoxyCompactList}\item 
 void(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structe2ees__db__handler__t_a129a04ed272f21e7cfa91d3769eeabf6}{load\+\_\+auth}} )(E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}user\+\_\+address, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}auth)
 \begin{DoxyCompactList}\small\item\em load auth from the account given by the user address \end{DoxyCompactList}\item 
-void(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structe2ees__db__handler__t_a3377d516fe86d53f2f16fc48efed55d6}{load\+\_\+inbound\+\_\+session}} )(char \texorpdfstring{$\ast$}{*}session\+\_\+id, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}our\+\_\+address, E2ees\+\_\+\+\_\+\+Session \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}inbound\+\_\+session)
+void(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structe2ees__db__handler__t_afc70e3e3477bb313769e58a784b55d18}{load\+\_\+session}} )(char \texorpdfstring{$\ast$}{*}session\+\_\+id, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}our\+\_\+address, E2ees\+\_\+\+\_\+\+Session \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}inbound\+\_\+session)
 \begin{DoxyCompactList}\small\item\em find inbound session \end{DoxyCompactList}\item 
 void(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structe2ees__db__handler__t_a99795726002a1917610af63531c62b36}{load\+\_\+outbound\+\_\+session}} )(E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}our\+\_\+address, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}their\+\_\+address, E2ees\+\_\+\+\_\+\+Session \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}outbound\+\_\+session)
 \begin{DoxyCompactList}\small\item\em find the lastest outbound session \end{DoxyCompactList}\item 
@@ -225,25 +225,6 @@ load group sessions
 {\em group\+\_\+sessions} & \\
 \hline
 \end{DoxyParams}
-\Hypertarget{structe2ees__db__handler__t_a3377d516fe86d53f2f16fc48efed55d6}\index{e2ees\_db\_handler\_t@{e2ees\_db\_handler\_t}!load\_inbound\_session@{load\_inbound\_session}}
-\index{load\_inbound\_session@{load\_inbound\_session}!e2ees\_db\_handler\_t@{e2ees\_db\_handler\_t}}
-\doxysubsubsection{\texorpdfstring{load\_inbound\_session}{load\_inbound\_session}}
-{\footnotesize\ttfamily \label{structe2ees__db__handler__t_a3377d516fe86d53f2f16fc48efed55d6} 
-void(\texorpdfstring{$\ast$}{*} e2ees\+\_\+db\+\_\+handler\+\_\+t\+::load\+\_\+inbound\+\_\+session) (char \texorpdfstring{$\ast$}{*}session\+\_\+id, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}our\+\_\+address, E2ees\+\_\+\+\_\+\+Session \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}inbound\+\_\+session)}
-
-
-
-find inbound session 
-
-
-\begin{DoxyParams}{Parameters}
-{\em session\+\_\+id} & \\
-\hline
-{\em our\+\_\+address} & \\
-\hline
-{\em inbound\+\_\+session} & \\
-\hline
-\end{DoxyParams}
 \Hypertarget{structe2ees__db__handler__t_a99795726002a1917610af63531c62b36}\index{e2ees\_db\_handler\_t@{e2ees\_db\_handler\_t}!load\_outbound\_session@{load\_outbound\_session}}
 \index{load\_outbound\_session@{load\_outbound\_session}!e2ees\_db\_handler\_t@{e2ees\_db\_handler\_t}}
 \doxysubsubsection{\texorpdfstring{load\_outbound\_session}{load\_outbound\_session}}
@@ -338,6 +319,25 @@ load pending request data
 \begin{DoxyReturn}{Returns}
 number of loaded request\+\_\+data list 
 \end{DoxyReturn}
+\Hypertarget{structe2ees__db__handler__t_afc70e3e3477bb313769e58a784b55d18}\index{e2ees\_db\_handler\_t@{e2ees\_db\_handler\_t}!load\_session@{load\_session}}
+\index{load\_session@{load\_session}!e2ees\_db\_handler\_t@{e2ees\_db\_handler\_t}}
+\doxysubsubsection{\texorpdfstring{load\_session}{load\_session}}
+{\footnotesize\ttfamily \label{structe2ees__db__handler__t_afc70e3e3477bb313769e58a784b55d18} 
+void(\texorpdfstring{$\ast$}{*} e2ees\+\_\+db\+\_\+handler\+\_\+t\+::load\+\_\+session) (char \texorpdfstring{$\ast$}{*}session\+\_\+id, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}our\+\_\+address, E2ees\+\_\+\+\_\+\+Session \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}inbound\+\_\+session)}
+
+
+
+find inbound session 
+
+
+\begin{DoxyParams}{Parameters}
+{\em session\+\_\+id} & \\
+\hline
+{\em our\+\_\+address} & \\
+\hline
+{\em inbound\+\_\+session} & \\
+\hline
+\end{DoxyParams}
 \Hypertarget{structe2ees__db__handler__t_a7b3bbeca5e4ee584d86d9352f94973f9}\index{e2ees\_db\_handler\_t@{e2ees\_db\_handler\_t}!load\_signed\_pre\_key@{load\_signed\_pre\_key}}
 \index{load\_signed\_pre\_key@{load\_signed\_pre\_key}!e2ees\_db\_handler\_t@{e2ees\_db\_handler\_t}}
 \doxysubsubsection{\texorpdfstring{load\_signed\_pre\_key}{load\_signed\_pre\_key}}

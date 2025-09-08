@@ -179,6 +179,16 @@ bool is_valid_string(const char *src) {
     return true;
 }
 
+bool is_invalid_string(const char *src) {
+    if (src != NULL) {
+        if (src[0] != '\0') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool is_valid_string_list(char **src, size_t len) {
     size_t i;
     for (i = 0; i < len; i++) {
@@ -234,6 +244,14 @@ bool is_valid_address(E2ees__E2eeAddress *src) {
         }
     } else {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_address() address is NULL");
+        return false;
+    }
+
+    return true;
+}
+
+bool is_invalid_address(E2ees__E2eeAddress *src) {
+    if (src != NULL) {
         return false;
     }
 
@@ -361,15 +379,15 @@ bool is_valid_unregistered_account(E2ees__Account *src) {
         return false;
     }
     // the address, password and auth should not be available in an unregistered account
-    if (is_valid_address(src->address)) {
+    if (!is_invalid_address(src->address)) {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_unregistered_account() bad address");
         return false;
     }
-    if (is_valid_string(src->password)) {
+    if (!is_invalid_string(src->password)) {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_unregistered_account() bad password");
         return false;
     }
-    if (is_valid_string(src->auth)) {
+    if (!is_invalid_string(src->auth)) {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_unregistered_account() bad auth");
         return false;
     }

@@ -1,10 +1,27 @@
 \doxysection{include/e2ees/log\+\_\+code.h File Reference}
 \hypertarget{log__code_8h}{}\label{log__code_8h}\index{include/e2ees/log\_code.h@{include/e2ees/log\_code.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structstack__frame}{stack\+\_\+frame}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{log__code_8h_a714add1a27ad97774f9eb23f7a25f47c}{TRACE\+\_\+\+ENTER}}()
+\item 
+\#define \mbox{\hyperlink{log__code_8h_a24c7bc81107a8d0c9530fb636e2a5771}{TRACE\+\_\+\+EXIT}}()
+\end{DoxyCompactItemize}
 \doxysubsubsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
 \Hypertarget{log__code_8h_a19cca64717360388c5b7cf9e2d8403bb}\label{log__code_8h_a19cca64717360388c5b7cf9e2d8403bb} 
 typedef enum Log\+Code {\bfseries Log\+Code}
+\item 
+\Hypertarget{log__code_8h_aec9a61c7e37b0e1d70eb9d5f50303217}\label{log__code_8h_aec9a61c7e37b0e1d70eb9d5f50303217} 
+typedef struct \mbox{\hyperlink{structstack__frame}{stack\+\_\+frame}} {\bfseries stack\+\_\+frame\+\_\+t}
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Enumerations}
 \begin{DoxyCompactItemize}
@@ -125,7 +142,15 @@ enum {\bfseries Log\+Code} \{ \newline
 \begin{DoxyCompactItemize}
 \item 
 const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{log__code_8h_a197c539ddf287bb08e9f4d3ea3a813af}{logcode\+\_\+string}} (Log\+Code log\+\_\+code)
-\begin{DoxyCompactList}\small\item\em Get the string representation of a given log code. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Get the string representation of a given log code. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{log__code_8h_ad535f7dc200caad603513cb261fbee4d}{get\+\_\+stack\+\_\+trace}} (char \texorpdfstring{$\ast$}{*}buffer, size\+\_\+t buffer\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Capture and format stack trace. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{log__code_8h_aeb7633afa0084b118fea5ebffd350487}\label{log__code_8h_aeb7633afa0084b118fea5ebffd350487} 
+\+\_\+\+\_\+thread \mbox{\hyperlink{structstack__frame}{stack\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*} {\bfseries current\+\_\+stack\+\_\+top}
+\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
@@ -139,7 +164,49 @@ E2\+EE Security is distributed in the hope that it will be useful, but WITHOUT A
 
 You should have received a copy of the GNU General Public License along with E2\+EE Security. If not, see \href{http://www.gnu.org/licenses/}{\texttt{ http\+://www.\+gnu.\+org/licenses/}}. 
 
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{log__code_8h_a714add1a27ad97774f9eb23f7a25f47c}\index{log\_code.h@{log\_code.h}!TRACE\_ENTER@{TRACE\_ENTER}}
+\index{TRACE\_ENTER@{TRACE\_ENTER}!log\_code.h@{log\_code.h}}
+\doxysubsubsection{\texorpdfstring{TRACE\_ENTER}{TRACE\_ENTER}}
+{\footnotesize\ttfamily \label{log__code_8h_a714add1a27ad97774f9eb23f7a25f47c} 
+\#define TRACE\+\_\+\+ENTER(\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{do}\ \{\ \}\ \textcolor{keywordflow}{while}(0)}
+
+\end{DoxyCode}
+\Hypertarget{log__code_8h_a24c7bc81107a8d0c9530fb636e2a5771}\index{log\_code.h@{log\_code.h}!TRACE\_EXIT@{TRACE\_EXIT}}
+\index{TRACE\_EXIT@{TRACE\_EXIT}!log\_code.h@{log\_code.h}}
+\doxysubsubsection{\texorpdfstring{TRACE\_EXIT}{TRACE\_EXIT}}
+{\footnotesize\ttfamily \label{log__code_8h_a24c7bc81107a8d0c9530fb636e2a5771} 
+\#define TRACE\+\_\+\+EXIT(\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{do}\ \{\ \}\ \textcolor{keywordflow}{while}(0)}
+
+\end{DoxyCode}
+
+
 \doxysubsection{Function Documentation}
+\Hypertarget{log__code_8h_ad535f7dc200caad603513cb261fbee4d}\index{log\_code.h@{log\_code.h}!get\_stack\_trace@{get\_stack\_trace}}
+\index{get\_stack\_trace@{get\_stack\_trace}!log\_code.h@{log\_code.h}}
+\doxysubsubsection{\texorpdfstring{get\_stack\_trace()}{get\_stack\_trace()}}
+{\footnotesize\ttfamily \label{log__code_8h_ad535f7dc200caad603513cb261fbee4d} 
+void get\+\_\+stack\+\_\+trace (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{buffer}{, }\item[{size\+\_\+t}]{buffer\+\_\+len}{}\end{DoxyParamCaption})}
+
+
+
+Capture and format stack trace. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & the buffer to keep stack trace msg \\
+\hline
+{\em buffer\+\_\+len} & the length of buffer \\
+\hline
+\end{DoxyParams}
 \Hypertarget{log__code_8h_a197c539ddf287bb08e9f4d3ea3a813af}\index{log\_code.h@{log\_code.h}!logcode\_string@{logcode\_string}}
 \index{logcode\_string@{logcode\_string}!log\_code.h@{log\_code.h}}
 \doxysubsubsection{\texorpdfstring{logcode\_string()}{logcode\_string()}}

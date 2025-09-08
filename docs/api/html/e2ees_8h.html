@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -367,9 +367,12 @@ Macros</h2></td></tr>
 <tr class="memitem:afe6a5064e2da3283352d46d8be1c4525" id="r_afe6a5064e2da3283352d46d8be1c4525"><td class="memItemLeft" align="right" valign="top"><a id="afe6a5064e2da3283352d46d8be1c4525" name="afe6a5064e2da3283352d46d8be1c4525"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>E2EES_PACK_ID_UNSPECIFIED</b>&#160;&#160;&#160;0</td></tr>
 <tr class="separator:afe6a5064e2da3283352d46d8be1c4525"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56c0b165ba482104fe96bac3bd845557" id="r_a56c0b165ba482104fe96bac3bd845557"><td class="memItemLeft" align="right" valign="top"><a id="a56c0b165ba482104fe96bac3bd845557" name="a56c0b165ba482104fe96bac3bd845557"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>E2EES_PACK_ID_V_0_DEFAULT</b>&#160;&#160;&#160;0x113101</td></tr>
-<tr class="separator:a56c0b165ba482104fe96bac3bd845557"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1a4491ad60e54cadad68082f463b004" id="r_ab1a4491ad60e54cadad68082f463b004"><td class="memItemLeft" align="right" valign="top"><a id="ab1a4491ad60e54cadad68082f463b004" name="ab1a4491ad60e54cadad68082f463b004"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>E2EES_PACK_ID_V_0</b>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:ab1a4491ad60e54cadad68082f463b004"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae81543d947f09e68c5ceab79c30f1cea" id="r_ae81543d947f09e68c5ceab79c30f1cea"><td class="memItemLeft" align="right" valign="top"><a id="ae81543d947f09e68c5ceab79c30f1cea" name="ae81543d947f09e68c5ceab79c30f1cea"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>E2EES_PACK_ID_DEFAULT</b>&#160;&#160;&#160;0x113101</td></tr>
+<tr class="separator:ae81543d947f09e68c5ceab79c30f1cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d92942c52099ca101aa4c88882ea721" id="r_a3d92942c52099ca101aa4c88882ea721"><td class="memItemLeft" align="right" valign="top"><a id="a3d92942c52099ca101aa4c88882ea721" name="a3d92942c52099ca101aa4c88882ea721"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>E2EES_CIPHER_SUITE_PART_LEN_IN_BITS</b>&#160;&#160;&#160;8</td></tr>
 <tr class="separator:a3d92942c52099ca101aa4c88882ea721"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -446,6 +449,9 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>e2ees_pack_id_to_
 <a class="el" href="structe2ees__pack__id__t.html">e2ees_pack_id_t</a>&#160;</td><td class="memItemRight" valign="bottom"><b>raw_to_e2ees_pack_id</b> (uint32_t e2ees_pack_id_raw)</td></tr>
 <tr class="memdesc:a2e96dc208ad14bb697227160ef5cf64e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert raw number to <a class="el" href="structe2ees__pack__id__t.html" title="Type definition of E2EE Security pack id.">e2ees_pack_id_t</a>. <br /></td></tr>
 <tr class="separator:a2e96dc208ad14bb697227160ef5cf64e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0db5d4d5c62157aee96a9e3f542f9c04" id="r_a0db5d4d5c62157aee96a9e3f542f9c04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0db5d4d5c62157aee96a9e3f542f9c04">e2ees_randombytes</a> (uint8_t *rand_data, size_t rand_data_len)</td></tr>
+<tr class="memdesc:a0db5d4d5c62157aee96a9e3f542f9c04"><td class="mdescLeft">&#160;</td><td class="mdescRight">A delegate function to generate random bytes.  <br /></td></tr>
+<tr class="separator:a0db5d4d5c62157aee96a9e3f542f9c04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2e416dd499204d6116336d67397ea25" id="r_af2e416dd499204d6116336d67397ea25"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af2e416dd499204d6116336d67397ea25">e2ees_notify_log</a> (E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg,...)</td></tr>
 <tr class="memdesc:af2e416dd499204d6116336d67397ea25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log function with additional arguments.  <br /></td></tr>
 <tr class="separator:af2e416dd499204d6116336d67397ea25"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -974,6 +980,36 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>e2ees_pack_id_to_
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">account</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0db5d4d5c62157aee96a9e3f542f9c04" name="a0db5d4d5c62157aee96a9e3f542f9c04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0db5d4d5c62157aee96a9e3f542f9c04">&#9670;&#160;</a></span>e2ees_randombytes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void e2ees_randombytes </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>rand_data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>rand_data_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A delegate function to generate random bytes. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">rand_data</td><td></td></tr>
+    <tr><td class="paramname">rand_data_len</td><td></td></tr>
   </table>
   </dd>
 </dl>

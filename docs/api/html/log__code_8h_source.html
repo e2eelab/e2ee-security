@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">E2EES<span id="projectnumber">&#160;v1.9.2</span>
+   <div id="projectname">E2EES<span id="projectnumber">&#160;v2.0.0</span>
    </div>
    <div id="projectbrief">E2EES implements the Signal protocol and aims to make it easy to build versatile end-to-end messaging applications.</div>
   </td>
@@ -96,130 +96,167 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#ifndef LOG_CODE_H_</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#define LOG_CODE_H_</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">enum</span> LogCode {</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  DEBUG_LOG = 0,</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="comment">// cipher suite</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  BAD_CIPHER_SUITE = 1001,</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  BAD_E2EES_PACK = 1002,</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <span class="comment">// account</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  BAD_ACCOUNT = 2001,</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  BAD_KEY_PAIR = 2002,</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  BAD_SIGNED_PRE_KEY = 2003,</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  BAD_SIGNATURE = 2004,</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  BAD_ONE_TIME_PRE_KEY = 2005,</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  BAD_AUTH = 2006,</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  BAD_AUTHENTICATOR = 2007,</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  BAD_PRIVATE_KEY = 2008,</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  BAD_PUBLIC_KEY = 2009,</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  BAD_REMOVE_OPK = 2010,</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  <span class="comment">// address</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  BAD_ADDRESS = 3001,</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  BAD_USER_ID = 3002,</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  BAD_DEVICE_ID = 3003,</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  BAD_DOMAIN = 3004,</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  BAD_USER_NAME = 3005,</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  <span class="comment">// ratchet</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  BAD_MESSAGE_ENCRYPTION = 4001,</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  BAD_MESSAGE_DECRYPTION = 4002,</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  BAD_FILE_ENCRYPTION = 4003,</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  BAD_FILE_DECRYPTION = 4004,</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  BAD_MESSAGE_KEY = 4005,</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  BAD_MESSAGE_SEQUENCE = 4006,</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  BAD_RATCHET_KEY = 4007,</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="comment">// session</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  BAD_SESSION = 5001,</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  BAD_SESSION_ID = 5002,</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  BAD_PRE_KEY_BUNDLE = 5101,</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  <span class="comment">// group session</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  BAD_GROUP_SESSION = 6001,</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  BAD_GROUP_SESSION_ID = 6002,</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  BAD_GROUP_NAME = 6003,</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  BAD_GROUP_ADDRESS = 6004,</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  BAD_GROUP_MEMBERS = 6005,</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  BAD_GROUP_MEMBER_INFO = 6006,</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  BAD_GROUP_INFO = 6007,</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  BAD_GROUP_SEED = 6008,</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  BAD_GROUP_CHAIN_KEY = 6009,</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  BAD_GROUP_PRE_KEY_BUNDLE = 6101,</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  BAD_GROUP_UPDATE_KEY_BUNDLE = 6102,</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  <span class="comment">// request</span></div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  BAD_ACCEPT_REQUEST = 7001,</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  BAD_ADD_GROUP_MEMBER_DEVICE_REQUEST = 7011,</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  BAD_ADD_GROUP_MEMBERS_REQUEST = 7021,</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>  BAD_CONSUME_PROTO_MSG_REQUEST = 7031,</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  BAD_CREATE_GROUP_REQUEST = 7041,</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>  BAD_GET_GROUP_REQUEST = 7051,</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  BAD_GET_PRE_KEY_BUNDLE_REQUEST = 7061,</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  BAD_INVITE_REQUEST = 7071,</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  BAD_LEAVE_GROUP_REQUEST = 7081,</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  BAD_PUBLISH_SPK_REQUEST = 7091,</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  BAD_REGISTER_USER_REQUEST = 7101,</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  BAD_REMOVE_GROUP_MEMBERS_REQUEST = 7111,</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  BAD_SEND_GROUP_MSG_REQUEST = 7121,</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  BAD_SEND_ONE2ONE_MSG_REQUEST = 7131,</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  BAD_SUPPLY_OPKS_REQUEST = 7141,</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  BAD_UPDATE_USER_REQUEST = 7151,</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  <span class="comment">// response</span></div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  BAD_ACCEPT_RESPONSE = 7301,</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  BAD_ADD_GROUP_MEMBER_DEVICE_RESPONSE = 7311,</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  BAD_ADD_GROUP_MEMBERS_RESPONSE = 7321,</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  BAD_CONSUME_PROTO_MSG_RESPONSE = 7331,</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  BAD_CREATE_GROUP_RESPONSE = 7341,</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  BAD_GET_GROUP_RESPONSE = 7351,</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  BAD_GET_PRE_KEY_BUNDLE_RESPONSE = 7361,</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  BAD_INVITE_RESPONSE = 7371,</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  BAD_LEAVE_GROUP_RESPONSE = 7381,</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  BAD_PUBLISH_SPK_RESPONSE = 7391,</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  BAD_REGISTER_USER_RESPONSE = 7401,</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  BAD_REMOVE_GROUP_MEMBERS_RESPONSE = 7411,</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  BAD_SEND_GROUP_MSG_RESPONSE = 7421,</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  BAD_SEND_ONE2ONE_MSG_RESPONSE = 7431,</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  BAD_SUPPLY_OPKS_RESPONSE = 7441,</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  BAD_UPDATE_USER_RESPONSE = 7451,</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  <span class="comment">// msg</span></div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  BAD_ACCEPT_MSG = 7601,</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>  BAD_ADD_GROUP_MEMBER_DEVICE_MSG = 7611,</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  BAD_ADD_GROUP_MEMBERS_MSG = 7621,</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>  BAD_ADD_USER_DEVICE_MSG = 7631,</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  BAD_CREATE_GROUP_MSG = 7641,</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  BAD_GET_GROUP_MSG = 7651,</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>  BAD_GET_PRE_KEY_BUNDLE_MSG = 7661,</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  BAD_INVITE_MSG = 7671,</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  BAD_LEAVE_GROUP_MSG = 7681,</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>  BAD_PUBLISH_SPK_MSG = 7691,</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>  BAD_REGISTER_USER_MSG = 7701,</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  BAD_REMOVE_GROUP_MEMBERS_MSG = 7711,</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  BAD_SUPPLY_OPKS_MSG = 7741,</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>  BAD_UPDATE_USER_MSG = 7751,</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>  <span class="comment">// plaintext</span></div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>  BAD_PLAINTEXT = 8001,</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">enum</span> LogCode {</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  DEBUG_LOG = 0,</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="comment">// cipher suite</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  BAD_CIPHER_SUITE = 1001,</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  BAD_E2EES_PACK = 1002,</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="comment">// account</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  BAD_ACCOUNT = 2001,</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  BAD_KEY_PAIR = 2002,</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  BAD_SIGNED_PRE_KEY = 2003,</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  BAD_SIGNATURE = 2004,</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  BAD_ONE_TIME_PRE_KEY = 2005,</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  BAD_AUTH = 2006,</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  BAD_AUTHENTICATOR = 2007,</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  BAD_PRIVATE_KEY = 2008,</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  BAD_PUBLIC_KEY = 2009,</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  BAD_REMOVE_OPK = 2010,</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="comment">// address</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  BAD_ADDRESS = 3001,</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  BAD_USER_ID = 3002,</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  BAD_DEVICE_ID = 3003,</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  BAD_DOMAIN = 3004,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  BAD_USER_NAME = 3005,</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="comment">// ratchet</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  BAD_MESSAGE_ENCRYPTION = 4001,</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  BAD_MESSAGE_DECRYPTION = 4002,</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  BAD_FILE_ENCRYPTION = 4003,</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  BAD_FILE_DECRYPTION = 4004,</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  BAD_MESSAGE_KEY = 4005,</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  BAD_MESSAGE_SEQUENCE = 4006,</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  BAD_RATCHET_KEY = 4007,</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <span class="comment">// session</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  BAD_SESSION = 5001,</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  BAD_SESSION_ID = 5002,</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  BAD_PRE_KEY_BUNDLE = 5101,</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="comment">// group session</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  BAD_GROUP_SESSION = 6001,</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  BAD_GROUP_SESSION_ID = 6002,</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  BAD_GROUP_NAME = 6003,</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  BAD_GROUP_ADDRESS = 6004,</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  BAD_GROUP_MEMBERS = 6005,</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  BAD_GROUP_MEMBER_INFO = 6006,</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  BAD_GROUP_INFO = 6007,</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  BAD_GROUP_SEED = 6008,</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>  BAD_GROUP_CHAIN_KEY = 6009,</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  BAD_GROUP_PRE_KEY_BUNDLE = 6101,</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  BAD_GROUP_UPDATE_KEY_BUNDLE = 6102,</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  <span class="comment">// request</span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>  BAD_ACCEPT_REQUEST = 7001,</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  BAD_ADD_GROUP_MEMBER_DEVICE_REQUEST = 7011,</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>  BAD_ADD_GROUP_MEMBERS_REQUEST = 7021,</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  BAD_CONSUME_PROTO_MSG_REQUEST = 7031,</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  BAD_CREATE_GROUP_REQUEST = 7041,</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  BAD_GET_GROUP_REQUEST = 7051,</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  BAD_GET_PRE_KEY_BUNDLE_REQUEST = 7061,</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  BAD_INVITE_REQUEST = 7071,</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  BAD_LEAVE_GROUP_REQUEST = 7081,</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  BAD_PUBLISH_SPK_REQUEST = 7091,</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  BAD_REGISTER_USER_REQUEST = 7101,</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  BAD_REMOVE_GROUP_MEMBERS_REQUEST = 7111,</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  BAD_SEND_GROUP_MSG_REQUEST = 7121,</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  BAD_SEND_ONE2ONE_MSG_REQUEST = 7131,</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  BAD_SUPPLY_OPKS_REQUEST = 7141,</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  BAD_UPDATE_USER_REQUEST = 7151,</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  <span class="comment">// response</span></div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  BAD_ACCEPT_RESPONSE = 7301,</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  BAD_ADD_GROUP_MEMBER_DEVICE_RESPONSE = 7311,</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  BAD_ADD_GROUP_MEMBERS_RESPONSE = 7321,</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  BAD_CONSUME_PROTO_MSG_RESPONSE = 7331,</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  BAD_CREATE_GROUP_RESPONSE = 7341,</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  BAD_GET_GROUP_RESPONSE = 7351,</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  BAD_GET_PRE_KEY_BUNDLE_RESPONSE = 7361,</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  BAD_INVITE_RESPONSE = 7371,</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  BAD_LEAVE_GROUP_RESPONSE = 7381,</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  BAD_PUBLISH_SPK_RESPONSE = 7391,</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  BAD_REGISTER_USER_RESPONSE = 7401,</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  BAD_REMOVE_GROUP_MEMBERS_RESPONSE = 7411,</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  BAD_SEND_GROUP_MSG_RESPONSE = 7421,</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  BAD_SEND_ONE2ONE_MSG_RESPONSE = 7431,</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  BAD_SUPPLY_OPKS_RESPONSE = 7441,</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>  BAD_UPDATE_USER_RESPONSE = 7451,</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  <span class="comment">// msg</span></div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>  BAD_ACCEPT_MSG = 7601,</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  BAD_ADD_GROUP_MEMBER_DEVICE_MSG = 7611,</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  BAD_ADD_GROUP_MEMBERS_MSG = 7621,</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>  BAD_ADD_USER_DEVICE_MSG = 7631,</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  BAD_CREATE_GROUP_MSG = 7641,</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  BAD_GET_GROUP_MSG = 7651,</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>  BAD_GET_PRE_KEY_BUNDLE_MSG = 7661,</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>  BAD_INVITE_MSG = 7671,</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  BAD_LEAVE_GROUP_MSG = 7681,</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  BAD_PUBLISH_SPK_MSG = 7691,</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>  BAD_REGISTER_USER_MSG = 7701,</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>  BAD_REMOVE_GROUP_MEMBERS_MSG = 7711,</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>  BAD_SUPPLY_OPKS_MSG = 7741,</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>  BAD_UPDATE_USER_MSG = 7751,</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>  <span class="comment">// server signature</span></div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>  BAD_SERVER_SIGNATURE = 9001,</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>};</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span><span class="keyword">typedef</span> <span class="keyword">enum</span> LogCode LogCode;</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno"><a class="line" href="log__code_8h.html#a197c539ddf287bb08e9f4d3ea3a813af">  145</a></span><span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_function" href="log__code_8h.html#a197c539ddf287bb08e9f4d3ea3a813af">logcode_string</a>(LogCode log_code);</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>}</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span> </div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span><span class="preprocessor">#endif </span><span class="comment">/* LOG_CODE_H_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>  <span class="comment">// plaintext</span></div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>  BAD_PLAINTEXT = 8001,</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>  <span class="comment">// server signature</span></div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>  BAD_SERVER_SIGNATURE = 9001</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>};</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span> </div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span><span class="keyword">typedef</span> <span class="keyword">enum</span> LogCode LogCode;</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
+<div class="foldopen" id="foldopen00142" data-start="{" data-end="};">
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno"><a class="line" href="structstack__frame.html">  142</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structstack__frame.html">stack_frame</a> {</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *function_name;</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *file_name;</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    <span class="keywordtype">int</span> line_number;</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keyword">struct </span><a class="code hl_struct" href="structstack__frame.html">stack_frame</a> *prev;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>} <a class="code hl_struct" href="structstack__frame.html">stack_frame_t</a>;</div>
+</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span><span class="comment">// Global stack top</span></div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span><span class="keyword">extern</span> __thread <a class="code hl_struct" href="structstack__frame.html">stack_frame_t</a> *current_stack_top;</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span><span class="preprocessor">#ifdef ENABLE_TRACE</span></div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span><span class="preprocessor">#define TRACE_ENTER() \</span></div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span><span class="preprocessor">        do { \</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="preprocessor">            stack_frame_t new_frame = {__func__, __FILE__, __LINE__, current_stack_top}; \</span></div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="preprocessor">            current_stack_top = &amp;new_frame; \</span></div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span><span class="preprocessor">        } while(0)</span></div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span><span class="preprocessor">#define TRACE_EXIT() \</span></div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span><span class="preprocessor">        do { \</span></div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span><span class="preprocessor">            if (current_stack_top != NULL) { \</span></div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span><span class="preprocessor">                current_stack_top = current_stack_top-&gt;prev; \</span></div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span><span class="preprocessor">            } \</span></div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span><span class="preprocessor">        } while(0)</span></div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span><span class="preprocessor">#define TRACE_ENTER() do { } while(0)</span></div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span><span class="preprocessor">#define TRACE_EXIT() do { } while(0)</span></div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno"><a class="line" href="log__code_8h.html#a197c539ddf287bb08e9f4d3ea3a813af">  176</a></span><span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_function" href="log__code_8h.html#a197c539ddf287bb08e9f4d3ea3a813af">logcode_string</a>(LogCode log_code);</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno"><a class="line" href="log__code_8h.html#ad535f7dc200caad603513cb261fbee4d">  183</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="log__code_8h.html#ad535f7dc200caad603513cb261fbee4d">get_stack_trace</a>(<span class="keywordtype">char</span> *buffer, <span class="keywordtype">size_t</span> buffer_len);</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>}</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span><span class="preprocessor">#endif </span><span class="comment">/* LOG_CODE_H_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="alog__code_8h_html_a197c539ddf287bb08e9f4d3ea3a813af"><div class="ttname"><a href="log__code_8h.html#a197c539ddf287bb08e9f4d3ea3a813af">logcode_string</a></div><div class="ttdeci">const char * logcode_string(LogCode log_code)</div><div class="ttdoc">Get the string representation of a given log code.</div></div>
+<div class="ttc" id="alog__code_8h_html_ad535f7dc200caad603513cb261fbee4d"><div class="ttname"><a href="log__code_8h.html#ad535f7dc200caad603513cb261fbee4d">get_stack_trace</a></div><div class="ttdeci">void get_stack_trace(char *buffer, size_t buffer_len)</div><div class="ttdoc">Capture and format stack trace.</div></div>
+<div class="ttc" id="astructstack__frame_html"><div class="ttname"><a href="structstack__frame.html">stack_frame</a></div><div class="ttdef"><b>Definition</b> log_code.h:142</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -12,9 +12,9 @@ Type definition of digital signature algorithm suite.
 \doxysubsubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-struct \mbox{\hyperlink{structcrypto__ds__param__t}{crypto\+\_\+ds\+\_\+param\+\_\+t}}(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structds__suite__t_a905d20de8a77174d2c6430a50d505e96}{get\+\_\+crypto\+\_\+param}} )(void)
-\begin{DoxyCompactList}\small\item\em Get the parameters of this digital signature suite. \end{DoxyCompactList}\item 
-int(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structds__suite__t_a54cd6cd0f027601ddf44a4fa1581e970}{sign\+\_\+key\+\_\+gen}} )(Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}pub\+\_\+key, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}priv\+\_\+key)
+struct \mbox{\hyperlink{structcrypto__ds__param__t}{crypto\+\_\+ds\+\_\+param\+\_\+t}}(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structds__suite__t_a77fb72906d5833310d3f2d1809313c68}{get\+\_\+param}} )(void)
+\begin{DoxyCompactList}\small\item\em Get the parameters of this digital signature algorithm suite. \end{DoxyCompactList}\item 
+int(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structds__suite__t_a0e3b815bfea5cbd0319393f94f8d9cb9}{ds\+\_\+key\+\_\+gen}} )(Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}pub\+\_\+key, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}priv\+\_\+key)
 \begin{DoxyCompactList}\small\item\em Generate a random key pair that will be used to generate or verify a signature. \end{DoxyCompactList}\item 
 int(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structds__suite__t_a46d695f2d62249196166f79052141229}{sign}} )(uint8\+\_\+t \texorpdfstring{$\ast$}{*}signature\+\_\+out, size\+\_\+t \texorpdfstring{$\ast$}{*}signature\+\_\+out\+\_\+len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}msg, size\+\_\+t msg\+\_\+len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}private\+\_\+key)
 \begin{DoxyCompactList}\small\item\em Sign a message. \end{DoxyCompactList}\item 
@@ -26,15 +26,35 @@ int(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structds__suite__t_a320e9b1599d9
 Type definition of digital signature algorithm suite. 
 
 \doxysubsection{Member Data Documentation}
-\Hypertarget{structds__suite__t_a905d20de8a77174d2c6430a50d505e96}\index{ds\_suite\_t@{ds\_suite\_t}!get\_crypto\_param@{get\_crypto\_param}}
-\index{get\_crypto\_param@{get\_crypto\_param}!ds\_suite\_t@{ds\_suite\_t}}
-\doxysubsubsection{\texorpdfstring{get\_crypto\_param}{get\_crypto\_param}}
-{\footnotesize\ttfamily \label{structds__suite__t_a905d20de8a77174d2c6430a50d505e96} 
-struct \mbox{\hyperlink{structcrypto__ds__param__t}{crypto\+\_\+ds\+\_\+param\+\_\+t}}(\texorpdfstring{$\ast$}{*} ds\+\_\+suite\+\_\+t\+::get\+\_\+crypto\+\_\+param) (void)}
+\Hypertarget{structds__suite__t_a0e3b815bfea5cbd0319393f94f8d9cb9}\index{ds\_suite\_t@{ds\_suite\_t}!ds\_key\_gen@{ds\_key\_gen}}
+\index{ds\_key\_gen@{ds\_key\_gen}!ds\_suite\_t@{ds\_suite\_t}}
+\doxysubsubsection{\texorpdfstring{ds\_key\_gen}{ds\_key\_gen}}
+{\footnotesize\ttfamily \label{structds__suite__t_a0e3b815bfea5cbd0319393f94f8d9cb9} 
+int(\texorpdfstring{$\ast$}{*} ds\+\_\+suite\+\_\+t\+::ds\+\_\+key\+\_\+gen) (Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}pub\+\_\+key, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}priv\+\_\+key)}
 
 
 
-Get the parameters of this digital signature suite. 
+Generate a random key pair that will be used to generate or verify a signature. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pub\+\_\+key} & \\
+\hline
+{\em priv\+\_\+key} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value \texorpdfstring{$<$}{<} 0 for error 
+\end{DoxyReturn}
+\Hypertarget{structds__suite__t_a77fb72906d5833310d3f2d1809313c68}\index{ds\_suite\_t@{ds\_suite\_t}!get\_param@{get\_param}}
+\index{get\_param@{get\_param}!ds\_suite\_t@{ds\_suite\_t}}
+\doxysubsubsection{\texorpdfstring{get\_param}{get\_param}}
+{\footnotesize\ttfamily \label{structds__suite__t_a77fb72906d5833310d3f2d1809313c68} 
+struct \mbox{\hyperlink{structcrypto__ds__param__t}{crypto\+\_\+ds\+\_\+param\+\_\+t}}(\texorpdfstring{$\ast$}{*} ds\+\_\+suite\+\_\+t\+::get\+\_\+param) (void)}
+
+
+
+Get the parameters of this digital signature algorithm suite. 
 
 \begin{DoxyReturn}{Returns}
 \doxylink{structcrypto__ds__param__t}{crypto\+\_\+ds\+\_\+param\+\_\+t} 
@@ -60,26 +80,6 @@ Sign a message.
 {\em msg\+\_\+len} & \\
 \hline
 {\em private\+\_\+key} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-value \texorpdfstring{$<$}{<} 0 for error 
-\end{DoxyReturn}
-\Hypertarget{structds__suite__t_a54cd6cd0f027601ddf44a4fa1581e970}\index{ds\_suite\_t@{ds\_suite\_t}!sign\_key\_gen@{sign\_key\_gen}}
-\index{sign\_key\_gen@{sign\_key\_gen}!ds\_suite\_t@{ds\_suite\_t}}
-\doxysubsubsection{\texorpdfstring{sign\_key\_gen}{sign\_key\_gen}}
-{\footnotesize\ttfamily \label{structds__suite__t_a54cd6cd0f027601ddf44a4fa1581e970} 
-int(\texorpdfstring{$\ast$}{*} ds\+\_\+suite\+\_\+t\+::sign\+\_\+key\+\_\+gen) (Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}pub\+\_\+key, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}priv\+\_\+key)}
-
-
-
-Generate a random key pair that will be used to generate or verify a signature. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em pub\+\_\+key} & \\
-\hline
-{\em priv\+\_\+key} & \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}

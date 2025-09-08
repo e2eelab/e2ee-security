@@ -8,7 +8,7 @@ int \mbox{\hyperlink{e2ees__client__internal_8h_a129cb7a651cfda6b150eb8cd6c2c869
 \begin{DoxyCompactList}\small\item\em Get the pre-\/key bundle internal object. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{e2ees__client__internal_8h_a86fe9790a809a7a685c53a8bc0c31a57}{invite\+\_\+internal}} (E2ees\+\_\+\+\_\+\+Invite\+Response \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}response\+\_\+out, E2ees\+\_\+\+\_\+\+Session \texorpdfstring{$\ast$}{*}outbound\+\_\+session)
 \begin{DoxyCompactList}\small\item\em Send invite request to server. \end{DoxyCompactList}\item 
-int \mbox{\hyperlink{e2ees__client__internal_8h_a2a79fb36b35ba3b60a2d78751fd125fc}{accept\+\_\+internal}} (E2ees\+\_\+\+\_\+\+Accept\+Response \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}response\+\_\+out, uint32\+\_\+t e2ees\+\_\+pack\+\_\+id, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}from, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}to, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}ciphertext\+\_\+1, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}our\+\_\+ratchet\+\_\+key)
+int \mbox{\hyperlink{e2ees__client__internal_8h_ad557cdabcf945b82a6ccbf55e90ead2f}{accept\+\_\+internal}} (E2ees\+\_\+\+\_\+\+Accept\+Response \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}response\+\_\+out, uint32\+\_\+t e2ees\+\_\+pack\+\_\+id, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}from, E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}to, char \texorpdfstring{$\ast$}{*}session\+\_\+id, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}ciphertext\+\_\+1, Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}our\+\_\+ratchet\+\_\+key)
 \begin{DoxyCompactList}\small\item\em Send accept request to server. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{e2ees__client__internal_8h_ade9955d1e5c3dbb4a55ef45d67935b5c}{publish\+\_\+spk\+\_\+internal}} (E2ees\+\_\+\+\_\+\+Publish\+Spk\+Response \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}response\+\_\+out, E2ees\+\_\+\+\_\+\+Account \texorpdfstring{$\ast$}{*}account)
 \begin{DoxyCompactList}\small\item\em Send publish\+\_\+spk request to server. \end{DoxyCompactList}\item 
@@ -38,11 +38,11 @@ E2\+EE Security is distributed in the hope that it will be useful, but WITHOUT A
 You should have received a copy of the GNU General Public License along with E2\+EE Security. If not, see \href{http://www.gnu.org/licenses/}{\texttt{ http\+://www.\+gnu.\+org/licenses/}}. 
 
 \doxysubsection{Function Documentation}
-\Hypertarget{e2ees__client__internal_8h_a2a79fb36b35ba3b60a2d78751fd125fc}\index{e2ees\_client\_internal.h@{e2ees\_client\_internal.h}!accept\_internal@{accept\_internal}}
+\Hypertarget{e2ees__client__internal_8h_ad557cdabcf945b82a6ccbf55e90ead2f}\index{e2ees\_client\_internal.h@{e2ees\_client\_internal.h}!accept\_internal@{accept\_internal}}
 \index{accept\_internal@{accept\_internal}!e2ees\_client\_internal.h@{e2ees\_client\_internal.h}}
 \doxysubsubsection{\texorpdfstring{accept\_internal()}{accept\_internal()}}
-{\footnotesize\ttfamily \label{e2ees__client__internal_8h_a2a79fb36b35ba3b60a2d78751fd125fc} 
-int accept\+\_\+internal (\begin{DoxyParamCaption}\item[{E2ees\+\_\+\+\_\+\+Accept\+Response \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{response\+\_\+out}{, }\item[{uint32\+\_\+t}]{e2ees\+\_\+pack\+\_\+id}{, }\item[{E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}}]{from}{, }\item[{E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}}]{to}{, }\item[{Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+1}{, }\item[{Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{our\+\_\+ratchet\+\_\+key}{}\end{DoxyParamCaption})}
+{\footnotesize\ttfamily \label{e2ees__client__internal_8h_ad557cdabcf945b82a6ccbf55e90ead2f} 
+int accept\+\_\+internal (\begin{DoxyParamCaption}\item[{E2ees\+\_\+\+\_\+\+Accept\+Response \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{response\+\_\+out}{, }\item[{uint32\+\_\+t}]{e2ees\+\_\+pack\+\_\+id}{, }\item[{E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}}]{from}{, }\item[{E2ees\+\_\+\+\_\+\+E2ee\+Address \texorpdfstring{$\ast$}{*}}]{to}{, }\item[{char \texorpdfstring{$\ast$}{*}}]{session\+\_\+id}{, }\item[{Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{ciphertext\+\_\+1}{, }\item[{Protobuf\+CBinary\+Data \texorpdfstring{$\ast$}{*}}]{our\+\_\+ratchet\+\_\+key}{}\end{DoxyParamCaption})}
 
 
 
@@ -57,6 +57,8 @@ Send accept request to server.
 {\em from} & \\
 \hline
 {\em to} & \\
+\hline
+{\em session\+\_\+id} & \\
 \hline
 {\em ciphertext\+\_\+1} & \\
 \hline

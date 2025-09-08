@@ -26,128 +26,126 @@
 \DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}e2ees/e2ees.h"{}}}
 \DoxyCodeLine{00023\ }
 \DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ E2EELAB\_DOMAIN\ \ \ \ \ \ \ \ \ \ "{}e2eelab.org"{}}}
-\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ TEST\_e2ees\_pack\_id\_ECC\ \ \ \ \ \ \ "{}0"{}}}
-\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ TEST\_e2ees\_pack\_id\_PQC\ \ \ \ \ \ \ "{}1"{}}}
-\DoxyCodeLine{00027\ }
-\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ gen\_e2ees\_pack\_id\_ecc()\ \(\backslash\)}}
-\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ gen\_e2ees\_pack\_id\_raw(\ \(\backslash\)}}
-\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ 0,\ \(\backslash\)}}
-\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_DS\_CURVE25519,\ \(\backslash\)}}
-\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_KEM\_CURVE25519,\ \(\backslash\)}}
-\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_SE\_AES256GCM,\ \(\backslash\)}}
-\DoxyCodeLine{00034\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_HASH\_SHA2\_256\ \(\backslash\)}}
-\DoxyCodeLine{00035\ \textcolor{preprocessor}{\ \ \ \ )}}
-\DoxyCodeLine{00036\ }
-\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ gen\_e2ees\_pack\_id\_pqc()\ \(\backslash\)}}
-\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ gen\_e2ees\_pack\_id\_raw(\ \(\backslash\)}}
-\DoxyCodeLine{00039\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ 0,\ \(\backslash\)}}
-\DoxyCodeLine{00040\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_DS\_MLDSA87,\ \(\backslash\)}}
-\DoxyCodeLine{00041\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_KEM\_MLKEM1024,\ \(\backslash\)}}
-\DoxyCodeLine{00042\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_SE\_AES256GCM,\ \(\backslash\)}}
-\DoxyCodeLine{00043\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_HASH\_SHA2\_256\ \(\backslash\)}}
-\DoxyCodeLine{00044\ \textcolor{preprocessor}{\ \ \ \ )}}
-\DoxyCodeLine{00045\ }
-\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ malloc\_group\_members(number)\ \(\backslash\)}}
-\DoxyCodeLine{00047\ \textcolor{preprocessor}{\ \ \ \ group\_members\ =\ (E2ees\_\_GroupMember\ **)malloc(sizeof(E2ees\_\_GroupMember\ *)\ *\ number\ );\ \(\backslash\)}}
-\DoxyCodeLine{00048\ \textcolor{preprocessor}{\ \ \ \ group\_members[0]\ =\ (E2ees\_\_GroupMember\ *)malloc(sizeof(E2ees\_\_GroupMember));\ \(\backslash\)}}
-\DoxyCodeLine{00049\ \textcolor{preprocessor}{\ \ \ \ e2ees\_\_group\_member\_\_init(group\_members[0]);\ \(\backslash\)}}
-\DoxyCodeLine{00050\ \textcolor{preprocessor}{\ \ \ \ group\_members[0]-\/>user\_id\ =\ strdup(user\_id\_list[0]);\ \(\backslash\)}}
-\DoxyCodeLine{00051\ \textcolor{preprocessor}{\ \ \ \ group\_members[0]-\/>domain\ =\ strdup(domain\_list[0]);\ \(\backslash\)}}
-\DoxyCodeLine{00052\ \textcolor{preprocessor}{\ \ \ \ group\_members[0]-\/>role\ =\ E2EES\_\_GROUP\_ROLE\_\_GROUP\_ROLE\_MANAGER;\ \(\backslash\)}}
-\DoxyCodeLine{00053\ \textcolor{preprocessor}{\ \ \ \ for\ (i\ =\ 1;\ i\ <\ number\ ;\ i++)\ \{\ \(\backslash\)}}
-\DoxyCodeLine{00054\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ group\_members[i]\ =\ (E2ees\_\_GroupMember\ *)malloc(sizeof(E2ees\_\_GroupMember));\ \(\backslash\)}}
-\DoxyCodeLine{00055\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ e2ees\_\_group\_member\_\_init(group\_members[i]);\ \(\backslash\)}}
-\DoxyCodeLine{00056\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ group\_members[i]-\/>user\_id\ =\ strdup(user\_id\_list[i]);\ \(\backslash\)}}
-\DoxyCodeLine{00057\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ group\_members[i]-\/>domain\ =\ strdup(domain\_list[i]);\ \(\backslash\)}}
-\DoxyCodeLine{00058\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ group\_members[i]-\/>role\ =\ E2EES\_\_GROUP\_ROLE\_\_GROUP\_ROLE\_MEMBER;\ \(\backslash\)}}
-\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ \}}}
-\DoxyCodeLine{00060\ }
-\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ malloc\_new\_group\_members(number)\ \(\backslash\)}}
-\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \ \ new\_group\_members\ =\ (E2ees\_\_GroupMember\ **)malloc(sizeof(E2ees\_\_GroupMember\ *)\ *\ number\ );\ \(\backslash\)}}
-\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ for\ (i\ =\ 0;\ i\ <\ number\ ;\ i++)\ \{\ \(\backslash\)}}
-\DoxyCodeLine{00064\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ new\_group\_members[i]\ =\ (E2ees\_\_GroupMember\ *)malloc(sizeof(E2ees\_\_GroupMember));\ \(\backslash\)}}
-\DoxyCodeLine{00065\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ e2ees\_\_group\_member\_\_init(new\_group\_members[i]);\ \(\backslash\)}}
-\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ new\_group\_members[i]-\/>user\_id\ =\ strdup(new\_user\_id\_list[i]);\ \(\backslash\)}}
-\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ new\_group\_members[i]-\/>domain\ =\ strdup(new\_domain\_list[i]);\ \(\backslash\)}}
-\DoxyCodeLine{00068\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ new\_group\_members[i]-\/>role\ =\ E2EES\_\_GROUP\_ROLE\_\_GROUP\_ROLE\_MEMBER;\ \(\backslash\)}}
-\DoxyCodeLine{00069\ \textcolor{preprocessor}{\ \ \ \ \}}}
-\DoxyCodeLine{00070\ }
-\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#define\ malloc\_removing\_group\_members(number)\ \(\backslash\)}}
-\DoxyCodeLine{00072\ \textcolor{preprocessor}{\ \ \ \ removing\_group\_members\ =\ (E2ees\_\_GroupMember\ **)malloc(sizeof(E2ees\_\_GroupMember\ *)\ *\ number\ );\ \(\backslash\)}}
-\DoxyCodeLine{00073\ \textcolor{preprocessor}{\ \ \ \ for\ (i\ =\ 0;\ i\ <\ number\ ;\ i++)\ \{\ \(\backslash\)}}
-\DoxyCodeLine{00074\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ removing\_group\_members[i]\ =\ (E2ees\_\_GroupMember\ *)malloc(sizeof(E2ees\_\_GroupMember));\ \(\backslash\)}}
-\DoxyCodeLine{00075\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ e2ees\_\_group\_member\_\_init(removing\_group\_members[i]);\ \(\backslash\)}}
-\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ removing\_group\_members[i]-\/>user\_id\ =\ strdup(removing\_user\_id\_list[i]);\ \(\backslash\)}}
-\DoxyCodeLine{00077\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ removing\_group\_members[i]-\/>domain\ =\ strdup(removing\_domain\_list[i]);\ \(\backslash\)}}
-\DoxyCodeLine{00078\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ removing\_group\_members[i]-\/>role\ =\ E2EES\_\_GROUP\_ROLE\_\_GROUP\_ROLE\_MEMBER;\ \(\backslash\)}}
-\DoxyCodeLine{00079\ \textcolor{preprocessor}{\ \ \ \ \}}}
-\DoxyCodeLine{00080\ }
-\DoxyCodeLine{00081\ \textcolor{comment}{//\ debug\ msg\ to\ console}}
-\DoxyCodeLine{00082\ \textcolor{keywordtype}{void}\ print\_hex(\textcolor{keywordtype}{char}\ *title,\ uint8\_t\ *msg,\ \textcolor{keywordtype}{size\_t}\ msg\_len);}
-\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ print\_msg(\textcolor{keywordtype}{char}\ *title,\ uint8\_t\ *msg,\ \textcolor{keywordtype}{size\_t}\ len);}
-\DoxyCodeLine{00084\ \textcolor{keywordtype}{void}\ print\_log(\textcolor{keywordtype}{char}\ *log\_msg,\ \textcolor{keywordtype}{int}\ log\_code);}
-\DoxyCodeLine{00085\ \textcolor{keywordtype}{void}\ print\_result(\textcolor{keywordtype}{char}\ *title,\ \textcolor{keywordtype}{bool}\ success);}
-\DoxyCodeLine{00086\ }
-\DoxyCodeLine{00087\ \textcolor{keywordtype}{bool}\ is\_null(\textcolor{keywordtype}{void}\ *pointer\_1,\ \textcolor{keywordtype}{void}\ *pointer\_2);}
-\DoxyCodeLine{00088\ \textcolor{keywordtype}{bool}\ is\_not\_null(\textcolor{keywordtype}{void}\ *pointer\_1,\ \textcolor{keywordtype}{void}\ *pointer\_2);}
-\DoxyCodeLine{00089\ }
-\DoxyCodeLine{00090\ \textcolor{comment}{//\ is\_equal}}
-\DoxyCodeLine{00091\ \textcolor{keywordtype}{bool}\ is\_equal\_data(ProtobufCBinaryData\ *src\_1,\ ProtobufCBinaryData\ *src\_2);}
-\DoxyCodeLine{00092\ \textcolor{keywordtype}{bool}\ is\_equal\_str(\textcolor{keywordtype}{char}\ *str1,\ \textcolor{keywordtype}{char}\ *str2);}
-\DoxyCodeLine{00093\ \textcolor{keywordtype}{bool}\ is\_equal\_keypair(E2ees\_\_KeyPair\ *src\_1,\ E2ees\_\_KeyPair\ *src\_2);}
-\DoxyCodeLine{00094\ \textcolor{keywordtype}{bool}\ is\_equal\_ik(E2ees\_\_IdentityKey\ *src\_1,\ E2ees\_\_IdentityKey\ *src\_2);}
-\DoxyCodeLine{00095\ \textcolor{keywordtype}{bool}\ is\_equal\_spk(E2ees\_\_SignedPreKey\ *src\_1,\ E2ees\_\_SignedPreKey\ *src\_2);}
-\DoxyCodeLine{00096\ \textcolor{keywordtype}{bool}\ is\_equal\_opk(E2ees\_\_OneTimePreKey\ *src\_1,\ E2ees\_\_OneTimePreKey\ *src\_2);}
-\DoxyCodeLine{00097\ \textcolor{keywordtype}{bool}\ is\_equal\_opk\_list(E2ees\_\_OneTimePreKey\ **src\_1,\ E2ees\_\_OneTimePreKey\ **src\_2,\ \textcolor{keywordtype}{size\_t}\ len);}
-\DoxyCodeLine{00098\ \textcolor{keywordtype}{bool}\ is\_equal\_account(E2ees\_\_Account\ *src\_1,\ E2ees\_\_Account\ *src\_2);}
-\DoxyCodeLine{00099\ \textcolor{keywordtype}{bool}\ is\_equal\_message\_key(E2ees\_\_MsgKey\ *msg\_key\_1,\ E2ees\_\_MsgKey\ *msg\_key\_2);}
-\DoxyCodeLine{00100\ \textcolor{keywordtype}{bool}\ is\_equal\_chain(E2ees\_\_ChainKey\ *chain\_key\_1,\ E2ees\_\_ChainKey\ *chain\_key\_2);}
-\DoxyCodeLine{00101\ \textcolor{keywordtype}{bool}\ is\_equal\_sender\_chain(E2ees\_\_SenderChainNode\ *sender\_chain\_1,\ E2ees\_\_SenderChainNode\ *sender\_chain\_2);}
-\DoxyCodeLine{00102\ \textcolor{keywordtype}{bool}\ is\_equal\_receiver\_chain(E2ees\_\_ReceiverChainNode\ *receiver\_chain\_node\_1,\ E2ees\_\_ReceiverChainNode\ *receiver\_chain\_node\_2);}
-\DoxyCodeLine{00103\ \textcolor{keywordtype}{bool}\ is\_equal\_skipped\_message\_key(E2ees\_\_SkippedMsgKeyNode\ *skipped\_msg\_key\_node\_1,\ E2ees\_\_SkippedMsgKeyNode\ *skipped\_msg\_key\_node\_2);}
-\DoxyCodeLine{00104\ \textcolor{keywordtype}{bool}\ is\_equal\_ratchet(E2ees\_\_Ratchet\ *ratchet\_1,\ E2ees\_\_Ratchet\ *ratchet\_2);}
-\DoxyCodeLine{00105\ \textcolor{keywordtype}{bool}\ is\_equal\_session(E2ees\_\_Session\ *session\_1,\ E2ees\_\_Session\ *session\_2);}
-\DoxyCodeLine{00106\ \textcolor{keywordtype}{bool}\ is\_equal\_sessions(E2ees\_\_Session\ **sessions\_1,\ E2ees\_\_Session\ **sessions\_2,\ \textcolor{keywordtype}{size\_t}\ session\_num);}
-\DoxyCodeLine{00107\ \textcolor{keywordtype}{bool}\ is\_equal\_group\_session(E2ees\_\_GroupSession\ *group\_session\_1,\ E2ees\_\_GroupSession\ *group\_session\_2);}
-\DoxyCodeLine{00108\ }
-\DoxyCodeLine{00109\ \textcolor{comment}{//\ mock}}
-\DoxyCodeLine{00110\ \textcolor{keywordtype}{void}\ mock\_data(ProtobufCBinaryData\ *to,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *from);}
-\DoxyCodeLine{00111\ \textcolor{keywordtype}{void}\ mock\_string(\textcolor{keywordtype}{char}\ **to,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *from);}
-\DoxyCodeLine{00112\ \textcolor{keywordtype}{char}\ *mock\_domain\_str();}
-\DoxyCodeLine{00113\ \textcolor{keywordtype}{void}\ mock\_address(E2ees\_\_E2eeAddress\ **address\_pp,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *user\_id,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *domain,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *device\_id);}
-\DoxyCodeLine{00114\ \textcolor{keywordtype}{void}\ mock\_random\_group\_address(E2ees\_\_E2eeAddress\ **address);}
-\DoxyCodeLine{00115\ \textcolor{keywordtype}{void}\ mock\_random\_user\_address(E2ees\_\_E2eeAddress\ **address);}
-\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}\ mock\_keypair(E2ees\_\_KeyPair\ **keypair);}
-\DoxyCodeLine{00117\ \textcolor{keywordtype}{void}\ mock\_identity\_key(E2ees\_\_IdentityKey\ **identity\_keypair);}
-\DoxyCodeLine{00118\ \textcolor{keywordtype}{void}\ mock\_signed\_pre\_key(E2ees\_\_SignedPreKey\ **signed\_pre\_keypair,\ uint32\_t\ spk\_id);}
-\DoxyCodeLine{00119\ \textcolor{keywordtype}{void}\ mock\_one\_time\_pre\_key(E2ees\_\_OneTimePreKey\ **one\_time\_pre\_keypair,\ uint32\_t\ opk\_id);}
-\DoxyCodeLine{00120\ \textcolor{keywordtype}{void}\ mock\_one\_time\_pre\_key\_list(E2ees\_\_OneTimePreKey\ ***one\_time\_pre\_key\_list);}
-\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ mock\_account(E2ees\_\_Account\ **account\_out);}
-\DoxyCodeLine{00122\ }
-\DoxyCodeLine{00123\ \textcolor{comment}{//\ hash}}
-\DoxyCodeLine{00124\ \textcolor{keywordtype}{void}\ pre\_key\_bundle\_hash(}
-\DoxyCodeLine{00125\ \ \ \ \ uint8\_t\ **out,}
-\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *out\_len,}
-\DoxyCodeLine{00127\ \ \ \ \ E2ees\_\_E2eeAddress\ *address,}
-\DoxyCodeLine{00128\ \ \ \ \ E2ees\_\_IdentityKeyPublic\ *ik,}
-\DoxyCodeLine{00129\ \ \ \ \ E2ees\_\_SignedPreKeyPublic\ *spk,}
-\DoxyCodeLine{00130\ \ \ \ \ E2ees\_\_OneTimePreKeyPublic\ *opk}
-\DoxyCodeLine{00131\ );}
-\DoxyCodeLine{00132\ }
-\DoxyCodeLine{00133\ \textcolor{keywordtype}{void}\ proto\_msg\_hash(}
-\DoxyCodeLine{00134\ \ \ \ \ uint8\_t\ **out,}
-\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *out\_len,}
-\DoxyCodeLine{00136\ \ \ \ \ E2ees\_\_ProtoMsgTag\ *tag,}
-\DoxyCodeLine{00137\ \ \ \ \ E2ees\_\_E2eeAddress\ *from,}
-\DoxyCodeLine{00138\ \ \ \ \ E2ees\_\_E2eeAddress\ *to,}
-\DoxyCodeLine{00139\ \ \ \ \ E2ees\_\_ProtoMsg\_\_PayloadCase\ payload\_case,}
-\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{void}\ *payload}
-\DoxyCodeLine{00141\ );}
-\DoxyCodeLine{00142\ }
-\DoxyCodeLine{00143\ \textcolor{comment}{//\ free}}
-\DoxyCodeLine{00144\ \textcolor{keywordtype}{void}\ free\_account(E2ees\_\_Account\ *account);}
-\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ free\_address(E2ees\_\_E2eeAddress\ *address);}
-\DoxyCodeLine{00146\ }
-\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ TEST\_UTIL\_H\_\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ gen\_e2ees\_pack\_id\_ecc()\ \(\backslash\)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\ \ \ \ gen\_e2ees\_pack\_id\_raw(\ \(\backslash\)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ID\_V\_0,\ \(\backslash\)}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_DS\_CURVE25519,\ \(\backslash\)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_KEM\_CURVE25519,\ \(\backslash\)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_SE\_AES256GCM,\ \(\backslash\)}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_HASH\_SHA2\_256\ \(\backslash\)}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\ \ \ \ )}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ gen\_e2ees\_pack\_id\_pqc()\ \(\backslash\)}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\ \ \ \ gen\_e2ees\_pack\_id\_raw(\ \(\backslash\)}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ID\_V\_0,\ \(\backslash\)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_DS\_MLDSA87,\ \(\backslash\)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_KEM\_MLKEM1024,\ \(\backslash\)}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_SE\_AES256GCM,\ \(\backslash\)}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ E2EES\_PACK\_ALG\_HASH\_SHA2\_256\ \(\backslash\)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\ \ \ \ )}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ malloc\_group\_members(number)\ \(\backslash\)}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\ \ \ \ group\_members\ =\ (E2ees\_\_GroupMember\ **)malloc(sizeof(E2ees\_\_GroupMember\ *)\ *\ number\ );\ \(\backslash\)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\ \ \ \ group\_members[0]\ =\ (E2ees\_\_GroupMember\ *)malloc(sizeof(E2ees\_\_GroupMember));\ \(\backslash\)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\ \ \ \ e2ees\_\_group\_member\_\_init(group\_members[0]);\ \(\backslash\)}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\ \ \ \ group\_members[0]-\/>user\_id\ =\ strdup(user\_id\_list[0]);\ \(\backslash\)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\ \ \ \ group\_members[0]-\/>domain\ =\ strdup(domain\_list[0]);\ \(\backslash\)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\ \ \ \ group\_members[0]-\/>role\ =\ E2EES\_\_GROUP\_ROLE\_\_GROUP\_ROLE\_MANAGER;\ \(\backslash\)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\ \ \ \ for\ (i\ =\ 1;\ i\ <\ number\ ;\ i++)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ group\_members[i]\ =\ (E2ees\_\_GroupMember\ *)malloc(sizeof(E2ees\_\_GroupMember));\ \(\backslash\)}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ e2ees\_\_group\_member\_\_init(group\_members[i]);\ \(\backslash\)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ group\_members[i]-\/>user\_id\ =\ strdup(user\_id\_list[i]);\ \(\backslash\)}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ group\_members[i]-\/>domain\ =\ strdup(domain\_list[i]);\ \(\backslash\)}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ group\_members[i]-\/>role\ =\ E2EES\_\_GROUP\_ROLE\_\_GROUP\_ROLE\_MEMBER;\ \(\backslash\)}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#define\ malloc\_new\_group\_members(number)\ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\ \ \ \ new\_group\_members\ =\ (E2ees\_\_GroupMember\ **)malloc(sizeof(E2ees\_\_GroupMember\ *)\ *\ number\ );\ \(\backslash\)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\ \ \ \ for\ (i\ =\ 0;\ i\ <\ number\ ;\ i++)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ new\_group\_members[i]\ =\ (E2ees\_\_GroupMember\ *)malloc(sizeof(E2ees\_\_GroupMember));\ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ e2ees\_\_group\_member\_\_init(new\_group\_members[i]);\ \(\backslash\)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ new\_group\_members[i]-\/>user\_id\ =\ strdup(new\_user\_id\_list[i]);\ \(\backslash\)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ new\_group\_members[i]-\/>domain\ =\ strdup(new\_domain\_list[i]);\ \(\backslash\)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ new\_group\_members[i]-\/>role\ =\ E2EES\_\_GROUP\_ROLE\_\_GROUP\_ROLE\_MEMBER;\ \(\backslash\)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#define\ malloc\_removing\_group\_members(number)\ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ removing\_group\_members\ =\ (E2ees\_\_GroupMember\ **)malloc(sizeof(E2ees\_\_GroupMember\ *)\ *\ number\ );\ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ for\ (i\ =\ 0;\ i\ <\ number\ ;\ i++)\ \{\ \(\backslash\)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ removing\_group\_members[i]\ =\ (E2ees\_\_GroupMember\ *)malloc(sizeof(E2ees\_\_GroupMember));\ \(\backslash\)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ e2ees\_\_group\_member\_\_init(removing\_group\_members[i]);\ \(\backslash\)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ removing\_group\_members[i]-\/>user\_id\ =\ strdup(removing\_user\_id\_list[i]);\ \(\backslash\)}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ removing\_group\_members[i]-\/>domain\ =\ strdup(removing\_domain\_list[i]);\ \(\backslash\)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ removing\_group\_members[i]-\/>role\ =\ E2EES\_\_GROUP\_ROLE\_\_GROUP\_ROLE\_MEMBER;\ \(\backslash\)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{comment}{//\ debug\ msg\ to\ console}}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ print\_hex(\textcolor{keywordtype}{char}\ *title,\ uint8\_t\ *msg,\ \textcolor{keywordtype}{size\_t}\ msg\_len);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{void}\ print\_msg(\textcolor{keywordtype}{char}\ *title,\ uint8\_t\ *msg,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{void}\ print\_log(\textcolor{keywordtype}{char}\ *log\_msg,\ \textcolor{keywordtype}{int}\ log\_code);}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ print\_result(\textcolor{keywordtype}{char}\ *title,\ \textcolor{keywordtype}{bool}\ success);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{bool}\ is\_null(\textcolor{keywordtype}{void}\ *pointer\_1,\ \textcolor{keywordtype}{void}\ *pointer\_2);}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{bool}\ is\_not\_null(\textcolor{keywordtype}{void}\ *pointer\_1,\ \textcolor{keywordtype}{void}\ *pointer\_2);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{//\ is\_equal}}
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{bool}\ is\_equal\_data(ProtobufCBinaryData\ *src\_1,\ ProtobufCBinaryData\ *src\_2);}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{bool}\ is\_equal\_str(\textcolor{keywordtype}{char}\ *str1,\ \textcolor{keywordtype}{char}\ *str2);}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{bool}\ is\_equal\_keypair(E2ees\_\_KeyPair\ *src\_1,\ E2ees\_\_KeyPair\ *src\_2);}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{bool}\ is\_equal\_ik(E2ees\_\_IdentityKey\ *src\_1,\ E2ees\_\_IdentityKey\ *src\_2);}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{bool}\ is\_equal\_spk(E2ees\_\_SignedPreKey\ *src\_1,\ E2ees\_\_SignedPreKey\ *src\_2);}
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{bool}\ is\_equal\_opk(E2ees\_\_OneTimePreKey\ *src\_1,\ E2ees\_\_OneTimePreKey\ *src\_2);}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{bool}\ is\_equal\_opk\_list(E2ees\_\_OneTimePreKey\ **src\_1,\ E2ees\_\_OneTimePreKey\ **src\_2,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{bool}\ is\_equal\_account(E2ees\_\_Account\ *src\_1,\ E2ees\_\_Account\ *src\_2);}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{bool}\ is\_equal\_message\_key(E2ees\_\_MsgKey\ *msg\_key\_1,\ E2ees\_\_MsgKey\ *msg\_key\_2);}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{bool}\ is\_equal\_chain(E2ees\_\_ChainKey\ *chain\_key\_1,\ E2ees\_\_ChainKey\ *chain\_key\_2);}
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{bool}\ is\_equal\_sender\_chain(E2ees\_\_SenderChainNode\ *sender\_chain\_1,\ E2ees\_\_SenderChainNode\ *sender\_chain\_2);}
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{bool}\ is\_equal\_receiver\_chain(E2ees\_\_ReceiverChainNode\ *receiver\_chain\_node\_1,\ E2ees\_\_ReceiverChainNode\ *receiver\_chain\_node\_2);}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{bool}\ is\_equal\_skipped\_message\_key(E2ees\_\_SkippedMsgKeyNode\ *skipped\_msg\_key\_node\_1,\ E2ees\_\_SkippedMsgKeyNode\ *skipped\_msg\_key\_node\_2);}
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{bool}\ is\_equal\_ratchet(E2ees\_\_Ratchet\ *ratchet\_1,\ E2ees\_\_Ratchet\ *ratchet\_2);}
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{bool}\ is\_equal\_session(E2ees\_\_Session\ *session\_1,\ E2ees\_\_Session\ *session\_2);}
+\DoxyCodeLine{00104\ \textcolor{keywordtype}{bool}\ is\_equal\_sessions(E2ees\_\_Session\ **sessions\_1,\ E2ees\_\_Session\ **sessions\_2,\ \textcolor{keywordtype}{size\_t}\ session\_num);}
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{bool}\ is\_equal\_group\_session(E2ees\_\_GroupSession\ *group\_session\_1,\ E2ees\_\_GroupSession\ *group\_session\_2);}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{comment}{//\ mock}}
+\DoxyCodeLine{00108\ \textcolor{keywordtype}{void}\ mock\_data(ProtobufCBinaryData\ *to,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *from);}
+\DoxyCodeLine{00109\ \textcolor{keywordtype}{void}\ mock\_string(\textcolor{keywordtype}{char}\ **to,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *from);}
+\DoxyCodeLine{00110\ \textcolor{keywordtype}{char}\ *mock\_domain\_str();}
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{void}\ mock\_address(E2ees\_\_E2eeAddress\ **address\_pp,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *user\_id,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *domain,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *device\_id);}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ mock\_random\_group\_address(E2ees\_\_E2eeAddress\ **address);}
+\DoxyCodeLine{00113\ \textcolor{keywordtype}{void}\ mock\_random\_user\_address(E2ees\_\_E2eeAddress\ **address);}
+\DoxyCodeLine{00114\ \textcolor{keywordtype}{void}\ mock\_keypair(E2ees\_\_KeyPair\ **keypair);}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{void}\ mock\_identity\_key(E2ees\_\_IdentityKey\ **identity\_keypair);}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}\ mock\_signed\_pre\_key(E2ees\_\_SignedPreKey\ **signed\_pre\_keypair,\ uint32\_t\ spk\_id);}
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{void}\ mock\_one\_time\_pre\_key(E2ees\_\_OneTimePreKey\ **one\_time\_pre\_keypair,\ uint32\_t\ opk\_id);}
+\DoxyCodeLine{00118\ \textcolor{keywordtype}{void}\ mock\_one\_time\_pre\_key\_list(E2ees\_\_OneTimePreKey\ ***one\_time\_pre\_key\_list);}
+\DoxyCodeLine{00119\ \textcolor{keywordtype}{void}\ mock\_account(E2ees\_\_Account\ **account\_out);}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{comment}{//\ hash}}
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{void}\ pre\_key\_bundle\_hash(}
+\DoxyCodeLine{00123\ \ \ \ \ uint8\_t\ **out,}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *out\_len,}
+\DoxyCodeLine{00125\ \ \ \ \ E2ees\_\_E2eeAddress\ *address,}
+\DoxyCodeLine{00126\ \ \ \ \ E2ees\_\_IdentityKeyPublic\ *ik,}
+\DoxyCodeLine{00127\ \ \ \ \ E2ees\_\_SignedPreKeyPublic\ *spk,}
+\DoxyCodeLine{00128\ \ \ \ \ E2ees\_\_OneTimePreKeyPublic\ *opk}
+\DoxyCodeLine{00129\ );}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{void}\ proto\_msg\_hash(}
+\DoxyCodeLine{00132\ \ \ \ \ uint8\_t\ **out,}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *out\_len,}
+\DoxyCodeLine{00134\ \ \ \ \ E2ees\_\_ProtoMsgTag\ *tag,}
+\DoxyCodeLine{00135\ \ \ \ \ E2ees\_\_E2eeAddress\ *from,}
+\DoxyCodeLine{00136\ \ \ \ \ E2ees\_\_E2eeAddress\ *to,}
+\DoxyCodeLine{00137\ \ \ \ \ E2ees\_\_ProtoMsg\_\_PayloadCase\ payload\_case,}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{void}\ *payload}
+\DoxyCodeLine{00139\ );}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{comment}{//\ free}}
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{void}\ free\_account(E2ees\_\_Account\ *account);}
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{void}\ free\_address(E2ees\_\_E2eeAddress\ *address);}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ TEST\_UTIL\_H\_\ */}\textcolor{preprocessor}{}}
 
 \end{DoxyCode}
