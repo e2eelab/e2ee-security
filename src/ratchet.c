@@ -394,10 +394,10 @@ static size_t verify_and_decrypt_for_new_chain(
 
         free_protobuf(&new_root_key);
         unset((void volatile *)&new_root_key, sizeof(ProtobufCBinaryData));
-        unset((void volatile *)&new_chain, sizeof(E2ees__ReceiverChainNode));
         free_protobuf(&(new_chain.chain_key->shared_key));
         e2ees__chain_key__free_unpacked(new_chain.chain_key, NULL);
         new_chain.chain_key = NULL;
+        unset((void volatile *)&new_chain, sizeof(E2ees__ReceiverChainNode));
     }
 
     return ret;
@@ -490,14 +490,20 @@ int initialise_as_bob(
             // PQC mode
             copy_protobuf_from_protobuf(&(sender_chain->our_ratchet_public_key), &ciphertext);
         }
-    } else {
-        free_mem((void **)&derived_secrets, sizeof(uint8_t) * derived_secrets_len);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         *ratchet_out = ratchet;
     } else {
         free_proto(ratchet);
+    }
+
+    // release
+    if (derived_secrets != NULL) {
+        free_mem((void **)&derived_secrets, sizeof(uint8_t) * derived_secrets_len);
+    }
+    if (ciphertext.data != NULL) {
+        free_mem((void **)&(ciphertext.data), sizeof(uint8_t) * ciphertext.len);
     }
 
     return ret;
@@ -611,14 +617,17 @@ int initialise_as_alice(
 
         // inviter's initial root sequence
         ratchet->root_sequence = 1;
-    } else {
-        free_mem((void **)&derived_secrets, sizeof(uint8_t) * derived_secrets_len);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         *ratchet_out = ratchet;
     } else {
         free_proto(ratchet);
+    }
+
+    // release
+    if (derived_secrets != NULL) {
+        free_mem((void **)&derived_secrets, sizeof(uint8_t) * derived_secrets_len);
     }
 
     return ret;

@@ -247,6 +247,12 @@ int pqc_new_outbound_session_v2(
         *response_out = response;
     }
 
+    // release
+    if (local_account != NULL) {
+        e2ees__account__free_unpacked(local_account, NULL);
+        local_account = NULL;
+    }
+
     return ret;
 }
 

@@ -27,147 +27,151 @@
 \DoxyCodeLine{00023\ }
 \DoxyCodeLine{00024\ \textcolor{keywordtype}{bool}\ is\_valid\_string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *src);}
 \DoxyCodeLine{00025\ }
-\DoxyCodeLine{00026\ \textcolor{keywordtype}{bool}\ is\_valid\_string\_list(\textcolor{keywordtype}{char}\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{bool}\ is\_invalid\_string(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *src);}
 \DoxyCodeLine{00027\ }
-\DoxyCodeLine{00028\ \textcolor{keywordtype}{bool}\ is\_valid\_address(E2ees\_\_E2eeAddress\ *src);}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{bool}\ is\_valid\_string\_list(\textcolor{keywordtype}{char}\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
 \DoxyCodeLine{00029\ }
-\DoxyCodeLine{00030\ \textcolor{keywordtype}{bool}\ is\_valid\_address\_list(E2ees\_\_E2eeAddress\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{bool}\ is\_valid\_address(E2ees\_\_E2eeAddress\ *src);}
 \DoxyCodeLine{00031\ }
-\DoxyCodeLine{00032\ \textcolor{keywordtype}{bool}\ is\_valid\_key\_pair(\textcolor{keyword}{const}\ E2ees\_\_KeyPair\ *src);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{bool}\ is\_invalid\_address(E2ees\_\_E2eeAddress\ *src);}
 \DoxyCodeLine{00033\ }
-\DoxyCodeLine{00034\ \textcolor{keywordtype}{bool}\ is\_valid\_identity\_key(E2ees\_\_IdentityKey\ *src);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{bool}\ is\_valid\_address\_list(E2ees\_\_E2eeAddress\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
 \DoxyCodeLine{00035\ }
-\DoxyCodeLine{00036\ \textcolor{keywordtype}{bool}\ is\_valid\_signed\_pre\_key(E2ees\_\_SignedPreKey\ *src);}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{bool}\ is\_valid\_key\_pair(\textcolor{keyword}{const}\ E2ees\_\_KeyPair\ *src);}
 \DoxyCodeLine{00037\ }
-\DoxyCodeLine{00038\ \textcolor{keywordtype}{bool}\ is\_valid\_one\_time\_pre\_key(E2ees\_\_OneTimePreKey\ *src);}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{bool}\ is\_valid\_identity\_key(E2ees\_\_IdentityKey\ *src);}
 \DoxyCodeLine{00039\ }
-\DoxyCodeLine{00040\ \textcolor{keywordtype}{bool}\ is\_valid\_one\_time\_pre\_key\_list(E2ees\_\_OneTimePreKey\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{bool}\ is\_valid\_signed\_pre\_key(E2ees\_\_SignedPreKey\ *src);}
 \DoxyCodeLine{00041\ }
-\DoxyCodeLine{00042\ \textcolor{keywordtype}{bool}\ is\_valid\_unregistered\_account(E2ees\_\_Account\ *src);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{bool}\ is\_valid\_one\_time\_pre\_key(E2ees\_\_OneTimePreKey\ *src);}
 \DoxyCodeLine{00043\ }
-\DoxyCodeLine{00044\ \textcolor{keywordtype}{bool}\ is\_valid\_registered\_account(E2ees\_\_Account\ *src);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{bool}\ is\_valid\_one\_time\_pre\_key\_list(E2ees\_\_OneTimePreKey\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
 \DoxyCodeLine{00045\ }
-\DoxyCodeLine{00046\ \textcolor{keywordtype}{bool}\ is\_valid\_msg\_key(\textcolor{keyword}{const}\ E2ees\_\_MsgKey\ *msg\_key);}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{bool}\ is\_valid\_unregistered\_account(E2ees\_\_Account\ *src);}
 \DoxyCodeLine{00047\ }
-\DoxyCodeLine{00048\ \textcolor{keywordtype}{bool}\ is\_valid\_chain\_key(\textcolor{keyword}{const}\ E2ees\_\_ChainKey\ *chain\_key);}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{bool}\ is\_valid\_registered\_account(E2ees\_\_Account\ *src);}
 \DoxyCodeLine{00049\ }
-\DoxyCodeLine{00050\ \textcolor{keywordtype}{bool}\ is\_valid\_sender\_chain(E2ees\_\_SenderChainNode\ *sender\_chain);}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{bool}\ is\_valid\_msg\_key(\textcolor{keyword}{const}\ E2ees\_\_MsgKey\ *msg\_key);}
 \DoxyCodeLine{00051\ }
-\DoxyCodeLine{00052\ \textcolor{keywordtype}{bool}\ is\_valid\_receiver\_chain(E2ees\_\_ReceiverChainNode\ *receiver\_chain);}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{bool}\ is\_valid\_chain\_key(\textcolor{keyword}{const}\ E2ees\_\_ChainKey\ *chain\_key);}
 \DoxyCodeLine{00053\ }
-\DoxyCodeLine{00054\ \textcolor{keywordtype}{bool}\ is\_valid\_skipped\_msg\_key\_node(E2ees\_\_SkippedMsgKeyNode\ *skipped\_msg\_key\_node);}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{bool}\ is\_valid\_sender\_chain(E2ees\_\_SenderChainNode\ *sender\_chain);}
 \DoxyCodeLine{00055\ }
-\DoxyCodeLine{00056\ \textcolor{keywordtype}{bool}\ is\_valid\_skipped\_msg\_key\_list(}
-\DoxyCodeLine{00057\ \ \ \ \ E2ees\_\_SkippedMsgKeyNode\ **skipped\_msg\_key\_list,}
-\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ skipped\_msg\_key\_list\_len}
-\DoxyCodeLine{00059\ );}
-\DoxyCodeLine{00060\ }
-\DoxyCodeLine{00061\ \textcolor{keywordtype}{bool}\ is\_valid\_ratchet(\textcolor{keyword}{const}\ E2ees\_\_Ratchet\ *ratchet);}
-\DoxyCodeLine{00062\ }
-\DoxyCodeLine{00063\ \textcolor{keywordtype}{bool}\ is\_valid\_uncompleted\_session(E2ees\_\_Session\ *src);}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{bool}\ is\_valid\_receiver\_chain(E2ees\_\_ReceiverChainNode\ *receiver\_chain);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{bool}\ is\_valid\_skipped\_msg\_key\_node(E2ees\_\_SkippedMsgKeyNode\ *skipped\_msg\_key\_node);}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{bool}\ is\_valid\_skipped\_msg\_key\_list(}
+\DoxyCodeLine{00061\ \ \ \ \ E2ees\_\_SkippedMsgKeyNode\ **skipped\_msg\_key\_list,}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ skipped\_msg\_key\_list\_len}
+\DoxyCodeLine{00063\ );}
 \DoxyCodeLine{00064\ }
-\DoxyCodeLine{00065\ \textcolor{keywordtype}{bool}\ is\_valid\_completed\_session(E2ees\_\_Session\ *src);}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{bool}\ is\_valid\_ratchet(\textcolor{keyword}{const}\ E2ees\_\_Ratchet\ *ratchet);}
 \DoxyCodeLine{00066\ }
-\DoxyCodeLine{00067\ \textcolor{keywordtype}{bool}\ is\_valid\_identity\_key\_public(E2ees\_\_IdentityKeyPublic\ *src);}
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{bool}\ is\_valid\_uncompleted\_session(E2ees\_\_Session\ *src);}
 \DoxyCodeLine{00068\ }
-\DoxyCodeLine{00069\ \textcolor{keywordtype}{bool}\ is\_valid\_signed\_pre\_key\_public(E2ees\_\_SignedPreKeyPublic\ *src);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{bool}\ is\_valid\_completed\_session(E2ees\_\_Session\ *src);}
 \DoxyCodeLine{00070\ }
-\DoxyCodeLine{00071\ \textcolor{keywordtype}{bool}\ is\_valid\_one\_time\_pre\_key\_public(E2ees\_\_OneTimePreKeyPublic\ *src);}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{bool}\ is\_valid\_identity\_key\_public(E2ees\_\_IdentityKeyPublic\ *src);}
 \DoxyCodeLine{00072\ }
-\DoxyCodeLine{00073\ \textcolor{keywordtype}{bool}\ is\_valid\_pre\_key\_bundle(E2ees\_\_PreKeyBundle\ *src);}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{bool}\ is\_valid\_signed\_pre\_key\_public(E2ees\_\_SignedPreKeyPublic\ *src);}
 \DoxyCodeLine{00074\ }
-\DoxyCodeLine{00075\ \textcolor{keywordtype}{bool}\ is\_valid\_pre\_key\_bundle\_list(E2ees\_\_PreKeyBundle\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{bool}\ is\_valid\_one\_time\_pre\_key\_public(E2ees\_\_OneTimePreKeyPublic\ *src);}
 \DoxyCodeLine{00076\ }
-\DoxyCodeLine{00077\ \textcolor{keywordtype}{bool}\ is\_valid\_one2one\_msg\_payload(\textcolor{keyword}{const}\ E2ees\_\_One2oneMsgPayload\ *payload);}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{bool}\ is\_valid\_pre\_key\_bundle(E2ees\_\_PreKeyBundle\ *src);}
 \DoxyCodeLine{00078\ }
-\DoxyCodeLine{00079\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_member(E2ees\_\_GroupMember\ *src);}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{bool}\ is\_valid\_pre\_key\_bundle\_list(E2ees\_\_PreKeyBundle\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
 \DoxyCodeLine{00080\ }
-\DoxyCodeLine{00081\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_member\_list(E2ees\_\_GroupMember\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{bool}\ is\_valid\_one2one\_msg\_payload(\textcolor{keyword}{const}\ E2ees\_\_One2oneMsgPayload\ *payload);}
 \DoxyCodeLine{00082\ }
-\DoxyCodeLine{00083\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_info(\textcolor{keyword}{const}\ E2ees\_\_GroupInfo\ *src);}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_member(E2ees\_\_GroupMember\ *src);}
 \DoxyCodeLine{00084\ }
-\DoxyCodeLine{00085\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_info\_list(\textcolor{keyword}{const}\ E2ees\_\_GroupInfo\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_member\_list(E2ees\_\_GroupMember\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
 \DoxyCodeLine{00086\ }
-\DoxyCodeLine{00087\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_member\_info(\textcolor{keyword}{const}\ E2ees\_\_GroupMemberInfo\ *src);}
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_info(\textcolor{keyword}{const}\ E2ees\_\_GroupInfo\ *src);}
 \DoxyCodeLine{00088\ }
-\DoxyCodeLine{00089\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_member\_info\_list(\textcolor{keyword}{const}\ E2ees\_\_GroupMemberInfo\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_info\_list(\textcolor{keyword}{const}\ E2ees\_\_GroupInfo\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
 \DoxyCodeLine{00090\ }
-\DoxyCodeLine{00091\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_session\_by\_member\_id(E2ees\_\_GroupSession\ *src);}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_member\_info(\textcolor{keyword}{const}\ E2ees\_\_GroupMemberInfo\ *src);}
 \DoxyCodeLine{00092\ }
-\DoxyCodeLine{00093\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_session\_by\_pre\_key\_bundle(E2ees\_\_GroupSession\ *src);}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_member\_info\_list(\textcolor{keyword}{const}\ E2ees\_\_GroupMemberInfo\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
 \DoxyCodeLine{00094\ }
-\DoxyCodeLine{00095\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_session(E2ees\_\_GroupSession\ *src);}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_session\_by\_member\_id(E2ees\_\_GroupSession\ *src);}
 \DoxyCodeLine{00096\ }
-\DoxyCodeLine{00097\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_session\_no\_chain\_key(E2ees\_\_GroupSession\ *src);}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_session\_by\_pre\_key\_bundle(E2ees\_\_GroupSession\ *src);}
 \DoxyCodeLine{00098\ }
-\DoxyCodeLine{00099\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_update\_key\_bundle(E2ees\_\_GroupUpdateKeyBundle\ *src);}
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_session(E2ees\_\_GroupSession\ *src);}
 \DoxyCodeLine{00100\ }
-\DoxyCodeLine{00101\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_pre\_key\_bundle(E2ees\_\_GroupPreKeyBundle\ *src);}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_session\_no\_chain\_key(E2ees\_\_GroupSession\ *src);}
 \DoxyCodeLine{00102\ }
-\DoxyCodeLine{00103\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_msg\_payload(\textcolor{keyword}{const}\ E2ees\_\_GroupMsgPayload\ *payload);}
+\DoxyCodeLine{00103\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_update\_key\_bundle(E2ees\_\_GroupUpdateKeyBundle\ *src);}
 \DoxyCodeLine{00104\ }
-\DoxyCodeLine{00105\ \textcolor{keywordtype}{bool}\ is\_valid\_register\_user\_response(E2ees\_\_RegisterUserResponse\ *src);}
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_pre\_key\_bundle(E2ees\_\_GroupPreKeyBundle\ *src);}
 \DoxyCodeLine{00106\ }
-\DoxyCodeLine{00107\ \textcolor{keywordtype}{bool}\ is\_valid\_publish\_spk\_response(E2ees\_\_PublishSpkResponse\ *src);}
+\DoxyCodeLine{00107\ \textcolor{keywordtype}{bool}\ is\_valid\_group\_msg\_payload(\textcolor{keyword}{const}\ E2ees\_\_GroupMsgPayload\ *payload);}
 \DoxyCodeLine{00108\ }
-\DoxyCodeLine{00109\ \textcolor{keywordtype}{bool}\ is\_valid\_supply\_opks\_response(E2ees\_\_SupplyOpksResponse\ *src);}
+\DoxyCodeLine{00109\ \textcolor{keywordtype}{bool}\ is\_valid\_register\_user\_response(E2ees\_\_RegisterUserResponse\ *src);}
 \DoxyCodeLine{00110\ }
-\DoxyCodeLine{00111\ \textcolor{keywordtype}{bool}\ is\_valid\_get\_pre\_key\_bundle\_response(E2ees\_\_GetPreKeyBundleResponse\ *src);}
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{bool}\ is\_valid\_publish\_spk\_response(E2ees\_\_PublishSpkResponse\ *src);}
 \DoxyCodeLine{00112\ }
-\DoxyCodeLine{00113\ \textcolor{keywordtype}{bool}\ is\_valid\_invite\_response(E2ees\_\_InviteResponse\ *src);}
+\DoxyCodeLine{00113\ \textcolor{keywordtype}{bool}\ is\_valid\_supply\_opks\_response(E2ees\_\_SupplyOpksResponse\ *src);}
 \DoxyCodeLine{00114\ }
-\DoxyCodeLine{00115\ \textcolor{keywordtype}{bool}\ is\_valid\_accept\_response(E2ees\_\_AcceptResponse\ *src);}
+\DoxyCodeLine{00115\ \textcolor{keywordtype}{bool}\ is\_valid\_get\_pre\_key\_bundle\_response(E2ees\_\_GetPreKeyBundleResponse\ *src);}
 \DoxyCodeLine{00116\ }
-\DoxyCodeLine{00117\ \textcolor{keywordtype}{bool}\ is\_valid\_create\_group\_response(E2ees\_\_CreateGroupResponse\ *src);}
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{bool}\ is\_valid\_invite\_response(E2ees\_\_InviteResponse\ *src);}
 \DoxyCodeLine{00118\ }
-\DoxyCodeLine{00119\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_group\_members\_response(E2ees\_\_AddGroupMembersResponse\ *src);}
+\DoxyCodeLine{00119\ \textcolor{keywordtype}{bool}\ is\_valid\_accept\_response(E2ees\_\_AcceptResponse\ *src);}
 \DoxyCodeLine{00120\ }
-\DoxyCodeLine{00121\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_group\_member\_device\_response(E2ees\_\_AddGroupMemberDeviceResponse\ *src);}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{bool}\ is\_valid\_create\_group\_response(E2ees\_\_CreateGroupResponse\ *src);}
 \DoxyCodeLine{00122\ }
-\DoxyCodeLine{00123\ \textcolor{keywordtype}{bool}\ is\_valid\_remove\_group\_members\_response(E2ees\_\_RemoveGroupMembersResponse\ *src);}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_group\_members\_response(E2ees\_\_AddGroupMembersResponse\ *src);}
 \DoxyCodeLine{00124\ }
-\DoxyCodeLine{00125\ \textcolor{keywordtype}{bool}\ is\_valid\_leave\_group\_response(E2ees\_\_LeaveGroupResponse\ *src);}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_group\_member\_device\_response(E2ees\_\_AddGroupMemberDeviceResponse\ *src);}
 \DoxyCodeLine{00126\ }
-\DoxyCodeLine{00127\ \textcolor{keywordtype}{bool}\ is\_valid\_send\_group\_msg\_response(E2ees\_\_SendGroupMsgResponse\ *src);}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{bool}\ is\_valid\_remove\_group\_members\_response(E2ees\_\_RemoveGroupMembersResponse\ *src);}
 \DoxyCodeLine{00128\ }
-\DoxyCodeLine{00129\ \textcolor{keywordtype}{bool}\ is\_valid\_supply\_opks\_msg(E2ees\_\_SupplyOpksMsg\ *src);}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{bool}\ is\_valid\_leave\_group\_response(E2ees\_\_LeaveGroupResponse\ *src);}
 \DoxyCodeLine{00130\ }
-\DoxyCodeLine{00131\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_user\_device\_msg(E2ees\_\_AddUserDeviceMsg\ *src);}
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{bool}\ is\_valid\_send\_group\_msg\_response(E2ees\_\_SendGroupMsgResponse\ *src);}
 \DoxyCodeLine{00132\ }
-\DoxyCodeLine{00133\ \textcolor{keywordtype}{bool}\ is\_valid\_remove\_user\_device\_msg(E2ees\_\_RemoveUserDeviceMsg\ *src);}
+\DoxyCodeLine{00133\ \textcolor{keywordtype}{bool}\ is\_valid\_supply\_opks\_msg(E2ees\_\_SupplyOpksMsg\ *src);}
 \DoxyCodeLine{00134\ }
-\DoxyCodeLine{00135\ \textcolor{keywordtype}{bool}\ is\_valid\_invite\_msg(E2ees\_\_InviteMsg\ *src);}
+\DoxyCodeLine{00135\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_user\_device\_msg(E2ees\_\_AddUserDeviceMsg\ *src);}
 \DoxyCodeLine{00136\ }
-\DoxyCodeLine{00137\ \textcolor{keywordtype}{bool}\ is\_valid\_accept\_msg(E2ees\_\_AcceptMsg\ *src);}
+\DoxyCodeLine{00137\ \textcolor{keywordtype}{bool}\ is\_valid\_remove\_user\_device\_msg(E2ees\_\_RemoveUserDeviceMsg\ *src);}
 \DoxyCodeLine{00138\ }
-\DoxyCodeLine{00139\ \textcolor{keywordtype}{bool}\ is\_valid\_e2ee\_msg(E2ees\_\_E2eeMsg\ *src);}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{bool}\ is\_valid\_invite\_msg(E2ees\_\_InviteMsg\ *src);}
 \DoxyCodeLine{00140\ }
-\DoxyCodeLine{00141\ \textcolor{keywordtype}{bool}\ is\_valid\_create\_group\_msg(E2ees\_\_CreateGroupMsg\ *src);}
+\DoxyCodeLine{00141\ \textcolor{keywordtype}{bool}\ is\_valid\_accept\_msg(E2ees\_\_AcceptMsg\ *src);}
 \DoxyCodeLine{00142\ }
-\DoxyCodeLine{00143\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_group\_members\_msg(E2ees\_\_AddGroupMembersMsg\ *src);}
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{bool}\ is\_valid\_e2ee\_msg(E2ees\_\_E2eeMsg\ *src);}
 \DoxyCodeLine{00144\ }
-\DoxyCodeLine{00145\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_group\_member\_device\_msg(E2ees\_\_AddGroupMemberDeviceMsg\ *src);}
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{bool}\ is\_valid\_create\_group\_msg(E2ees\_\_CreateGroupMsg\ *src);}
 \DoxyCodeLine{00146\ }
-\DoxyCodeLine{00147\ \textcolor{keywordtype}{bool}\ is\_valid\_remove\_group\_members\_msg(E2ees\_\_RemoveGroupMembersMsg\ *src);}
+\DoxyCodeLine{00147\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_group\_members\_msg(E2ees\_\_AddGroupMembersMsg\ *src);}
 \DoxyCodeLine{00148\ }
-\DoxyCodeLine{00149\ \textcolor{keywordtype}{bool}\ is\_valid\_leave\_group\_msg(E2ees\_\_LeaveGroupMsg\ *src);}
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{bool}\ is\_valid\_add\_group\_member\_device\_msg(E2ees\_\_AddGroupMemberDeviceMsg\ *src);}
 \DoxyCodeLine{00150\ }
-\DoxyCodeLine{00151\ \textcolor{keywordtype}{bool}\ is\_valid\_proto\_msg(E2ees\_\_ProtoMsg\ *src);}
+\DoxyCodeLine{00151\ \textcolor{keywordtype}{bool}\ is\_valid\_remove\_group\_members\_msg(E2ees\_\_RemoveGroupMembersMsg\ *src);}
 \DoxyCodeLine{00152\ }
-\DoxyCodeLine{00153\ \textcolor{keywordtype}{bool}\ is\_valid\_subject(E2ees\_\_Subject\ *src);}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{bool}\ is\_valid\_leave\_group\_msg(E2ees\_\_LeaveGroupMsg\ *src);}
 \DoxyCodeLine{00154\ }
-\DoxyCodeLine{00155\ \textcolor{keywordtype}{bool}\ is\_valid\_cert(E2ees\_\_Cert\ *src);}
+\DoxyCodeLine{00155\ \textcolor{keywordtype}{bool}\ is\_valid\_proto\_msg(E2ees\_\_ProtoMsg\ *src);}
 \DoxyCodeLine{00156\ }
-\DoxyCodeLine{00157\ \textcolor{keywordtype}{bool}\ is\_valid\_certificate(E2ees\_\_Certificate\ *src);}
+\DoxyCodeLine{00157\ \textcolor{keywordtype}{bool}\ is\_valid\_subject(E2ees\_\_Subject\ *src);}
 \DoxyCodeLine{00158\ }
-\DoxyCodeLine{00159\ \textcolor{keywordtype}{bool}\ is\_valid\_server\_signed\_signature(E2ees\_\_ServerSignedSignature\ *src);}
+\DoxyCodeLine{00159\ \textcolor{keywordtype}{bool}\ is\_valid\_cert(E2ees\_\_Cert\ *src);}
 \DoxyCodeLine{00160\ }
-\DoxyCodeLine{00161\ \textcolor{keywordtype}{bool}\ is\_valid\_server\_signed\_signature\_list(E2ees\_\_ServerSignedSignature\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
+\DoxyCodeLine{00161\ \textcolor{keywordtype}{bool}\ is\_valid\_certificate(E2ees\_\_Certificate\ *src);}
 \DoxyCodeLine{00162\ }
-\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
-\DoxyCodeLine{00164\ \}}
-\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00163\ \textcolor{keywordtype}{bool}\ is\_valid\_server\_signed\_signature(E2ees\_\_ServerSignedSignature\ *src);}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{keywordtype}{bool}\ is\_valid\_server\_signed\_signature\_list(E2ees\_\_ServerSignedSignature\ **src,\ \textcolor{keywordtype}{size\_t}\ len);}
 \DoxyCodeLine{00166\ }
-\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ VALIDATION\_H\_\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00168\ \}}
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ VALIDATION\_H\_\ */}\textcolor{preprocessor}{}}
 
 \end{DoxyCode}

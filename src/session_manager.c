@@ -195,12 +195,12 @@ int consume_get_pre_key_bundle_response(
                 if(server_public_key.data != NULL) {
                     ds_suite_t *digital_signature_suite = get_ds_suite(cur_pre_key_bundle->signature->signing_alg);
                     server_check = digital_signature_suite->verify(
-                                                                   cur_pre_key_bundle->signature->signature.data,
-                                                                   cur_pre_key_bundle->signature->signature.len,
-                                                                   cur_pre_key_bundle->signature->msg_fingerprint.data,
-                                                                   cur_pre_key_bundle->signature->msg_fingerprint.len,
-                                                                   server_public_key.data
-                                                                   );
+                        cur_pre_key_bundle->signature->signature.data,
+                        cur_pre_key_bundle->signature->signature.len,
+                        cur_pre_key_bundle->signature->msg_fingerprint.data,
+                        cur_pre_key_bundle->signature->msg_fingerprint.len,
+                        server_public_key.data
+                    );
                     // release
                     free_mem((void **)&(server_public_key.data), server_public_key.len);
                 } else {
