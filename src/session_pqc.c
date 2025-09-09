@@ -241,9 +241,8 @@ int pqc_new_outbound_session_v2(
         free_protobuf(&ciphertext_4);
         e2ees__session__free_unpacked(outbound_session, NULL);
         outbound_session = NULL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
+        
+        // output invite response
         *response_out = response;
     }
 

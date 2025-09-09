@@ -473,7 +473,11 @@ int new_outbound_group_session_by_sender(
                     group_pre_key_plaintext_data, group_pre_key_plaintext_data_len
                 );
                 // release
-                free_invite_response_list(&invite_response_list, invite_response_num);
+                if (invite_response_list != NULL) {
+                    free_invite_response_list(&invite_response_list, invite_response_num);
+                    invite_response_list = NULL;
+                    invite_response_num = 0;
+                }
             }
         }
 
@@ -1232,7 +1236,11 @@ int renew_outbound_group_session_by_welcome_and_add(
                     group_ratchet_state_plaintext_data, group_ratchet_state_plaintext_data_len
                 );
                 // release
-                free_invite_response_list(&invite_response_list, invite_response_num);
+                if (invite_response_list != NULL) {
+                    free_invite_response_list(&invite_response_list, invite_response_num);
+                    invite_response_list = NULL;
+                    invite_response_num = 0;
+                }
             }
         }
 
@@ -1515,7 +1523,11 @@ int renew_group_sessions_with_new_device(
                 group_ratchet_state_plaintext_data, group_ratchet_state_plaintext_data_len
             );
             // release
-            free_invite_response_list(&invite_response_list, invite_response_num);
+            if (invite_response_list != NULL) {
+                free_invite_response_list(&invite_response_list, invite_response_num);
+                invite_response_list = NULL;
+                invite_response_num = 0;
+            }
         }
 
         ProtobufCBinaryData *their_chain_keys = NULL;

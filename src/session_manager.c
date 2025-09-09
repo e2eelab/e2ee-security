@@ -442,7 +442,11 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                             NULL, 0
                         );
                         // release
-                        free_invite_response_list(&invite_response_list, invite_response_num);
+                        if (invite_response_list != NULL) {
+                            free_invite_response_list(&invite_response_list, invite_response_num);
+                            invite_response_list = NULL;
+                            invite_response_num = 0;
+                        }
                     } else {
                         char *cur_device_id = NULL;
                         for (i = 0; i < their_devices_num; i++) {
@@ -459,8 +463,10 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                                 NULL, 0
                             );
                             // release
-                            if (ret == E2EES_RESULT_SUCC) {
+                            if (invite_response_list != NULL) {
                                 free_invite_response_list(&invite_response_list, invite_response_num);
+                                invite_response_list = NULL;
+                                invite_response_num = 0;
                             }
                         }
                     }

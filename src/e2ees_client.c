@@ -217,36 +217,18 @@ E2ees__InviteResponse *invite(
     }
 
     // release
-    free_string(auth);
-    free_invite_response_list(&invite_response_list, invite_response_num);
+    if (auth != NULL) {
+        free_string(auth);
+    }
+    if (invite_response_list != NULL) {
+        free_invite_response_list(&invite_response_list, invite_response_num);
+        invite_response_list = NULL;
+        invite_response_num = 0;
+    }
 
     // done
     return invite_response;
 }
-
-// E2ees__InviteResponse *new_invite(E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain) {
-//     char *auth = NULL;
-//     load_auth_from_cache(&auth, from);
-
-//     if (auth == NULL) {
-//         e2ees_notify_log(from, BAD_ACCOUNT, "invite() from [%s:%s] to [%s@%s]",
-//             from->user->user_id,
-//             from->user->device_id,
-//             to_user_id,
-//             to_domain);
-//         return NULL;
-//     }
-
-//     E2ees__InviteResponse *invite_response = NULL;
-//     invite_response = get_pre_key_bundle_internal(from, auth, to_user_id, to_domain, NULL, true, NULL, 0);
-
-//     // release
-//     free(auth);
-
-//     // done
-//     // response can be NULL
-//     return invite_response;
-// }
 
 void send_sync_msg(E2ees__E2eeAddress *from, const uint8_t *plaintext_data, size_t plaintext_data_len) {
     E2ees__Session **self_outbound_sessions = NULL;

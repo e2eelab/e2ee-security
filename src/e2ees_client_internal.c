@@ -69,6 +69,10 @@ int get_pre_key_bundle_internal(
             group_pre_key_plaintext_data_len,
             get_pre_key_bundle_response
         );
+        
+        // output invite_response_list
+        *invite_response_list_out = invite_response_list;
+        *invite_response_num_out = invite_response_num;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -91,9 +95,6 @@ int get_pre_key_bundle_internal(
             }
             free_mem((void **)&their_device_id, sizeof(char *) * their_device_num);
         }
-
-        *invite_response_list_out = invite_response_list;
-        *invite_response_num_out = invite_response_num;
     } else {
         if (get_pre_key_bundle_response != NULL) {
             if (get_pre_key_bundle_response->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_NO_CONTENT) {
@@ -189,9 +190,8 @@ int invite_internal(
         // release
         free_string(auth);
         free_proto(invite_request);
-    }
 
-    if (ret == E2EES_RESULT_SUCC) {
+        // output invite response
         *response_out = response;
     }
 
@@ -638,12 +638,9 @@ static void resend_pending_request(E2ees__Account *account) {
 
                     // release
                     if (invite_response_list != NULL) {
-                        for (j = 0; j < their_device_num; j++) {
-                            if (invite_response_list[j] != NULL) {
-                                e2ees__invite_response__free_unpacked(invite_response_list[j], NULL);
-                            }
-                        }
-                        free_mem((void **)&invite_response_list, sizeof(E2ees__InviteResponse *) * their_device_num);
+                        free_invite_response_list(&invite_response_list, their_device_num);
+                        invite_response_list = NULL;
+                        invite_response_num = 0;
                     }
 
                     if (ret == E2EES_RESULT_SUCC) {
