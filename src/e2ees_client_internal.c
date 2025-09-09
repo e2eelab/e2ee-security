@@ -265,9 +265,8 @@ int accept_internal(
         // release
         free_string(auth);
         free_proto(accept_request);
-    }
 
-    if (ret == E2EES_RESULT_SUCC) {
+        // output accept response
         *response_out = response;
     }
 
@@ -306,14 +305,13 @@ int publish_spk_internal(
                 response = NULL;
             }
         }
+
+        // output publish_spk response
+        *response_out = response;
     }
 
     // release
     free_proto(publish_spk_request);
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *response_out = response;
-    }
 
     // done
     return ret;
@@ -373,9 +371,8 @@ int supply_opks_internal(
             free_protobuf_list(&request_arg_list, opks_num);
             free_mem((void **)&request_data, request_data_len);
         }
-    }
 
-    if (ret == E2EES_RESULT_SUCC) {
+        // output supply_opks response
         *response_out = response;
     }
 
@@ -507,14 +504,13 @@ int add_group_member_device_internal(
             // release
             free_mem((void **)&request_data, request_data_len);
         }
+
+        // output add_group_member_device response
+        *response_out = response;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = consume_add_group_member_device_response(outbound_group_session, response);
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *response_out = response;
     }
 
     // release

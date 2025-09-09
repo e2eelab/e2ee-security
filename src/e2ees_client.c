@@ -100,9 +100,8 @@ int register_user(
             e2ees_notify_log(NULL, BAD_REGISTER_USER_RESPONSE, "register_user()");
             ret = E2EES_RESULT_FAIL;
         }
-    }
 
-    if (ret == E2EES_RESULT_SUCC) {
+        // output register response
         *response_out = response;
     }
 
@@ -548,14 +547,13 @@ int create_group(
             // release
             // free_mem((void **)&request_data, request_data_len);
         }
+
+        // output create_group response
+        *response_out = response;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = consume_create_group_response(e2ees_pack_id, sender_address, group_name, group_members, group_members_num, response);
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *response_out = response;
     }
 
     // release
@@ -635,14 +633,13 @@ int add_group_members(
             // release
             // free_mem((void **)&request_data, request_data_len);
         }
+
+        // output add_group_members response
+        *response_out = response;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = consume_add_group_members_response(outbound_group_session, response, adding_members, adding_members_num);
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *response_out = response;
     }
 
     // release
@@ -724,14 +721,13 @@ int remove_group_members(
             // release
             // free_mem((void **)&request_data, request_data_len);
         }
+
+        // output remove_group_members response
+        *response_out = response;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = consume_remove_group_members_response(outbound_group_session, response, removing_members, removing_members_num);
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *response_out = response;
     }
 
     // release
@@ -792,14 +788,13 @@ int leave_group(
             // release
             // free_mem((void **)&request_data, request_data_len);
         }
+
+        // output leave_group response
+        *response_out = response;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = consume_leave_group_response(sender_address, response);
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *response_out = response;
     }
 
     // release
@@ -902,6 +897,9 @@ int send_group_msg_with_filter(
             // release
             free_mem((void **)&request_data, request_data_len);
         }
+
+        // output send_group_msg response
+        *response_out = response;
     }
 
     if (ret == E2EES_RESULT_SUCC) {   
@@ -922,10 +920,6 @@ int send_group_msg_with_filter(
             // e2ees__send_group_msg_response__init(response);
             // response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_REQUEST_TIMEOUT;
         }
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *response_out = response;
     }
 
     // release
