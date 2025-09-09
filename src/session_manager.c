@@ -139,6 +139,8 @@ int consume_get_pre_key_bundle_response(
     E2ees__E2eeAddress *to_address = NULL;
     uint32_t e2ees_pack_id;
     E2ees__InviteResponse **invite_response_list = NULL;
+    size_t invite_response_list_len = 0;
+    E2ees__InviteResponse *cur_invite_response = NULL;
     int invite_response_ret = E2EES_RESULT_SUCC;    // this parameter may be useful
     int server_check = E2EES_RESULT_SUCC;
     ProtobufCBinaryData server_public_key = {0, NULL};
@@ -156,9 +158,11 @@ int consume_get_pre_key_bundle_response(
                 if (n_pre_key_bundles > 1) {
                     // pre-key bundles from this and other devices, but we need not invite this device
                     is_self = true;
-                    invite_response_list = (E2ees__InviteResponse **)malloc(sizeof(E2ees__InviteResponse *) * (n_pre_key_bundles - 1));
+                    invite_response_list_len = n_pre_key_bundles - 1;
+                    invite_response_list = (E2ees__InviteResponse **)malloc(sizeof(E2ees__InviteResponse *) * invite_response_list_len);
                 } else if (n_pre_key_bundles == 1) {
                     if (!compare_address(from, their_pre_key_bundles[0]->user_address)) {
+                        invite_response_list_len = 1;
                         invite_response_list = (E2ees__InviteResponse **)malloc(sizeof(E2ees__InviteResponse *));
                     } else {
                         ret = E2EES_RESULT_FAIL;
@@ -168,7 +172,8 @@ int consume_get_pre_key_bundle_response(
                     ret = E2EES_RESULT_FAIL;
                 }
             } else {
-                invite_response_list = (E2ees__InviteResponse **)malloc(sizeof(E2ees__InviteResponse *) * n_pre_key_bundles);
+                invite_response_list_len = n_pre_key_bundles;
+                invite_response_list = (E2ees__InviteResponse **)malloc(sizeof(E2ees__InviteResponse *) * invite_response_list_len);
             }
         } else {
             e2ees_notify_log(NULL, BAD_GET_PRE_KEY_BUNDLE_RESPONSE, "consume_get_pre_key_bundle_response()");
@@ -192,7 +197,7 @@ int consume_get_pre_key_bundle_response(
 
             if (is_valid_server_signed_signature(cur_pre_key_bundle->signature)) {
                 load_server_public_key_from_cache(&server_public_key, from);
-                if(server_public_key.data != NULL) {
+                if (server_public_key.data != NULL) {
                     ds_suite_t *digital_signature_suite = get_ds_suite(cur_pre_key_bundle->signature->signing_alg);
                     server_check = digital_signature_suite->verify(
                         cur_pre_key_bundle->signature->signature.data,
@@ -253,6 +258,18 @@ int consume_get_pre_key_bundle_response(
         }
         *invite_response_list_out = invite_response_list;
         *invite_response_num = n_pre_key_bundles;
+    } else {
+        // release
+        if (invite_response_list != NULL) {
+            for (i = 0; i < invite_response_list_len; i++) {
+                cur_invite_response = invite_response_list[i];
+                if (cur_invite_response != NULL) {
+                    e2ees__invite_response__free_unpacked(cur_invite_response, NULL);
+                    cur_invite_response = NULL;
+                }
+            }
+            free_mem((void **)&invite_response_list, sizeof(E2ees__InviteResponse *) * invite_response_list_len);
+        }
     }
 
     // done
@@ -828,7 +845,10 @@ bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *
     }
     // release
     free_proto(account);
-    e2ees__session__free_unpacked(inbound_session, NULL);
+    if (inbound_session != NULL) {
+        e2ees__session__free_unpacked(inbound_session, NULL);
+        inbound_session = NULL;
+    }
 
     // done
     return true;

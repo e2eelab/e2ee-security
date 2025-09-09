@@ -1119,6 +1119,9 @@ E2ees__ConsumeProtoMsgResponse *process_proto_msg(uint8_t *proto_msg_data, size_
     if (proto_msg != NULL) {
         free_proto(proto_msg);
     }
+    if (server_public_key.data != NULL) {
+        free_mem((void **)&(server_public_key.data), sizeof(uint8_t) * server_public_key.len);
+    }
 
     // done
     return response;

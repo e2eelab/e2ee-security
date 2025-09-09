@@ -493,6 +493,7 @@ int new_outbound_group_session_by_sender(
     // release
     free_proto(account);
     free_string(auth);
+    free_proto(identity_key);
     e2ees__group_session__free_unpacked(outbound_group_session, NULL);
     free_mem((void **)&group_pre_key_plaintext_data, sizeof(uint8_t) * group_pre_key_plaintext_data_len);
 
@@ -580,9 +581,12 @@ int new_outbound_group_session_by_receiver(
         get_e2ees_plugin()->db_handler.store_group_session(outbound_group_session);
 
         // release
-        free_proto(account);
         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
     }
+
+    // release
+    free_proto(account);
+    free_proto(identity_key);
 
     return ret;
 }
@@ -695,7 +699,6 @@ int new_outbound_group_session_invited(
         // }
 
         // release
-        free_proto(account);
         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
         for (i = 0; i < n_adding_member_info_list; i++) {
             free_protobuf(adding_members_chain_key[i]);
@@ -703,6 +706,10 @@ int new_outbound_group_session_invited(
         }
         free_mem((void **)&adding_members_chain_key, sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
     }
+
+    // release
+    free_proto(account);
+    free_proto(identity_key);
 
     return ret;
 }
@@ -1305,8 +1312,6 @@ int renew_outbound_group_session_by_welcome_and_add(
         }
 
         // release
-        free_proto(account);
-        free_string(auth);
         free_mem((void **)&group_ratchet_state_plaintext_data, sizeof(uint8_t) * group_ratchet_state_plaintext_data_len);
         for (i = 0; i < n_adding_member_info_list; i++) {
             free_protobuf(their_chain_keys[i]);
@@ -1314,6 +1319,11 @@ int renew_outbound_group_session_by_welcome_and_add(
         }
         free_mem((void **)&their_chain_keys, sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
     }
+
+    // release
+    free_proto(account);
+    free_string(auth);
+    free_proto(identity_key);
 
     return ret;
 }
@@ -1589,10 +1599,15 @@ int renew_group_sessions_with_new_device(
         }
 
         // release
-        free_proto(account);
-        free_string(auth);
+        free_mem((void **)&group_ratchet_state_plaintext_data, sizeof(uint8_t) * group_ratchet_state_plaintext_data_len);
+        free_mem((void **)&(their_chain_keys->data), sizeof(uint8_t) * their_chain_keys->len);
         free_mem((void **)&their_chain_keys, sizeof(ProtobufCBinaryData));
     }
+
+    // release
+    free_proto(account);
+    free_string(auth);
+    free_proto(identity_key);
 
     return ret;
 }

@@ -445,6 +445,9 @@ int pqc_new_inbound_session(
         e2ees__signed_pre_key__free_unpacked(old_spk_data, NULL);
         old_spk_data = NULL;
     }
+    if (hash_input != NULL) {
+        free_mem((void **)&hash_input, sizeof(uint8_t) * hash_input_len);
+    }
     free_protobuf(&ciphertext_1);
     free_proto(accept_response);
 
