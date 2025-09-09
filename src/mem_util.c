@@ -274,15 +274,33 @@ void copy_opks_from_opks(E2ees__OneTimePreKey ***dest, E2ees__OneTimePreKey **sr
 void copy_subject_from_subject(E2ees__Subject **dest, E2ees__Subject *src) {
     *dest = (E2ees__Subject *)malloc(sizeof(E2ees__Subject));
     e2ees__subject__init(*dest);
-    (*dest)->cn = strdup(src->cn);
-    (*dest)->domain = strdup(src->domain);
-    (*dest)->o = strdup(src->o);
-    size_t n_ou = src->n_ou;
-    (*dest)->n_ou = n_ou;
-    (*dest)->ou = (char **)malloc(sizeof(char *) * n_ou);
-    size_t i;
-    for (i = 0; i < n_ou; i++) {
-        ((*dest)->ou)[i] = strdup((src->ou)[i]);
+    if (src->cn != NULL) {
+        (*dest)->cn = strdup(src->cn);
+    } else {
+        (*dest)->cn = NULL;
+    }
+    if (src->domain != NULL) {
+        (*dest)->domain = strdup(src->domain);
+    } else {
+        (*dest)->domain = NULL;
+    }
+    if (src->o != NULL) {
+        (*dest)->o = strdup(src->o);
+    } else {
+        (*dest)->o = NULL;
+    }
+    if(src->n_ou >= 0) {
+        size_t n_ou = src->n_ou;
+        (*dest)->n_ou = n_ou;
+        (*dest)->ou = (char **)malloc(sizeof(char *) * n_ou);
+        size_t i;
+        for (i = 0; i < n_ou; i++) {
+            if ((src->ou)[i] != NULL) {
+                ((*dest)->ou)[i] = strdup((src->ou)[i]);
+            } else {
+                ((*dest)->ou)[i] = NULL;
+            }
+        }
     }
 }
 

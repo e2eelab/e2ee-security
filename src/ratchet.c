@@ -394,8 +394,10 @@ static size_t verify_and_decrypt_for_new_chain(
 
         free_protobuf(&new_root_key);
         unset((void volatile *)&new_root_key, sizeof(ProtobufCBinaryData));
-        free_protobuf(&(new_chain.chain_key->shared_key));
         unset((void volatile *)&new_chain, sizeof(E2ees__ReceiverChainNode));
+        free_protobuf(&(new_chain.chain_key->shared_key));
+        e2ees__chain_key__free_unpacked(new_chain.chain_key, NULL);
+        new_chain.chain_key = NULL;
     }
 
     return ret;

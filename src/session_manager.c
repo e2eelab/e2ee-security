@@ -170,8 +170,6 @@ int consume_get_pre_key_bundle_response(
             } else {
                 invite_response_list = (E2ees__InviteResponse **)malloc(sizeof(E2ees__InviteResponse *) * n_pre_key_bundles);
             }
-
-            load_server_public_key_from_cache(&server_public_key, from);
         } else {
             e2ees_notify_log(NULL, BAD_GET_PRE_KEY_BUNDLE_RESPONSE, "consume_get_pre_key_bundle_response()");
             ret = E2EES_RESULT_FAIL;
@@ -193,14 +191,21 @@ int consume_get_pre_key_bundle_response(
             }
 
             if (is_valid_server_signed_signature(cur_pre_key_bundle->signature)) {
-                ds_suite_t *digital_signature_suite = get_ds_suite(cur_pre_key_bundle->signature->signing_alg);
-                server_check = digital_signature_suite->verify(
-                    cur_pre_key_bundle->signature->signature.data,
-                    cur_pre_key_bundle->signature->signature.len,
-                    cur_pre_key_bundle->signature->msg_fingerprint.data,
-                    cur_pre_key_bundle->signature->msg_fingerprint.len,
-                    server_public_key.data
-                );
+                load_server_public_key_from_cache(&server_public_key, from);
+                if(server_public_key.data != NULL) {
+                    ds_suite_t *digital_signature_suite = get_ds_suite(cur_pre_key_bundle->signature->signing_alg);
+                    server_check = digital_signature_suite->verify(
+                                                                   cur_pre_key_bundle->signature->signature.data,
+                                                                   cur_pre_key_bundle->signature->signature.len,
+                                                                   cur_pre_key_bundle->signature->msg_fingerprint.data,
+                                                                   cur_pre_key_bundle->signature->msg_fingerprint.len,
+                                                                   server_public_key.data
+                                                                   );
+                    // release
+                    free_mem((void **)&(server_public_key.data), server_public_key.len);
+                } else {
+                    server_check = E2EES_RESULT_FAIL;
+                }
 
                 if (server_check < E2EES_RESULT_SUCC) {
                     e2ees_notify_log(NULL, BAD_SERVER_SIGNATURE, "consume_get_pre_key_bundle_response()");

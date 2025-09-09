@@ -305,9 +305,11 @@ int generate_signed_pre_key(
             e2ees__key_pair__free_unpacked(key_pair, NULL);
             key_pair = NULL;
         }
-        if (signature_data != NULL) {
-            free_mem((void **)&signature_data, sizeof(uint8_t) * sig_len);
-        }
+    }
+    
+    // release
+    if (signature_data != NULL) {
+        free_mem((void **)&signature_data, sizeof(uint8_t) * sig_len);
     }
 
     return ret;
