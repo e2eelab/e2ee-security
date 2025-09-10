@@ -633,11 +633,7 @@ static void resend_pending_request(E2ees__Account *account) {
                     );
 
                     // release
-                    if (invite_response_list != NULL) {
-                        free_invite_response_list(&invite_response_list, their_device_num);
-                        invite_response_list = NULL;
-                        invite_response_num = 0;
-                    }
+                    free_invite_response_list(&invite_response_list, invite_response_num);
 
                     if (ret == E2EES_RESULT_SUCC) {
                         if (pending_request->request_arg_list[0].data[0] == 'T') {

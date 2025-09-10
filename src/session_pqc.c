@@ -70,6 +70,7 @@ int pqc_new_outbound_session_v2(
                     their_spk = their_pre_key_bundle->signed_pre_key_public;
                     their_opk = their_pre_key_bundle->one_time_pre_key_public;
                 } else {
+                    e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "pqc_new_outbound_session_v2() invalid cipher suite with e2ees_pack_id = %d", e2ees_pack_id);
                     ret = E2EES_RESULT_FAIL;
                 }
             } else {

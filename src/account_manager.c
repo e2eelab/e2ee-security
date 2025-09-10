@@ -149,11 +149,7 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
                 );
                 
                 // release
-                if (invite_response_list != NULL) {
-                    free_invite_response_list(&invite_response_list, invite_response_num);
-                    invite_response_list = NULL;
-                    invite_response_num = 0;
-                }
+                free_invite_response_list(&invite_response_list, invite_response_num);
             }
         }
 
@@ -190,11 +186,7 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
                     NULL, 0
                 );
                 // release
-                if (invite_response_list != NULL) {
-                    free_invite_response_list(&invite_response_list, invite_response_num);
-                    invite_response_list = NULL;
-                    invite_response_num = 0;
-                }
+                free_invite_response_list(&invite_response_list, invite_response_num);
             }
         }
         return true;

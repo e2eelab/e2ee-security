@@ -96,6 +96,7 @@ static int create_chain_key(
             ret = E2EES_RESULT_FAIL;
         }
     } else {
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "create_chain_key() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -157,6 +158,7 @@ static int advance_chain_key(
             ret = E2EES_RESULT_FAIL;
         }
     } else {
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "advance_chain_key() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -193,6 +195,7 @@ static int create_msg_keys(
             ret = E2EES_RESULT_FAIL;
         }
     } else {
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "create_msg_keys() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -248,6 +251,7 @@ static int verify_and_decrypt(
             ret = E2EES_RESULT_FAIL;
         }
     } else {
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "verify_and_decrypt() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -292,6 +296,7 @@ static int verify_and_decrypt_for_existing_chain(
             }
         }
     } else {
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "verify_and_decrypt_for_existing_chain() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -363,6 +368,7 @@ static size_t verify_and_decrypt_for_new_chain(
             ret = E2EES_RESULT_FAIL;
         }
     } else {
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "verify_and_decrypt_for_new_chain() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -422,6 +428,7 @@ int initialise_as_bob(
     if (is_valid_cipher_suite(cipher_suite)) {
         pqc_param = cipher_suite->kem_suite->get_param().pqc_param;
     } else {
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "initialise_as_bob() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
     if (shared_secret == NULL)
@@ -537,6 +544,7 @@ int initialise_as_alice(
                 ret = E2EES_RESULT_FAIL;
         }
     } else {
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "initialise_as_alice() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
     if (shared_secret == NULL)
@@ -646,7 +654,7 @@ int encrypt_ratchet(
     E2ees__ChainKey *chain_key = NULL;
 
     if (!is_valid_cipher_suite(cipher_suite)) {
-        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "encrypt_ratchet()");
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "encrypt_ratchet() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
     if (ratchet != NULL) {
@@ -781,6 +789,7 @@ int decrypt_ratchet(
             }
         }
     } else {
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "decrypt_ratchet() invalid cipher suite");
         ret = E2EES_RESULT_FAIL;
     }
 

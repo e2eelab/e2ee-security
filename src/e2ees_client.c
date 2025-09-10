@@ -216,14 +216,8 @@ E2ees__InviteResponse *invite(
     }
 
     // release
-    if (auth != NULL) {
-        free_string(auth);
-    }
-    if (invite_response_list != NULL) {
-        free_invite_response_list(&invite_response_list, invite_response_num);
-        invite_response_list = NULL;
-        invite_response_num = 0;
-    }
+    free_string(auth);
+    free_invite_response_list(&invite_response_list, invite_response_num);
 
     // done
     return invite_response;

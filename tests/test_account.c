@@ -449,17 +449,18 @@ static void test_register_user() {
     uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
     const char *user_name = "alice";
     const char *user_id = "alice";
-    const char *device_id = generate_uuid_str();
+    char *device_id = generate_uuid_str();
     const char *authenticator = "email";
     const char *auth_code = "123456";
     int ret = 0;
     E2ees__RegisterUserResponse *response = NULL;
     ret = register_user(
-        &response, e2ees_pack_id, user_name, user_id, device_id, authenticator, auth_code
+        &response, e2ees_pack_id, user_name, user_id, (const char *)device_id, authenticator, auth_code
     );
     assert(ret == 0);
 
     // release
+    free_string(device_id);
     e2ees__register_user_response__free_unpacked(response, NULL);
 
     // test stop
@@ -478,13 +479,13 @@ static void test_publish_spk() {
     uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
     const char *user_name = "alice";
     const char *user_id = "alice";
-    const char *device_id = generate_uuid_str();
+    char *device_id = generate_uuid_str();
     const char *authenticator = "email";
     const char *auth_code = "123456";
     int ret = 0;
     E2ees__RegisterUserResponse *register_user_response = NULL;
     ret = register_user(
-        &register_user_response, e2ees_pack_id, user_name, user_id, device_id, authenticator, auth_code
+        &register_user_response, e2ees_pack_id, user_name, user_id, (const char *)device_id, authenticator, auth_code
     );
 
     // load account
@@ -506,6 +507,7 @@ static void test_publish_spk() {
     assert(new_spk_id == old_spk_id + 1);
 
     // release
+    free_string(device_id);
     free_proto(register_user_response);
     free_proto(account);
     free_proto(publish_spk_response);
@@ -540,13 +542,13 @@ static void test_supply_opks() {
     uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
     const char *user_name = "alice";
     const char *user_id = "alice";
-    const char *device_id = generate_uuid_str();
+    char *device_id = generate_uuid_str();
     const char *authenticator = "email";
     const char *auth_code = "123456";
     int ret = 0;
     E2ees__RegisterUserResponse *register_user_response = NULL;
     ret = register_user(
-        &register_user_response, e2ees_pack_id, user_name, user_id, device_id, authenticator, auth_code
+        &register_user_response, e2ees_pack_id, user_name, user_id, (const char *)device_id, authenticator, auth_code
     );
 
     // load account
@@ -559,7 +561,7 @@ static void test_supply_opks() {
     for (i = rest_opks_num; i < account->n_one_time_pre_key_list; i++) {
         get_e2ees_plugin()->db_handler.remove_one_time_pre_key(account->address, account->one_time_pre_key_list[i]->opk_id);
     }
-    
+
     // the server asks the client to supply some one-time pre-keys
     uint32_t supply_opks_num = 100;
     E2ees__E2eeAddress *user_address = account->address;
@@ -576,6 +578,7 @@ static void test_supply_opks() {
     assert(account_new->next_one_time_pre_key_id == (E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM + supply_opks_num + 1));
 
     // release
+    free_string(device_id);
     free_proto(register_user_response);
     free_proto(account);
     if (account_new != NULL) {
@@ -600,13 +603,13 @@ static void test_free_opks() {
     uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
     const char *user_name = "alice";
     const char *user_id = "alice";
-    const char *device_id = generate_uuid_str();
+    char *device_id = generate_uuid_str();
     const char *authenticator = "email";
     const char *auth_code = "123456";
     int ret = 0;
     E2ees__RegisterUserResponse *register_user_response = NULL;
     ret = register_user(
-        &register_user_response, e2ees_pack_id, user_name, user_id, device_id, authenticator, auth_code
+        &register_user_response, e2ees_pack_id, user_name, user_id, (const char *)device_id, authenticator, auth_code
     );
 
     // load account
@@ -632,6 +635,7 @@ static void test_free_opks() {
     }
 
     // release
+    free_string(device_id);
     free_proto(register_user_response);
     free_proto(account);
     if (account_new != NULL) {

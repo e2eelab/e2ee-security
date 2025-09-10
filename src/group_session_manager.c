@@ -1198,18 +1198,13 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
     E2ees__GroupSession *inbound_group_session = NULL;
     get_e2ees_plugin()->db_handler.load_group_session_by_id(e2ee_msg->from, receiver_address, e2ee_msg->session_id, &inbound_group_session);
 
-    if (inbound_group_session == NULL){
-        e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_group_msg() inbound group session not found, just consume it");
+    if (!is_valid_group_session(inbound_group_session)) {
+        e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_group_msg() invalid inbound group session, just consume it");
         return true;
     }
 
     const cipher_suite_t *cipher_suite = get_e2ees_pack(inbound_group_session->e2ees_pack_id)->cipher_suite;
-    int sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
-
-    if (inbound_group_session->associated_data.data == NULL || inbound_group_session->associated_data.len < sign_key_len){
-        e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_group_msg() inbound group session associated_data is NULL, just consume it");
-        return true;
-    }
+    uint32_t sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
     // unpack the e2ee message
     E2ees__GroupMsgPayload *group_msg_payload = e2ee_msg->group_msg;
@@ -1227,7 +1222,7 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
         e2ees_notify_log(inbound_group_session->session_owner, BAD_SIGNATURE, "consume_group_msg()");
         // release
         e2ees__group_session__free_unpacked(inbound_group_session, NULL);
-        free_mem((void **)&identity_public_key, sign_key_len);
+        free_mem((void **)&identity_public_key, sizeof(uint8_t) * sign_key_len);
         return true;
     }
 
@@ -1267,7 +1262,7 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
 
     // release
     e2ees__group_session__free_unpacked(inbound_group_session, NULL);
-    free_mem((void **)&identity_public_key, sign_key_len);
+    free_mem((void **)&identity_public_key, sizeof(uint8_t) * sign_key_len);
     e2ees__msg_key__free_unpacked(msg_key, NULL);
 
     return true;

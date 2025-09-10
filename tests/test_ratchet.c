@@ -400,6 +400,9 @@ static void test_initialise_as_alice() {
     free_protobuf(&(alice_ratchet_key.private_key));
     free_protobuf(&(bob_spk.public_key));
     free_protobuf(&(bob_spk.private_key));
+    if (ciphertext.data != NULL) {
+        free_mem((void **)&(ciphertext.data), sizeof(uint8_t) * ciphertext.len);
+    }
     unset(temp_secret, sizeof(temp_secret));
 
     // test stop

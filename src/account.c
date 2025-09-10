@@ -107,7 +107,7 @@ int create_account(E2ees__Account **account_out, uint32_t e2ees_pack_id) {
     // get the cipher suite
     const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
     if (!is_valid_cipher_suite(cipher_suite)) {
-        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "create_account() no cipher suite");
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "create_account() invalid cipher suite with e2ees_pack_id = %d", e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -185,7 +185,7 @@ int generate_identity_key(
         sign_pub_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
         sign_priv_key_len = cipher_suite->ds_suite->get_param().sign_priv_key_len;
     } else {
-        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "generate_identity_key() no cipher suite");
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "generate_identity_key() invalid cipher suite with e2ees_pack_id = %d", e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -255,7 +255,7 @@ int generate_signed_pre_key(
         asym_priv_key_len = cipher_suite->kem_suite->get_param().asym_priv_key_len;
         sig_len = cipher_suite->ds_suite->get_param().sig_len;
     } else {
-        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "generate_signed_pre_key() no cipher suite");
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "generate_signed_pre_key() invalid cipher suite with e2ees_pack_id = %d", e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -354,7 +354,7 @@ int generate_opks(
         asym_pub_key_len = cipher_suite->kem_suite->get_param().asym_pub_key_len;
         asym_priv_key_len = cipher_suite->kem_suite->get_param().asym_priv_key_len;
     } else {
-        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "generate_opks() no cipher suite");
+        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "generate_opks() invalid cipher suite with e2ees_pack_id = %d", e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
 
