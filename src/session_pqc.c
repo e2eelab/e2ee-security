@@ -235,6 +235,9 @@ int pqc_new_outbound_session_v2(
         ret = invite_internal(&response, outbound_session);
 
         // release
+        if (hash_input != NULL) {
+            free_mem((void **)&hash_input, sizeof(uint8_t) * hash_input_len);
+        }
         unset(secret, sizeof(secret));
         free_protobuf(&ciphertext_2);
         free_protobuf(&ciphertext_3);
