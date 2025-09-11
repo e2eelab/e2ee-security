@@ -109,6 +109,7 @@ const char* logcode_string(LogCode log_code) {
         case BAD_ADD_GROUP_MEMBERS_MSG: return "BAD_ADD_GROUP_MEMBERS_MSG";
         case BAD_ADD_USER_DEVICE_MSG: return "BAD_ADD_USER_DEVICE_MSG";
         case BAD_CREATE_GROUP_MSG: return "BAD_CREATE_GROUP_MSG";
+        case BAD_E2EE_MSG: return "BAD_E2EE_MSG";
         case BAD_GET_GROUP_MSG: return "BAD_GET_GROUP_MSG";
         case BAD_GET_PRE_KEY_BUNDLE_MSG: return "BAD_GET_PRE_KEY_BUNDLE_MSG";
         case BAD_INVITE_MSG: return "BAD_INVITE_MSG";

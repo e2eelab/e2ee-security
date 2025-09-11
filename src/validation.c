@@ -693,6 +693,48 @@ bool is_valid_completed_session(E2ees__Session *src) {
     return true;
 }
 
+bool is_valid_inbound_session(E2ees__Session *src) {
+    if (src != NULL) {
+        if (!is_valid_string(src->version)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad version");
+            return false;
+        }
+        if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad e2ees_pack_id");
+            return false;
+        }
+        if (!is_valid_string(src->session_id)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad session_id");
+            return false;
+        }
+        if (!is_valid_address(src->our_address)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad our_address");
+            return false;
+        }
+        if (!is_valid_address(src->their_address)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad their_address");
+            return false;
+        }
+        if (!is_valid_ratchet(src->ratchet)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad ratchet");
+            return false;
+        }
+        if (!is_valid_protobuf(&(src->associated_data))) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad associated_data");
+            return false;
+        }
+        if (!is_valid_protobuf(&(src->fingerprint))) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad fingerprint");
+            return false;
+        }
+    } else {
+        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() src == NULL");
+        return false;
+    }
+
+    return true;
+}
+
 bool is_valid_identity_key_public(E2ees__IdentityKeyPublic *src) {
     if (src != NULL) {
         if (!is_valid_protobuf(&(src->asym_public_key))) {

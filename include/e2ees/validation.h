@@ -68,6 +68,8 @@ bool is_valid_uncompleted_session(E2ees__Session *src);
 
 bool is_valid_completed_session(E2ees__Session *src);
 
+bool is_valid_inbound_session(E2ees__Session *src);
+
 bool is_valid_identity_key_public(E2ees__IdentityKeyPublic *src);
 
 bool is_valid_signed_pre_key_public(E2ees__SignedPreKeyPublic *src);
