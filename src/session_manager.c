@@ -523,6 +523,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                     // release inbound_group_sessions
                     free_mem((void **)&inbound_group_sessions, sizeof(E2ees__Session *) * inbound_group_sessions_num);
 
+                    // create the outbound group session
                     new_outbound_group_session_by_receiver(
                         &(group_pre_key_bundle->group_seed),
                         group_pre_key_bundle->e2ees_pack_id,
@@ -542,6 +543,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                         receiver_address->user->device_id
                     );
                 } else {
+                    // the sender in the inbound group session is the one who creates the group
                     new_inbound_group_session_by_pre_key_bundle(group_pre_key_bundle->e2ees_pack_id, receiver_address, group_pre_key_bundle);
                     e2ees_notify_log(
                         receiver_address,

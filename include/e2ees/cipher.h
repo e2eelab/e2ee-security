@@ -209,7 +209,7 @@ typedef struct se_suite_t {
      * @param key The secret key
      * @param ciphertext_data The ciphertext to decrypt
      * @param ciphertext_data_len The ciphertext length
-     * @return The length of plaintext_data or -1 for decryption error
+     * @return 0 if success or -1 for decryption error
      */
     int (*decrypt)(
         uint8_t **, size_t *,

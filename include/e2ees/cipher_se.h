@@ -56,7 +56,7 @@ int crypto_se_encrypt_aes256_gcm(
  * @param aes_key
  * @param ciphertext_data
  * @param ciphertext_data_len
- * @return The length of plaintext_data or -1 for decryption error
+ * @return 0 if success or -1 for decryption error
  */
 int crypto_se_decrypt_aes256_gcm(
     uint8_t **decrypted_data_out, size_t *decrypted_data_len_out,

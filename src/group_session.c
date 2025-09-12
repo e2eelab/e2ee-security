@@ -961,7 +961,7 @@ int new_and_complete_inbound_group_session(
         e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_and_complete_inbound_group_session()");
         ret = E2EES_RESULT_FAIL;
     }
-    if (!is_valid_group_session(other_group_session)) {
+    if (!is_valid_group_session_by_pre_key_bundle(other_group_session)) {
         e2ees_notify_log(NULL, BAD_GROUP_SESSION, "new_and_complete_inbound_group_session()");
         ret = E2EES_RESULT_FAIL;
     }
