@@ -501,8 +501,10 @@ E2ees__RegisterUserResponse *mock_register_user(E2ees__RegisterUserRequest *requ
     // check if there is the user's data stored in the server's database
     uint8_t user_data_find;
     user_data *client_data = find_user(request->authenticator, &user_data_find);
-    E2ees__E2eeAddress **other_device_address_list, **friend_addresses, **receiver_addresses;
-    E2ees__GroupInfo **group_info_list;
+    E2ees__E2eeAddress **other_device_address_list = NULL;
+    E2ees__E2eeAddress **friend_addresses = NULL;
+    E2ees__E2eeAddress **receiver_addresses = NULL;
+    E2ees__GroupInfo **group_info_list = NULL;
     size_t other_device_num = 0, friends_num = 0, receiver_num = 0, group_num = 0;
     if (client_data != NULL) {
         other_device_num = find_device_addresses(client_data->address->user->user_id, &other_device_address_list);
@@ -633,6 +635,18 @@ E2ees__RegisterUserResponse *mock_register_user(E2ees__RegisterUserRequest *requ
             e2ees__e2ee_address__free_unpacked(other_device_address_list[i], NULL);
         }
         free_mem((void **)&other_device_address_list, sizeof(E2ees__E2eeAddress *) * other_device_num);
+        for (i = 0; i < friends_num; i++) {
+            e2ees__e2ee_address__free_unpacked(friend_addresses[i], NULL);
+        }
+        free_mem((void **)&friend_addresses, sizeof(E2ees__E2eeAddress *) * friends_num);
+        for (i = 0; i < receiver_num; i++) {
+            e2ees__e2ee_address__free_unpacked(receiver_addresses[i], NULL);
+        }
+        free_mem((void **)&receiver_addresses, sizeof(E2ees__E2eeAddress *) * receiver_num);
+        for (i = 0; i < group_num; i++) {
+            e2ees__group_info__free_unpacked(group_info_list[i], NULL);
+        }
+        free_mem((void **)&group_info_list, sizeof(E2ees__GroupInfo *) * group_num);
     }
 
     return response;
@@ -1916,12 +1930,14 @@ E2ees__SendGroupMsgResponse *mock_send_group_msg(E2ees__E2eeAddress *from, const
     size_t i, j;
     uint8_t *msg = NULL;
     size_t msg_len;
+    char *member_user_id = NULL;
+    E2ees__E2eeAddress **to_member_addresses = NULL;
+    size_t to_member_addresses_num;
     for (i = 0; i < group_data_set[group_data_find].group_members_num; i++) {
         // send to other group members
-        const char *member_user_id = cur_group_data->group_member_list[i]->user_id;
+        member_user_id = cur_group_data->group_member_list[i]->user_id;
         // forward a copy of E2eeMsg
-        E2ees__E2eeAddress **to_member_addresses = NULL;
-        size_t to_member_addresses_num = find_device_addresses(member_user_id, &to_member_addresses);
+        to_member_addresses_num = find_device_addresses(member_user_id, &to_member_addresses);
         for (j = 0; j < to_member_addresses_num; j++) {
             E2ees__E2eeAddress *to_member_address = to_member_addresses[j];
             if (safe_strcmp(sender_user_id, to_member_address->user->user_id)) {
@@ -1951,11 +1967,15 @@ E2ees__SendGroupMsgResponse *mock_send_group_msg(E2ees__E2eeAddress *from, const
             // release
             e2ees__proto_msg__free_unpacked(proto_msg, NULL);
             free_mem((void **)&msg, msg_len);
-            e2ees__e2ee_address__free_unpacked(to_member_address, NULL);
         }
         // release
         if (to_member_addresses != NULL) {
-            free((void *)to_member_addresses);
+            for (j = 0; j < to_member_addresses_num; j++) {
+                e2ees__e2ee_address__free_unpacked(to_member_addresses[j], NULL);
+                to_member_addresses[j] = NULL;
+            }
+            free_mem((void **)&to_member_addresses, sizeof(E2ees__E2eeAddress *) * to_member_addresses_num);
+            to_member_addresses = NULL;
         }
     }
 
