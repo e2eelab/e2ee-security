@@ -351,8 +351,6 @@ typedef struct store_group {
     char *group_name;
 } store_group;
 
-store_group group = {NULL, NULL};
-
 static uint8_t test_plaintext[] = "Group session test!!!";
 static size_t test_plaintext_len;
 
@@ -405,9 +403,6 @@ static void on_group_created(
     E2ees__GroupMember **group_members, size_t group_members_num
 ) {
     // print_msg("on_group_created: group_name", (uint8_t *)group_name, strlen(group_name));
-
-    copy_address_from_address(&(group.group_address), group_address);
-    group.group_name = strdup(group_name);
 }
 
 static void on_group_members_added(
@@ -459,9 +454,6 @@ static void test_begin() {
     }
     account_data_insert_pos = 0;
 
-    group.group_address = NULL;
-    group.group_name = NULL;
-
     get_e2ees_plugin()->event_handler = test_event_handler;
 
     start_mock_server_sending();
@@ -480,13 +472,6 @@ static void test_end() {
         }
     }
     account_data_insert_pos = 0;
-
-    if (group.group_address != NULL) {
-        e2ees__e2ee_address__free_unpacked(group.group_address, NULL);
-    }
-    if (group.group_name != NULL) {
-        free(group.group_name);
-    }
 }
 
 static void mock_user_pqc_account(const char *user_name, const char *authenticator, const char *auth_code) {
@@ -1092,17 +1077,17 @@ static void test_medium_group() {
     // add new group members to the group
     E2ees__AddGroupMembersResponse *add_group_members_response = NULL;
     ret = add_group_members(
-        &add_group_members_response, address_list[0], group.group_address, new_group_members, new_group_member_num
+        &add_group_members_response, address_list[0], group_address, new_group_members, new_group_member_num
     );
 
     sleep(10);
 
     // group message
-    test_encryption(address_list[9], group.group_address, test_plaintext, test_plaintext_len);
+    test_encryption(address_list[9], group_address, test_plaintext, test_plaintext_len);
 
-    test_encryption(address_list[10], group.group_address, test_plaintext, test_plaintext_len);
+    test_encryption(address_list[10], group_address, test_plaintext, test_plaintext_len);
 
-    test_encryption(address_list[13], group.group_address, test_plaintext, test_plaintext_len);
+    test_encryption(address_list[13], group_address, test_plaintext, test_plaintext_len);
 
     sleep(5);
 
@@ -1113,15 +1098,15 @@ static void test_medium_group() {
 
     E2ees__RemoveGroupMembersResponse *remove_group_members_response = NULL;
     ret = remove_group_members(
-        &remove_group_members_response, address_list[0], group.group_address, removing_group_members, removing_group_member_num
+        &remove_group_members_response, address_list[0], group_address, removing_group_members, removing_group_member_num
     );
 
     sleep(10);
 
     // group message
-    test_encryption(address_list[1], group.group_address, test_plaintext, test_plaintext_len);
+    test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
-    test_encryption(address_list[12], group.group_address, test_plaintext, test_plaintext_len);
+    test_encryption(address_list[12], group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 10);

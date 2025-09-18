@@ -619,6 +619,7 @@ E2ees__RegisterUserResponse *mock_register_user(E2ees__RegisterUserRequest *requ
             proto_msg->payload_case,
             proto_msg->add_user_device_msg
         );
+        proto_msg->n_signature_list = 1;
         proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
         mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -770,6 +771,7 @@ E2ees__InviteResponse *mock_invite(E2ees__E2eeAddress *from, const char *auth, E
             proto_msg->payload_case,
             proto_msg->invite_msg
         );
+        proto_msg->n_signature_list = 1;
         proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
         mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -812,6 +814,7 @@ E2ees__AcceptResponse *mock_accept(E2ees__E2eeAddress *from, const char *auth, E
         proto_msg->payload_case,
         proto_msg->accept_msg
     );
+    proto_msg->n_signature_list = 1;
     proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
     mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -937,6 +940,7 @@ E2ees__SendOne2oneMsgResponse *mock_send_one2one_msg(E2ees__E2eeAddress *from, c
             proto_msg->payload_case,
             proto_msg->e2ee_msg
         );
+        proto_msg->n_signature_list = 1;
         proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
         mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -966,6 +970,7 @@ E2ees__SendOne2oneMsgResponse *mock_send_one2one_msg(E2ees__E2eeAddress *from, c
                 proto_msg->payload_case,
                 proto_msg->e2ee_msg
             );
+            proto_msg->n_signature_list = 1;
             proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
             mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -1109,6 +1114,7 @@ E2ees__CreateGroupResponse *mock_create_group(E2ees__E2eeAddress *from, const ch
                 proto_msg->payload_case,
                 proto_msg->create_group_msg
             );
+            proto_msg->n_signature_list = 1;
             proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
             mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -1147,6 +1153,10 @@ E2ees__CreateGroupResponse *mock_create_group(E2ees__E2eeAddress *from, const ch
         current = index_address_list[i];
         while (current != NULL) {
             next = current->next;
+            if (current->device_address != NULL) {
+                e2ees__e2ee_address__free_unpacked(current->device_address, NULL);
+                current->device_address = NULL;
+            }
             free_mem((void **)&current, sizeof(index_node));
             current = next;
         }
@@ -1304,6 +1314,7 @@ E2ees__AddGroupMembersResponse *mock_add_group_members(E2ees__E2eeAddress *from,
                 proto_msg->payload_case,
                 proto_msg->add_group_members_msg
             );
+            proto_msg->n_signature_list = 1;
             proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
             mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -1348,6 +1359,10 @@ E2ees__AddGroupMembersResponse *mock_add_group_members(E2ees__E2eeAddress *from,
         current = adding_member_index_address_list[i];
         while (current != NULL) {
             next = current->next;
+            if (current->device_address != NULL) {
+                e2ees__e2ee_address__free_unpacked(current->device_address, NULL);
+                current->device_address = NULL;
+            }
             free_mem((void **)&current, sizeof(index_node));
             current = next;
         }
@@ -1358,6 +1373,10 @@ E2ees__AddGroupMembersResponse *mock_add_group_members(E2ees__E2eeAddress *from,
         current = index_address_list[i];
         while (current != NULL) {
             next = current->next;
+            if (current->device_address != NULL) {
+                e2ees__e2ee_address__free_unpacked(current->device_address, NULL);
+                current->device_address = NULL;
+            }
             free_mem((void **)&current, sizeof(index_node));
             current = next;
         }
@@ -1421,7 +1440,9 @@ E2ees__AddGroupMemberDeviceResponse *mock_add_group_member_device(
 
     E2ees__AddGroupMemberDeviceMsg *add_group_member_device_msg = NULL;
     copy_add_group_member_device_msg(&(add_group_member_device_msg), request->msg);
-
+    // the adding_member_device in request->msg is not completed, so release the adding_member_device in add_group_member_device_msg first
+    e2ees__group_member_info__free_unpacked(add_group_member_device_msg->adding_member_device, NULL);
+    add_group_member_device_msg->adding_member_device = NULL;
     copy_group_member_id(&(add_group_member_device_msg->adding_member_device), adding_member_device_info);
 
     // start packing
@@ -1471,6 +1492,7 @@ E2ees__AddGroupMemberDeviceResponse *mock_add_group_member_device(
                 proto_msg->payload_case,
                 proto_msg->add_group_member_device_msg
             );
+            proto_msg->n_signature_list = 1;
             proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
             mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -1500,6 +1522,7 @@ E2ees__AddGroupMemberDeviceResponse *mock_add_group_member_device(
 
     // release
     e2ees__add_group_member_device_msg__free_unpacked(add_group_member_device_msg, NULL);
+    add_group_member_device_msg = NULL;
 
     free_mem((void **)&to_member_addresses_num_list, sizeof(size_t) * group_members_num);
 
@@ -1508,6 +1531,10 @@ E2ees__AddGroupMemberDeviceResponse *mock_add_group_member_device(
         current = index_address_list[i];
         while (current != NULL) {
             next = current->next;
+            if (current->device_address != NULL) {
+                e2ees__e2ee_address__free_unpacked(current->device_address, NULL);
+                current->device_address = NULL;
+            }
             free_mem((void **)&current, sizeof(index_node));
             current = next;
         }
@@ -1515,6 +1542,7 @@ E2ees__AddGroupMemberDeviceResponse *mock_add_group_member_device(
     free_mem((void **)&index_address_list, sizeof(index_node *) * group_members_num);
 
     e2ees__group_member_info__free_unpacked(adding_member_device_info, NULL);
+    adding_member_device_info = NULL;
 
     return response;
 }
@@ -1671,6 +1699,7 @@ E2ees__RemoveGroupMembersResponse *mock_remove_group_members(E2ees__E2eeAddress 
                 proto_msg->payload_case,
                 proto_msg->remove_group_members_msg
             );
+            proto_msg->n_signature_list = 1;
             proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
             mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -1713,6 +1742,7 @@ E2ees__RemoveGroupMembersResponse *mock_remove_group_members(E2ees__E2eeAddress 
                 proto_msg->payload_case,
                 proto_msg->remove_group_members_msg
             );
+            proto_msg->n_signature_list = 1;
             proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
             mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -1754,17 +1784,36 @@ E2ees__RemoveGroupMembersResponse *mock_remove_group_members(E2ees__E2eeAddress 
     e2ees__remove_group_members_msg__free_unpacked(remove_group_members_msg_to_removed, NULL);
 
     free_mem((void **)&to_member_addresses_num_list, sizeof(size_t) * new_group_members_num);
+    free_mem((void **)&removed_member_addresses_num_list, sizeof(size_t) * removed_group_members_num);
 
     index_node *current, *next;
     for (i = 0; i < new_group_members_num; i++) {
         current = index_address_list[i];
         while (current != NULL) {
             next = current->next;
+            if (current->device_address != NULL) {
+                e2ees__e2ee_address__free_unpacked(current->device_address, NULL);
+                current->device_address = NULL;
+            }
             free_mem((void **)&current, sizeof(index_node));
             current = next;
         }
     }
     free_mem((void **)&index_address_list, sizeof(index_node *) * new_group_members_num);
+
+    for (i = 0; i < removed_group_members_num; i++) {
+        current = removed_index_address_list[i];
+        while (current != NULL) {
+            next = current->next;
+            if (current->device_address != NULL) {
+                e2ees__e2ee_address__free_unpacked(current->device_address, NULL);
+                current->device_address = NULL;
+            }
+            free_mem((void **)&current, sizeof(index_node));
+            current = next;
+        }
+    }
+    free_mem((void **)&removed_index_address_list, sizeof(index_node *) * removed_group_members_num);
 
     return response;
 }
@@ -1866,6 +1915,7 @@ E2ees__LeaveGroupResponse *mock_leave_group(E2ees__E2eeAddress *from, const char
         proto_msg->payload_case,
         proto_msg->leave_group_msg
     );
+    proto_msg->n_signature_list = 1;
     proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
     mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
@@ -1959,6 +2009,7 @@ E2ees__SendGroupMsgResponse *mock_send_group_msg(E2ees__E2eeAddress *from, const
                 proto_msg->payload_case,
                 proto_msg->e2ee_msg
             );
+            proto_msg->n_signature_list = 1;
             proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
             mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
 
