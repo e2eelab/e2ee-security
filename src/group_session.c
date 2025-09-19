@@ -1252,15 +1252,15 @@ int renew_outbound_group_session_by_welcome_and_add(
             &(outbound_group_session->group_info), old_group_info, adding_group_members, adding_group_members_num
         );
 
+        // pack the group ratchet state
+        group_ratchet_state_plaintext_data_len = pack_group_ratchet_state_plaintext(
+            outbound_group_session, &group_ratchet_state_plaintext_data,
+            sender_chain_key == NULL, identity_public_key,
+            n_adding_member_info_list, adding_member_info_list
+        );
+
         // send the current ratchet state to the new group members
         for (i = 0; i < adding_group_members_num; i++) {
-            // pack
-            group_ratchet_state_plaintext_data_len = pack_group_ratchet_state_plaintext(
-                outbound_group_session, &group_ratchet_state_plaintext_data,
-                sender_chain_key == NULL, identity_public_key,
-                n_adding_member_info_list, adding_member_info_list
-            );
-
             cur_user_id = adding_group_members[i]->user_id;
             cur_user_domain = adding_group_members[i]->domain;
 

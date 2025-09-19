@@ -689,6 +689,18 @@ bool consume_add_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__Ad
         }
     }
 
+    // release
+    if (group_address_list != NULL) {
+        cur_group_address_node = group_address_list;
+        while (cur_group_address_node != NULL) {
+            group_address_list = group_address_list->next;
+            e2ees__e2ee_address__free_unpacked(cur_group_address_node->group_address, NULL);
+            cur_group_address_node->group_address = NULL;
+            free_mem((void **)&cur_group_address_node, sizeof(group_address_node));
+            cur_group_address_node = group_address_list;
+        }
+    }
+
     // done
     return true;
 }

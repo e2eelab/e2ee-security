@@ -202,7 +202,7 @@ static size_t find_device_index_and_addresses(const char *user_id, index_node **
 
 static size_t find_device_addresses(const char *user_id, E2ees__E2eeAddress ***user_addresses) {
     size_t user_addresses_num = 0;
-    uint8_t i;
+    uint8_t i, j;
     for (i = 0; i < user_data_max; i++) {
         if (user_data_set[i].address != NULL) {
             // return non-zero if not equal
@@ -210,12 +210,14 @@ static size_t find_device_addresses(const char *user_id, E2ees__E2eeAddress ***u
                 user_addresses_num++;
         }
     }
-    *user_addresses = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * user_addresses_num);
-    uint8_t j = 0;
-    for (i = 0; i < user_data_max; i++) {
-        if (user_data_set[i].address != NULL) {
-            if (safe_strcmp(user_data_set[i].address->user->user_id, user_id))
-                copy_address_from_address(&((*user_addresses)[j++]), user_data_set[i].address);
+    if (user_addresses_num > 0) {
+        *user_addresses = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * user_addresses_num);
+        j = 0;
+        for (i = 0; i < user_data_max; i++) {
+            if (user_data_set[i].address != NULL) {
+                if (safe_strcmp(user_data_set[i].address->user->user_id, user_id))
+                    copy_address_from_address(&((*user_addresses)[j++]), user_data_set[i].address);
+            }
         }
     }
     return user_addresses_num;
@@ -224,19 +226,21 @@ static size_t find_device_addresses(const char *user_id, E2ees__E2eeAddress ***u
 
 static size_t find_friend_addresses(uint8_t user_index, E2ees__E2eeAddress ***friend_addresses) {
     size_t friends_num = 0;
-    uint8_t i;
+    uint8_t i, j;
     for (i = 0; i < user_data_max; i++) {
         if (session_record[user_index][i] == true) {
             if (!safe_strcmp(user_data_set[user_index].address->user->user_id, user_data_set[i].address->user->user_id))
                 friends_num++;
         }
     }
-    *friend_addresses = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * friends_num);
-    uint8_t j = 0;
-    for (i = 0; i < user_data_max; i++) {
-        if (session_record[user_index][i] == true) {
-            if (!safe_strcmp(user_data_set[user_index].address->user->user_id, user_data_set[i].address->user->user_id))
-                copy_address_from_address(&((*friend_addresses)[j++]), user_data_set[i].address);
+    if (friends_num > 0) {
+        *friend_addresses = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * friends_num);
+        j = 0;
+        for (i = 0; i < user_data_max; i++) {
+            if (session_record[user_index][i] == true) {
+                if (!safe_strcmp(user_data_set[user_index].address->user->user_id, user_data_set[i].address->user->user_id))
+                    copy_address_from_address(&((*friend_addresses)[j++]), user_data_set[i].address);
+            }
         }
     }
     return friends_num;
@@ -244,26 +248,28 @@ static size_t find_friend_addresses(uint8_t user_index, E2ees__E2eeAddress ***fr
 
 static size_t find_group_data(uint8_t user_index, E2ees__GroupInfo ***group_info_list) {
     size_t group_num = 0;
-    uint8_t i;
+    uint8_t i, j;
     for (i = 0; i < group_data_max; i++) {
         if (group_record[user_index][i] == true) {
             group_num++;
         }
     }
-    *group_info_list = (E2ees__GroupInfo **)malloc(sizeof(E2ees__GroupInfo *) * group_num);
-    uint8_t j = 0;
-    for (i = 0; i < group_data_max; i++) {
-        if (group_record[user_index][i] == true) {
-            (*group_info_list)[j] = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
-            e2ees__group_info__init((*group_info_list)[j]);
-            // copy group data
-            group_data *cur_group_data = &(group_data_set[i]);
-            (*group_info_list)[j]->group_name = strdup(cur_group_data->group_name);
-            copy_address_from_address(&((*group_info_list)[j]->group_address), cur_group_data->group_address);
-            (*group_info_list)[j]->n_group_member_list = cur_group_data->group_members_num;
-            copy_group_members(&((*group_info_list)[j]->group_member_list), cur_group_data->group_member_list, cur_group_data->group_members_num);
-            // done
-            j++;
+    if (group_num > 0) {
+        *group_info_list = (E2ees__GroupInfo **)malloc(sizeof(E2ees__GroupInfo *) * group_num);
+        j = 0;
+        for (i = 0; i < group_data_max; i++) {
+            if (group_record[user_index][i] == true) {
+                (*group_info_list)[j] = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
+                e2ees__group_info__init((*group_info_list)[j]);
+                // copy group data
+                group_data *cur_group_data = &(group_data_set[i]);
+                (*group_info_list)[j]->group_name = strdup(cur_group_data->group_name);
+                copy_address_from_address(&((*group_info_list)[j]->group_address), cur_group_data->group_address);
+                (*group_info_list)[j]->n_group_member_list = cur_group_data->group_members_num;
+                copy_group_members(&((*group_info_list)[j]->group_member_list), cur_group_data->group_member_list, cur_group_data->group_members_num);
+                // done
+                j++;
+            }
         }
     }
     return group_num;
@@ -1335,8 +1341,6 @@ E2ees__AddGroupMembersResponse *mock_add_group_members(E2ees__E2eeAddress *from,
     response->n_group_member_list = new_group_members_num;
     response->group_member_list = (E2ees__GroupMember **)malloc(sizeof(E2ees__GroupMember *) * new_group_members_num);
     for (i = 0; i < new_group_members_num; i++) {
-        (response->group_member_list)[i] = (E2ees__GroupMember *)malloc(sizeof(E2ees__GroupMember));
-        e2ees__group_member__init((response->group_member_list)[i]);
         copy_group_member(&((response->group_member_list)[i]), (cur_group_data->group_member_list)[i]);
     }
 
@@ -1513,8 +1517,6 @@ E2ees__AddGroupMemberDeviceResponse *mock_add_group_member_device(
     response->n_group_member_list = group_members_num;
     response->group_member_list = (E2ees__GroupMember **)malloc(sizeof(E2ees__GroupMember *) * group_members_num);
     for (i = 0; i < group_members_num; i++) {
-        (response->group_member_list)[i] = (E2ees__GroupMember *)malloc(sizeof(E2ees__GroupMember));
-        e2ees__group_member__init((response->group_member_list)[i]);
         copy_group_member(&((response->group_member_list)[i]), (cur_group_data->group_member_list)[i]);
     }
 

@@ -1777,30 +1777,33 @@ size_t load_outbound_sessions(
 ) {
     // allocate memory
     size_t n_outbound_sessions = load_n_outbound_sessions(our_address, their_user_id);
-    (*outbound_sessions) = (E2ees__Session **)malloc(n_outbound_sessions * sizeof(E2ees__Session *));
 
-    // prepare
-    sqlite3_stmt *stmt;
-    sqlite_prepare(SESSION_LOAD_OUTBOUND_SESSIONS, &stmt);
-    sqlite3_bind_text(stmt, 1, our_address->domain, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 2, our_address->user->user_id, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 3, our_address->user->device_id, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 4, their_user_id, -1, SQLITE_TRANSIENT);
+    if (n_outbound_sessions > 0) {
+        (*outbound_sessions) = (E2ees__Session **)malloc(sizeof(E2ees__Session *) * n_outbound_sessions);
 
-    // step
-    for (int i = 0; i < n_outbound_sessions; i++) {
-        sqlite3_step(stmt);
+        // prepare
+        sqlite3_stmt *stmt;
+        sqlite_prepare(SESSION_LOAD_OUTBOUND_SESSIONS, &stmt);
+        sqlite3_bind_text(stmt, 1, our_address->domain, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, our_address->user->user_id, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, our_address->user->device_id, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, their_user_id, -1, SQLITE_TRANSIENT);
 
-        // load
-        size_t session_data_len = sqlite3_column_bytes(stmt, 0);
-        uint8_t *session_data = (uint8_t *)sqlite3_column_blob(stmt, 0);
+        // step
+        for (int i = 0; i < n_outbound_sessions; i++) {
+            sqlite3_step(stmt);
 
-        // unpack
-        (*outbound_sessions)[i] = e2ees__session__unpack(NULL, session_data_len, session_data);
+            // load
+            size_t session_data_len = sqlite3_column_bytes(stmt, 0);
+            uint8_t *session_data = (uint8_t *)sqlite3_column_blob(stmt, 0);
+
+            // unpack
+            (*outbound_sessions)[i] = e2ees__session__unpack(NULL, session_data_len, session_data);
+        }
+
+        // release
+        sqlite_finalize(stmt);
     }
-
-    // release
-    sqlite_finalize(stmt);
 
     return n_outbound_sessions;
 }
@@ -2000,32 +2003,34 @@ size_t load_group_sessions(
     E2ees__E2eeAddress *group_address,
     E2ees__GroupSession ***group_sessions
 ) {
-    // allocate memory
     size_t n_group_sessions = load_n_group_sessions(owner_address, group_address);
-    (*group_sessions) = (E2ees__GroupSession **)malloc(n_group_sessions * sizeof(E2ees__GroupSession *));
 
-    // prepare
-    sqlite3_stmt *stmt;
-    sqlite_prepare(GROUP_SESSIONS_LOAD, &stmt);
-    sqlite3_bind_text(stmt, 1, group_address->group->group_id, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 2, owner_address->user->user_id, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 3, owner_address->domain, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 4, owner_address->user->device_id, -1, SQLITE_TRANSIENT);
+    if (n_group_sessions > 0) {
+        (*group_sessions) = (E2ees__GroupSession **)malloc(sizeof(E2ees__GroupSession *) * n_group_sessions);
 
-    // step
-    for (int i = 0; i < n_group_sessions; i++) {
-        sqlite3_step(stmt);
+        // prepare
+        sqlite3_stmt *stmt;
+        sqlite_prepare(GROUP_SESSIONS_LOAD, &stmt);
+        sqlite3_bind_text(stmt, 1, group_address->group->group_id, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, owner_address->user->user_id, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, owner_address->domain, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, owner_address->user->device_id, -1, SQLITE_TRANSIENT);
 
-        // load
-        size_t group_session_data_len = sqlite3_column_bytes(stmt, 0);
-        uint8_t *group_session_data = (uint8_t *)sqlite3_column_blob(stmt, 0);
+        // step
+        for (int i = 0; i < n_group_sessions; i++) {
+            sqlite3_step(stmt);
 
-        // unpack
-        (*group_sessions)[i] = e2ees__group_session__unpack(NULL, group_session_data_len, group_session_data);
+            // load
+            size_t group_session_data_len = sqlite3_column_bytes(stmt, 0);
+            uint8_t *group_session_data = (uint8_t *)sqlite3_column_blob(stmt, 0);
+
+            // unpack
+            (*group_sessions)[i] = e2ees__group_session__unpack(NULL, group_session_data_len, group_session_data);
+        }
+
+        // release
+        sqlite_finalize(stmt);
     }
-
-    // release
-    sqlite_finalize(stmt);
 
     return n_group_sessions;
 }
@@ -2061,32 +2066,34 @@ size_t load_group_addresses(
     E2ees__E2eeAddress *owner_address,
     E2ees__E2eeAddress ***group_addresses
 ) {
-    // allocate memory
     size_t n_group_addresses = load_n_group_addresses(sender_address, owner_address);
-    (*group_addresses) = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * n_group_addresses);
 
-    // prepare
-    sqlite3_stmt *stmt;
-    sqlite_prepare(GROUP_ADDRESSES_LOAD, &stmt);
-    sqlite3_bind_text(stmt, 1, sender_address->user->user_id, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 2, sender_address->domain, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 3, sender_address->user->device_id, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 4, owner_address->user->user_id, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 5, owner_address->domain, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 6, owner_address->user->device_id, -1, SQLITE_TRANSIENT);
+    if (n_group_addresses > 0) {
+        (*group_addresses) = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * n_group_addresses);
 
-    // step
-    for (int i = 0; i < n_group_addresses; i++) {
-        sqlite3_step(stmt);
+        // prepare
+        sqlite3_stmt *stmt;
+        sqlite_prepare(GROUP_ADDRESSES_LOAD, &stmt);
+        sqlite3_bind_text(stmt, 1, sender_address->user->user_id, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, sender_address->domain, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, sender_address->user->device_id, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, owner_address->user->user_id, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, owner_address->domain, -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 6, owner_address->user->device_id, -1, SQLITE_TRANSIENT);
 
-        // load
-        sqlite_int64 address_id = sqlite3_column_int64(stmt, 0);
+        // step
+        for (int i = 0; i < n_group_addresses; i++) {
+            sqlite3_step(stmt);
 
-        load_group_address(address_id, &((*group_addresses)[i]));
+            // load
+            sqlite_int64 address_id = sqlite3_column_int64(stmt, 0);
+
+            load_group_address(address_id, &((*group_addresses)[i]));
+        }
+
+        // release
+        sqlite_finalize(stmt);
     }
-
-    // release
-    sqlite_finalize(stmt);
 
     return n_group_addresses;
 }
