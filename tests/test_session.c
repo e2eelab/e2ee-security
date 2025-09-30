@@ -534,8 +534,10 @@ static void test_encryption(
 }
 
 static void test_basic_session() {
+    // print test case
+    print_test_case("v1.0is01", "test_basic_session");
+
     // test start
-    printf("test_basic_session begin!!!\n");
     tear_up();
     test_begin();
 
@@ -562,8 +564,10 @@ static void test_basic_session() {
 }
 
 static void test_interaction() {
+    // print test case
+    print_test_case("v1.0is02", "test_interaction");
+
     // test start
-    printf("test_interaction begin!!!\n");
     tear_up();
     test_begin();
 
@@ -595,8 +599,10 @@ static void test_interaction() {
 }
 
 static void test_continual_messages() {
+    // print test case
+    print_test_case("v1.0is03", "test_continual_messages");
+
     // test start
-    printf("test_continual_messages begin!!!\n");
     tear_up();
     test_begin();
 
@@ -626,8 +632,10 @@ static void test_continual_messages() {
 }
 
 static void test_one_to_many() {
+    // print test case
+    print_test_case("v1.0is04", "test_one_to_many");
+
     // test start
-    printf("test_one_to_many begin!!!\n");
     tear_up();
     test_begin();
 
@@ -661,8 +669,10 @@ static void test_one_to_many() {
 }
 
 static void test_many_to_one() {
+    // print test case
+    print_test_case("v1.0is05", "test_many_to_one");
+
     // test start
-    printf("test_many_to_one begin!!!\n");
     tear_up();
     test_begin();
 
@@ -696,8 +706,10 @@ static void test_many_to_one() {
 }
 
 static void test_many_to_many() {
+    // print test case
+    print_test_case("v1.0is06", "test_many_to_many");
+
     // test start
-    printf("test_many_to_many begin!!!\n");
     tear_up();
     test_begin();
 
@@ -741,8 +753,10 @@ static void test_many_to_many() {
 }
 
 static void test_add_a_device() {
+    // print test case
+    print_test_case("v1.0is07", "test_add_a_device");
+
     // test start
-    printf("test_add_a_device begin!!!\n");
     tear_up();
     test_begin();
 
@@ -788,8 +802,10 @@ static void test_add_a_device() {
 }
 
 static void test_session_no_opk() {
+    // print test case
+    print_test_case("v1.0is08", "test_session_no_opk");
+
     // test start
-    printf("test_session_no_opk begin!!!\n");
     tear_up();
     test_begin();
 
@@ -816,8 +832,10 @@ static void test_session_no_opk() {
 }
 
 static void test_invite_twice() {
+    // print test case
+    print_test_case("v1.0is09", "test_invite_twice");
+
     // test start
-    printf("test_invite_twice begin!!!\n");
     tear_up();
     test_begin();
 
@@ -849,8 +867,10 @@ static void test_invite_twice() {
 }
 
 static void test_invite_interaction() {
+    // print test case
+    print_test_case("v1.0is10", "test_invite_interaction");
+
     // test start
-    printf("test_invite_interaction begin!!!\n");
     tear_up();
     test_begin();
 

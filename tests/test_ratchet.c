@@ -360,8 +360,10 @@ static void initialization(
 ///-----------------unit test-----------------///
 
 static void test_initialise_as_alice() {
+    // print test case
+    print_test_case("v1.0ur01", "test_initialise_as_alice");
+
     // test start
-    printf("test_initialise_as_alice begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *alice_ratchet = NULL;
@@ -411,8 +413,10 @@ static void test_initialise_as_alice() {
 }
 
 static void test_initialise_as_bob() {
+    // print test case
+    print_test_case("v1.0ur02", "test_initialise_as_bob");
+
     // test start
-    printf("test_initialise_as_bob begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *bob_ratchet = NULL;
@@ -454,8 +458,10 @@ static void test_initialise_as_bob() {
 ///-----------------integration test-----------------///
 
 static void test_alice_to_bob() {
+    // print test case
+    print_test_case("v1.0ir01", "test_alice_to_bob");
+
     // test start
-    printf("test_alice_to_bob begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *alice_ratchet = NULL, *bob_ratchet = NULL;
@@ -497,8 +503,10 @@ static void test_alice_to_bob() {
 }
 
 static void test_bob_to_alice() {
+    // print test case
+    print_test_case("v1.0ir02", "test_bob_to_alice");
+
     // test start
-    printf("test_bob_to_alice begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *alice_ratchet = NULL, *bob_ratchet = NULL;
@@ -540,8 +548,10 @@ static void test_bob_to_alice() {
 }
 
 static void test_interaction_alice_first() {
+    // print test case
+    print_test_case("v1.0ir03", "test_interaction_alice_first");
+
     // test start
-    printf("test_interaction_alice_first begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *alice_ratchet = NULL, *bob_ratchet = NULL;
@@ -607,8 +617,10 @@ static void test_interaction_alice_first() {
 }
 
 static void test_interaction_bob_first() {
+    // print test case
+    print_test_case("v1.0ir04", "test_interaction_bob_first");
+
     // test start
-    printf("test_interaction_bob_first begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *alice_ratchet = NULL, *bob_ratchet = NULL;
@@ -674,8 +686,10 @@ static void test_interaction_bob_first() {
 }
 
 static void test_out_of_order() {
+    // print test case
+    print_test_case("v1.0ir05", "test_out_of_order");
+
     // test start
-    printf("test_out_of_order begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *alice_ratchet = NULL, *bob_ratchet = NULL;
@@ -741,8 +755,10 @@ static void test_out_of_order() {
 }
 
 static void test_continual_message() {
+    // print test case
+    print_test_case("v1.0ir06", "test_continual_message");
+
     // test start
-    printf("test_continual_message begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *alice_ratchet = NULL, *bob_ratchet = NULL;
@@ -795,8 +811,10 @@ static void test_continual_message() {
 }
 
 static void test_interaction_v2() {
+    // print test case
+    print_test_case("v1.0ir07", "test_interaction_v2");
+
     // test start
-    printf("test_interaction_v2 begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *alice_ratchet = NULL, *bob_ratchet = NULL;
@@ -879,8 +897,10 @@ static void test_interaction_v2() {
 }
 
 static void test_out_of_order_v2() {
+    // print test case
+    print_test_case("v1.0ir08", "test_out_of_order_v2");
+
     // test start
-    printf("test_out_of_order_v2 begin!!!\n");
     tear_up();
 
     E2ees__Ratchet *alice_ratchet = NULL, *bob_ratchet = NULL;

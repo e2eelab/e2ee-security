@@ -518,8 +518,10 @@ static void test_encryption(
 }
 
 static void test_create_group() {
+    // print test case
+    print_test_case("v1.0ig01", "test_create_group");
+
     // test start
-    printf("test_create_group begin!!!\n");
     tear_up();
     test_begin();
 
@@ -571,8 +573,10 @@ static void test_create_group() {
 }
 
 static void test_add_group_members() {
+    // print test case
+    print_test_case("v1.0ig02", "test_add_group_members");
+
     // test start
-    printf("test_add_group_members begin!!!\n");
     tear_up();
     test_begin();
 
@@ -639,8 +643,10 @@ static void test_add_group_members() {
 }
 
 static void test_remove_group_members() {
+    // print test case
+    print_test_case("v1.0ig03", "test_remove_group_members");
+
     // test start
-    printf("test_remove_group_members begin!!!\n");
     tear_up();
     test_begin();
 
@@ -706,8 +712,10 @@ static void test_remove_group_members() {
 }
 
 static void test_create_add_remove() {
+    // print test case
+    print_test_case("v1.0ig04", "test_create_add_remove");
+
     // test start
-    printf("test_create_add_remove begin!!!\n");
     tear_up();
     test_begin();
 
@@ -788,8 +796,10 @@ static void test_create_add_remove() {
 }
 
 static void test_leave_group() {
+    // print test case
+    print_test_case("v1.0ig05", "test_leave_group");
+
     // test start
-    printf("test_leave_group begin!!!\n");
     tear_up();
     test_begin();
 
@@ -843,8 +853,10 @@ static void test_leave_group() {
 }
 
 static void test_continual() {
+    // print test case
+    print_test_case("v1.0ig06", "test_continual");
+
     // test start
-    printf("test_continual begin!!!\n");
     tear_up();
     test_begin();
 
@@ -900,8 +912,10 @@ static void test_continual() {
 }
 
 static void test_multiple_devices() {
+    // print test case
+    print_test_case("v1.0ig07", "test_multiple_devices");
+
     // test start
-    printf("test_multiple_devices begin!!!\n");
     tear_up();
     test_begin();
 
@@ -953,8 +967,10 @@ static void test_multiple_devices() {
 }
 
 static void test_add_new_device() {
+    // print test case
+    print_test_case("v1.0ig08", "test_add_new_device");
+
     // test start
-    printf("test_add_new_device begin!!!\n");
     tear_up();
     test_begin();
 
@@ -1000,8 +1016,10 @@ static void test_add_new_device() {
 }
 
 static void test_medium_group() {
+    // print test case
+    print_test_case("v1.0ig09", "test_medium_group");
+
     // test start
-    printf("test_medium_group begin!!!\n");
     tear_up();
     test_begin();
 

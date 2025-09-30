@@ -76,6 +76,12 @@
         removing_group_members[i]->role = E2EES__GROUP_ROLE__GROUP_ROLE_MEMBER; \
     }
 
+#define print_test_case(id, title) \
+    printf("Test Case ID:\n"); \
+    printf("\t%s\n", id); \
+    printf("Test Case Title:\n"); \
+    printf("\t%s\n", title);
+
 // debug msg to console
 void print_hex(char *title, uint8_t *msg, size_t msg_len);
 void print_msg(char *title, uint8_t *msg, size_t len);

@@ -223,18 +223,6 @@
 #include "test_plugin.h"
 #include "test_util.h"
 
-enum test_case {
-    GENERATE_IDENTITY_KEY = 0,
-    GENERATE_SIGNED_PRE_KEY = 1,
-    GENERATE_OPKS = 2,
-    CREATE_ACCOUNT = 3,
-    CREATE_ACCOUNTS = 10,
-    REGISTER_USER = 11,
-    PUBLISH_SPK = 12,
-    SUPPLY_OPKS = 13,
-    FREE_OPKS = 14,
-};
-
 static void on_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg) {
     // print_log((char *)log_msg, log_code);
 }
@@ -256,58 +244,7 @@ static e2ees_event_handler_t test_event_handler = {
     NULL
 };
 
-static void print_test_case_id(int case_num) {
-    if (case_num == GENERATE_IDENTITY_KEY) {
-        printf("\tv1.0ua01\n");
-    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
-        printf("\tv1.0ua02\n");
-    } else if (case_num == GENERATE_OPKS) {
-        printf("\tv1.0ua03\n");
-    } else if (case_num == CREATE_ACCOUNT) {
-        printf("\tv1.0ua04\n");
-    } else if (case_num == CREATE_ACCOUNTS) {
-        printf("\tv1.0ia01\n");
-    } else if (case_num == REGISTER_USER) {
-        printf("\tv1.0ia02\n");
-    } else if (case_num == PUBLISH_SPK) {
-        printf("\tv1.0ia03\n");
-    } else if (case_num == SUPPLY_OPKS) {
-        printf("\tv1.0ia04\n");
-    } else if (case_num == FREE_OPKS) {
-        printf("\tv1.0ia05\n");
-    } else {}
-}
-
-static void print_test_case_title(int case_num) {
-    if (case_num == GENERATE_IDENTITY_KEY) {
-        printf("\tgenerate_identity_key\n");
-    } else if (case_num == GENERATE_SIGNED_PRE_KEY) {
-        printf("\tgenerate_signed_pre_key\n");
-    } else if (case_num == GENERATE_OPKS) {
-        printf("\tgenerate_opks\n");
-    } else if (case_num == CREATE_ACCOUNT) {
-        printf("\tcreate_account\n");
-    } else if (case_num == CREATE_ACCOUNTS) {
-        printf("\tcreate_accounts\n");
-    } else if (case_num == REGISTER_USER) {
-        printf("\ttest_register_user\n");
-    } else if (case_num == PUBLISH_SPK) {
-        printf("\ttest_publish_spk\n");
-    } else if (case_num == SUPPLY_OPKS) {
-        printf("\ttest_supply_opks\n");
-    } else if (case_num == FREE_OPKS) {
-        printf("\ttest_free_opks\n");
-    } else {}
-}
-
-static void print_test_case_begin(int case_num) {
-    printf("Test Case ID:\n");
-    print_test_case_id(case_num);
-    printf("Test Case Title:\n");
-    print_test_case_title(case_num);
-}
-
-static void print_test_case_final(int case_num) {
+static void print_test_case_final() {
     printf("Result:\n");
     printf("\tSuccess!");
     printf("\n\n");
@@ -318,7 +255,7 @@ static void print_test_case_final(int case_num) {
 
 static void test_generate_identity_key() {
     // print test case
-    print_test_case_begin(GENERATE_IDENTITY_KEY);
+    print_test_case("v1.0ua01", "generate_identity_key");
 
     // test start
     tear_up();
@@ -336,12 +273,12 @@ static void test_generate_identity_key() {
 
     // test stop
     tear_down();
-    print_test_case_final(GENERATE_IDENTITY_KEY);
+    print_test_case_final();
 }
 
 static void test_generate_signed_pre_key() {
     // print test case
-    print_test_case_begin(GENERATE_SIGNED_PRE_KEY);
+    print_test_case("v1.0ua02", "generate_signed_pre_key");
 
     // test start
     tear_up();
@@ -362,12 +299,12 @@ static void test_generate_signed_pre_key() {
 
     // test stop
     tear_down();
-    print_test_case_final(GENERATE_SIGNED_PRE_KEY);
+    print_test_case_final();
 }
 
 static void test_generate_opks() {
     // print test case
-    print_test_case_begin(GENERATE_OPKS);
+    print_test_case("v1.0ua03", "generate_opks");
 
     // test start
     tear_up();
@@ -390,13 +327,14 @@ static void test_generate_opks() {
 
     // test stop
     tear_down();
-    print_test_case_final(GENERATE_OPKS);
+    print_test_case_final();
 }
 
 static void test_create_account(bool unit) {
     // print test case
-    if (unit)
-        print_test_case_begin(CREATE_ACCOUNT);
+    if (unit) {
+        print_test_case("v1.0ua04", "create_account");
+    }
 
     // test start
     tear_up();
@@ -415,14 +353,14 @@ static void test_create_account(bool unit) {
     // test stop
     tear_down();
     if (unit)
-        print_test_case_final(CREATE_ACCOUNT);
+        print_test_case_final();
 }
 
 ///-----------------integration test-----------------///
 
 static void test_create_accounts(uint64_t num) {
     // print test case
-    print_test_case_begin(CREATE_ACCOUNTS);
+    print_test_case("v1.0ia01", "create_accounts");
 
     // test start
     tear_up();
@@ -435,12 +373,12 @@ static void test_create_accounts(uint64_t num) {
 
     // test stop
     tear_down();
-    print_test_case_final(CREATE_ACCOUNTS);
+    print_test_case_final();
 }
 
 static void test_register_user() {
     // print test case
-    print_test_case_begin(REGISTER_USER);
+    print_test_case("v1.0ia02", "test_register_user");
 
     // test start
     tear_up();
@@ -465,12 +403,12 @@ static void test_register_user() {
 
     // test stop
     tear_down();
-    print_test_case_final(REGISTER_USER);
+    print_test_case_final();
 }
 
 static void test_publish_spk() {
     // print test case
-    print_test_case_begin(PUBLISH_SPK);
+    print_test_case("v1.0ia03", "test_publish_spk");
 
     // test start
     tear_up();
@@ -514,7 +452,7 @@ static void test_publish_spk() {
 
     // test stop
     tear_down();
-    print_test_case_final(PUBLISH_SPK);
+    print_test_case_final();
 }
 
 E2ees__ProtoMsg *mock_supply_opks_msg(E2ees__E2eeAddress *user_address, uint32_t supply_opks_num) {
@@ -533,7 +471,7 @@ E2ees__ProtoMsg *mock_supply_opks_msg(E2ees__E2eeAddress *user_address, uint32_t
 
 static void test_supply_opks() {
     // print test case
-    print_test_case_begin(SUPPLY_OPKS);
+    print_test_case("v1.0ia04", "test_supply_opks");
 
     // test start
     tear_up();
@@ -589,12 +527,12 @@ static void test_supply_opks() {
 
     // test stop
     tear_down();
-    print_test_case_final(SUPPLY_OPKS);
+    print_test_case_final();
 }
 
 static void test_free_opks() {
     // print test case
-    print_test_case_begin(FREE_OPKS);
+    print_test_case("v1.0ia05", "test_free_opks");
 
     // test start
     tear_up();
@@ -645,7 +583,7 @@ static void test_free_opks() {
 
     // test stop
     tear_down();
-    print_test_case_final(FREE_OPKS);
+    print_test_case_final();
 }
 
 int main() {
