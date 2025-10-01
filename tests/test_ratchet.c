@@ -53,7 +53,7 @@
  * @ingroup ratchet_unit
  * @{
  * @section sec20001 Test Case ID
- * v1.0ur01
+ * v1.0urt01
  * @section sec20002 Test Case Title
  * initialise_as_alice
  * @section sec20003 Test Description
@@ -73,7 +73,7 @@
  * @ingroup ratchet_unit
  * @{
  * @section sec20101 Test Case ID
- * v1.0ur02
+ * v1.0urt02
  * @section sec20102 Test Case Title
  * initialise_as_bob
  * @section sec20103 Test Description
@@ -98,7 +98,7 @@
  * @ingroup ratchet_int
  * @{
  * @section sec21001 Test Case ID
- * v1.0ir01
+ * v1.0irt01
  * @section sec21002 Test Case Title
  * test_alice_to_bob
  * @section sec21003 Test Description
@@ -118,7 +118,7 @@
  * @ingroup ratchet_int
  * @{
  * @section sec21101 Test Case ID
- * v1.0ir02
+ * v1.0irt02
  * @section sec21102 Test Case Title
  * test_bob_to_alice
  * @section sec21103 Test Description
@@ -138,7 +138,7 @@
  * @ingroup ratchet_int
  * @{
  * @section sec21201 Test Case ID
- * v1.0ir03
+ * v1.0irt03
  * @section sec21202 Test Case Title
  * test_interaction_alice_first
  * @section sec21203 Test Description
@@ -161,7 +161,7 @@
  * @ingroup ratchet_int
  * @{
  *  @section sec21301 Test Case ID
- * v1.0ir04
+ * v1.0irt04
  * @section sec21302 Test Case Title
  * test_interaction_bob_first
  * @section sec21303 Test Description
@@ -184,7 +184,7 @@
  * @ingroup ratchet_int
  * @{
  * @section sec21401 Test Case ID
- * v1.0ir05
+ * v1.0irt05
  * @section sec21402 Test Case Title
  * test_out_of_order
  * @section sec21403 Test Description
@@ -206,7 +206,7 @@
  * @ingroup ratchet_int
  * @{
  * @section sec21501 Test Case ID
- * v1.0ir06
+ * v1.0irt06
  * @section sec21502 Test Case Title
  * test_continual_message
  * @section sec21503 Test Description
@@ -226,7 +226,7 @@
  * @ingroup ratchet_int
  * @{
  * @section sec21601 Test Case ID
- * v1.0ir07
+ * v1.0irt07
  * @section sec21602 Test Case Title
  * test_interaction_v2
  * @section sec21603 Test Description
@@ -250,7 +250,7 @@
  * @ingroup ratchet_int
  * @{
  * @section sec21701 Test Case ID
- * v1.0ir08
+ * v1.0irt08
  * @section sec21702 Test Case Title
  * test_out_of_order_v2
  * @section sec21703 Test Description
@@ -361,7 +361,7 @@ static void initialization(
 
 static void test_initialise_as_alice() {
     // print test case
-    print_test_case("v1.0ur01", "test_initialise_as_alice");
+    print_test_case("v1.0urt01", "test_initialise_as_alice");
 
     // test start
     tear_up();
@@ -409,12 +409,12 @@ static void test_initialise_as_alice() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_initialise_as_bob() {
     // print test case
-    print_test_case("v1.0ur02", "test_initialise_as_bob");
+    print_test_case("v1.0urt02", "test_initialise_as_bob");
 
     // test start
     tear_up();
@@ -452,14 +452,14 @@ static void test_initialise_as_bob() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 ///-----------------integration test-----------------///
 
 static void test_alice_to_bob() {
     // print test case
-    print_test_case("v1.0ir01", "test_alice_to_bob");
+    print_test_case("v1.0irt01", "test_alice_to_bob");
 
     // test start
     tear_up();
@@ -485,12 +485,6 @@ static void test_alice_to_bob() {
     bool result = is_equal(plaintext, output, plaintext_length);
     assert(result);
 
-    if (result) {
-        print_result("Decryption success!!!", true);
-    } else {
-        print_result("Decryption failed!!!", false);
-    }
-
     free_protobuf(&ad);
     e2ees__one2one_msg_payload__free_unpacked(message, NULL);
     free_mem((void **)&output, decrypt_length);
@@ -499,12 +493,12 @@ static void test_alice_to_bob() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_bob_to_alice() {
     // print test case
-    print_test_case("v1.0ir02", "test_bob_to_alice");
+    print_test_case("v1.0irt02", "test_bob_to_alice");
 
     // test start
     tear_up();
@@ -530,12 +524,6 @@ static void test_bob_to_alice() {
     bool result = is_equal(plaintext, output, plaintext_length);
     assert(result);
 
-    if (result) {
-        print_result("Decryption success!!!", true);
-    } else {
-        print_result("Decryption failed!!!", false);
-    }
-
     free_protobuf(&ad);
     e2ees__one2one_msg_payload__free_unpacked(message, NULL);
     free_mem((void **)&output, decrypt_length);
@@ -544,12 +532,12 @@ static void test_bob_to_alice() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_interaction_alice_first() {
     // print test case
-    print_test_case("v1.0ir03", "test_interaction_alice_first");
+    print_test_case("v1.0irt03", "test_interaction_alice_first");
 
     // test start
     tear_up();
@@ -576,12 +564,6 @@ static void test_interaction_alice_first() {
     result = is_equal(plaintext_1, output_1, plaintext_1_length);
     assert(result);
 
-    if (result) {
-        print_result("Decryption success!!!", true);
-    } else {
-        print_result("Decryption failed!!!", false);
-    }
-
     /* Bob sends Alice a message */
     uint8_t plaintext_2[] = "Bob's Message";
     size_t plaintext_2_length = sizeof(plaintext_2) - 1;
@@ -597,12 +579,6 @@ static void test_interaction_alice_first() {
     result = is_equal(plaintext_2, output_2, plaintext_2_length);
     assert(result);
 
-    if (result) {
-        print_result("Decryption success!!!", true);
-    } else {
-        print_result("Decryption failed!!!", false);
-    }
-
     free_protobuf(&ad);
     e2ees__one2one_msg_payload__free_unpacked(message_1, NULL);
     e2ees__one2one_msg_payload__free_unpacked(message_2, NULL);
@@ -613,12 +589,12 @@ static void test_interaction_alice_first() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_interaction_bob_first() {
     // print test case
-    print_test_case("v1.0ir04", "test_interaction_bob_first");
+    print_test_case("v1.0irt04", "test_interaction_bob_first");
 
     // test start
     tear_up();
@@ -645,12 +621,6 @@ static void test_interaction_bob_first() {
     result = is_equal(plaintext_1, output_1, plaintext_1_length);
     assert(result);
 
-    if (result) {
-        print_result("Decryption success!!!", true);
-    } else {
-        print_result("Decryption failed!!!", false);
-    }
-
     /* Alice sends Bob a message */
     uint8_t plaintext_2[] = "Alice's Message";
     size_t plaintext_2_length = sizeof(plaintext_2) - 1;
@@ -666,12 +636,6 @@ static void test_interaction_bob_first() {
     result = is_equal(plaintext_2, output_2, plaintext_2_length);
     assert(result);
 
-    if (result) {
-        print_result("Decryption success!!!", true);
-    } else {
-        print_result("Decryption failed!!!", false);
-    }
-
     free_protobuf(&ad);
     e2ees__one2one_msg_payload__free_unpacked(message_1, NULL);
     e2ees__one2one_msg_payload__free_unpacked(message_2, NULL);
@@ -682,12 +646,12 @@ static void test_interaction_bob_first() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_out_of_order() {
     // print test case
-    print_test_case("v1.0ir05", "test_out_of_order");
+    print_test_case("v1.0irt05", "test_out_of_order");
 
     // test start
     tear_up();
@@ -722,24 +686,12 @@ static void test_out_of_order() {
     result = is_equal(plaintext_2, output_2, plaintext_2_length);
     assert(result);
 
-    if (result) {
-        print_result("Decryption success!!!", true);
-    } else {
-        print_result("Decryption failed!!!", false);
-    }
-
     uint8_t *output_1 = NULL;
     size_t decrypt_length_1;
     decrypt_ratchet(&output_1, &decrypt_length_1, test_cipher_suite, bob_ratchet, ad, message_1);
     assert(decrypt_length_1 == plaintext_1_length);
     result = is_equal(plaintext_1, output_1, plaintext_1_length);
     assert(result);
-
-    if (result) {
-        print_result("Decryption success!!!", true);
-    } else {
-        print_result("Decryption failed!!!", false);
-    }
 
     free_protobuf(&ad);
     e2ees__one2one_msg_payload__free_unpacked(message_1, NULL);
@@ -751,12 +703,12 @@ static void test_out_of_order() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_continual_message() {
     // print test case
-    print_test_case("v1.0ir06", "test_continual_message");
+    print_test_case("v1.0irt06", "test_continual_message");
 
     // test start
     tear_up();
@@ -807,12 +759,12 @@ static void test_continual_message() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_interaction_v2() {
     // print test case
-    print_test_case("v1.0ir07", "test_interaction_v2");
+    print_test_case("v1.0irt07", "test_interaction_v2");
 
     // test start
     tear_up();
@@ -893,12 +845,12 @@ static void test_interaction_v2() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_out_of_order_v2() {
     // print test case
-    print_test_case("v1.0ir08", "test_out_of_order_v2");
+    print_test_case("v1.0irt08", "test_out_of_order_v2");
 
     // test start
     tear_up();
@@ -995,7 +947,7 @@ static void test_out_of_order_v2() {
 
     // test stop
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 int main() {

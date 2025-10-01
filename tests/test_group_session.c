@@ -56,7 +56,7 @@
  * @ingroup group_session_int
  * @{
  * @section sec41001 Test Case ID
- * v1.0ig01
+ * v1.0igs01
  * @section sec41002 Test Case Title
  * test_create_group
  * @section sec41003 Test Description
@@ -75,7 +75,7 @@
  * @ingroup group_session_int
  * @{
  * @section sec41101 Test Case ID
- * v1.0ig02
+ * v1.0igs02
  * @section sec41102 Test Case Title
  * test_add_group_members
  * @section sec41103 Test Description
@@ -96,7 +96,7 @@
  * @ingroup group_session_int
  * @{
  * @section sec41201 Test Case ID
- * v1.0ig03
+ * v1.0igs03
  * @section sec41202 Test Case Title
  * test_remove_group_members
  * @section sec41203 Test Description
@@ -117,7 +117,7 @@
  * @ingroup group_session_int
  * @{
  * @section sec41301 Test Case ID
- * v1.0ig04
+ * v1.0igs04
  * @section sec41302 Test Case Title
  * test_create_add_remove
  * @section sec41303 Test Description
@@ -142,7 +142,7 @@
  * @ingroup group_session_int
  * @{
  * @section sec41401 Test Case ID
- * v1.0ig05
+ * v1.0igs05
  * @section sec41402 Test Case Title
  * test_leave_group
  * @section sec41403 Test Description
@@ -163,7 +163,7 @@
  * @ingroup group_session_int
  * @{
  * @section sec41501 Test Case ID
- * v1.0ig06
+ * v1.0igs06
  * @section sec41502 Test Case Title
  * test_continual
  * @section sec41503 Test Description
@@ -182,7 +182,7 @@
  * @ingroup group_session_int
  * @{
  * @section sec41601 Test Case ID
- * v1.0ig07
+ * v1.0igs07
  * @section sec41602 Test Case Title
  * test_multiple_devices
  * @section sec41603 Test Description
@@ -203,7 +203,7 @@
  * @ingroup group_session_int
  * @{
  * @section sec41701 Test Case ID
- * v1.0ig08
+ * v1.0igs08
  * @section sec41702 Test Case Title
  * test_add_new_device
  * @section sec41703 Test Description
@@ -223,7 +223,7 @@
  * @ingroup group_session_int
  * @{
  * @section sec41801 Test Case ID
- * v1.0ig09
+ * v1.0igs09
  * @section sec41802 Test Case Title
  * test_medium_group
  * @section sec41803 Test Description
@@ -519,7 +519,7 @@ static void test_encryption(
 
 static void test_create_group() {
     // print test case
-    print_test_case("v1.0ig01", "test_create_group");
+    print_test_case("v1.0igs01", "test_create_group");
 
     // test start
     tear_up();
@@ -569,12 +569,12 @@ static void test_create_group() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_add_group_members() {
     // print test case
-    print_test_case("v1.0ig02", "test_add_group_members");
+    print_test_case("v1.0igs02", "test_add_group_members");
 
     // test start
     tear_up();
@@ -639,12 +639,12 @@ static void test_add_group_members() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_remove_group_members() {
     // print test case
-    print_test_case("v1.0ig03", "test_remove_group_members");
+    print_test_case("v1.0igs03", "test_remove_group_members");
 
     // test start
     tear_up();
@@ -708,12 +708,12 @@ static void test_remove_group_members() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_create_add_remove() {
     // print test case
-    print_test_case("v1.0ig04", "test_create_add_remove");
+    print_test_case("v1.0igs04", "test_create_add_remove");
 
     // test start
     tear_up();
@@ -792,12 +792,12 @@ static void test_create_add_remove() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_leave_group() {
     // print test case
-    print_test_case("v1.0ig05", "test_leave_group");
+    print_test_case("v1.0igs05", "test_leave_group");
 
     // test start
     tear_up();
@@ -849,12 +849,12 @@ static void test_leave_group() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_continual() {
     // print test case
-    print_test_case("v1.0ig06", "test_continual");
+    print_test_case("v1.0igs06", "test_continual");
 
     // test start
     tear_up();
@@ -908,12 +908,12 @@ static void test_continual() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_multiple_devices() {
     // print test case
-    print_test_case("v1.0ig07", "test_multiple_devices");
+    print_test_case("v1.0igs07", "test_multiple_devices");
 
     // test start
     tear_up();
@@ -963,12 +963,12 @@ static void test_multiple_devices() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_add_new_device() {
     // print test case
-    print_test_case("v1.0ig08", "test_add_new_device");
+    print_test_case("v1.0igs08", "test_add_new_device");
 
     // test start
     tear_up();
@@ -1012,12 +1012,12 @@ static void test_add_new_device() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_medium_group() {
     // print test case
-    print_test_case("v1.0ig09", "test_medium_group");
+    print_test_case("v1.0igs09", "test_medium_group");
 
     // test start
     tear_up();
@@ -1137,7 +1137,7 @@ static void test_medium_group() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_create_group_time() {
@@ -1181,7 +1181,7 @@ static void test_create_group_time() {
     end = time(NULL);
     printf("Creating group time: %ld seconds\n\n", end - start);
 
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 int main() {

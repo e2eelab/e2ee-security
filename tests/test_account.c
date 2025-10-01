@@ -48,7 +48,7 @@
  * @ingroup account_unit
  * @{
  * @section sec10201 Test Case ID
- * v1.0ua01
+ * v1.0uac01
  * @section sec10202 Test Case Title
  * generate_identity_key
  * @section sec10203 Test Description
@@ -67,7 +67,7 @@
  * @ingroup account_unit
  * @{
  * @section sec10301 Test Case ID
- * v1.0ua02
+ * v1.0uac02
  * @section sec10302 Test Case Title
  * generate_signed_pre_key
  * @section sec10303 Test Description
@@ -87,7 +87,7 @@
  * @ingroup account_unit
  * @{
  * @section sec10401 Test Case ID
- * v1.0ua03
+ * v1.0uac03
  * @section sec10402 Test Case Title
  * generate_opks
  * @section sec10403 Test Description
@@ -106,7 +106,7 @@
  * @ingroup account_unit
  * @{
  * @section sec10501 Test Case ID
- * v1.0ua04
+ * v1.0uac04
  * @section sec10502 Test Case Title
  * create_account
  * @section sec10503 Test Description
@@ -130,7 +130,7 @@
  * @ingroup account_int
  * @{
  * @section sec11001 Test Case ID
- * v1.0ia01
+ * v1.0iac01
  * @section sec11002 Test Case Title
  * test_create_accounts
  * @section sec11003 Test Description
@@ -150,7 +150,7 @@
  * @ingroup account_int
  * @{
  * @section sec11101 Test Case ID
- * v1.0ia02
+ * v1.0iac02
  * @section sec11102 Test Case Title
  * test_register_user
  * @section sec11103 Test Description
@@ -169,7 +169,7 @@
  * @ingroup account_int
  * @{
  * @section sec11201 Test Case ID
- * v1.0ia03
+ * v1.0iac03
  * @section sec11202 Test Case Title
  * test_publish_spk
  * @section sec11203 Test Description
@@ -189,7 +189,7 @@
  * @ingroup account_int
  * @{
  * @section sec11301 Test Case ID
- * v1.0ia04
+ * v1.0iac04
  * @section sec11302 Test Case Title
  * test_supply_opks
  * @section sec11303 Test Description
@@ -244,18 +244,11 @@ static e2ees_event_handler_t test_event_handler = {
     NULL
 };
 
-static void print_test_case_final() {
-    printf("Result:\n");
-    printf("\tSuccess!");
-    printf("\n\n");
-    printf("====================\n");
-}
-
 ///-----------------unit test-----------------///
 
 static void test_generate_identity_key() {
     // print test case
-    print_test_case("v1.0ua01", "generate_identity_key");
+    print_test_case("v1.0uac01", "generate_identity_key");
 
     // test start
     tear_up();
@@ -278,7 +271,7 @@ static void test_generate_identity_key() {
 
 static void test_generate_signed_pre_key() {
     // print test case
-    print_test_case("v1.0ua02", "generate_signed_pre_key");
+    print_test_case("v1.0uac02", "generate_signed_pre_key");
 
     // test start
     tear_up();
@@ -304,7 +297,7 @@ static void test_generate_signed_pre_key() {
 
 static void test_generate_opks() {
     // print test case
-    print_test_case("v1.0ua03", "generate_opks");
+    print_test_case("v1.0uac03", "generate_opks");
 
     // test start
     tear_up();
@@ -333,7 +326,7 @@ static void test_generate_opks() {
 static void test_create_account(bool unit) {
     // print test case
     if (unit) {
-        print_test_case("v1.0ua04", "create_account");
+        print_test_case("v1.0uac04", "create_account");
     }
 
     // test start
@@ -360,7 +353,7 @@ static void test_create_account(bool unit) {
 
 static void test_create_accounts(uint64_t num) {
     // print test case
-    print_test_case("v1.0ia01", "create_accounts");
+    print_test_case("v1.0iac01", "create_accounts");
 
     // test start
     tear_up();
@@ -378,7 +371,7 @@ static void test_create_accounts(uint64_t num) {
 
 static void test_register_user() {
     // print test case
-    print_test_case("v1.0ia02", "test_register_user");
+    print_test_case("v1.0iac02", "test_register_user");
 
     // test start
     tear_up();
@@ -408,7 +401,7 @@ static void test_register_user() {
 
 static void test_publish_spk() {
     // print test case
-    print_test_case("v1.0ia03", "test_publish_spk");
+    print_test_case("v1.0iac03", "test_publish_spk");
 
     // test start
     tear_up();
@@ -471,7 +464,7 @@ E2ees__ProtoMsg *mock_supply_opks_msg(E2ees__E2eeAddress *user_address, uint32_t
 
 static void test_supply_opks() {
     // print test case
-    print_test_case("v1.0ia04", "test_supply_opks");
+    print_test_case("v1.0iac04", "test_supply_opks");
 
     // test start
     tear_up();
@@ -532,7 +525,7 @@ static void test_supply_opks() {
 
 static void test_free_opks() {
     // print test case
-    print_test_case("v1.0ia05", "test_free_opks");
+    print_test_case("v1.0iac05", "test_free_opks");
 
     // test start
     tear_up();

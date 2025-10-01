@@ -58,6 +58,13 @@ void print_result(char *title, bool success) {
         printf("%s: failed\n", title);
 }
 
+void print_test_case_final() {
+    printf("Result:\n");
+    printf("\tSuccess!");
+    printf("\n\n");
+    printf("====================\n");
+}
+
 bool is_null(void *pointer_1, void *pointer_2) {
     if ((pointer_1 == NULL) && (pointer_2 == NULL)) {
         return true;

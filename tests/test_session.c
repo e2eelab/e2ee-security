@@ -53,7 +53,7 @@
  * @ingroup session_int
  * @{
  * @section sec31001 Test Case ID
- * v1.0is01
+ * v1.0iss01
  * @section sec31002 Test Case Title
  * test_basic_session
  * @section sec31003 Test Description
@@ -73,7 +73,7 @@
  * @ingroup session_int
  * @{
  * @section sec31101 Test Case ID
- * v1.0is02
+ * v1.0iss02
  * @section sec31102 Test Case Title
  * test_interaction
  * @section sec31103 Test Description
@@ -95,7 +95,7 @@
  * @ingroup session_int
  * @{
  * @section sec31201 Test Case ID
- * v1.0is03
+ * v1.0iss03
  * @section sec31202 Test Case Title
  * test_continual_messages
  * @section sec31203 Test Description
@@ -115,7 +115,7 @@
  * @ingroup session_int
  * @{
  * @section sec31401 Test Case ID
- * v1.0is04
+ * v1.0iss04
  * @section sec31402 Test Case Title
  * test_one_to_many
  * @section sec31403 Test Description
@@ -135,7 +135,7 @@
  * @ingroup session_int
  * @{
  * @section sec31501 Test Case ID
- * v1.0is05
+ * v1.0iss05
  * @section sec31502 Test Case Title
  * test_many_to_one
  * @section sec31503 Test Description
@@ -155,7 +155,7 @@
  * @ingroup session_int
  * @{
  * @section sec31601 Test Case ID
- * v1.0is06
+ * v1.0iss06
  * @section sec31602 Test Case Title
  * test_many_to_many
  * @section sec31603 Test Description
@@ -175,7 +175,7 @@
  * @ingroup session_int
  * @{
  * @section sec31701 Test Case ID
- * v1.0is07
+ * v1.0iss07
  * @section sec31702 Test Case Title
  * test_add_a_device
  * @section sec31703 Test Description
@@ -196,7 +196,7 @@
  * @ingroup session_int
  * @{
  * @section sec31801 Test Case ID
- * v1.0is08
+ * v1.0iss08
  * @section sec31802 Test Case Title
  * test_session_no_opk
  * @section sec31803 Test Description
@@ -216,7 +216,7 @@
  * @ingroup session_int
  * @{
  * @section sec31801 Test Case ID
- * v1.0is09
+ * v1.0iss09
  * @section sec31802 Test Case Title
  * test_invite_twice
  * @section sec31803 Test Description
@@ -236,7 +236,7 @@
  * @ingroup session_int
  * @{
  * @section sec31801 Test Case ID
- * v1.0is10
+ * v1.0iss10
  * @section sec31802 Test Case Title
  * test_invite_interaction
  * @section sec31803 Test Description
@@ -493,7 +493,6 @@ static void mock_alice_account(const char *user_name) {
         &response, e2ees_pack_id, user_name, user_name, device_id, authenticator, auth_code
     );
     assert(ret == 0);
-    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     free(device_id);
@@ -510,7 +509,6 @@ static void mock_bob_account(const char *user_name) {
         &response, e2ees_pack_id, user_name, user_name, device_id, authenticator, auth_code
     );
     assert(ret == 0);
-    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     free(device_id);
@@ -535,7 +533,7 @@ static void test_encryption(
 
 static void test_basic_session() {
     // print test case
-    print_test_case("v1.0is01", "test_basic_session");
+    print_test_case("v1.0iss01", "test_basic_session");
 
     // test start
     tear_up();
@@ -560,12 +558,12 @@ static void test_basic_session() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_interaction() {
     // print test case
-    print_test_case("v1.0is02", "test_interaction");
+    print_test_case("v1.0iss02", "test_interaction");
 
     // test start
     tear_up();
@@ -595,12 +593,12 @@ static void test_interaction() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_continual_messages() {
     // print test case
-    print_test_case("v1.0is03", "test_continual_messages");
+    print_test_case("v1.0iss03", "test_continual_messages");
 
     // test start
     tear_up();
@@ -628,12 +626,12 @@ static void test_continual_messages() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_one_to_many() {
     // print test case
-    print_test_case("v1.0is04", "test_one_to_many");
+    print_test_case("v1.0iss04", "test_one_to_many");
 
     // test start
     tear_up();
@@ -665,12 +663,12 @@ static void test_one_to_many() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_many_to_one() {
     // print test case
-    print_test_case("v1.0is05", "test_many_to_one");
+    print_test_case("v1.0iss05", "test_many_to_one");
 
     // test start
     tear_up();
@@ -702,12 +700,12 @@ static void test_many_to_one() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_many_to_many() {
     // print test case
-    print_test_case("v1.0is06", "test_many_to_many");
+    print_test_case("v1.0iss06", "test_many_to_many");
 
     // test start
     tear_up();
@@ -749,12 +747,12 @@ static void test_many_to_many() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_add_a_device() {
     // print test case
-    print_test_case("v1.0is07", "test_add_a_device");
+    print_test_case("v1.0iss07", "test_add_a_device");
 
     // test start
     tear_up();
@@ -798,12 +796,12 @@ static void test_add_a_device() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_session_no_opk() {
     // print test case
-    print_test_case("v1.0is08", "test_session_no_opk");
+    print_test_case("v1.0iss08", "test_session_no_opk");
 
     // test start
     tear_up();
@@ -828,12 +826,12 @@ static void test_session_no_opk() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_invite_twice() {
     // print test case
-    print_test_case("v1.0is09", "test_invite_twice");
+    print_test_case("v1.0iss09", "test_invite_twice");
 
     // test start
     tear_up();
@@ -863,12 +861,12 @@ static void test_invite_twice() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_invite_interaction() {
     // print test case
-    print_test_case("v1.0is10", "test_invite_interaction");
+    print_test_case("v1.0iss10", "test_invite_interaction");
 
     // test start
     tear_up();
@@ -900,7 +898,7 @@ static void test_invite_interaction() {
     e2ees__invite_response__free_unpacked(response, NULL);
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 int main() {

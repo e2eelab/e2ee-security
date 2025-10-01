@@ -87,6 +87,7 @@ void print_hex(char *title, uint8_t *msg, size_t msg_len);
 void print_msg(char *title, uint8_t *msg, size_t len);
 void print_log(char *log_msg, int log_code);
 void print_result(char *title, bool success);
+void print_test_case_final();
 
 bool is_null(void *pointer_1, void *pointer_2);
 bool is_not_null(void *pointer_1, void *pointer_2);

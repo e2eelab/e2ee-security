@@ -15,6 +15,93 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with E2EE Security.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * @defgroup new_device_int new device test
+ * @ingroup Integration
+ * This includes integration tests about session.
+ * 
+ * @defgroup new_device_test_two_members_session two members test
+ * @ingroup new_device_int
+ * @{
+ * @section sec51001 Test Case ID
+ * v1.0ind01
+ * @section sec51002 Test Case Title
+ * test_two_members_session
+ * @section sec51003 Test Description
+ * Alice and Bob establish their session. Alice adds a new device.
+ * @section sec51004 Test Objectives
+ * To assure that the session still works after one member adds a new device.
+ * @section sec51005 Preconditions
+ * @section sec51006 Test Steps
+ * Step 1: Alice invites Bob to create a session.\n
+ * Step 2: Alice adds a new device.\n
+ * Step 3: Alice sends a message to Bob.\n
+ * Step 4: Bob decrypts the message.
+ * @section sec51007 Expected Results
+ * No output.
+ * @}
+ * 
+ * @defgroup new_device_test_two_members_four_devices two members and four devices test
+ * @ingroup new_device_int
+ * @{
+ * @section sec51101 Test Case ID
+ * v1.0ind02
+ * @section sec51102 Test Case Title
+ * test_two_members_four_devices
+ * @section sec51103 Test Description
+ * Alice and Bob establish their session. Alice and Bob add a new device respectively.
+ * @section sec51104 Test Objectives
+ * To assure that the session still works after the two members both add a new device.
+ * @section sec51105 Preconditions
+ * @section sec51106 Test Steps
+ * Step 1: Alice invites Bob to create a session.\n
+ * Step 2: Alice adds a new device.\n
+ * Step 3: Alice and Bob send a message to each other.\n
+ * Step 4: Bob adds a new device.\n
+ * Step 5: Alice and Bob send a message to each other.
+ * @section sec51107 Expected Results
+ * No output.
+ * @}
+ * 
+ * @defgroup new_device_test_multiple_devices multiple devices test
+ * @ingroup new_device_int
+ * @{
+ * @section sec51201 Test Case ID
+ * v1.0ind03
+ * @section sec51202 Test Case Title
+ * test_multiple_devices
+ * @section sec51203 Test Description
+ * Alice has two devices while Bob has one device. Alice adds a new device.
+ * @section sec51204 Test Objectives
+ * To assure that the session still works after one member adds a new device.
+ * @section sec51205 Preconditions
+ * @section sec51206 Test Steps
+ * Step 1: Alice registers two devices and Bob register one device.\n
+ * Step 2: Alice invites Bob to create a session.\n
+ * Step 3: Alice adds a new device.\n
+ * Step 4: Bob sends a message to Alice.
+ * @section sec51207 Expected Results
+ * No output.
+ * @}
+ * 
+ * @defgroup new_device_test_several_members_and_groups several members and groups test
+ * @ingroup new_device_int
+ * @{
+ * @section sec51401 Test Case ID
+ * v1.0ind04
+ * @section sec51402 Test Case Title
+ * test_several_members_and_groups
+ * @section sec51403 Test Description
+ * There are some members and groups in this test.
+ * @section sec51404 Test Objectives
+ * To assure that several sessions and group sessions can work.
+ * @section sec51405 Preconditions
+ * @section sec51406 Test Steps
+ * 
+ * @section sec51407 Expected Results
+ * No output.
+ * @}
+ * 
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,7 +115,7 @@
 #include "test_util.h"
 #include "test_plugin.h"
 
-#define account_data_max 10
+#define account_data_max 20
 #define group_max 10
 
 static E2ees__Account *account_data[account_data_max];
@@ -36,6 +123,7 @@ static E2ees__Account *account_data[account_data_max];
 static uint8_t account_data_insert_pos;
 
 static uint8_t test_plaintext[] = "New devices test!!!";
+static size_t test_plaintext_len;
 
 static void on_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg) {
     // print_log((char *)log_msg, log_code);
@@ -86,7 +174,12 @@ static void on_other_device_msg_received(
     // printf("%s received the message from other devices!\n", to_address->user->user_name);
 }
 
-static void on_group_msg_received(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *group_address, uint8_t *plaintext, size_t plaintext_len) {
+static void on_group_msg_received(
+    E2ees__E2eeAddress *user_address,
+    E2ees__E2eeAddress *from_address,
+    E2ees__E2eeAddress *group_address,
+    uint8_t *plaintext, size_t plaintext_len
+) {
     assert(memcmp(plaintext, test_plaintext, plaintext_len) == 0);
     // printf("%s received the message from a group member!\n", user_address->user->user_name);
 }
@@ -137,6 +230,8 @@ static e2ees_event_handler_t test_event_handler = {
 };
 
 static void test_begin(){
+    test_plaintext_len = sizeof(test_plaintext) - 1;
+
     int i;
     for (i = 0; i < account_data_max; i++) {
         account_data[i] = NULL;
@@ -161,109 +256,6 @@ static void test_end(){
     account_data_insert_pos = 0;
 }
 
-static void mock_alice_account(const char *user_name) {
-    uint32_t e2ees_pack_id = gen_e2ees_pack_id_ecc();
-    const char *device_id = generate_uuid_str();
-    const char *authenticator = "alice@domain.com.tw";
-    const char *auth_code = "123456";
-    E2ees__RegisterUserResponse *response = NULL;
-    register_user(
-        &response,
-        e2ees_pack_id,
-        user_name,
-        user_name,
-        device_id,
-        authenticator,
-        auth_code
-    );
-    assert(safe_strcmp(device_id, response->address->user->device_id));
-    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
-}
-
-static void mock_bob_account(const char *user_name) {
-    uint32_t e2ees_pack_id = gen_e2ees_pack_id_ecc();
-    const char *device_id = generate_uuid_str();
-    const char *authenticator = "bob@domain.com.tw";
-    const char *auth_code = "654321";
-    E2ees__RegisterUserResponse *response = NULL;
-    register_user(
-        &response,
-        e2ees_pack_id,
-        user_name,
-        user_name,
-        device_id,
-        authenticator,
-        auth_code
-    );
-    assert(safe_strcmp(device_id, response->address->user->device_id));
-    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
-}
-
-static void mock_claire_account(const char *user_name) {
-    uint32_t e2ees_pack_id = gen_e2ees_pack_id_ecc();
-    const char *device_id = generate_uuid_str();
-    const char *authenticator = "claire@domain.com.tw";
-    const char *auth_code = "987654";
-    E2ees__RegisterUserResponse *response = NULL;
-    register_user(
-        &response,
-        e2ees_pack_id,
-        user_name,
-        user_name,
-        device_id,
-        authenticator,
-        auth_code
-    );
-    assert(safe_strcmp(device_id, response->address->user->device_id));
-    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
-}
-
-static void mock_alice_pqc_account(const char *user_name) {
-    uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
-    char *device_id = generate_uuid_str();
-    const char *authenticator = "alice@domain.com.tw";
-    const char *auth_code = "123456";
-    E2ees__RegisterUserResponse *response = NULL;
-    register_user(
-        &response,
-        e2ees_pack_id,
-        user_name,
-        user_name,
-        device_id,
-        authenticator,
-        auth_code
-    );
-    assert(safe_strcmp(device_id, response->address->user->device_id));
-    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
-
-    // release
-    free(device_id);
-    e2ees__register_user_response__free_unpacked(response, NULL);
-}
-
-static void mock_bob_pqc_account(const char *user_name) {
-    uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
-    char *device_id = generate_uuid_str();
-    const char *authenticator = "bob@domain.com.tw";
-    const char *auth_code = "654321";
-    E2ees__RegisterUserResponse *response = NULL;
-    register_user(
-        &response,
-        e2ees_pack_id,
-        user_name,
-        user_name,
-        device_id,
-        authenticator,
-        auth_code
-    );
-    assert(safe_strcmp(device_id, response->address->user->device_id));
-    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
-
-    // release
-    free(device_id);
-    e2ees__register_user_response__free_unpacked(response, NULL);
-}
-
 static void mock_user_pqc_account(const char *user_name, const char *authenticator, const char *auth_code) {
     int ret = 0;
     uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
@@ -279,7 +271,6 @@ static void mock_user_pqc_account(const char *user_name, const char *authenticat
         auth_code
     );
     assert(ret == 0);
-    // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
     free(device_id);
@@ -318,10 +309,8 @@ static void test_group_encryption(
 }
 
 static void test_two_members_session() {
-    // test start
-    printf("test_two_members_session begin!!!\n");
-
-    size_t test_plaintext_len = sizeof(test_plaintext) - 1;
+    // print test case
+    print_test_case("v1.0ind01", "test_two_members_session");
 
     tear_up();
     test_begin();
@@ -356,14 +345,12 @@ static void test_two_members_session() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_two_members_four_devices() {
-    // test start
-    printf("test_two_members_four_devices begin!!!\n");
-
-    size_t test_plaintext_len = sizeof(test_plaintext) - 1;
+    // print test case
+    print_test_case("v1.0ind02", "test_two_members_four_devices");
 
     tear_up();
     test_begin();
@@ -429,14 +416,12 @@ static void test_two_members_four_devices() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_multiple_devices() {
-    // test start
-    printf("test_several_members_and_groups begin!!!\n");
-
-    size_t test_plaintext_len = sizeof(test_plaintext) - 1;
+    // print test case
+    print_test_case("v1.0ind03", "test_multiple_devices");
 
     tear_up();
     test_begin();
@@ -471,14 +456,12 @@ static void test_multiple_devices() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 static void test_several_members_and_groups() {
-    // test start
-    printf("test_several_members_and_groups begin!!!\n");
-
-    size_t test_plaintext_len = sizeof(test_plaintext) - 1;
+    // print test case
+    print_test_case("v1.0ind04", "test_several_members_and_groups");
 
     tear_up();
     test_begin();
@@ -589,19 +572,15 @@ static void test_several_members_and_groups() {
     sleep(3);
 
     // Bob sends a message to Alice
-    printf("Bob sent a message to Alice.\n");
     test_encryption(bob_address, alice_user_id, alice_domain, test_plaintext, test_plaintext_len);
 
     // Alice sends a message to the first group
-    printf("Alice sent a message to the first group.\n");
     test_group_encryption(alice_address_1, create_group_response_1->group_address, test_plaintext, test_plaintext_len);
 
     // Frank sends a message to the second group
-    printf("Frank sent a message to the second group.\n");
     test_group_encryption(frank_address, create_group_response_2->group_address, test_plaintext, test_plaintext_len);
 
     // Emily sends a message to David
-    printf("Emily sent a message to David.\n");
     test_encryption(emily_address_2, david_user_id, david_domain, test_plaintext, test_plaintext_len);
 
     // release
@@ -639,13 +618,13 @@ static void test_several_members_and_groups() {
     // test stop
     test_end();
     tear_down();
-    printf("====================================\n");
+    print_test_case_final();
 }
 
 int main() {
-    // test_two_members_session();
-    // test_two_members_four_devices();
-    // test_multiple_devices();
+    test_two_members_session();
+    test_two_members_four_devices();
+    test_multiple_devices();
     test_several_members_and_groups();
     return 0;
 }

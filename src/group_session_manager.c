@@ -1339,12 +1339,12 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__GroupSession *inbound_group_session = NULL;
-    uint32_t sign_key_len;
+    uint32_t sign_key_len = 0;
     E2ees__GroupMsgPayload *group_msg_payload = NULL;
     uint8_t *identity_public_key = NULL;
     E2ees__MsgKey *msg_key = NULL;
     uint8_t *plaintext_data = NULL;
-    size_t plaintext_data_len;
+    size_t plaintext_data_len = 0;
 
     if (is_valid_address(receiver_address)) {
         if (is_valid_e2ee_msg(e2ee_msg)) {
