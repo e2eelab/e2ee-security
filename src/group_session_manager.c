@@ -159,7 +159,7 @@ bool consume_create_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__Creat
     char *group_name = NULL;
     E2ees__E2eeAddress *sender_address = NULL;
     E2ees__E2eeAddress *group_address = NULL;
-    size_t group_members_num;
+    size_t group_members_num = 0;
     E2ees__GroupMember **group_member_list = NULL;
     size_t i;
     E2ees__GroupSession *inbound_group_session = NULL;
@@ -375,7 +375,7 @@ int consume_add_group_members_response(
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__GroupMember **new_group_members = NULL;
-    size_t new_group_members_num;
+    size_t new_group_members_num = 0;
     E2ees__E2eeAddress *session_owner = NULL;
     char *group_name = NULL;
     E2ees__E2eeAddress *group_address = NULL;
@@ -432,11 +432,11 @@ bool consume_add_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ees__
     E2ees__E2eeAddress *group_address = NULL;
     char *group_name = NULL;
     E2ees__GroupMember **new_group_members = NULL;
-    size_t new_group_members_num;
+    size_t new_group_members_num = 0;
     uint32_t e2ees_pack_id;
     E2ees__GroupSession *outbound_group_session = NULL;
     E2ees__GroupSession *inbound_group_session = NULL;
-    uint32_t their_sequence;
+    uint32_t their_sequence = 0;
 
     if (is_valid_address(receiver_address)) {
         if (is_valid_add_group_members_msg(msg)) {
@@ -650,11 +650,11 @@ bool consume_add_group_member_device_msg(
     E2ees__E2eeAddress *group_address = NULL;
     char *group_name = NULL;
     E2ees__GroupMember **group_member_list = NULL;
-    size_t group_members_num;
+    size_t group_members_num = 0;
     uint32_t e2ees_pack_id;
     E2ees__GroupSession *outbound_group_session = NULL;
     E2ees__GroupSession *inbound_group_session = NULL;
-    uint32_t their_sequence;
+    uint32_t their_sequence = 0;
 
     if (is_valid_address(receiver_address)) {
         if (is_valid_add_group_member_device_msg(msg)) {
@@ -814,7 +814,7 @@ int consume_remove_group_members_response(
     E2ees__E2eeAddress *sender_address = NULL;
     E2ees__E2eeAddress *group_address = NULL;
     E2ees__GroupMember **group_member_list = NULL;
-    size_t group_members_num;
+    size_t group_members_num = 0;
     char *old_session_id = NULL;
     char *group_name = NULL;
 
@@ -876,7 +876,7 @@ bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ee
     char *group_name = NULL;
     E2ees__E2eeAddress *sender_address = NULL;
     E2ees__E2eeAddress *group_address = NULL;
-    size_t new_group_members_num;
+    size_t new_group_members_num = 0;
     E2ees__GroupMember **new_group_members = NULL;
     E2ees__GroupSession *inbound_group_session = NULL;
     bool new_group_session = true;

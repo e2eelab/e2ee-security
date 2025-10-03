@@ -169,10 +169,10 @@ int generate_identity_key(
 ) {
     int ret = E2EES_RESULT_SUCC;
 
-    uint32_t asym_pub_key_len;
-    uint32_t asym_priv_key_len;
-    uint32_t sign_pub_key_len;
-    uint32_t sign_priv_key_len;
+    uint32_t asym_pub_key_len = 0;
+    uint32_t asym_priv_key_len = 0;
+    uint32_t sign_pub_key_len = 0;
+    uint32_t sign_priv_key_len = 0;
     E2ees__IdentityKey *identity_key = NULL;
     E2ees__KeyPair *asym_key_pair = NULL;
     E2ees__KeyPair *sign_key_pair = NULL;
@@ -240,13 +240,13 @@ int generate_signed_pre_key(
 ) {
     int ret = E2EES_RESULT_SUCC;
 
-    uint32_t asym_pub_key_len;
-    uint32_t asym_priv_key_len;
-    uint32_t sig_len;
+    uint32_t asym_pub_key_len = 0;
+    uint32_t asym_priv_key_len = 0;
+    uint32_t sig_len = 0;
     E2ees__SignedPreKey *signed_pre_key = NULL;
     E2ees__KeyPair *key_pair = NULL;
     uint8_t *signature_data = NULL;
-    size_t signature_data_len;
+    size_t signature_data_len = 0;
 
     // get the cipher suite
     const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
@@ -343,8 +343,8 @@ int generate_opks(
 ) {
     int ret = E2EES_RESULT_SUCC;
 
-    uint32_t asym_pub_key_len;
-    uint32_t asym_priv_key_len;
+    uint32_t asym_pub_key_len = 0;
+    uint32_t asym_priv_key_len = 0;
     E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
     E2ees__KeyPair *key_pair = NULL;
     size_t i;
@@ -413,8 +413,8 @@ int insert_opks(E2ees__Account *account, E2ees__OneTimePreKey **src, size_t src_
     int ret = E2EES_RESULT_SUCC;
 
     size_t i, j;
-    size_t old_opk_num;
-    size_t new_opk_num;
+    size_t old_opk_num = 0;
+    size_t new_opk_num = 0;
     E2ees__OneTimePreKey **temp_one_time_pre_key_list = NULL;
     E2ees__OneTimePreKey **cur_one_time_pre_key_list = NULL;
     E2ees__OneTimePreKey *cur_one_time_pre_key = NULL;
@@ -523,7 +523,7 @@ static void copy_one_time_pre_key_list(E2ees__OneTimePreKey **dest, E2ees__OneTi
 
 void free_one_time_pre_key(E2ees__Account *account) {
     size_t used_num = 0;
-    size_t new_num;
+    size_t new_num = 0;
     size_t i;
     if (account->one_time_pre_key_list) {
         for (i = 0; i < account->n_one_time_pre_key_list; i++) {

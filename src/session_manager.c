@@ -38,11 +38,11 @@ typedef struct group_address_node {
 
 static void send_pending_plaintext_data(E2ees__Session *outbound_session) {
     // load pending plaintext data(may be the group pre-key or the common plaintext)
-    uint32_t pending_plaintext_data_list_num;
-    char **pending_plaintext_id_list;
-    uint8_t **pending_plaintext_data_list;
-    size_t *pending_plaintext_data_len_list;
-    E2ees__NotifLevel *notif_level_list;
+    uint32_t pending_plaintext_data_list_num = 0;
+    char **pending_plaintext_id_list = NULL;
+    uint8_t **pending_plaintext_data_list = NULL;
+    size_t *pending_plaintext_data_len_list = NULL;
+    E2ees__NotifLevel *notif_level_list = NULL;
     pending_plaintext_data_list_num =
         get_e2ees_plugin()->db_handler.load_pending_plaintext_data(
             outbound_session->our_address,
@@ -134,7 +134,7 @@ int consume_get_pre_key_bundle_response(
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__PreKeyBundle **their_pre_key_bundles = NULL;
-    size_t n_pre_key_bundles;
+    size_t n_pre_key_bundles = 0;
     E2ees__PreKeyBundle *cur_pre_key_bundle = NULL;
     E2ees__E2eeAddress *to_address = NULL;
     uint32_t e2ees_pack_id;
@@ -369,7 +369,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
     E2ees__Session *inbound_session = NULL;
     E2ees__One2oneMsgPayload *payload = NULL;
     uint8_t *decrypted_data_out = NULL;
-    size_t decrypted_data_len_out;
+    size_t decrypted_data_len_out = 0;
 
     if (is_valid_e2ee_msg(e2ee_msg)) {
         // load the corresponding inbound session
@@ -608,12 +608,12 @@ bool consume_add_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__Ad
 
     E2ees__E2eeAddress *new_user_address = NULL;
     E2ees__E2eeAddress **old_address_list = NULL;
-    size_t old_address_list_number;
+    size_t old_address_list_number = 0;
     group_address_node *group_address_list = NULL;
     group_address_node *cur_group_address_node = NULL;
     group_address_node *tail_group_address_node = NULL;
     E2ees__E2eeAddress **group_addresses = NULL;
-    size_t group_address_num;
+    size_t group_address_num = 0;
     size_t i, j;
 
     if (!is_valid_address(receiver_address)) {

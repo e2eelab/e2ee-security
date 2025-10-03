@@ -339,10 +339,10 @@ int new_outbound_group_session_by_sender(
     E2ees__GroupSession *outbound_group_session = NULL;
     E2ees__GroupInfo *group_info = NULL;
     uint8_t *group_pre_key_plaintext_data = NULL;
-    size_t group_pre_key_plaintext_data_len;
+    size_t group_pre_key_plaintext_data_len = 0;
     char *cur_user_id = NULL, *cur_user_domain = NULL;
     E2ees__Session **outbound_sessions = NULL;
-    size_t outbound_sessions_num;
+    size_t outbound_sessions_num = 0;
     E2ees__Session *outbound_session = NULL;
     E2ees__SendOne2oneMsgResponse *response = NULL;
     E2ees__InviteResponse **invite_response_list = NULL;
@@ -621,9 +621,9 @@ int new_outbound_group_session_invited(
     E2ees__IdentityKey *identity_key = NULL;
     uint8_t *identity_public_key = NULL;
     E2ees__GroupSession *outbound_group_session = NULL;
-    uint32_t sign_key_len;
-    uint32_t ad_len;
-    size_t n_adding_member_info_list;
+    uint32_t sign_key_len = 0;
+    uint32_t ad_len = 0;
+    size_t n_adding_member_info_list = 0;
     ProtobufCBinaryData *sender_chain_key = NULL;
     ProtobufCBinaryData **adding_members_chain_key = NULL;
     size_t i;
@@ -792,8 +792,8 @@ int new_inbound_group_session_by_member_id(
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__GroupSession *inbound_group_session = NULL;
-    uint32_t sign_key_len;
-    uint32_t ad_len;
+    uint32_t sign_key_len = 0;
+    uint32_t ad_len = 0;
 
     if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
         e2ees_notify_log(
@@ -854,9 +854,9 @@ int complete_inbound_group_session_by_pre_key_bundle(
     int ret = E2EES_RESULT_SUCC;
 
     uint8_t *secret = NULL;
-    uint32_t sign_key_len;
-    size_t secret_len;
-    uint32_t hf_len;
+    uint32_t sign_key_len = 0;
+    size_t secret_len = 0;
+    uint32_t hf_len = 0;
 
     if (!is_valid_group_session_by_member_id(inbound_group_session)) {
         e2ees_notify_log(NULL, BAD_GROUP_SESSION, "complete_inbound_group_session_by_pre_key_bundle()");
@@ -912,10 +912,10 @@ int complete_inbound_group_session_by_member_id(
     int ret = E2EES_RESULT_SUCC;
 
     uint8_t *secret = NULL;
-    uint32_t sign_key_len;
-    uint32_t ad_len;
-    size_t secret_len;
-    uint32_t hf_len;
+    uint32_t sign_key_len = 0;
+    uint32_t ad_len = 0;
+    size_t secret_len = 0;
+    uint32_t hf_len = 0;
 
     if (!is_valid_group_session_by_pre_key_bundle(inbound_group_session)) {
         e2ees_notify_log(NULL, BAD_GROUP_SESSION, "complete_inbound_group_session_by_member_id()");
@@ -978,10 +978,10 @@ int new_and_complete_inbound_group_session(
     uint8_t *secret = NULL;
     uint8_t *identity_public_key = NULL;
     ProtobufCBinaryData *group_seed = NULL;
-    uint32_t sign_key_len;
-    uint32_t ad_len;
-    size_t secret_len;
-    uint32_t hf_len;
+    uint32_t sign_key_len = 0;
+    uint32_t ad_len = 0;
+    size_t secret_len = 0;
+    uint32_t hf_len = 0;
 
     if (is_valid_group_member_info(group_member_id)) {
         identity_public_key = group_member_id->sign_public_key.data;
@@ -1054,8 +1054,8 @@ int new_and_complete_inbound_group_session_with_chain_key(
 
     E2ees__GroupSession *inbound_group_session = NULL;
     uint8_t *identity_public_key = NULL;
-    uint32_t sign_key_len;
-    uint32_t ad_len;
+    uint32_t sign_key_len = 0;
+    uint32_t ad_len = 0;
 
     if (is_valid_group_member_info(group_member_info)) {
         identity_public_key = group_member_info->sign_public_key.data;
@@ -1111,8 +1111,8 @@ int new_and_complete_inbound_group_session_with_ratchet_state(
 
     E2ees__GroupSession *inbound_group_session = NULL;
     uint8_t *identity_public_key = NULL;
-    uint32_t sign_key_len;
-    uint32_t ad_len;
+    uint32_t sign_key_len = 0;
+    uint32_t ad_len = 0;
 
     if (!is_valid_address(user_address)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "new_and_complete_inbound_group_session_with_ratchet_state()");
@@ -1188,14 +1188,14 @@ int renew_outbound_group_session_by_welcome_and_add(
     E2ees__GroupInfo *old_group_info = NULL;
     char *cur_user_id = NULL, *cur_user_domain = NULL;
     uint8_t *group_ratchet_state_plaintext_data = NULL;
-    size_t group_ratchet_state_plaintext_data_len;
+    size_t group_ratchet_state_plaintext_data_len = 0;
     E2ees__Session **outbound_sessions = NULL;
-    size_t outbound_sessions_num;
+    size_t outbound_sessions_num = 0;
     E2ees__Session *outbound_session = NULL;
     E2ees__SendOne2oneMsgResponse *response = NULL;
     ProtobufCBinaryData **their_chain_keys = NULL;
     E2ees__GroupSession **inbound_group_sessions = NULL;
-    size_t inbound_group_sessions_num;
+    size_t inbound_group_sessions_num = 0;
     size_t i, j;
 
     if (!is_valid_group_session(outbound_group_session)) {
@@ -1477,12 +1477,12 @@ int renew_group_sessions_with_new_device(
     char *cur_user_id = NULL, *cur_user_domain = NULL;
     char *cur_user_device_id = NULL;
     uint8_t *group_ratchet_state_plaintext_data = NULL;
-    size_t group_ratchet_state_plaintext_data_len;
+    size_t group_ratchet_state_plaintext_data_len = 0;
     E2ees__Session *outbound_session = NULL;
     E2ees__SendOne2oneMsgResponse *response = NULL;
     ProtobufCBinaryData *their_chain_keys = NULL;
     E2ees__GroupSession **inbound_group_sessions = NULL;
-    size_t inbound_group_sessions_num;
+    size_t inbound_group_sessions_num = 0;
     size_t i, j;
 
     if (!is_valid_group_session(outbound_group_session)) {

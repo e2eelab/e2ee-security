@@ -283,7 +283,7 @@ int pqc_new_inbound_session(
     uint8_t x3dh_epoch = 3;
     int asym_pub_key_len;
     int ad_len;
-    int hash_input_len;
+    int hash_input_len = 0;
     uint8_t *hash_input = NULL;
     int shared_key_len;
     int hf_len;

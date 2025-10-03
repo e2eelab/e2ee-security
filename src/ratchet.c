@@ -188,7 +188,7 @@ static int create_msg_keys(
     E2ees__MsgKey *msg_key = NULL;
     uint8_t *output = NULL;
     int msg_key_len = 0;
-    int hf_len;
+    int hf_len = 0;
 
     if (is_valid_cipher_suite(cipher_suite)) {
         if (!is_valid_chain_key(chain_key)) {
@@ -334,8 +334,8 @@ static size_t verify_and_decrypt_for_new_chain(
     int ret = E2EES_RESULT_SUCC;
 
     bool pqc_param;
-    uint32_t coming_root_sequence;
-    uint32_t our_root_sequence;
+    uint32_t coming_root_sequence = 0;
+    uint32_t our_root_sequence = 0;
 
     if (is_valid_cipher_suite(cipher_suite)) {
         pqc_param = cipher_suite->kem_suite->get_param().pqc_param;
@@ -419,8 +419,8 @@ int initialise_as_bob(
 
     E2ees__Ratchet *ratchet = NULL;
     bool pqc_param;
-    int shared_key_len;
-    int hf_len;
+    int shared_key_len = 0;
+    int hf_len = 0;
     uint8_t *derived_secrets = NULL;
     size_t derived_secrets_len = 0;
     ProtobufCBinaryData ciphertext = {0, NULL};
@@ -709,9 +709,9 @@ int decrypt_ratchet(
     int ret = E2EES_RESULT_SUCC;
 
     bool pqc_param;
-    int ratchet_key_len;
-    uint32_t coming_root_sequence;
-    uint32_t our_root_sequence;
+    int ratchet_key_len = 0;
+    uint32_t coming_root_sequence = 0;
+    uint32_t our_root_sequence = 0;
     E2ees__ReceiverChainNode *corresponding_receiver_chain = NULL;
     bool skipped_message = false;
 

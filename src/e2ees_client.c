@@ -370,7 +370,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg(
 ) {
     // pack common plaintext before sending it
     uint8_t *common_plaintext_data = NULL;
-    size_t common_plaintext_data_len;
+    size_t common_plaintext_data_len = 0;
     pack_common_plaintext(
         plaintext_data, plaintext_data_len,
         E2EES__PLAINTEXT__PAYLOAD_COMMON_MSG,
