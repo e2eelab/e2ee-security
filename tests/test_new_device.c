@@ -283,7 +283,8 @@ static void test_encryption(
 ) {
     // send encrypted msg
     E2ees__SendOne2oneMsgResponse *response = NULL;
-    response = send_one2one_msg(
+    int ret = send_one2one_msg(
+        &response,
         from_address, to_user_id, to_domain,
         E2EES__NOTIF_LEVEL__NOTIF_LEVEL_NORMAL,
         plaintext, plaintext_len);

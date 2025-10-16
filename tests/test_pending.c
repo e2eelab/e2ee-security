@@ -382,12 +382,19 @@ static void test_sending_before_accept() {
     size_t plaintext_len = sizeof(plaintext) - 1;
 
     int i;
+    E2ees__SendOne2oneMsgResponse *send_one2one_msg_response = NULL;
     for (i = 0; i < 20; i++) {
         send_one2one_msg(
+            &send_one2one_msg_response,
             alice_address,
             bob_address->user->user_id, bob_address->domain,
             E2EES__NOTIF_LEVEL__NOTIF_LEVEL_NORMAL,
             plaintext, plaintext_len);
+
+        if (send_one2one_msg_response != NULL) {
+            e2ees__send_one2one_msg_response__free_unpacked(send_one2one_msg_response, NULL);
+            send_one2one_msg_response = NULL;
+        }
     }
 
     // invite

@@ -86,15 +86,17 @@ E2ees__InviteResponse *new_invite(
 
 /**
  * @brief Send one2one msg.
+ * @param response_out
  * @param from
  * @param to_user_id
  * @param to_domain
  * @param notif_level
  * @param plaintext_data
  * @param plaintext_data_len
- * @return E2ees__SendOne2oneMsgResponse *
+ * @return 0 if success
  */
-E2ees__SendOne2oneMsgResponse *send_one2one_msg(
+int send_one2one_msg(
+    E2ees__SendOne2oneMsgResponse **response_out,
     E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain,
     uint32_t notif_level,
     const uint8_t *plaintext_data, size_t plaintext_data_len

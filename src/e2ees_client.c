@@ -363,22 +363,31 @@ void send_sync_invite_msg(E2ees__E2eeAddress *from, const char *to_user_id, cons
     }
 }
 
-E2ees__SendOne2oneMsgResponse *send_one2one_msg(
+int send_one2one_msg(
+    E2ees__SendOne2oneMsgResponse **response_out,
     E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain,
     uint32_t notif_level,
     const uint8_t *plaintext_data, size_t plaintext_data_len
 ) {
-    // pack common plaintext before sending it
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__SendOne2oneMsgResponse *response = NULL;
     uint8_t *common_plaintext_data = NULL;
     size_t common_plaintext_data_len = 0;
+    E2ees__Session **outbound_sessions = NULL;
+    size_t outbound_sessions_num = 0;
+    E2ees__E2eeAddress *to = NULL;
+    bool succ = false;
+    size_t i;
+
+    // pack common plaintext before sending it
     pack_common_plaintext(
         plaintext_data, plaintext_data_len,
         E2EES__PLAINTEXT__PAYLOAD_COMMON_MSG,
         &common_plaintext_data, &common_plaintext_data_len
     );
 
-    E2ees__Session **outbound_sessions = NULL;
-    size_t outbound_sessions_num = get_e2ees_plugin()->db_handler.load_outbound_sessions(from, to_user_id, to_domain, &outbound_sessions);
+    outbound_sessions_num = get_e2ees_plugin()->db_handler.load_outbound_sessions(from, to_user_id, to_domain, &outbound_sessions);
     if (outbound_sessions_num == 0 || outbound_sessions == NULL) {
         // save common_plaintext_data and will be resent after the first outbound session established
         e2ees_notify_log(
@@ -387,7 +396,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg(
             "send_one2one_msg(): outbound_sessions_num = %zu, store common_plaintext_data",
             outbound_sessions_num
         );
-        E2ees__E2eeAddress *to = (E2ees__E2eeAddress *)malloc(sizeof(E2ees__E2eeAddress));
+        to = (E2ees__E2eeAddress *)malloc(sizeof(E2ees__E2eeAddress));
         e2ees__e2ee_address__init(to);
         to->domain = strdup(to_domain);
         E2ees__PeerUser *peer_user = (E2ees__PeerUser *)malloc(sizeof(E2ees__PeerUser));
@@ -403,78 +412,86 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg(
             common_plaintext_data_len,
             notif_level
         );
-        // release
-        e2ees__e2ee_address__free_unpacked(to, NULL);
-        free_mem((void **)&common_plaintext_data, common_plaintext_data_len);
-        // done
-        E2ees__SendOne2oneMsgResponse *response = (E2ees__SendOne2oneMsgResponse *)malloc(sizeof(E2ees__SendOne2oneMsgResponse));
-        e2ees__send_one2one_msg_response__init(response);
-        response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_REQUEST_TIMEOUT;
-        return response;
+
+        ret = E2EES_RESULT_FAIL;
     }
 
-    size_t i;
-    bool succ = false;
-    for (i = 0; i < outbound_sessions_num; i++) {
-        E2ees__Session *outbound_session = outbound_sessions[i];
-        if (outbound_session->responded == false) {
+    if (ret == E2EES_RESULT_SUCC) {
+        for (i = 0; i < outbound_sessions_num; i++) {
+            E2ees__Session *outbound_session = outbound_sessions[i];
+            if (outbound_session->responded == false) {
+                e2ees_notify_log(
+                    from,
+                    DEBUG_LOG,
+                    "send_one2one_msg(): outbound session %zu of %zu [%s] not responded, store common_plaintext_data",
+                    i+1,
+                    outbound_sessions_num,
+                    outbound_session->session_id
+                );
+                // store pending common_plaintext_data
+                store_pending_common_plaintext_data_internal(
+                    outbound_session->our_address,
+                    outbound_session->their_address,
+                    common_plaintext_data,
+                    common_plaintext_data_len,
+                    notif_level
+                );
+                continue;
+            }
+
+            // send message to server
+            E2ees__SendOne2oneMsgResponse *session_response = send_one2one_msg_internal(
+                outbound_session,
+                notif_level,
+                common_plaintext_data, common_plaintext_data_len
+            );
             e2ees_notify_log(
                 from,
                 DEBUG_LOG,
-                "send_one2one_msg(): outbound session %zu of %zu [%s] not responded, store common_plaintext_data",
+                "send_one2one_msg(): outbound session %zu of %zu [%s] response code: %d",
                 i+1,
                 outbound_sessions_num,
-                outbound_session->session_id
+                outbound_session->session_id,
+                session_response->code
             );
-            // store pending common_plaintext_data
-            store_pending_common_plaintext_data_internal(
-                outbound_session->our_address,
-                outbound_session->their_address,
-                common_plaintext_data,
-                common_plaintext_data_len,
-                notif_level
-            );
+            if (session_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
+                succ = true;
+            }
             // release
-            e2ees__session__free_unpacked(outbound_session, NULL);
-            continue;
+            e2ees__send_one2one_msg_response__free_unpacked(session_response, NULL);
+            session_response = NULL;
         }
+    }
 
-        // send message to server
-        E2ees__SendOne2oneMsgResponse *response = send_one2one_msg_internal(
-            outbound_session,
-            notif_level,
-            common_plaintext_data, common_plaintext_data_len
-        );
-        e2ees_notify_log(
-            from,
-            DEBUG_LOG,
-            "send_one2one_msg(): outbound session %zu of %zu [%s] response code: %d",
-            i+1,
-            outbound_sessions_num,
-            outbound_session->session_id,
-            response->code
-        );
-        if (response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
-            succ = true;
-        }
-        // release
-        e2ees__send_one2one_msg_response__free_unpacked(response, NULL);
-        e2ees__session__free_unpacked(outbound_session, NULL);
+    // send the message to other self devices
+    if (ret == E2EES_RESULT_SUCC) {
+        send_sync_msg(from, plaintext_data, plaintext_data_len);
     }
 
     // release
     free_mem((void **)&common_plaintext_data, common_plaintext_data_len);
-    free_mem((void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
-
-    // send the message to other self devices
-    send_sync_msg(from, plaintext_data, plaintext_data_len);
+    if (to != NULL) {
+        e2ees__e2ee_address__free_unpacked(to, NULL);
+        to = NULL;
+    }
+    if (outbound_sessions != NULL) {
+        free_mem((void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
+        outbound_sessions = NULL;
+    }
 
     // done
     // return ok response if there is at least one session sent successfully
-    E2ees__SendOne2oneMsgResponse *response = (E2ees__SendOne2oneMsgResponse *)malloc(sizeof(E2ees__SendOne2oneMsgResponse));
+    response = (E2ees__SendOne2oneMsgResponse *)malloc(sizeof(E2ees__SendOne2oneMsgResponse));
     e2ees__send_one2one_msg_response__init(response);
-    response->code = (succ ? E2EES__RESPONSE_CODE__RESPONSE_CODE_OK : E2EES__RESPONSE_CODE__RESPONSE_CODE_REQUEST_TIMEOUT);
-    return response;
+    if (ret == E2EES_RESULT_SUCC) {
+        response->code = (succ ? E2EES__RESPONSE_CODE__RESPONSE_CODE_OK : E2EES__RESPONSE_CODE__RESPONSE_CODE_REQUEST_TIMEOUT);
+    } else {
+        response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_EXPECTATION_FAILED;
+    }
+
+    *response_out = response;
+
+    return ret;
 }
 
 int create_group(
