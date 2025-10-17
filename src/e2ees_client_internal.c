@@ -418,12 +418,13 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
 
         // release
         free_mem((void **)&request_data, request_data_len);
-        e2ees__send_one2one_msg_response__free_unpacked(response, NULL);
-        
-        // replace response code to enable another try
-        response = (E2ees__SendOne2oneMsgResponse *)malloc(sizeof(E2ees__SendOne2oneMsgResponse));
-        e2ees__send_one2one_msg_response__init(response);
-        response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_REQUEST_TIMEOUT;
+
+        // ensure response is not NULL
+        if (response == NULL) {
+            response = (E2ees__SendOne2oneMsgResponse *)malloc(sizeof(E2ees__SendOne2oneMsgResponse));
+            e2ees__send_one2one_msg_response__init(response);
+            response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_SERVICE_UNAVAILABLE;
+        }
     }
 
     // release

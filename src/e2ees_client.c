@@ -440,7 +440,7 @@ int send_one2one_msg(
             }
 
             // send message to server
-            E2ees__SendOne2oneMsgResponse *session_response = send_one2one_msg_internal(
+            E2ees__SendOne2oneMsgResponse *send_one2one_msg_response = send_one2one_msg_internal(
                 outbound_session,
                 notif_level,
                 common_plaintext_data, common_plaintext_data_len
@@ -452,14 +452,14 @@ int send_one2one_msg(
                 i+1,
                 outbound_sessions_num,
                 outbound_session->session_id,
-                session_response->code
+                send_one2one_msg_response->code
             );
-            if (session_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
+            if (send_one2one_msg_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
                 succ = true;
             }
             // release
-            e2ees__send_one2one_msg_response__free_unpacked(session_response, NULL);
-            session_response = NULL;
+            e2ees__send_one2one_msg_response__free_unpacked(send_one2one_msg_response, NULL);
+            send_one2one_msg_response = NULL;
         }
     }
 
@@ -474,7 +474,11 @@ int send_one2one_msg(
         e2ees__e2ee_address__free_unpacked(to, NULL);
         to = NULL;
     }
-    if (outbound_sessions != NULL) {
+    if (outbound_sessions_num > 0 && outbound_sessions != NULL) {
+        for (i = 0; i < outbound_sessions_num; i++) {
+            e2ees__session__free_unpacked(outbound_sessions[i], NULL);
+            outbound_sessions[i] = NULL;
+        }
         free_mem((void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
         outbound_sessions = NULL;
     }
@@ -484,11 +488,12 @@ int send_one2one_msg(
     response = (E2ees__SendOne2oneMsgResponse *)malloc(sizeof(E2ees__SendOne2oneMsgResponse));
     e2ees__send_one2one_msg_response__init(response);
     if (ret == E2EES_RESULT_SUCC) {
-        response->code = (succ ? E2EES__RESPONSE_CODE__RESPONSE_CODE_OK : E2EES__RESPONSE_CODE__RESPONSE_CODE_REQUEST_TIMEOUT);
+        // there are some outbound sessions, but none of them were processed successfully
+        response->code = (succ ? E2EES__RESPONSE_CODE__RESPONSE_CODE_OK : E2EES__RESPONSE_CODE__RESPONSE_CODE_BAD_REQUEST);
     } else {
         response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_EXPECTATION_FAILED;
+        response->msg = "no outbound sessions";
     }
-
     *response_out = response;
 
     return ret;
@@ -897,7 +902,7 @@ int send_group_msg_with_filter(
         response = get_e2ees_plugin()->proto_handler.send_group_msg(sender_address, auth, send_group_msg_request);
 
         if (!is_valid_send_group_msg_response(response)) {
-            e2ees_notify_log(NULL, BAD_SEND_GROUP_MSG_RESPONSE, "send_group_msg()");
+            e2ees_notify_log(sender_address, BAD_SEND_GROUP_MSG_RESPONSE, "send_group_msg()");
             ret = E2EES_RESULT_FAIL;
             // pack request to request_data
             size_t request_data_len = e2ees__send_group_msg_request__get_packed_size(send_group_msg_request);
@@ -911,11 +916,14 @@ int send_group_msg_with_filter(
 
         // output send_group_msg response
         *response_out = response;
+    } else {
+       e2ees_notify_log(sender_address, BAD_SEND_GROUP_MSG_RESPONSE, "send_group_msg() response is null");
+        *response_out = NULL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {   
         ret = consume_send_group_msg_response(outbound_group_session, response);
-        if (ret != 0) {
+        if (ret != E2EES_RESULT_SUCC) {
             // // pack request to request_data
             // size_t request_data_len = e2ees__send_group_msg_request__get_packed_size(request);
             // uint8_t *request_data = (uint8_t *)malloc(sizeof(uint8_t) * request_data_len);
@@ -929,7 +937,7 @@ int send_group_msg_with_filter(
             // // replace response code to enable another try
             // response = (E2ees__SendGroupMsgResponse *)malloc(sizeof(E2ees__SendGroupMsgResponse));
             // e2ees__send_group_msg_response__init(response);
-            // response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_REQUEST_TIMEOUT;
+            // response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_EXPECTATION_FAILED;
         }
     }
 
