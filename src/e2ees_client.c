@@ -901,44 +901,26 @@ int send_group_msg_with_filter(
     if (ret == E2EES_RESULT_SUCC) {
         response = get_e2ees_plugin()->proto_handler.send_group_msg(sender_address, auth, send_group_msg_request);
 
-        if (!is_valid_send_group_msg_response(response)) {
-            e2ees_notify_log(sender_address, BAD_SEND_GROUP_MSG_RESPONSE, "send_group_msg()");
-            ret = E2EES_RESULT_FAIL;
-            // pack request to request_data
-            size_t request_data_len = e2ees__send_group_msg_request__get_packed_size(send_group_msg_request);
-            uint8_t *request_data = (uint8_t *)malloc(sizeof(uint8_t) * request_data_len);
-            e2ees__send_group_msg_request__pack(send_group_msg_request, request_data);
+        ret = consume_send_group_msg_response(outbound_group_session, response);
+        if (ret != E2EES_RESULT_SUCC) {
+            // do not keep failed reqiest
+            // e2ees_notify_log(sender_address, BAD_SEND_GROUP_MSG_RESPONSE, "send_group_msg()");
+            // ret = E2EES_RESULT_FAIL;
+            // // pack request to request_data
+            // size_t request_data_len = e2ees__send_group_msg_request__get_packed_size(send_group_msg_request);
+            // uint8_t *request_data = (uint8_t *)malloc(sizeof(uint8_t) * request_data_len);
+            // e2ees__send_group_msg_request__pack(send_group_msg_request, request_data);
 
-            store_pending_request_internal(sender_address, E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_SEND_GROUP_MSG, request_data, request_data_len, NULL, 0);
+            // store_pending_request_internal(sender_address, E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_SEND_GROUP_MSG, request_data, request_data_len, NULL, 0);
             // release
-            free_mem((void **)&request_data, request_data_len);
+            // free_mem((void **)&request_data, request_data_len);
         }
 
         // output send_group_msg response
         *response_out = response;
     } else {
-       e2ees_notify_log(sender_address, BAD_SEND_GROUP_MSG_RESPONSE, "send_group_msg() response is null");
+        e2ees_notify_log(sender_address, BAD_SEND_GROUP_MSG_RESPONSE, "send_group_msg() response is null");
         *response_out = NULL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {   
-        ret = consume_send_group_msg_response(outbound_group_session, response);
-        if (ret != E2EES_RESULT_SUCC) {
-            // // pack request to request_data
-            // size_t request_data_len = e2ees__send_group_msg_request__get_packed_size(request);
-            // uint8_t *request_data = (uint8_t *)malloc(sizeof(uint8_t) * request_data_len);
-            // e2ees__send_group_msg_request__pack(request, request_data);
-
-            // store_pending_request_internal(sender_address, E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_SEND_GROUP_MSG, request_data, request_data_len, NULL, 0);
-            // // release
-            // free_mem((void **)&request_data, request_data_len);
-            // e2ees__send_group_msg_response__free_unpacked(response, NULL);
-
-            // // replace response code to enable another try
-            // response = (E2ees__SendGroupMsgResponse *)malloc(sizeof(E2ees__SendGroupMsgResponse));
-            // e2ees__send_group_msg_response__init(response);
-            // response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_EXPECTATION_FAILED;
-        }
     }
 
     // release
