@@ -492,7 +492,7 @@ int send_one2one_msg(
         response->code = (succ ? E2EES__RESPONSE_CODE__RESPONSE_CODE_OK : E2EES__RESPONSE_CODE__RESPONSE_CODE_BAD_REQUEST);
     } else {
         response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_EXPECTATION_FAILED;
-        response->msg = "no outbound sessions";
+        response->msg = strdup("no outbound sessions");
     }
     *response_out = response;
 
