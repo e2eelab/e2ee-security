@@ -171,9 +171,8 @@ int invite_internal(
     if (ret == E2EES_RESULT_SUCC) {
         response = get_e2ees_plugin()->proto_handler.invite(user_address, auth, invite_request);
 
-        if (is_valid_invite_response(response)) {
-            ret = consume_invite_response(user_address, response);
-        } else {
+        ret = consume_invite_response(user_address, response);
+        if (ret == E2EES_RESULT_FAIL) {
             // pack invite_request to request_data
             size_t request_data_len = e2ees__invite_request__get_packed_size(invite_request);
             uint8_t *request_data = (uint8_t *)malloc(sizeof(uint8_t) * request_data_len);
@@ -249,9 +248,8 @@ int accept_internal(
     if (ret == E2EES_RESULT_SUCC) {
         response = get_e2ees_plugin()->proto_handler.accept(from, auth, accept_request);
 
-        if (is_valid_accept_response(response)) {
-            ret = consume_accept_response(from, response);
-        } else {
+        ret = consume_accept_response(from, response);
+        if (ret == E2EES_RESULT_FAIL) {
             // pack accept_request to request_data
             size_t request_data_len = e2ees__accept_request__get_packed_size(accept_request);
             uint8_t *request_data = (uint8_t *)malloc(sizeof(uint8_t) * request_data_len);
@@ -689,9 +687,8 @@ static void resend_pending_request(E2ees__Account *account) {
             case E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_INVITE: {
                 E2ees__InviteRequest *invite_request = e2ees__invite_request__unpack(NULL, pending_request->request_data.len, pending_request->request_data.data);
                 E2ees__InviteResponse *invite_response = get_e2ees_plugin()->proto_handler.invite(user_address, auth, invite_request);
-                succ = is_valid_invite_response(invite_response);
-                if (succ) {
-                    ret = consume_invite_response(user_address, invite_response);
+                ret = consume_invite_response(user_address, invite_response);
+                if (ret == E2EES_RESULT_SUCC) {
                     get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                 } else {
                     e2ees_notify_log(user_address, DEBUG_LOG, "handle pending invite_request failed");
@@ -705,9 +702,8 @@ static void resend_pending_request(E2ees__Account *account) {
             case E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_ACCEPT: {
                 E2ees__AcceptRequest *accept_request = e2ees__accept_request__unpack(NULL, pending_request->request_data.len, pending_request->request_data.data);
                 E2ees__AcceptResponse *accept_response = get_e2ees_plugin()->proto_handler.accept(user_address, auth, accept_request);
-                succ = is_valid_accept_response(accept_response);
-                if (succ) {
-                    ret = consume_accept_response(accept_request->msg->from, accept_response);
+                ret = consume_accept_response(accept_request->msg->from, accept_response);
+                if (ret == E2EES_RESULT_SUCC) {
                     get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                 } else {
                     e2ees_notify_log(user_address, DEBUG_LOG, "handle pending accept_request failed");

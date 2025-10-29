@@ -771,9 +771,14 @@ int consume_invite_response(
     E2ees__InviteResponse *response
 ) {
     int ret = E2EES_RESULT_SUCC;
+    bool succ = false;
 
     if (is_valid_address(user_address)) {
-        if (!is_valid_invite_response(response)) {
+        if (is_valid_invite_response(response)) {
+            if (response->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
+                succ = true;
+            }
+        } else {
             e2ees_notify_log(NULL, BAD_INVITE_RESPONSE, "consume_invite_response()");
             ret = E2EES_RESULT_FAIL;
         }
@@ -781,7 +786,7 @@ int consume_invite_response(
         ret = E2EES_RESULT_FAIL;
     }
 
-    if (ret == E2EES_RESULT_SUCC) {
+    if (succ) {
         // load the corresponding inbound session
         E2ees__Session *inbound_session = NULL;
         get_e2ees_plugin()->db_handler.load_session(response->session_id, user_address, &inbound_session);
@@ -936,9 +941,14 @@ int produce_accept_request(
 
 int consume_accept_response(E2ees__E2eeAddress *user_address, E2ees__AcceptResponse *response) {
     int ret = E2EES_RESULT_SUCC;
+    bool succ = false;
 
     if (is_valid_address(user_address)) {
-        if (!is_valid_accept_response(response)) {
+        if (is_valid_accept_response(response)) {
+            if (response->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
+                succ = true;
+            }
+        } else {
             e2ees_notify_log(NULL, BAD_ACCEPT_RESPONSE, "consume_accept_response()");
             ret = E2EES_RESULT_FAIL;
         }
