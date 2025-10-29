@@ -1303,6 +1303,11 @@ bool is_valid_get_pre_key_bundle_response(E2ees__GetPreKeyBundleResponse *src) {
 
 bool is_valid_invite_response(E2ees__InviteResponse *src) {
     if (src != NULL) {
+        if (src->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
+            // user/device not found, just consume it
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_invite_response() user/device not found");
+            return true;
+        }
         if (src->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_invite_response() code != OK");
             return false;
@@ -1321,6 +1326,11 @@ bool is_valid_invite_response(E2ees__InviteResponse *src) {
 
 bool is_valid_accept_response(E2ees__AcceptResponse *src) {
     if (src != NULL) {
+        if (src->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
+            // user/device not found, just consume it
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_response() user/device not found");
+            return true;
+        }
         if (src->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_accept_response() code != OK");
             return false;
