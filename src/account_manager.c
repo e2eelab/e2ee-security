@@ -158,13 +158,13 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
             for (i = 0; i < response->n_other_user_address_list; i++) {
                 to_address = (response->other_user_address_list)[i];
                 e2ees_notify_log(
-                    address, DEBUG_LOG, "consume_register_response() other_user_address_list %zu of %zu: address [%s:%s]",
+                    address, DEBUG_LOG, "consume_register_response() other_user_address_list %zu of %zu: address [%s@%s]",
                     i + 1, response->n_other_user_address_list,
                     to_address->user->user_id,
-                    to_address->user->device_id
+                    to_address->domain
                 );
                 // skip the same user device
-                if (safe_strcmp(address->user->device_id, to_address->user->device_id)) {
+                if (compare_address(address, to_address)) {
                     e2ees_notify_log(
                         address,
                         DEBUG_LOG,
