@@ -487,7 +487,7 @@ static void mock_user_pqc_account(const char *user_name, const char *authenticat
         authenticator,
         auth_code
     );
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
     // printf("Test user registered: \"%s@%s\"\n", response->address->user->user_id, response->address->domain);
 
     // release
@@ -508,7 +508,7 @@ static void test_encryption(
         plaintext_data, plaintext_data_len
     );
 
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
     
     // release
     if (response != NULL) {
@@ -549,7 +549,7 @@ static void test_create_group() {
     E2ees__CreateGroupResponse *create_group_response = NULL;
     ret = create_group(&create_group_response, address_list[0], "Group name", group_members, 4);
 
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
     sleep(5);
@@ -618,7 +618,7 @@ static void test_add_group_members() {
     // add the new group member to the group
     E2ees__AddGroupMembersResponse *add_group_members_response = NULL;
     ret = add_group_members(&add_group_members_response, address_list[0], group_address, new_group_members, new_group_member_num);
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     sleep(3);
     // Everyone sends a message to the group
@@ -689,7 +689,7 @@ static void test_remove_group_members() {
     ret = remove_group_members(
         &remove_group_members_response, address_list[0], group_address, removing_group_members, removing_group_member_num
     );
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     sleep(4);
     // Everyone sends a message to the group

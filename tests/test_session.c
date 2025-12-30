@@ -492,7 +492,7 @@ static void mock_alice_account(const char *user_name) {
     int ret = register_user(
         &response, e2ees_pack_id, user_name, user_name, device_id, authenticator, auth_code
     );
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     free(device_id);
@@ -508,7 +508,7 @@ static void mock_bob_account(const char *user_name) {
     int ret = register_user(
         &response, e2ees_pack_id, user_name, user_name, device_id, authenticator, auth_code
     );
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     free(device_id);

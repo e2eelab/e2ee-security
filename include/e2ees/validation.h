@@ -29,9 +29,13 @@ bool is_valid_string_list(char **src, size_t len);
 
 bool is_valid_address(E2ees__E2eeAddress *src);
 
+bool is_valid_no_device_id_user_address(E2ees__E2eeAddress *src);
+
 bool is_invalid_address(E2ees__E2eeAddress *src);
 
 bool is_valid_address_list(E2ees__E2eeAddress **src, size_t len);
+
+bool is_valid_no_device_id_user_address_list(E2ees__E2eeAddress **src, size_t len);
 
 bool is_valid_key_pair(const E2ees__KeyPair *src);
 

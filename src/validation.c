@@ -250,6 +250,43 @@ bool is_valid_address(E2ees__E2eeAddress *src) {
     return true;
 }
 
+bool is_valid_no_device_id_user_address(E2ees__E2eeAddress *src) {
+    if (src != NULL) {
+        if (!is_valid_string(src->domain)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() bad domain %d", src->domain);
+            return false;
+        }
+        if (src->peer_case == E2EES__E2EE_ADDRESS__PEER_USER) {
+            if (src->user != NULL) {
+                // user_name is optional
+                // if (!is_valid_string(src->user->user_name)) {
+                //    return false;
+                // }
+                if (!is_valid_string(src->user->user_id)) {
+                    e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() bad user_id %d", src->user->user_id);
+                    return false;
+                }
+                // device_id is bound to null or empty string
+                if (!is_invalid_string(src->user->device_id)) {
+                    e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() bad device_id, should be null or empty");
+                    return false;
+                }
+            } else {
+                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() bad user address with user == NULL");
+                return false;
+            }
+        } else {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() user address has bad peer_case %d", src->peer_case);
+            return false;
+        }
+    } else {
+        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() address is NULL");
+        return false;
+    }
+
+    return true;
+}
+
 bool is_invalid_address(E2ees__E2eeAddress *src) {
     if (src != NULL) {
         return false;
@@ -266,6 +303,21 @@ bool is_valid_address_list(E2ees__E2eeAddress **src, size_t len) {
     size_t i;
     for (i = 0; i < len; i++) {
         if (!is_valid_address(src[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool is_valid_no_device_id_user_address_list(E2ees__E2eeAddress **src, size_t len) {
+    if (len > 0 && src == NULL)
+        return false;
+    if (len == 0 && src != NULL)
+        return false;
+    size_t i;
+    for (i = 0; i < len; i++) {
+        if (!is_valid_no_device_id_user_address(src[i])) {
             return false;
         }
     }
@@ -1235,7 +1287,7 @@ bool is_valid_register_user_response(E2ees__RegisterUserResponse *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_register_user_response() bad other_device_address_list");
             return false;
         }
-        if (!is_valid_address_list(src->other_user_address_list, src->n_other_user_address_list)) {
+        if (!is_valid_no_device_id_user_address_list(src->other_user_address_list, src->n_other_user_address_list)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_register_user_response() bad other_user_address_list");
             return false;
         }

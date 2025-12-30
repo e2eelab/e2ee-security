@@ -189,7 +189,7 @@ static void mock_alice_account(const char *user_name, uint32_t e2ees_pack_id) {
         &response, e2ees_pack_id, user_name, user_name, device_id, authenticator, auth_code
     );
 
-    if (ret == 0) {
+    if (ret == E2EES_RESULT_SUCC) {
         printf("%s registered completely!\n", user_name);
     } else {
         printf("%s registered failed!\n", user_name);
@@ -209,7 +209,7 @@ static void mock_bob_account(const char *user_name, uint32_t e2ees_pack_id) {
         &response, e2ees_pack_id, user_name, user_name, device_id, authenticator, auth_code
     );
 
-    if (ret == 0) {
+    if (ret == E2EES_RESULT_SUCC) {
         printf("%s registered completely!\n", user_name);
     } else {
         printf("%s registered failed!\n", user_name);

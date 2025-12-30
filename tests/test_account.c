@@ -259,7 +259,7 @@ static void test_generate_identity_key() {
 
     E2ees__IdentityKey *identity_key = NULL;
     ret = generate_identity_key(&identity_key, e2ees_pack_id);
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     free_proto(identity_key);
@@ -284,7 +284,7 @@ static void test_generate_signed_pre_key() {
     E2ees__SignedPreKey *signed_pre_key = NULL;
     generate_identity_key(&identity_key, e2ees_pack_id);
     ret = generate_signed_pre_key(&signed_pre_key, e2ees_pack_id, 0, identity_key->sign_key_pair->private_key.data);
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     free_proto(identity_key);
@@ -309,7 +309,7 @@ static void test_generate_opks() {
 
     E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
     ret = generate_opks(&one_time_pre_key_list, number_of_keys, e2ees_pack_id, 0);
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     for (i = 0; i < number_of_keys; i++) {
@@ -338,7 +338,7 @@ static void test_create_account(bool unit) {
 
     E2ees__Account *account = NULL;
     ret = create_account(&account, e2ees_pack_id);
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     free_proto(account);
@@ -388,7 +388,7 @@ static void test_register_user() {
     ret = register_user(
         &response, e2ees_pack_id, user_name, user_id, (const char *)device_id, authenticator, auth_code
     );
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     free_string(device_id);

@@ -395,7 +395,7 @@ static void test_initialise_as_alice() {
         &(bob_spk.public_key),
         &ciphertext
     );
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     free_protobuf(&(alice_ratchet_key.public_key));
@@ -442,7 +442,7 @@ static void test_initialise_as_bob() {
         &bob_spk,
         &(alice_ratchet_key.public_key)
     );
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     free_protobuf(&(alice_ratchet_key.public_key));

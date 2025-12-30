@@ -270,7 +270,7 @@ static void mock_user_pqc_account(const char *user_name, const char *authenticat
         authenticator,
         auth_code
     );
-    assert(ret == 0);
+    assert(ret == E2EES_RESULT_SUCC);
 
     // release
     free(device_id);

@@ -291,7 +291,7 @@ int publish_spk_internal(
         if (is_valid_publish_spk_response(response)) {
             ret = consume_publish_spk_response(account, response);
 
-            if (ret == -1) {
+            if (ret == E2EES_RESULT_FAIL) {
                 e2ees__publish_spk_response__free_unpacked(response, NULL);
                 response = NULL;
                 // we do not store pending request here

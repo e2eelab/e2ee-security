@@ -575,6 +575,10 @@ E2ees__RegisterUserResponse *mock_register_user(E2ees__RegisterUserRequest *requ
             response->other_user_address_list = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * friends_num);
             for (i = 0; i < friends_num; i++) {
                 copy_address_from_address(&((response->other_user_address_list)[i]), friend_addresses[i]);
+                // remove device_id for more general cases
+                free((response->other_user_address_list)[i]->user->device_id);
+                (response->other_user_address_list)[i]->user->device_id = strdup("");
+                
                 copy_address_from_address(&(receiver_addresses[other_device_num + i]), friend_addresses[i]);
             }
         }
