@@ -65,6 +65,12 @@ int generate_signed_pre_key(
 );
 
 /**
+ * Purge and renew signed pre-key pair if it is expired.
+ * @param account
+ */
+void purge_signed_pre_key(E2ees__Account *account);
+
+/**
  * @brief Lookup an one-time pre-key with a given public key
  *
  * @param account The account for looking up the one-time pre-key
@@ -105,11 +111,11 @@ int mark_opk_as_used(
 );
 
 /**
- * @brief Remove the used one-time pre-keys
+ * @brief Purge used one-time pre-keys
  *
  * @param account The account to be processed
  */
-void free_one_time_pre_key(E2ees__Account *account);
+void purge_one_time_pre_key(E2ees__Account *account);
 
 #ifdef __cplusplus
 }

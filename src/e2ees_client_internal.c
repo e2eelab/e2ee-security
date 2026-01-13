@@ -8,7 +8,7 @@
 #include "e2ees/validation.h"
 #include "e2ees/session_manager.h"
 #include "e2ees/e2ees_client.h"
-#include "e2ees/account_cache.h"
+#include "e2ees/account.h"
 
 int get_pre_key_bundle_internal(
     E2ees__InviteResponse ***invite_response_list_out,
@@ -154,7 +154,7 @@ int invite_internal(
 
     if (is_valid_uncompleted_session(outbound_session)) {
         user_address = outbound_session->our_address;
-        load_auth_from_cache(&auth, user_address);
+        get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(user_address, BAD_AUTH, "invite_internal()");
             ret = E2EES_RESULT_FAIL;
@@ -218,7 +218,7 @@ int accept_internal(
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_address(from)) {
-        load_auth_from_cache(&auth, from);
+        get_e2ees_plugin()->db_handler.load_auth(from, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(from, BAD_AUTH, "accept_internal()");
             ret = E2EES_RESULT_FAIL;
@@ -393,7 +393,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
 
     E2ees__E2eeAddress *user_address = outbound_session->our_address;
     char *auth = NULL;
-    load_auth_from_cache( &auth, user_address);
+    get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
 
     if (auth == NULL) {
         e2ees_notify_log(outbound_session->our_address, BAD_AUTH, "send_one2one_msg_internal()");
@@ -447,7 +447,7 @@ int add_group_member_device_internal(
     char *auth = NULL;
 
     if (is_valid_address(sender_address)) {
-        load_auth_from_cache( &auth, sender_address);
+        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
 
         if (auth != NULL) {
             if (is_valid_address(group_address)) {
@@ -974,5 +974,12 @@ void resume_connection_internal(E2ees__Account *account) {
     if (account == NULL)
         return;
 
+    // renew and purge signed pre-keys
+    purge_signed_pre_key(account);
+
+    // check if there are too many "used" one-time pre-keys
+    purge_one_time_pre_key(account);
+
+    // try resend pending request from db
     resend_pending_request(account);
 }

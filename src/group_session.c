@@ -378,8 +378,7 @@ int new_outbound_group_session_by_sender(
                 }
             }
         } else {
-            load_auth_from_cache(&auth, user_address);
-
+            get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
             if (auth == NULL) {
                 e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender()");
                 ret = E2EES_RESULT_FAIL;
@@ -1219,7 +1218,7 @@ int renew_outbound_group_session_by_welcome_and_add(
                 }
             }
         } else {
-            load_auth_from_cache(&auth, outbound_group_session->session_owner);
+            get_e2ees_plugin()->db_handler.load_auth(outbound_group_session->session_owner, &auth);
             if (auth == NULL) {
                 e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add()");
                 ret = E2EES_RESULT_FAIL;
@@ -1506,8 +1505,7 @@ int renew_group_sessions_with_new_device(
                 }
             }
         } else {
-            load_auth_from_cache(&auth, outbound_group_session->session_owner);
-
+            get_e2ees_plugin()->db_handler.load_auth(outbound_group_session->session_owner, &auth);
             if (auth == NULL) {
                 e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device()");
                 ret = E2EES_RESULT_FAIL;

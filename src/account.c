@@ -35,42 +35,16 @@ void account_begin() {
     size_t account_num = get_e2ees_plugin()->db_handler.load_accounts(&accounts);
 
     E2ees__Account *cur_account = NULL;
-    int64_t now;
     size_t i;
     for (i = 0; i < account_num; i++) {
         cur_account = accounts[i];
 
         if (is_valid_registered_account(cur_account)) {
-            // check if the signed pre-key expired
-            now = get_e2ees_plugin()->common_handler.gen_ts();
-            if (now > cur_account->signed_pre_key->ttl) {
-                uint32_t e2ees_pack_id = cur_account->e2ees_pack_id;
-                uint32_t cur_spk_id = cur_account->signed_pre_key->spk_id;
-                E2ees__SignedPreKey *signed_pre_key = NULL;
-                uint8_t *identity_private_key = cur_account->identity_key->sign_key_pair->private_key.data;
-                // generate a new pair of signed pre-key
-                ret = generate_signed_pre_key(&signed_pre_key, e2ees_pack_id, cur_spk_id, identity_private_key);
-
-                if (ret == E2EES_RESULT_SUCC) {
-                    // release the old signed pre-key
-                    e2ees__signed_pre_key__free_unpacked(cur_account->signed_pre_key, NULL);
-                    cur_account->signed_pre_key = signed_pre_key;
-
-                    E2ees__PublishSpkResponse *response = NULL;
-                    ret = publish_spk_internal(&response, cur_account);
-                    // release
-                    if (response != NULL) {
-                        e2ees__publish_spk_response__free_unpacked(response, NULL);
-                        response = NULL;
-                    }
-                }
-            }
-
-            // check and remove signed pre-keys (keep last two)
-            get_e2ees_plugin()->db_handler.remove_expired_signed_pre_key(cur_account->address);
+            // renew and purge signed pre-keys
+            purge_signed_pre_key(cur_account);
 
             // check if there are too many "used" one-time pre-keys
-            free_one_time_pre_key(cur_account);
+            purge_one_time_pre_key(cur_account);
 
             // store into cache
             store_account_into_cache(cur_account);
@@ -315,6 +289,37 @@ int generate_signed_pre_key(
     return ret;
 }
 
+void purge_signed_pre_key(E2ees__Account *account) {
+    int ret = E2EES_RESULT_SUCC;
+    // check if the signed pre-key expired
+    int64_t now = get_e2ees_plugin()->common_handler.gen_ts();
+    if (now > account->signed_pre_key->ttl) {
+        uint32_t e2ees_pack_id = account->e2ees_pack_id;
+        uint32_t cur_spk_id = account->signed_pre_key->spk_id;
+        E2ees__SignedPreKey *signed_pre_key = NULL;
+        uint8_t *identity_private_key = account->identity_key->sign_key_pair->private_key.data;
+        // generate a new pair of signed pre-key
+        ret = generate_signed_pre_key(&signed_pre_key, e2ees_pack_id, cur_spk_id, identity_private_key);
+
+        if (ret == E2EES_RESULT_SUCC) {
+            // release the old signed pre-key
+            e2ees__signed_pre_key__free_unpacked(account->signed_pre_key, NULL);
+            account->signed_pre_key = signed_pre_key;
+
+            E2ees__PublishSpkResponse *response = NULL;
+            ret = publish_spk_internal(&response, account);
+            // release
+            if (response != NULL) {
+                e2ees__publish_spk_response__free_unpacked(response, NULL);
+                response = NULL;
+            }
+        }
+    }
+
+    // check and remove signed pre-keys (keep last two)
+    get_e2ees_plugin()->db_handler.remove_expired_signed_pre_key(account->address);
+}
+
 E2ees__OneTimePreKey *lookup_one_time_pre_key(E2ees__Account *account, uint32_t one_time_pre_key_id) {
     E2ees__OneTimePreKey **cur = account->one_time_pre_key_list;
     if (cur == NULL) {
@@ -521,7 +526,7 @@ static void copy_one_time_pre_key_list(E2ees__OneTimePreKey **dest, E2ees__OneTi
     }
 }
 
-void free_one_time_pre_key(E2ees__Account *account) {
+void purge_one_time_pre_key(E2ees__Account *account) {
     size_t used_num = 0;
     size_t new_num = 0;
     size_t i;

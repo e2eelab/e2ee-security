@@ -552,7 +552,7 @@ static void test_free_opks() {
     for (i = 0; i < used_opks; i++) {
         account->one_time_pre_key_list[i]->used = true;
     }
-    free_one_time_pre_key(account);
+    purge_one_time_pre_key(account);
     // store
     get_e2ees_plugin()->db_handler.store_account(account);
 
