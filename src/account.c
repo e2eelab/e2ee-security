@@ -291,6 +291,7 @@ int generate_signed_pre_key(
 
 void purge_signed_pre_key(E2ees__Account *account) {
     int ret = E2EES_RESULT_SUCC;
+
     // check if the signed pre-key expired
     int64_t now = get_e2ees_plugin()->common_handler.gen_ts();
     if (now > account->signed_pre_key->ttl) {

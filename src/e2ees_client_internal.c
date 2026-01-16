@@ -354,7 +354,7 @@ int supply_opks_internal(
             size_t request_arg_list_len = opks_num;
             ProtobufCBinaryData *request_arg_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData) * request_arg_list_len);
             size_t i;
-            for(i = 0; i < opks_num; i++) {
+            for (i = 0; i < opks_num; i++) {
                 E2ees__OneTimePreKey *one_time_pre_key = one_time_pre_key_list[i];
                 size_t one_time_pre_key_data_len = e2ees__one_time_pre_key__get_packed_size(one_time_pre_key);
                 uint8_t *one_time_pre_key_data = (uint8_t *)malloc(sizeof(uint8_t)*one_time_pre_key_data_len);

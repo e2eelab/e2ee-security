@@ -40,8 +40,6 @@ typedef struct account_cacheer {
 
 void store_account_into_cache(E2ees__Account *account);
 
-void renew_auth_into_cache(E2ees__Account *account);
-
 void load_version_from_cache(char **version_out, E2ees__E2eeAddress *address);
 
 void load_e2ees_pack_id_from_cache(uint32_t *e2ees_pack_id_out, E2ees__E2eeAddress *address);

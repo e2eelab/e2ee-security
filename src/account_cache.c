@@ -25,20 +25,27 @@
 
 static account_cacheer *account_cacheer_list = NULL;
 
+static void insert_account_cacheer(
+    account_cacheer *dest, E2ees__Account *account
+) {
+    dest->version = strdup(account->version);
+    dest->e2ees_pack_id = account->e2ees_pack_id;
+    copy_address_from_address(&(dest->address), account->address);
+    copy_ik_from_ik(&(dest->identity_key), account->identity_key);
+
+    if (account->server_cert != NULL 
+        && account->server_cert->cert != NULL
+    ) {
+        copy_protobuf_from_protobuf(&(dest->server_public_key), &(account->server_cert->cert->public_key));
+    }
+    
+    dest->next = NULL;
+}
+
 void store_account_into_cache(E2ees__Account *account) {
     if (account_cacheer_list == NULL) {
         account_cacheer_list = (account_cacheer *)malloc(sizeof(account_cacheer));
-        account_cacheer_list->version = strdup(account->version);
-        account_cacheer_list->e2ees_pack_id = account->e2ees_pack_id;
-        copy_address_from_address(&(account_cacheer_list->address), account->address);
-        copy_ik_from_ik(&(account_cacheer_list->identity_key), account->identity_key);
-
-        if (account->server_cert != NULL 
-            && account->server_cert->cert != NULL) {
-            copy_protobuf_from_protobuf(&(account_cacheer_list->server_public_key), &(account->server_cert->cert->public_key));
-        }
-        
-        account_cacheer_list->next = NULL;
+        insert_account_cacheer(account_cacheer_list, account);
     } else {
         account_cacheer *cur = account_cacheer_list;
         if (compare_address(cur->address, account->address)) {
@@ -53,17 +60,7 @@ void store_account_into_cache(E2ees__Account *account) {
             }
         }
         cur->next = (account_cacheer *)malloc(sizeof(account_cacheer));
-        cur->next->version = strdup(account->version);
-        cur->next->e2ees_pack_id = account->e2ees_pack_id;
-        copy_address_from_address(&(cur->next->address), account->address);
-        copy_ik_from_ik(&(cur->next->identity_key), account->identity_key);
-
-        if (account->server_cert != NULL 
-            && account->server_cert->cert != NULL) {
-            copy_protobuf_from_protobuf(&(cur->next->server_public_key), &(account->server_cert->cert->public_key));
-        }
-
-        cur->next->next = NULL;
+        insert_account_cacheer(cur->next, account);
     }
 }
 
