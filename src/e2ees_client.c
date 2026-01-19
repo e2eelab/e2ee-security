@@ -463,10 +463,8 @@ int send_one2one_msg(
         }
     }
 
-    // send the message to other self devices
-    if (ret == E2EES_RESULT_SUCC) {
-        send_sync_msg(from, plaintext_data, plaintext_data_len);
-    }
+    // send the message to other self devices, whether ret is success or not
+    send_sync_msg(from, plaintext_data, plaintext_data_len);
 
     // release
     free_mem((void **)&common_plaintext_data, common_plaintext_data_len);
