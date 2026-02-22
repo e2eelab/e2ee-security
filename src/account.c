@@ -40,12 +40,6 @@ void account_begin() {
         cur_account = accounts[i];
 
         if (is_valid_registered_account(cur_account)) {
-            // renew and purge signed pre-keys
-            purge_signed_pre_key(cur_account);
-
-            // check if there are too many "used" one-time pre-keys
-            purge_one_time_pre_key(cur_account);
-
             // store into cache
             store_account_into_cache(cur_account);
         }
