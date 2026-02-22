@@ -51,11 +51,27 @@ set(protobuf_BUILD_PROTOC_BINARIES OFF)
 set(protobuf_BUILD_LIBPROTOC OFF)
 set(protobuf_BUILD_TESTS OFF)
 
-# set protoc tool path, ex: "/usr/local/bin/protoc"
-find_program(PROTOC_EXECUTABLE protoc REQUIRED)
-if(NOT PROTOC_EXECUTABLE)
-  message(FATAL_ERROR "protoc excutable not found! Please install protoc")
-endif()
+# find protoc tool path, ex: "/usr/local/bin/protoc"
+#find_program(PROTOC_EXECUTABLE protoc REQUIRED)
+#if(NOT PROTOC_EXECUTABLE)
+#  message(FATAL_ERROR "protoc excutable not found! Please install protoc")
+#else()
+#  message("protoc found at: ${PROTOC_EXECUTABLE}")
+#endif()
+set(PROTOBUF_PROTOC_EXECUTABLE
+        "/usr/local/bin/protoc"
+        CACHE STRING "protoc binary on host")
+
+# find protoc-gen-c tool path, ex: "/usr/local/bin/protoc-gen-c "
+#find_program(PROTOC_GEN_C_EXECUTABLE "protoc-gen-c" REQUIRED)
+#if(NOT PROTOC_GEN_C_EXECUTABLE)
+#    message(FATAL_ERROR "protoc-gen-c excutable not found! Please install protoc-gen-c")
+#else()
+#    message("protoc-gen-c found at: ${PROTOC_GEN_C_EXECUTABLE}")
+#endif()
+set(PROTOC_GEN_C_EXECUTABLE
+        "/usr/local/bin/protoc-gen-c"
+        CACHE STRING "protoc-gen-c binary on host")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -84,10 +100,6 @@ file(MAKE_DIRECTORY ${PROTO_DIS_DIR}/e2ees)
 
 file(GLOB e2ees_PROTOS ${PROTO_SRC_DIR}/e2ees/*.proto)
 
-set(PROTOBUF_PROTOC_EXECUTABLE
-    "/usr/local/bin/protoc"
-    CACHE STRING "Protoc binary on host")
-
 set(proto_gen_src "")
 set(proto_gen_header "")
 
@@ -96,7 +108,8 @@ foreach(proto ${e2ees_PROTOS})
   message(STATUS "  convert => ${proto}")
   execute_process(
     COMMAND
-      ${PROTOC_EXECUTABLE} -I=e2ees --proto_path=${PROTO_SRC_DIR}
+      ${PROTOBUF_PROTOC_EXECUTABLE} -I=e2ees --proto_path=${PROTO_SRC_DIR}
+      --plugin=${PROTOC_GEN_C_EXECUTABLE}
       --c_out=${PROTO_DIS_DIR}/e2ees ${proto_name}.proto
     RESULT_VARIABLE rv
     OUTPUT_VARIABLE protoc_output
