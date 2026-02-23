@@ -598,11 +598,17 @@ bool consume_add_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__Ad
     if (!is_valid_address(receiver_address)) {
         ret = E2EES_RESULT_FAIL;
     }
+
     if (is_valid_add_user_device_msg(msg)) {
         new_user_address = msg->user_address;
         old_address_list = msg->old_address_list;
         old_address_list_number = msg->n_old_address_list;
     } else {
+        ret = E2EES_RESULT_FAIL;
+    }
+
+    // only handle other device
+    if (compare_address(receiver_address, new_user_address)) {
         ret = E2EES_RESULT_FAIL;
     }
 
