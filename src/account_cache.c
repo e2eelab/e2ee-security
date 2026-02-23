@@ -37,6 +37,9 @@ static void insert_account_cacheer(
         && account->server_cert->cert != NULL
     ) {
         copy_protobuf_from_protobuf(&(dest->server_public_key), &(account->server_cert->cert->public_key));
+    } else {
+        dest->server_public_key.len = 0;
+        dest->server_public_key.data = NULL;
     }
     
     dest->next = NULL;

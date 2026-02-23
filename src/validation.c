@@ -1341,6 +1341,10 @@ bool is_valid_get_pre_key_bundle_response(E2ees__GetPreKeyBundleResponse *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_get_pre_key_bundle_response() bad user_id");
             return false;
         }
+        if (src->n_pre_key_bundles <= 0) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_get_pre_key_bundle_response() n_pre_key_bundles <= 0");
+            return false;
+        }
         if (!is_valid_pre_key_bundle_list(src->pre_key_bundles, src->n_pre_key_bundles)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_get_pre_key_bundle_response() bad pre_key_bundles");
             return false;
