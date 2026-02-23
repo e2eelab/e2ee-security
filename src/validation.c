@@ -140,7 +140,7 @@ bool is_valid_protobuf(const ProtobufCBinaryData *src) {
             return false;
         }
     } else {
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_protobuf() src is NULL");
+        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_protobuf() src is null");
         return false;
     }
 
@@ -243,7 +243,7 @@ bool is_valid_address(E2ees__E2eeAddress *src) {
             return false;
         }
     } else {
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_address() address is NULL");
+        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_address() address is null");
         return false;
     }
 
@@ -280,7 +280,7 @@ bool is_valid_no_device_id_user_address(E2ees__E2eeAddress *src) {
             return false;
         }
     } else {
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() address is NULL");
+        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() address is null");
         return false;
     }
 
@@ -448,6 +448,10 @@ bool is_valid_unregistered_account(E2ees__Account *src) {
 }
 
 bool is_valid_registered_account(E2ees__Account *src) {
+    if (src == NULL) {
+        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_registered_account() account is null");
+        return false;
+    }    
     if (src->version == NULL) {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_registered_account() bad version");
         return false;
@@ -893,7 +897,7 @@ bool is_valid_one2one_msg_payload(const E2ees__One2oneMsgPayload *payload) {
         }
     } else {
         // the payload is NULL
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_one2one_msg_payload() payload == NULL");
+        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_one2one_msg_payload() payload is null");
         return false;
     }
 
@@ -1254,7 +1258,7 @@ bool is_valid_group_msg_payload(const E2ees__GroupMsgPayload *payload) {
         }
     } else {
         // the payload is NULL
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_msg_payload() payload == NULL");
+        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_msg_payload() payload is null");
         return false;
     }
 

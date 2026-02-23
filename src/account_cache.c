@@ -104,6 +104,9 @@ void load_identity_key_from_cache(E2ees__IdentityKey **identity_key_out, E2ees__
 }
 
 void load_server_public_key_from_cache(ProtobufCBinaryData *server_public_key, E2ees__E2eeAddress *address) {
+    server_public_key->len = 0;
+    server_public_key->data = NULL;
+
     account_cacheer *cur = account_cacheer_list;
     while (cur != NULL) {
         if (compare_address(cur->address, address)) {

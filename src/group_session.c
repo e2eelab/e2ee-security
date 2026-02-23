@@ -1434,7 +1434,7 @@ int renew_inbound_group_session_by_welcome_and_add(
         e2ees_notify_log(
             inbound_group_session->session_owner,
             DEBUG_LOG,
-            "renew_inbound_group_session_by_welcome_and_add() sender_chain_key is Null: %s",
+            "renew_inbound_group_session_by_welcome_and_add() sender_chain_key is null: %s",
             sender_chain_key == NULL ? "true" : "false"
         );
 
