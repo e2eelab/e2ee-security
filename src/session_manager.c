@@ -74,6 +74,7 @@ static void send_pending_plaintext_data(E2ees__Session *outbound_session) {
             // release
             if (response != NULL) {
                 e2ees__send_one2one_msg_response__free_unpacked(response, NULL);
+                response = NULL;
             }
         }
 
@@ -101,9 +102,11 @@ int produce_get_pre_key_bundle_request(
     E2ees__GetPreKeyBundleRequest *request = NULL;
 
     if (!is_valid_string(to_user_id)) {
+        e2ees_notify_log(NULL, BAD_USER_ID, "produce_get_pre_key_bundle_request(): no to_user_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(to_domain)) {
+        e2ees_notify_log(NULL, BAD_DOMAIN, "produce_get_pre_key_bundle_request(): no to_domain");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -154,10 +157,11 @@ int consume_get_pre_key_bundle_response(
             n_pre_key_bundles = get_pre_key_bundle_response->n_pre_key_bundles;
             is_self = safe_strcmp(from_user_id, get_pre_key_bundle_response->user_id);
         } else {
-            e2ees_notify_log(NULL, BAD_GET_PRE_KEY_BUNDLE_RESPONSE, "consume_get_pre_key_bundle_response() invalid get_pre_key_bundle_response");
+            e2ees_notify_log(NULL, BAD_GET_PRE_KEY_BUNDLE_RESPONSE, "consume_get_pre_key_bundle_response(): invalid get_pre_key_bundle_response");
             ret = E2EES_RESULT_FAIL;
         } 
     } else {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "consume_get_pre_key_bundle_response(): no from");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -266,15 +270,24 @@ int produce_send_one2one_msg_request(
     E2ees__One2oneMsgPayload *payload_out = NULL;
 
     if (outbound_session != NULL) {
-        if (outbound_session->session_id == NULL)
+        if (outbound_session->session_id == NULL) {
+            e2ees_notify_log(NULL, BAD_SESSION_ID, "produce_send_one2one_msg_request(): no session_id");
             ret = E2EES_RESULT_FAIL;
-        if (outbound_session->our_address == NULL)
+        }
+        if (outbound_session->our_address == NULL){
+            e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_one2one_msg_request(): no our_address");
             ret = E2EES_RESULT_FAIL;
-        if (outbound_session->their_address == NULL)
+        }
+        if (outbound_session->their_address == NULL){
+            e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_one2one_msg_request(): no their_address");
             ret = E2EES_RESULT_FAIL;
-        if (outbound_session->ratchet == NULL)
+        }
+        if (outbound_session->ratchet == NULL){
+            e2ees_notify_log(NULL, BAD_RATCHET, "produce_send_one2one_msg_request(): no ratchet");
             ret = E2EES_RESULT_FAIL;
+        }
     } else {
+        e2ees_notify_log(NULL, BAD_SESSION, "produce_send_one2one_msg_request(): no outbound_session");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -365,6 +378,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
     if (e2ee_msg->payload_case == E2EES__E2EE_MSG__PAYLOAD_ONE2ONE_MSG) {
         payload = e2ee_msg->one2one_msg;
     } else {
+        e2ees_notify_log(receiver_address, BAD_E2EE_MSG, "consume_one2one_msg(): invalid payload_case");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -596,6 +610,7 @@ bool consume_add_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__Ad
     size_t i, j;
 
     if (!is_valid_address(receiver_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "consume_add_user_device_msg(): no receiver_address");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -604,11 +619,13 @@ bool consume_add_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__Ad
         old_address_list = msg->old_address_list;
         old_address_list_number = msg->n_old_address_list;
     } else {
+        e2ees_notify_log(NULL, BAD_ADD_USER_DEVICE_MSG, "consume_add_user_device_msg(): no add_user_device_msg");
         ret = E2EES_RESULT_FAIL;
     }
 
     // only handle other device
     if (compare_address(receiver_address, new_user_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "consume_add_user_device_msg(): receiver_address and new_user_address are the same");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -713,6 +730,7 @@ int produce_invite_request(
     E2ees__InviteMsg *msg = NULL;
 
     if (!is_valid_uncompleted_session(outbound_session)) {
+        e2ees_notify_log(NULL, BAD_SESSION, "produce_invite_request(): no outbound_session");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -764,10 +782,11 @@ int consume_invite_response(
                 succ = true;
             }
         } else {
-            e2ees_notify_log(NULL, BAD_INVITE_RESPONSE, "consume_invite_response()");
+            e2ees_notify_log(NULL, BAD_INVITE_RESPONSE, "consume_invite_response(): invalid invite_response");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "consume_invite_response(): invalid user_address");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -780,7 +799,7 @@ int consume_invite_response(
             inbound_session->invite_t = response->invite_t;
             get_e2ees_plugin()->db_handler.store_session(inbound_session);
         } else {
-            e2ees_notify_log(NULL, BAD_SESSION, "consume_invite_response()");
+            e2ees_notify_log(NULL, BAD_SESSION, "consume_invite_response(): invalid inbound_session");
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -879,23 +898,29 @@ int produce_accept_request(
     E2ees__AcceptMsg *msg = NULL;
 
     if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
+        e2ees_notify_log(NULL, BAD_E2EES_PACK, "produce_accept_request(): no e2ees_pack_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(from)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_accept_request(): no from");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(to)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_accept_request(): no to");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(session_id)) {
+        e2ees_notify_log(NULL, BAD_SESSION_ID, "produce_accept_request(): no session_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (ciphertext_1 != NULL) {
         if (!is_valid_protobuf(ciphertext_1)) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "produce_accept_request(): no ciphertext_1");
             ret = E2EES_RESULT_FAIL;
         }
     }
     if (!is_valid_protobuf(our_ratchet_key)) {
+        e2ees_notify_log(NULL, BAD_RATCHET_KEY, "produce_accept_request(): no our_ratchet_key");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -934,10 +959,11 @@ int consume_accept_response(E2ees__E2eeAddress *user_address, E2ees__AcceptRespo
                 succ = true;
             }
         } else {
-            e2ees_notify_log(NULL, BAD_ACCEPT_RESPONSE, "consume_accept_response()");
+            e2ees_notify_log(NULL, BAD_ACCEPT_RESPONSE, "consume_accept_response(): invalid accept_response");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "consume_accept_response(): invalid user_address");
         ret = E2EES_RESULT_FAIL;
     }
 

@@ -26,6 +26,7 @@ __thread stack_frame_t *current_stack_top = NULL;
 const char* logcode_string(LogCode log_code) {
     switch (log_code) {
         case DEBUG_LOG: return "DEBUG";
+        case VERBOSE_LOG: return "VERBOSE_LOG";
         case BAD_CIPHER_SUITE: return "BAD_CIPHER_SUITE";
         case BAD_E2EES_PACK: return "BAD_E2EES_PACK";
             // account
@@ -52,6 +53,7 @@ const char* logcode_string(LogCode log_code) {
         case BAD_FILE_DECRYPTION: return "BAD_FILE_DECRYPTION";
         case BAD_MESSAGE_KEY: return "BAD_MESSAGE_KEY";
         case BAD_MESSAGE_SEQUENCE: return "BAD_MESSAGE_SEQUENCE";
+        case BAD_RATCHET: return "BAD_RATCHET";
         case BAD_RATCHET_KEY: return "BAD_RATCHET_KEY";
             // session
         case BAD_SESSION: return "BAD_SESSION";
@@ -114,11 +116,14 @@ const char* logcode_string(LogCode log_code) {
         case BAD_GET_PRE_KEY_BUNDLE_MSG: return "BAD_GET_PRE_KEY_BUNDLE_MSG";
         case BAD_INVITE_MSG: return "BAD_INVITE_MSG";
         case BAD_LEAVE_GROUP_MSG: return "BAD_LEAVE_GROUP_MSG";
+        case BAD_PROTO_MSG: return "BAD_PROTO_MSG";
         case BAD_PUBLISH_SPK_MSG: return "BAD_PUBLISH_SPK_MSG";
         case BAD_REGISTER_USER_MSG: return "BAD_REGISTER_USER_MSG";
         case BAD_REMOVE_GROUP_MEMBERS_MSG: return "BAD_REMOVE_GROUP_MEMBERS_MSG";
         case BAD_SUPPLY_OPKS_MSG: return "BAD_SUPPLY_OPKS_MSG";
         case BAD_UPDATE_USER_MSG: return "BAD_UPDATE_USER_MSG";
+            // consume
+        case BAD_CONSUME: return "BAD_CONSUME";
             // plaintext
         case BAD_PLAINTEXT: return "BAD_PLAINTEXT";
             // server signature

@@ -358,7 +358,7 @@ int new_outbound_group_session_by_sender(
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "new_outbound_group_session_by_sender()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "new_outbound_group_session_by_sender(): no user_address");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, user_address);
@@ -366,12 +366,12 @@ int new_outbound_group_session_by_sender(
         if (identity_key == NULL) {
             get_e2ees_plugin()->db_handler.load_account_by_address(user_address, &account);
             if (account == NULL) {
-                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender()");
+                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender(): no account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_uint8_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender()");
+                    e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender(): no identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 } else {
                     auth = strdup(account->auth);
@@ -380,7 +380,7 @@ int new_outbound_group_session_by_sender(
         } else {
             get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
             if (auth == NULL) {
-                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender()");
+                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender(): no auth");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = identity_key->sign_key_pair->public_key.data;
@@ -389,23 +389,23 @@ int new_outbound_group_session_by_sender(
     }
 
     if (!is_valid_group_member_info_list((const E2ees__GroupMemberInfo **)member_info_list, n_member_info_list)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_outbound_group_session_by_sender()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_outbound_group_session_by_sender(): invalid group member info list");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(group_name)) {
-        e2ees_notify_log(NULL, BAD_GROUP_NAME, "new_outbound_group_session_by_sender()");
+        e2ees_notify_log(NULL, BAD_GROUP_NAME, "new_outbound_group_session_by_sender(): no group_name");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(group_address)) {
-        e2ees_notify_log(NULL, BAD_GROUP_ADDRESS, "new_outbound_group_session_by_sender()");
+        e2ees_notify_log(NULL, BAD_GROUP_ADDRESS, "new_outbound_group_session_by_sender(): no group_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(group_member_list, group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "new_outbound_group_session_by_sender()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "new_outbound_group_session_by_sender(): invalid group member list");
         ret = E2EES_RESULT_FAIL;
     }
     if ((group_members_num == 0) || (n_member_info_list == 0) || (group_members_num > n_member_info_list)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "new_outbound_group_session_by_sender()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "new_outbound_group_session_by_sender(): invalid n_member_info_list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -534,7 +534,7 @@ int new_outbound_group_session_by_receiver(
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_outbound_group_session_by_receiver()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_outbound_group_session_by_receiver(): no user_address");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, user_address);
@@ -542,12 +542,12 @@ int new_outbound_group_session_by_receiver(
         if (identity_key == NULL) {
             get_e2ees_plugin()->db_handler.load_account_by_address(user_address, &account);
             if (account == NULL) {
-                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_receiver()");
+                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_receiver(): no account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_uint8_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_receiver()");
+                    e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_receiver(): no identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 }
             }
@@ -557,23 +557,23 @@ int new_outbound_group_session_by_receiver(
     }
 
     if (!is_valid_protobuf(group_seed)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SEED, "new_outbound_group_session_by_receiver()");
+        e2ees_notify_log(NULL, BAD_GROUP_SEED, "new_outbound_group_session_by_receiver(): no group_seed");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(group_name)) {
-        e2ees_notify_log(NULL, BAD_GROUP_NAME, "new_outbound_group_session_by_receiver()");
+        e2ees_notify_log(NULL, BAD_GROUP_NAME, "new_outbound_group_session_by_receiver(): no group_name");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(group_address)) {
-        e2ees_notify_log(NULL, BAD_GROUP_ADDRESS, "new_outbound_group_session_by_receiver()");
+        e2ees_notify_log(NULL, BAD_GROUP_ADDRESS, "new_outbound_group_session_by_receiver(): no group_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(session_id)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION_ID, "new_outbound_group_session_by_receiver()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION_ID, "new_outbound_group_session_by_receiver(): no session_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(group_member_list, group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "new_outbound_group_session_by_receiver()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "new_outbound_group_session_by_receiver(): invalid group member list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -628,7 +628,7 @@ int new_outbound_group_session_invited(
     size_t i;
 
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_outbound_group_session_invited()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_outbound_group_session_invited(): no user_address");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, user_address);
@@ -636,12 +636,12 @@ int new_outbound_group_session_invited(
         if (identity_key == NULL) {
             get_e2ees_plugin()->db_handler.load_account_by_address(user_address, &account);
             if (account == NULL) {
-                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_invited()");
+                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_invited(): no account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_uint8_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_invited()");
+                    e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_invited(): no identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 }
             }
@@ -653,7 +653,7 @@ int new_outbound_group_session_invited(
         n_adding_member_info_list = group_update_key_bundle->n_adding_member_info_list;
         sender_chain_key = &(group_update_key_bundle->chain_key);
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_UPDATE_KEY_BUNDLE, "new_outbound_group_session_invited()");
+        e2ees_notify_log(NULL, BAD_GROUP_UPDATE_KEY_BUNDLE, "new_outbound_group_session_invited(): invalid group_update_key_bundle");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -740,13 +740,13 @@ int new_inbound_group_session_by_pre_key_bundle(
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_inbound_group_session_by_pre_key_bundle()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_inbound_group_session_by_pre_key_bundle(): no user_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_group_pre_key_bundle(group_pre_key_bundle)) {
         group_seed = &(group_pre_key_bundle->group_seed);
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_PRE_KEY_BUNDLE, "new_inbound_group_session_by_pre_key_bundle()");
+        e2ees_notify_log(NULL, BAD_GROUP_PRE_KEY_BUNDLE, "new_inbound_group_session_by_pre_key_bundle(): invalid group_pre_key_bundle");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -803,15 +803,15 @@ int new_inbound_group_session_by_member_id(
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_inbound_group_session_by_member_id()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_inbound_group_session_by_member_id(): no user_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_info(group_member_id)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_inbound_group_session_by_member_id()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_inbound_group_session_by_member_id(): no group_member_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_info(group_info)) {
-        e2ees_notify_log(NULL, BAD_GROUP_INFO, "new_inbound_group_session_by_member_id()");
+        e2ees_notify_log(NULL, BAD_GROUP_INFO, "new_inbound_group_session_by_member_id(): no group_info");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -858,11 +858,11 @@ int complete_inbound_group_session_by_pre_key_bundle(
     uint32_t hf_len = 0;
 
     if (!is_valid_group_session_by_member_id(inbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "complete_inbound_group_session_by_pre_key_bundle()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "complete_inbound_group_session_by_pre_key_bundle(): no inbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_pre_key_bundle(group_pre_key_bundle)) {
-        e2ees_notify_log(NULL, BAD_GROUP_PRE_KEY_BUNDLE, "complete_inbound_group_session_by_pre_key_bundle()");
+        e2ees_notify_log(NULL, BAD_GROUP_PRE_KEY_BUNDLE, "complete_inbound_group_session_by_pre_key_bundle(): no group_pre_key_bundle");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -917,11 +917,11 @@ int complete_inbound_group_session_by_member_id(
     uint32_t hf_len = 0;
 
     if (!is_valid_group_session_by_pre_key_bundle(inbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "complete_inbound_group_session_by_member_id()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "complete_inbound_group_session_by_member_id(): no inbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_info(group_member_id)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "complete_inbound_group_session_by_member_id()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "complete_inbound_group_session_by_member_id(): no group_member_id");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -985,13 +985,13 @@ int new_and_complete_inbound_group_session(
     if (is_valid_group_member_info(group_member_id)) {
         identity_public_key = group_member_id->sign_public_key.data;
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_and_complete_inbound_group_session()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_and_complete_inbound_group_session(): no group_member_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_group_session_by_pre_key_bundle(other_group_session)) {
         group_seed = &(other_group_session->group_seed);
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "new_and_complete_inbound_group_session()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "new_and_complete_inbound_group_session(): no other_group_session");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -1059,15 +1059,15 @@ int new_and_complete_inbound_group_session_with_chain_key(
     if (is_valid_group_member_info(group_member_info)) {
         identity_public_key = group_member_info->sign_public_key.data;
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_and_complete_inbound_group_session_with_chain_key()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_and_complete_inbound_group_session_with_chain_key(): no group_member_info");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_session_no_chain_key(other_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "new_and_complete_inbound_group_session_with_chain_key()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "new_and_complete_inbound_group_session_with_chain_key(): no other_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (their_chain_key == NULL) {
-        e2ees_notify_log(NULL, BAD_GROUP_CHAIN_KEY, "new_and_complete_inbound_group_session_with_chain_key()");
+        e2ees_notify_log(NULL, BAD_GROUP_CHAIN_KEY, "new_and_complete_inbound_group_session_with_chain_key(): no their_chain_key");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -1114,13 +1114,13 @@ int new_and_complete_inbound_group_session_with_ratchet_state(
     uint32_t ad_len = 0;
 
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "new_and_complete_inbound_group_session_with_ratchet_state()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "new_and_complete_inbound_group_session_with_ratchet_state(): no user_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_group_update_key_bundle(group_update_key_bundle)) {
         identity_public_key = group_update_key_bundle->sign_public_key.data;
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_UPDATE_KEY_BUNDLE, "new_and_complete_inbound_group_session_with_ratchet_state()");
+        e2ees_notify_log(NULL, BAD_GROUP_UPDATE_KEY_BUNDLE, "new_and_complete_inbound_group_session_with_ratchet_state(): no group_update_key_bundle");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -1198,7 +1198,7 @@ int renew_outbound_group_session_by_welcome_and_add(
     size_t i, j;
 
     if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_outbound_group_session_by_welcome_and_add()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_outbound_group_session_by_welcome_and_add(): no outbound_group_session");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, outbound_group_session->session_owner);
@@ -1206,12 +1206,12 @@ int renew_outbound_group_session_by_welcome_and_add(
         if (identity_key == NULL) {
             get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
             if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add()");
+                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add(): no account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_bytes_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add()");
+                    e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add(): no identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 } else {
                     auth = strdup(account->auth);
@@ -1220,7 +1220,7 @@ int renew_outbound_group_session_by_welcome_and_add(
         } else {
             get_e2ees_plugin()->db_handler.load_auth(outbound_group_session->session_owner, &auth);
             if (auth == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add()");
+                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add(): no auth");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = &(identity_key->sign_key_pair->public_key);
@@ -1228,15 +1228,15 @@ int renew_outbound_group_session_by_welcome_and_add(
         }
     }
     if (!is_valid_address(sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "renew_outbound_group_session_by_welcome_and_add()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "renew_outbound_group_session_by_welcome_and_add(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_info_list((const E2ees__GroupMemberInfo **)adding_member_info_list, n_adding_member_info_list)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "renew_outbound_group_session_by_welcome_and_add()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "renew_outbound_group_session_by_welcome_and_add(): invalid group member info list");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(adding_group_members, adding_group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "renew_outbound_group_session_by_welcome_and_add()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "renew_outbound_group_session_by_welcome_and_add(): invalid adding group member list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -1422,11 +1422,11 @@ int renew_inbound_group_session_by_welcome_and_add(
     int ret = E2EES_RESULT_SUCC;
 
     if (!is_valid_group_session(inbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_inbound_group_session_by_welcome_and_add()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_inbound_group_session_by_welcome_and_add(): no inbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (new_group_info == NULL) {
-        e2ees_notify_log(NULL, BAD_GROUP_INFO, "renew_inbound_group_session_by_welcome_and_add()");
+        e2ees_notify_log(NULL, BAD_GROUP_INFO, "renew_inbound_group_session_by_welcome_and_add(): no new_group_info");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -1485,7 +1485,7 @@ int renew_group_sessions_with_new_device(
     size_t i, j;
 
     if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_group_sessions_with_new_device()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_group_sessions_with_new_device(): no outbound_group_session");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, outbound_group_session->session_owner);
@@ -1493,12 +1493,12 @@ int renew_group_sessions_with_new_device(
         if (identity_key == NULL) {
             get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
             if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device()");
+                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device(): no account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_bytes_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device()");
+                    e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device(): no identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 } else {
                     auth = strdup(account->auth);
@@ -1507,7 +1507,7 @@ int renew_group_sessions_with_new_device(
         } else {
             get_e2ees_plugin()->db_handler.load_auth(outbound_group_session->session_owner, &auth);
             if (auth == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device()");
+                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device(): no auth");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = &(identity_key->sign_key_pair->public_key);
@@ -1515,7 +1515,7 @@ int renew_group_sessions_with_new_device(
         }
     }
     if (!is_valid_address(sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "renew_group_sessions_with_new_device()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "renew_group_sessions_with_new_device(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_address(new_device_address)) {
@@ -1523,11 +1523,11 @@ int renew_group_sessions_with_new_device(
         cur_user_domain = new_device_address->domain;
         cur_user_device_id = new_device_address->user->device_id;
     } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "renew_group_sessions_with_new_device()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "renew_group_sessions_with_new_device(): no new_device_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_info(adding_member_device_info)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "renew_group_sessions_with_new_device()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "renew_group_sessions_with_new_device(): no adding_member_device_info");
         ret = E2EES_RESULT_FAIL;
     }
 

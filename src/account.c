@@ -424,7 +424,7 @@ int insert_opks(E2ees__Account *account, E2ees__OneTimePreKey **src, size_t src_
         old_opk_num = account->n_one_time_pre_key_list;
         new_opk_num = old_opk_num + src_num;
     } else {
-        e2ees_notify_log(NULL, BAD_ONE_TIME_PRE_KEY, "insert_opks()");
+        e2ees_notify_log(NULL, BAD_ONE_TIME_PRE_KEY, "insert_opks(): invalid one-time pre-key list");
         ret = E2EES_RESULT_FAIL;
     }
 

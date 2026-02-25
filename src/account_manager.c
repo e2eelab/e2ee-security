@@ -45,7 +45,7 @@ int produce_register_request(E2ees__RegisterUserRequest **request_out, E2ees__Ac
         signed_pre_key = account->signed_pre_key;
         signed_pre_key_pair = signed_pre_key->key_pair;
     } else {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "produce_register_request()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "produce_register_request(): invalid account");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -99,11 +99,11 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
     size_t i;
 
     if (!is_valid_unregistered_account(account)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "consume_register_response()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "consume_register_response(): invalid account");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_register_user_response(response)) {
-        e2ees_notify_log(NULL, BAD_REGISTER_USER_RESPONSE, "consume_register_response()");
+        e2ees_notify_log(NULL, BAD_REGISTER_USER_RESPONSE, "consume_register_response(): invalid register_user_response");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -208,7 +208,7 @@ int produce_publish_spk_request(
         signed_pre_key = account->signed_pre_key;
         signed_pre_key_pair = signed_pre_key->key_pair;
     } else {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "produce_publish_spk_request()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "produce_publish_spk_request(): invalid account");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -239,11 +239,11 @@ int consume_publish_spk_response(
     int ret = E2EES_RESULT_SUCC;
 
     if (!is_valid_publish_spk_response(response)) {
-        e2ees_notify_log(NULL, BAD_PUBLISH_SPK_RESPONSE, "consume_publish_spk_response()");
+        e2ees_notify_log(NULL, BAD_PUBLISH_SPK_RESPONSE, "consume_publish_spk_response(): invalid publish_spk_response");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_registered_account(account)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "consume_publish_spk_response()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "consume_publish_spk_response(): invalid account");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -274,7 +274,7 @@ int produce_supply_opks_request(
         e2ees_pack_id = account->e2ees_pack_id;
         cur_opk_id = account->next_one_time_pre_key_id;
     } else {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "produce_supply_opks_request()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "produce_supply_opks_request(): invalid account");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -312,11 +312,11 @@ int consume_supply_opks_response(E2ees__Account *account, E2ees__OneTimePreKey *
     int ret = E2EES_RESULT_SUCC;
 
     if (!is_valid_registered_account(account)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "consume_supply_opks_response()");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "consume_supply_opks_response(): invalid account");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_supply_opks_response(response)) {
-        e2ees_notify_log(NULL, BAD_SUPPLY_OPKS_RESPONSE, "consume_supply_opks_response()");
+        e2ees_notify_log(NULL, BAD_SUPPLY_OPKS_RESPONSE, "consume_supply_opks_response(): invalid supply_opks_response");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -337,12 +337,12 @@ bool consume_supply_opks_msg(E2ees__E2eeAddress *receiver_address, E2ees__Supply
         since our published one-time pre-keys are going to used up. */
 
     if (!is_valid_address(receiver_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "consume_supply_opks_msg()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "consume_supply_opks_msg(): invalid receiver_address");
         return true;
     }
     if (is_valid_supply_opks_msg(msg)) {
         if (!compare_address(receiver_address, msg->user_address)){
-            e2ees_notify_log(receiver_address, BAD_SUPPLY_OPKS_MSG, "consume_supply_opks_msg()");
+            e2ees_notify_log(receiver_address, BAD_SUPPLY_OPKS_MSG, "consume_supply_opks_msg(): invalid supply_opks_msg");
             return true;
         }
     }
@@ -352,7 +352,7 @@ bool consume_supply_opks_msg(E2ees__E2eeAddress *receiver_address, E2ees__Supply
     get_e2ees_plugin()->db_handler.load_account_by_address(receiver_address, &account);
 
     if (!is_valid_registered_account(account)) {
-        e2ees_notify_log(receiver_address, BAD_ACCOUNT, "consume_supply_opks_msg()");
+        e2ees_notify_log(receiver_address, BAD_ACCOUNT, "consume_supply_opks_msg(): invalid account");
         return true;
     }
 

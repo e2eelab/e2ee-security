@@ -97,7 +97,7 @@ int register_user(
         if (is_valid_register_user_response(response)) {
             bool consumed = consume_register_response(account, response);
         } else {
-            e2ees_notify_log(NULL, BAD_REGISTER_USER_RESPONSE, "register_user()");
+            e2ees_notify_log(NULL, BAD_REGISTER_USER_RESPONSE, "register_user(): invalid register_user_response");
             ret = E2EES_RESULT_FAIL;
         }
 
@@ -175,15 +175,15 @@ E2ees__InviteResponse *invite(
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "invite()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "invite(): no from");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(to_user_id)) {
-        e2ees_notify_log(NULL, BAD_USER_ID, "invite()");
+        e2ees_notify_log(NULL, BAD_USER_ID, "invite(): no to_user_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(to_domain)) {
-        e2ees_notify_log(NULL, BAD_DOMAIN, "invite()");
+        e2ees_notify_log(NULL, BAD_DOMAIN, "invite(): no to_domain");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -513,15 +513,15 @@ int create_group(
     uint32_t e2ees_pack_id = 0;
 
     if (!is_valid_address(sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "create_group()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "create_group(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(group_name)) {
-        e2ees_notify_log(NULL, BAD_GROUP_NAME, "create_group()");
+        e2ees_notify_log(NULL, BAD_GROUP_NAME, "create_group(): no group_name");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(group_members, group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "create_group()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "create_group(): invalid group member list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -531,7 +531,7 @@ int create_group(
         if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
             get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
             if (account == NULL) {
-                e2ees_notify_log(sender_address, BAD_ACCOUNT, "create_group()");
+                e2ees_notify_log(sender_address, BAD_ACCOUNT, "create_group(): no account");
                 ret = E2EES_RESULT_FAIL;
             }
             e2ees_pack_id = account->e2ees_pack_id;
@@ -550,7 +550,7 @@ int create_group(
         response = get_e2ees_plugin()->proto_handler.create_group(sender_address, auth, create_group_request);
 
         if (!is_valid_create_group_response(response)) {
-            e2ees_notify_log(sender_address, BAD_CREATE_GROUP_RESPONSE, "create_group()");
+            e2ees_notify_log(sender_address, BAD_CREATE_GROUP_RESPONSE, "create_group(): invalid create_group_response");
             ret = E2EES_RESULT_FAIL;
             // do not keep pending request for create_group():
             // pack reuest to request_data
@@ -568,6 +568,9 @@ int create_group(
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = consume_create_group_response(e2ees_pack_id, sender_address, group_name, group_members, group_members_num, response);
+        if (ret != E2EES_RESULT_SUCC) {
+            e2ees_notify_log(sender_address, BAD_CONSUME, "Server created group but local consume response failed");
+        }
     }
 
     // release
@@ -615,15 +618,15 @@ int add_group_members(
                 }
             }
         } else {
-            e2ees_notify_log(sender_address, BAD_AUTH, "add_group_members()");
+            e2ees_notify_log(sender_address, BAD_AUTH, "add_group_members(): no auth");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_members()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_members(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(adding_members, adding_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "add_group_members()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "add_group_members(): invalid adding member list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -633,10 +636,8 @@ int add_group_members(
 
     if (ret == E2EES_RESULT_SUCC) {
         response = get_e2ees_plugin()->proto_handler.add_group_members(sender_address, auth, add_group_members_request);
-        // TODO: replace adding_members, adding_members_num by using response->added_group_member_list
-
         if (!is_valid_add_group_members_response(response)) {
-            e2ees_notify_log(NULL, BAD_ADD_GROUP_MEMBERS_RESPONSE, "add_group_members()");
+            e2ees_notify_log(NULL, BAD_ADD_GROUP_MEMBERS_RESPONSE, "add_group_members(): invalid add_group_members_response");
             ret = E2EES_RESULT_FAIL;
             // do not keep pending request for add_group_members():
             // pack reuest to request_data
@@ -653,7 +654,12 @@ int add_group_members(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = consume_add_group_members_response(outbound_group_session, response, adding_members, adding_members_num);
+        ret = consume_add_group_members_response(
+            outbound_group_session, response, response->added_group_member_list, response->n_added_group_member_list
+        );
+        if (ret != E2EES_RESULT_SUCC) {
+            e2ees_notify_log(sender_address, BAD_CONSUME, "Server added group members but local consume response failed");
+        }
     }
 
     // release
@@ -704,15 +710,15 @@ int remove_group_members(
                 }
             }
         } else {
-            e2ees_notify_log(sender_address, BAD_AUTH, "remove_group_members()");
+            e2ees_notify_log(sender_address, BAD_AUTH, "remove_group_members(): no auth");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "remove_group_members()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "remove_group_members(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(removing_members, removing_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "remove_group_members()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "remove_group_members(): invalid removing member list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -724,7 +730,7 @@ int remove_group_members(
         response = get_e2ees_plugin()->proto_handler.remove_group_members(sender_address, auth, remove_group_members_request);
 
         if (!is_valid_remove_group_members_response(response)) {
-            e2ees_notify_log(NULL, BAD_REMOVE_GROUP_MEMBERS_RESPONSE, "remove_group_members()");
+            e2ees_notify_log(NULL, BAD_REMOVE_GROUP_MEMBERS_RESPONSE, "remove_group_members(): invalid remove_group_members_response");
             ret = E2EES_RESULT_FAIL;
             // do not keep pending request for remove_group_members():
             // pack request to request_data
@@ -741,7 +747,12 @@ int remove_group_members(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = consume_remove_group_members_response(outbound_group_session, response, removing_members, removing_members_num);
+        ret = consume_remove_group_members_response(
+            outbound_group_session, response, response->removed_group_member_list, response->n_removed_group_member_list
+        );
+        if (ret != E2EES_RESULT_SUCC) {
+            e2ees_notify_log(sender_address, BAD_CONSUME, "Server removed group members but local consume response failed");
+        }
     }
 
     // release
@@ -771,15 +782,15 @@ int leave_group(
         get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
 
         if (auth == NULL) {
-            e2ees_notify_log(sender_address, BAD_AUTH, "leave_group()");
+            e2ees_notify_log(sender_address, BAD_AUTH, "leave_group(): no auth");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "leave_group()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "leave_group(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(group_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "leave_group()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "leave_group(): no group_address");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -791,7 +802,7 @@ int leave_group(
         response = get_e2ees_plugin()->proto_handler.leave_group(sender_address, auth, leave_group_request);
 
         if (!is_valid_leave_group_response(response)) {
-            e2ees_notify_log(NULL, BAD_LEAVE_GROUP_RESPONSE, "leave_group()");
+            e2ees_notify_log(NULL, BAD_LEAVE_GROUP_RESPONSE, "leave_group(): invalid leave_group_response");
             ret = E2EES_RESULT_FAIL;
             // do not keep pending request for leave_group():
             // pack request to request_data
@@ -858,27 +869,27 @@ int send_group_msg_with_filter(
                 }
             }
         } else {
-            e2ees_notify_log(sender_address, BAD_AUTH, "send_group_msg()");
+            e2ees_notify_log(sender_address, BAD_AUTH, "send_group_msg(): no auth");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "send_group_msg()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "send_group_msg(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (plaintext_data == NULL) {
-        e2ees_notify_log(NULL, BAD_PLAINTEXT, "send_group_msg()");
+        e2ees_notify_log(NULL, BAD_PLAINTEXT, "send_group_msg(): no plaintext_data");
         ret = E2EES_RESULT_FAIL;
     }
     if (plaintext_data_len == 0) {
-        e2ees_notify_log(NULL, BAD_PLAINTEXT, "send_group_msg()");
+        e2ees_notify_log(NULL, BAD_PLAINTEXT, "send_group_msg(): plaintext_data_len is zero");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address_list(allow_list, allow_list_len)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "send_group_msg()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "send_group_msg(): invalid allow_list");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address_list(deny_list, deny_list_len)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "send_group_msg()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "send_group_msg(): invalid deny_list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -954,7 +965,7 @@ E2ees__ConsumeProtoMsgResponse *consume_proto_msg(E2ees__E2eeAddress *sender_add
     get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
 
     if (auth == NULL) {
-        e2ees_notify_log(sender_address, BAD_ACCOUNT, "consume_proto_msg()");
+        e2ees_notify_log(sender_address, BAD_ACCOUNT, "consume_proto_msg(): no auth");
         return NULL;
     }
 
@@ -996,11 +1007,12 @@ E2ees__ConsumeProtoMsgResponse *process_proto_msg(uint8_t *proto_msg_data, size_
                 server_public_key.data
             );
             if (server_check < 0) {
-                e2ees_notify_log(NULL, BAD_SERVER_SIGNATURE, "process_proto_msg()");
+                e2ees_notify_log(NULL, BAD_SERVER_SIGNATURE, "process_proto_msg(): invalid server signature");
                 ret = E2EES_RESULT_FAIL;
             }
         }
     } else {
+        e2ees_notify_log(NULL, BAD_PROTO_MSG, "process_proto_msg(): invalid proto_msg");
         ret = E2EES_RESULT_FAIL;
     }
 

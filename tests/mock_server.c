@@ -1348,6 +1348,9 @@ E2ees__AddGroupMembersResponse *mock_add_group_members(E2ees__E2eeAddress *from,
         copy_group_member(&((response->group_member_list)[i]), (cur_group_data->group_member_list)[i]);
     }
 
+    response->n_added_group_member_list = adding_members_num;
+    copy_group_members(&(response->added_group_member_list), add_group_members_msg->adding_member_list, adding_members_num);
+
     copy_group_member_ids(&(response->adding_member_info_list), adding_member_info_list, adding_member_addresses_total_num);
     response->n_adding_member_info_list = adding_member_addresses_total_num;
 
@@ -1784,6 +1787,8 @@ E2ees__RemoveGroupMembersResponse *mock_remove_group_members(E2ees__E2eeAddress 
     }
     response->n_member_info_list = to_member_addresses_total_num;
     copy_group_member_ids(&(response->member_info_list), remove_group_members_msg_to_remained->member_info_list, to_member_addresses_total_num);
+    response->n_removed_group_member_list = removed_group_members_num;
+    copy_group_members(&(response->removed_group_member_list), request->msg->removing_member_list, removed_group_members_num);
 
     // release
     e2ees__remove_group_members_msg__free_unpacked(remove_group_members_msg_to_remained, NULL);

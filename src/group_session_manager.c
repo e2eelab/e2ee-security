@@ -43,19 +43,19 @@ int produce_create_group_request(
     uint32_t e2ees_pack_id = 0;
 
     if (!is_valid_address(sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_create_group_request()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_create_group_request(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(group_name)) {
-        e2ees_notify_log(NULL, BAD_GROUP_NAME, "produce_create_group_request()");
+        e2ees_notify_log(NULL, BAD_GROUP_NAME, "produce_create_group_request(): no group_name");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(group_member_list, group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_create_group_request()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_create_group_request(): invalid group member list");
         ret = E2EES_RESULT_FAIL;
     }
     if (group_members_num == 0) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_create_group_request()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_create_group_request(): group_members_num is zero");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -65,7 +65,7 @@ int produce_create_group_request(
         if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
             get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
             if (account == NULL) {
-                e2ees_notify_log(sender_address, BAD_ACCOUNT, "produce_create_group_request()");
+                e2ees_notify_log(sender_address, BAD_ACCOUNT, "produce_create_group_request(): no account");
                 ret = E2EES_RESULT_FAIL;
             }
             e2ees_pack_id = account->e2ees_pack_id;
@@ -315,11 +315,11 @@ int produce_add_group_members_request(
     uint32_t e2ees_pack_id = 0;
 
     if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_add_group_members_request()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_add_group_members_request(): no outbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(adding_member_list, adding_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_add_group_members_request()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_add_group_members_request(): invalid adding member list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -329,7 +329,7 @@ int produce_add_group_members_request(
         if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
             get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
             if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "produce_add_group_members_request()");
+                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "produce_add_group_members_request(): no account");
                 ret = E2EES_RESULT_FAIL;
             }
             e2ees_pack_id = account->e2ees_pack_id;
@@ -534,11 +534,11 @@ int produce_add_group_member_device_request(
     uint32_t e2ees_pack_id = 0;
 
     if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_add_group_member_device_request()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_add_group_member_device_request(): no outbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(new_device_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_add_group_member_device_request()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_add_group_member_device_request(): no new_device_address");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -548,7 +548,7 @@ int produce_add_group_member_device_request(
         if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
             get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
             if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "produce_add_group_member_device_request()");
+                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "produce_add_group_member_device_request(): no account");
                 ret = E2EES_RESULT_FAIL;
             }
             e2ees_pack_id = account->e2ees_pack_id;
@@ -738,11 +738,11 @@ int produce_remove_group_members_request(
     uint32_t e2ees_pack_id = 0;
 
     if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_remove_group_members_request()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_remove_group_members_request(): no outbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(removing_group_members, removing_group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_remove_group_members_request()");
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_remove_group_members_request(): invalid removing group member list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -752,7 +752,7 @@ int produce_remove_group_members_request(
         if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
             get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
             if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "produce_remove_group_members_request()");
+                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "produce_remove_group_members_request(): no account");
                 ret = E2EES_RESULT_FAIL;
             }
             e2ees_pack_id = account->e2ees_pack_id;
@@ -1048,11 +1048,11 @@ int produce_leave_group_request(
     E2ees__LeaveGroupMsg *msg = NULL;
 
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_leave_group_request()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_leave_group_request(): no user_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(group_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_leave_group_request()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_leave_group_request(): no group_address");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -1178,23 +1178,23 @@ int produce_send_group_msg_request(
     if (is_valid_group_session(outbound_group_session)) {
         cipher_suite = get_e2ees_pack(outbound_group_session->e2ees_pack_id)->cipher_suite;
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_send_group_msg_request()");
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_send_group_msg_request(): no outbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (plaintext_data == NULL) {
-        e2ees_notify_log(NULL, BAD_PLAINTEXT, "produce_send_group_msg_request()");
+        e2ees_notify_log(NULL, BAD_PLAINTEXT, "produce_send_group_msg_request(): no plaintext_data");
         ret = E2EES_RESULT_FAIL;
     }
     if (plaintext_data_len == 0) {
-        e2ees_notify_log(NULL, BAD_PLAINTEXT, "produce_send_group_msg_request()");
+        e2ees_notify_log(NULL, BAD_PLAINTEXT, "produce_send_group_msg_request(): plaintext_data_len is zero");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address_list(allow_list, allow_list_len)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_group_msg_request()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_group_msg_request(): invalid allow_list");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address_list(deny_list, deny_list_len)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_group_msg_request()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_group_msg_request(): invalid deny_list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -1204,7 +1204,7 @@ int produce_send_group_msg_request(
         if (identity_key == NULL) {
             get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->sender, &account);
             if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->sender, BAD_ACCOUNT, "produce_send_group_msg_request()");
+                e2ees_notify_log(outbound_group_session->sender, BAD_ACCOUNT, "produce_send_group_msg_request(): no account");
                 ret = E2EES_RESULT_FAIL;
             }
             copy_ik_from_ik(&identity_key, account->identity_key);
@@ -1411,10 +1411,10 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
                 inbound_group_session->sequence += 1;
                 get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
             } else {
-                e2ees_notify_log(inbound_group_session->session_owner, BAD_MESSAGE_DECRYPTION, "consume_group_msg()");
+                e2ees_notify_log(inbound_group_session->session_owner, BAD_MESSAGE_DECRYPTION, "consume_group_msg(): decryption failed");
             }
         } else {
-            e2ees_notify_log(inbound_group_session->session_owner, BAD_SIGNATURE, "consume_group_msg()");
+            e2ees_notify_log(inbound_group_session->session_owner, BAD_SIGNATURE, "consume_group_msg(): verification failed");
         }
     }
 

@@ -248,22 +248,22 @@ void e2ees_notify_log(E2ees__E2eeAddress *user_address, LogCode log_code, const 
         return;
     }
 
-    char msg[256] = {0};
+    char msg[4096] = {0};
     va_list arg;
     va_start(arg, msg_fmt);
-    vsnprintf(msg, 256, msg_fmt, arg);
+    vsnprintf(msg, sizeof(msg), msg_fmt, arg);
     va_end(arg);
 
     const char *logcode_str = logcode_string(log_code);
-    if (log_code == DEBUG_LOG) {
-        char log_msg[256 + 36] = {0};
+    if (log_code == DEBUG_LOG || log_code == VERBOSE_LOG) {
+        char log_msg[4096 + 64] = {0};
         snprintf(log_msg, sizeof(log_msg), "<%s> %s", logcode_str, msg);
         e2ees_plugin->event_handler.on_log(user_address, log_code, log_msg);
     } else {
-        char stack_trace[256] = {0};
+        char stack_trace[512] = {0};
         get_stack_trace(stack_trace, sizeof(stack_trace));
 
-        char log_msg[512] = {0};
+        char log_msg[4096 + 512] = {0};
         snprintf(log_msg, sizeof(log_msg), "<%s> %s\nStack trace:\n%s", logcode_str, msg, stack_trace);
         e2ees_plugin->event_handler.on_log(user_address, log_code, log_msg);
     }

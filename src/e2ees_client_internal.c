@@ -30,19 +30,19 @@ int get_pre_key_bundle_internal(
     size_t invite_response_num;
 
     if (!is_valid_address(from)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "get_pre_key_bundle_internal()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "get_pre_key_bundle_internal(): no from");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(auth)) {
-        e2ees_notify_log(NULL, BAD_AUTH, "get_pre_key_bundle_internal()");
+        e2ees_notify_log(NULL, BAD_AUTH, "get_pre_key_bundle_internal(): no auth");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(to_user_id)) {
-        e2ees_notify_log(NULL, BAD_USER_ID, "get_pre_key_bundle_internal()");
+        e2ees_notify_log(NULL, BAD_USER_ID, "get_pre_key_bundle_internal(): no to_user_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(to_domain)) {
-        e2ees_notify_log(NULL, BAD_DOMAIN, "get_pre_key_bundle_internal()");
+        e2ees_notify_log(NULL, BAD_DOMAIN, "get_pre_key_bundle_internal(): no to_domain");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -55,7 +55,7 @@ int get_pre_key_bundle_internal(
         get_pre_key_bundle_response = get_e2ees_plugin()->proto_handler.get_pre_key_bundle(from, auth, get_pre_key_bundle_request);
 
         if (!is_valid_get_pre_key_bundle_response(get_pre_key_bundle_response)) {
-            e2ees_notify_log(NULL, BAD_GET_PRE_KEY_BUNDLE_RESPONSE, "get_pre_key_bundle_internal()");
+            e2ees_notify_log(NULL, BAD_GET_PRE_KEY_BUNDLE_RESPONSE, "get_pre_key_bundle_internal(): invalid get_pre_key_bundle_response");
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -156,11 +156,11 @@ int invite_internal(
         user_address = outbound_session->our_address;
         get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
         if (!is_valid_string(auth)) {
-            e2ees_notify_log(user_address, BAD_AUTH, "invite_internal()");
+            e2ees_notify_log(user_address, BAD_AUTH, "invite_internal(): no auth");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(user_address, BAD_SESSION, "invite_internal()");
+        e2ees_notify_log(user_address, BAD_SESSION, "invite_internal(): no outbound_session");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -214,29 +214,29 @@ int accept_internal(
     char *auth = NULL;
 
     if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
-        e2ees_notify_log(from, BAD_E2EES_PACK, "accept_internal()");
+        e2ees_notify_log(from, BAD_E2EES_PACK, "accept_internal(): no e2ees_pack_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_address(from)) {
         get_e2ees_plugin()->db_handler.load_auth(from, &auth);
         if (!is_valid_string(auth)) {
-            e2ees_notify_log(from, BAD_AUTH, "accept_internal()");
+            e2ees_notify_log(from, BAD_AUTH, "accept_internal(): no auth");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(from, BAD_ADDRESS, "accept_internal()");
+        e2ees_notify_log(from, BAD_ADDRESS, "accept_internal(): no from");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(to)) {
-        e2ees_notify_log(from, BAD_ADDRESS, "accept_internal()");
+        e2ees_notify_log(from, BAD_ADDRESS, "accept_internal(): no to");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(session_id)) {
-        e2ees_notify_log(from, BAD_SESSION_ID, "accept_internal()");
+        e2ees_notify_log(from, BAD_SESSION_ID, "accept_internal(): no session_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_protobuf(our_ratchet_key)) {
-        e2ees_notify_log(from, BAD_RATCHET_KEY, "accept_internal()");
+        e2ees_notify_log(from, BAD_RATCHET_KEY, "accept_internal(): no our_ratchet_key");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -327,11 +327,11 @@ int supply_opks_internal(
 
     if (opks_num != 0) {
         if (!is_valid_registered_account(account)) {
-            e2ees_notify_log(account->address, BAD_ACCOUNT, "supply_opks_internal()");
+            e2ees_notify_log(account->address, BAD_ACCOUNT, "supply_opks_internal(): invalid account");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(account->address, BAD_ADDRESS, "supply_opks_internal()");
+        e2ees_notify_log(account->address, BAD_ADDRESS, "supply_opks_internal(): no opks");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -396,7 +396,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
     get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
 
     if (auth == NULL) {
-        e2ees_notify_log(outbound_session->our_address, BAD_AUTH, "send_one2one_msg_internal()");
+        e2ees_notify_log(outbound_session->our_address, BAD_AUTH, "send_one2one_msg_internal(): no auth");
         return NULL;
     }
 
@@ -457,26 +457,26 @@ int add_group_member_device_internal(
 
                 // group session might not exist:
                 if (outbound_group_session == NULL) {
-                    e2ees_notify_log(sender_address, BAD_GROUP_SESSION, "add_group_member_device_internal()");
+                    e2ees_notify_log(sender_address, BAD_GROUP_SESSION, "add_group_member_device_internal(): no outbound_group_session");
                     // skip:
                     // release
                     free_string(auth);
                     return ret;
                 }
             } else {
-                e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal()");
+                e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal(): no group_address");
                 ret = E2EES_RESULT_FAIL;
             }
         } else {
-            e2ees_notify_log(sender_address, BAD_AUTH, "add_group_member_device_internal()");
+            e2ees_notify_log(sender_address, BAD_AUTH, "add_group_member_device_internal(): no auth");
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(new_device_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal()");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal(): no new_device_address");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -488,7 +488,7 @@ int add_group_member_device_internal(
         response = get_e2ees_plugin()->proto_handler.add_group_member_device(sender_address, auth, add_group_member_device_request);
 
         if (!is_valid_add_group_member_device_response(response)) {
-            e2ees_notify_log(NULL, BAD_ADD_GROUP_MEMBER_DEVICE_RESPONSE, "add_group_member_device_internal()");
+            e2ees_notify_log(NULL, BAD_ADD_GROUP_MEMBER_DEVICE_RESPONSE, "add_group_member_device_internal(): invalid add_group_member_device_response");
             ret = E2EES_RESULT_FAIL;
             // note that packing the pending request will be skipped in some cases
             // pack add_group_member_device_request to request_data
@@ -787,14 +787,12 @@ static void resend_pending_request(E2ees__Account *account) {
                         create_group_request->msg->group_info->n_group_member_list,
                         create_group_response
                     );
-                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                pending_request_id_list[i]);
+                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                 } else {
                     if (create_group_response != NULL && create_group_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
                         // At least one member with group manager role,
                         // or some error happened on creating group.
-                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                    pending_request_id_list[i]);
+                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                     }
                     e2ees_notify_log(user_address, DEBUG_LOG, "handle pending create_group_request failed");
                 }
@@ -817,14 +815,12 @@ static void resend_pending_request(E2ees__Account *account) {
                         group_session, add_group_members_response,
                         add_group_members_msg->adding_member_list, add_group_members_msg->n_adding_member_list
                     );
-                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                pending_request_id_list[i]);
+                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                 } else {
                     if (add_group_members_response != NULL && add_group_members_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
                         // Only the group member with GROUP_ROLE_MANAGER role can add group members,
                         // or member inexists.
-                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                    pending_request_id_list[i]);
+                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                     }
                     e2ees_notify_log(user_address, DEBUG_LOG, "handle pending add_group_members_request failed");
                 }
@@ -846,13 +842,11 @@ static void resend_pending_request(E2ees__Account *account) {
                     ret = consume_add_group_member_device_response(
                         group_session, add_group_member_device_response
                     );
-                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                pending_request_id_list[i]);
+                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                 } else {
                     if (add_group_member_device_response != NULL && add_group_member_device_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
                         // Can not collect group member info, or member device already added.
-                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                    pending_request_id_list[i]);
+                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                     }
                     e2ees_notify_log(user_address, DEBUG_LOG, "handle pending add_group_member_device_request failed");
                 }
@@ -877,14 +871,12 @@ static void resend_pending_request(E2ees__Account *account) {
                         group_session, remove_group_members_response,
                         remove_group_members_msg->removing_member_list, remove_group_members_msg->n_removing_member_list
                     );
-                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                pending_request_id_list[i]);
+                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                 } else {
                     if (remove_group_members_response != NULL && remove_group_members_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
                         // Only the group member with GROUP_ROLE_MANAGER role can remove group members,
                         // user can not remove himself, or member is not in removing member list.
-                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                    pending_request_id_list[i]);
+                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                     }
                     e2ees_notify_log(user_address, DEBUG_LOG, "handle pending remove_group_members_request failed");
                 }
@@ -901,13 +893,11 @@ static void resend_pending_request(E2ees__Account *account) {
                 succ = is_valid_leave_group_response(leave_group_response);
                 if (succ) {
                     ret = consume_leave_group_response(user_address, leave_group_response);
-                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                pending_request_id_list[i]);
+                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                 } else {
                     if (leave_group_response != NULL && leave_group_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
                         // Only the group member can leave the group.
-                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address,
-                                                                                    pending_request_id_list[i]);
+                        get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
                     }
                     e2ees_notify_log(user_address, DEBUG_LOG, "handle pending leave_group_request failed");
                 }
