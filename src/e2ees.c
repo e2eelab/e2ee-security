@@ -243,6 +243,130 @@ void e2ees_randombytes(uint8_t *rand_data, size_t rand_data_len) {
     get_e2ees_plugin()->common_handler.gen_rand(rand_data, rand_data_len);
 }
 
+///-----------------proto verbose-----------------///
+// 輔助函式：處理縮排與安全寫入
+void dump_printf(DumpContext *ctx, const char *fmt, ...) {
+    if (ctx->offset >= ctx->size - 64) return; // 空間不足預警
+    
+    // 先處理縮排
+    for (int i = 0; i < ctx->indent && ctx->offset < ctx->size; i++) {
+        ctx->buf[ctx->offset++] = ' ';
+        ctx->buf[ctx->offset++] = ' ';
+    }
+
+    va_list args;
+    va_start(args, fmt);
+    int written = vsnprintf(ctx->buf + ctx->offset, ctx->size - ctx->offset, fmt, args);
+    va_end(args);
+
+    if (written > 0) ctx->offset += written;
+}
+
+// 核心遞迴函式
+void dump_message_recursive(const ProtobufCMessage *msg, DumpContext *ctx) {
+    if (!msg) {
+        dump_printf(ctx, "NULL\n");
+        return;
+    }
+
+    const ProtobufCMessageDescriptor *desc = msg->descriptor;
+    dump_printf(ctx, "--- %s ---\n", desc->name);
+    ctx->indent++;
+
+    for (unsigned i = 0; i < desc->n_fields; i++) {
+        const ProtobufCFieldDescriptor *f = &desc->fields[i];
+        const void *member = ((const char *)msg) + f->offset;
+        const void *qmember = ((const char *)msg) + f->quantifier_offset;
+
+        // 處理 Optional 欄位沒值的情況
+        if (f->label == PROTOBUF_C_LABEL_OPTIONAL && f->quantifier_offset != 0) {
+            if (!*(const protobuf_c_boolean *)qmember) continue;
+        }
+
+        // 處理 Repeated (陣列) 欄位
+        if (f->label == PROTOBUF_C_LABEL_REPEATED) {
+            size_t n = *(const size_t *)qmember;
+            dump_printf(ctx, "%s: [Array, count=%zu]\n", f->name, n);
+            
+            ctx->indent++;
+            const void *array = *(const void * const *)member;
+            for (size_t j = 0; j < n; j++) {
+                dump_printf(ctx, "[%zu]: ", j);
+                
+                // 根據類型處理陣列元素
+                if (f->type == PROTOBUF_C_TYPE_MESSAGE) {
+                    const ProtobufCMessage *sub = ((const ProtobufCMessage * const *)array)[j];
+                    // 這裡關閉縮排再遞迴，避免格式太亂
+                    int old_indent = ctx->indent; ctx->indent = 0;
+                    dump_message_recursive(sub, ctx);
+                    ctx->indent = old_indent;
+                } else if (f->type == PROTOBUF_C_TYPE_STRING) {
+                    dump_printf(ctx, "\"%s\"\n", ((const char * const *)array)[j]);
+                } else {
+                    dump_printf(ctx, "<other type in array>\n");
+                }
+            }
+            ctx->indent--;
+            continue;
+        }
+
+        // 處理單一欄位 (非陣列)
+        dump_printf(ctx, "%s: ", f->name);
+        switch (f->type) {
+            case PROTOBUF_C_TYPE_STRING:
+                dump_printf(ctx, "\"%s\"\n", *(const char * const *)member);
+                break;
+            case PROTOBUF_C_TYPE_INT32:
+            case PROTOBUF_C_TYPE_UINT32:
+                dump_printf(ctx, "%u\n", *(const uint32_t *)member);
+                break;
+            case PROTOBUF_C_TYPE_BYTES: {
+                const ProtobufCBinaryData *bd = (const ProtobufCBinaryData *)member;
+                dump_printf(ctx, "<bytes len=%zu, hex_head=%02X%02X...>\n", 
+                            bd->len, bd->len > 0 ? bd->data[0] : 0, bd->len > 1 ? bd->data[1] : 0);
+                break;
+            }
+            case PROTOBUF_C_TYPE_MESSAGE: {
+                const ProtobufCMessage *sub = *(const ProtobufCMessage * const *)member;
+                int old_indent = ctx->indent; ctx->indent = 0;
+                dump_message_recursive(sub, ctx);
+                ctx->indent = old_indent;
+                break;
+            }
+            case PROTOBUF_C_TYPE_ENUM: {
+                int val = *(const int *)member;
+                const ProtobufCEnumDescriptor *ed = (const ProtobufCEnumDescriptor *)f->descriptor;
+                const char *ename = "UNK";
+                for (unsigned k = 0; k < ed->n_values; k++) 
+                    if (ed->values[k].value == val) ename = ed->values[k].name;
+                dump_printf(ctx, "%s(%d)\n", ename, val);
+                break;
+            }
+            default: dump_printf(ctx, "<type %d>\n", f->type); break;
+        }
+    }
+    ctx->indent--;
+}
+
+void log_proto_verbose(E2ees__E2eeAddress *addr, const char *title, const void *proto_struct) {
+    if (!proto_struct) return;
+    
+    char *big_buffer = malloc(8192); // 針對 VERBOSE 給予 8KB 空間
+    if (!big_buffer) return;
+    
+    DumpContext ctx = { .buf = big_buffer, .size = 8192, .offset = 0, .indent = 0 };
+    
+    // 強制轉型為 ProtobufCMessage
+    dump_message_recursive((const ProtobufCMessage *)proto_struct, &ctx);
+    
+    // 呼叫e2ees_notify_log
+    e2ees_notify_log(addr, VERBOSE_LOG, "%s\n%s", title, big_buffer);
+    
+    free(big_buffer);
+}
+
+///-----------------------------------------------///
+
 void e2ees_notify_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *msg_fmt, ...) {
     if (e2ees_plugin == NULL) {
         return;

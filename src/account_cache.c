@@ -25,6 +25,19 @@
 
 static account_cacheer *account_cacheer_list = NULL;
 
+static account_cacheer* find_account_in_cache(E2ees__E2eeAddress *address) {
+    account_cacheer *cur = account_cacheer_list;
+    while (cur) {
+        if (compare_address(cur->address, address)) {
+            // already cached
+            return cur;
+        }
+        cur = cur->next;
+    }
+    // not yet cached
+    return NULL;
+}
+
 static void insert_account_cacheer(
     account_cacheer *dest, E2ees__Account *account
 ) {
@@ -46,25 +59,22 @@ static void insert_account_cacheer(
 }
 
 void store_account_into_cache(E2ees__Account *account) {
-    if (account_cacheer_list == NULL) {
-        account_cacheer_list = (account_cacheer *)malloc(sizeof(account_cacheer));
-        insert_account_cacheer(account_cacheer_list, account);
-    } else {
-        account_cacheer *cur = account_cacheer_list;
-        if (compare_address(cur->address, account->address)) {
-            // already cached, skip
-            return;
-        }
-        while (cur->next != NULL) {
-            cur = cur->next;
-            if (compare_address(cur->address, account->address)) {
-                // already cached, skip
-                return;
-            }
-        }
-        cur->next = (account_cacheer *)malloc(sizeof(account_cacheer));
-        insert_account_cacheer(cur->next, account);
+    if (!account || !account->address) return;
+
+    // check if the address is in the cache already
+    if (find_account_in_cache(account->address)) return;
+
+    // double pointer
+    account_cacheer **pp = &account_cacheer_list;
+    while (*pp) {
+        pp = &((*pp)->next);
     }
+
+    // allocate the memory
+    *pp = (account_cacheer *)malloc(sizeof(account_cacheer));
+    if (*pp == NULL) return; // malloc error
+
+    insert_account_cacheer(*pp, account);
 }
 
 void load_version_from_cache(char **version_out, E2ees__E2eeAddress *address) {

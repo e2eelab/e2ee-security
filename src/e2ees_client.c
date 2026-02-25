@@ -82,6 +82,7 @@ int register_user(
     if (ret == E2EES_RESULT_SUCC) {
         // register account to server
         ret = produce_register_request(&register_user_request, account);
+        log_proto_verbose(NULL, "--- Register User Request ---", (const ProtobufCMessage *)register_user_request);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -93,6 +94,7 @@ int register_user(
         register_user_request->auth_code = strdup(auth_code);
 
         response = get_e2ees_plugin()->proto_handler.register_user(register_user_request);
+        log_proto_verbose(NULL, "--- Register User Response ---", (const ProtobufCMessage *)response);
 
         if (is_valid_register_user_response(response)) {
             bool consumed = consume_register_response(account, response);
@@ -543,11 +545,13 @@ int create_group(
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = produce_create_group_request(&create_group_request, sender_address, group_name, group_members, group_members_num);
+        log_proto_verbose(sender_address, "--- Create Group Request ---", (const ProtobufCMessage *)create_group_request);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         // send message to server
         response = get_e2ees_plugin()->proto_handler.create_group(sender_address, auth, create_group_request);
+        log_proto_verbose(sender_address, "--- Create Group Response ---", (const ProtobufCMessage *)response);
 
         if (!is_valid_create_group_response(response)) {
             e2ees_notify_log(sender_address, BAD_CREATE_GROUP_RESPONSE, "create_group(): invalid create_group_response");
@@ -632,10 +636,13 @@ int add_group_members(
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = produce_add_group_members_request(&add_group_members_request, outbound_group_session, adding_members, adding_members_num);
+        log_proto_verbose(NULL, "--- Add Group Members Request ---", (const ProtobufCMessage *)add_group_members_request);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         response = get_e2ees_plugin()->proto_handler.add_group_members(sender_address, auth, add_group_members_request);
+        log_proto_verbose(NULL, "--- Add Group Members Response ---", (const ProtobufCMessage *)response);
+
         if (!is_valid_add_group_members_response(response)) {
             e2ees_notify_log(NULL, BAD_ADD_GROUP_MEMBERS_RESPONSE, "add_group_members(): invalid add_group_members_response");
             ret = E2EES_RESULT_FAIL;
@@ -724,10 +731,12 @@ int remove_group_members(
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = produce_remove_group_members_request(&remove_group_members_request, outbound_group_session, removing_members, removing_members_num);
+        log_proto_verbose(NULL, "--- Remove Group Members Request ---", (const ProtobufCMessage *)remove_group_members_request);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         response = get_e2ees_plugin()->proto_handler.remove_group_members(sender_address, auth, remove_group_members_request);
+        log_proto_verbose(NULL, "--- Remove Group Members Response ---", (const ProtobufCMessage *)response);
 
         if (!is_valid_remove_group_members_response(response)) {
             e2ees_notify_log(NULL, BAD_REMOVE_GROUP_MEMBERS_RESPONSE, "remove_group_members(): invalid remove_group_members_response");
@@ -796,10 +805,12 @@ int leave_group(
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = produce_leave_group_request(&leave_group_request, sender_address, group_address);
+        log_proto_verbose(NULL, "--- Leave Group Request ---", (const ProtobufCMessage *)leave_group_request);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         response = get_e2ees_plugin()->proto_handler.leave_group(sender_address, auth, leave_group_request);
+        log_proto_verbose(NULL, "--- Leave Group Response ---", (const ProtobufCMessage *)response);
 
         if (!is_valid_leave_group_response(response)) {
             e2ees_notify_log(NULL, BAD_LEAVE_GROUP_RESPONSE, "leave_group(): invalid leave_group_response");
@@ -905,10 +916,12 @@ int send_group_msg_with_filter(
             deny_list,
             deny_list_len
         );
+        log_proto_verbose(NULL, "--- Send Group Msg Request ---", (const ProtobufCMessage *)send_group_msg_request);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         response = get_e2ees_plugin()->proto_handler.send_group_msg(sender_address, auth, send_group_msg_request);
+        log_proto_verbose(NULL, "--- Send Group Msg Response ---", (const ProtobufCMessage *)response);
 
         ret = consume_send_group_msg_response(outbound_group_session, response);
         if (ret != E2EES_RESULT_SUCC) {
@@ -1019,39 +1032,50 @@ E2ees__ConsumeProtoMsgResponse *process_proto_msg(uint8_t *proto_msg_data, size_
     if (ret == E2EES_RESULT_SUCC) {
         switch(proto_msg->payload_case) {
             case E2EES__PROTO_MSG__PAYLOAD_SUPPLY_OPKS_MSG:
+                log_proto_verbose(receiver_address, "--- Supply Opks Msg ---", (const ProtobufCMessage *)proto_msg->supply_opks_msg);
                 consumed = consume_supply_opks_msg(receiver_address, proto_msg->supply_opks_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_ADD_USER_DEVICE_MSG:
+                log_proto_verbose(receiver_address, "--- Add User Device Msg ---", (const ProtobufCMessage *)proto_msg->add_user_device_msg);
                 consumed = consume_add_user_device_msg(receiver_address, proto_msg->add_user_device_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_REMOVE_USER_DEVICE_MSG:
+                log_proto_verbose(receiver_address, "--- Remove User Device Msg ---", (const ProtobufCMessage *)proto_msg->remove_user_device_msg);
                 consumed = consume_remove_user_device_msg(receiver_address, proto_msg->remove_user_device_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_INVITE_MSG:
+                log_proto_verbose(receiver_address, "--- Invite Msg ---", (const ProtobufCMessage *)proto_msg->invite_msg);
                 consumed = consume_invite_msg(receiver_address, proto_msg->invite_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_ACCEPT_MSG:
+                log_proto_verbose(receiver_address, "--- Accept Msg ---", (const ProtobufCMessage *)proto_msg->accept_msg);
                 consumed = consume_accept_msg(receiver_address, proto_msg->accept_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG:
+                log_proto_verbose(receiver_address, "--- E2ee Msg ---", (const ProtobufCMessage *)proto_msg->e2ee_msg);
                 if (proto_msg->e2ee_msg->payload_case == E2EES__E2EE_MSG__PAYLOAD_ONE2ONE_MSG)
                     consumed = consume_one2one_msg(receiver_address, proto_msg->e2ee_msg);
                 else if (proto_msg->e2ee_msg->payload_case == E2EES__E2EE_MSG__PAYLOAD_GROUP_MSG)
                     consumed = consume_group_msg(receiver_address, proto_msg->e2ee_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_CREATE_GROUP_MSG:
+                log_proto_verbose(receiver_address, "--- Create Group Msg ---", (const ProtobufCMessage *)proto_msg->create_group_msg);
                 consumed = consume_create_group_msg(receiver_address, proto_msg->create_group_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_ADD_GROUP_MEMBERS_MSG:
+                log_proto_verbose(receiver_address, "--- Add Group Members Msg ---", (const ProtobufCMessage *)proto_msg->add_group_members_msg);
                 consumed = consume_add_group_members_msg(receiver_address, proto_msg->add_group_members_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_ADD_GROUP_MEMBER_DEVICE_MSG:
+                log_proto_verbose(receiver_address, "--- Add Group Member Device Msg ---", (const ProtobufCMessage *)proto_msg->add_group_member_device_msg);
                 consumed = consume_add_group_member_device_msg(receiver_address, proto_msg->add_group_member_device_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_REMOVE_GROUP_MEMBERS_MSG:
+                log_proto_verbose(receiver_address, "--- Remove Group Members Msg ---", (const ProtobufCMessage *)proto_msg->remove_group_members_msg);
                 consumed = consume_remove_group_members_msg(receiver_address, proto_msg->remove_group_members_msg);
                 break;
             case E2EES__PROTO_MSG__PAYLOAD_LEAVE_GROUP_MSG:
+                log_proto_verbose(receiver_address, "--- Leave Group Msg ---", (const ProtobufCMessage *)proto_msg->leave_group_msg);
                 consumed = consume_leave_group_msg(receiver_address, proto_msg->leave_group_msg);
                 break;
             default:
