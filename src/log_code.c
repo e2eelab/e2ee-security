@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with E2EE Security.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "e2ees/e2ees.h"
 #include "e2ees/log_code.h"
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -159,6 +161,175 @@ void get_stack_trace(char* buffer, size_t buffer_len) {
         frame = frame->prev;
     }
 #else
-    // Stack tracing is disabled
+    // stack tracing is disabled
 #endif
+}
+
+// helper function: Handle indentation and safe writing
+static void dump_printf(dump_context_t *ctx, const char *fmt, ...) {
+    if (ctx->offset >= ctx->size - 64) return; // warning: Insufficient space / Out of memory safeguard
+    
+    // handle indentation first
+    for (int i = 0; i < ctx->indent && ctx->offset < ctx->size; i++) {
+        ctx->buf[ctx->offset++] = ' ';
+        ctx->buf[ctx->offset++] = ' ';
+    }
+
+    va_list args;
+    va_start(args, fmt);
+    int written = vsnprintf(ctx->buf + ctx->offset, ctx->size - ctx->offset, fmt, args);
+    va_end(args);
+
+    if (written > 0) ctx->offset += written;
+}
+
+// core recursive function
+static void dump_message_recursive(const ProtobufCMessage *msg, dump_context_t *ctx) {
+    if (!msg) {
+        dump_printf(ctx, "NULL\n");
+        return;
+    }
+
+    const ProtobufCMessageDescriptor *desc = msg->descriptor;
+    dump_printf(ctx, "--- %s ---\n", desc->name);
+    ctx->indent++;
+
+    for (unsigned i = 0; i < desc->n_fields; i++) {
+        const ProtobufCFieldDescriptor *f = &desc->fields[i];
+
+        // handle oneof (union)
+        if (f->quantifier_offset != 0 && f->label != PROTOBUF_C_LABEL_REPEATED) {
+            // get the value of the case variable
+            const uint32_t *case_value = (const uint32_t *)((const char *)msg + f->quantifier_offset);
+            
+            // f->id represents the tag number defined in the .proto file
+            // if the current case_value does not match this field's ID, it means this field is not the active member of the union
+            if (*case_value != f->id) {
+                continue; // skip
+            }
+        }
+
+        const void *member = ((const char *)msg) + f->offset;
+        const void *qmember = ((const char *)msg) + f->quantifier_offset;
+
+        // handle empty/null optional fields
+        if (f->label == PROTOBUF_C_LABEL_OPTIONAL && f->quantifier_offset != 0) {
+            if (!*(const protobuf_c_boolean *)qmember) continue;
+        }
+
+        // handle repeated (array) fields
+        if (f->label == PROTOBUF_C_LABEL_REPEATED) {
+            size_t n = *(const size_t *)qmember;
+            dump_printf(ctx, "%s: [Array, count=%zu]\n", f->name, n);
+            
+            ctx->indent++;
+            const void *array = *(const void * const *)member;
+            for (size_t j = 0; j < n; j++) {
+                dump_printf(ctx, "[%zu]: ", j);
+                
+                // process array elements based on type
+                if (f->type == PROTOBUF_C_TYPE_MESSAGE) {
+                    const ProtobufCMessage *sub = ((const ProtobufCMessage * const *)array)[j];
+                    // disable indentation before recursion to maintain formatting
+                    int old_indent = ctx->indent; ctx->indent = 0;
+                    dump_message_recursive(sub, ctx);
+                    ctx->indent = old_indent;
+                } else if (f->type == PROTOBUF_C_TYPE_STRING) {
+                    dump_printf(ctx, "\"%s\"\n", ((const char * const *)array)[j]);
+                } else {
+                    dump_printf(ctx, "<other type in array>\n");
+                }
+            }
+            ctx->indent--;
+            continue;
+        }
+
+        // handle single (non-array) fields
+        dump_printf(ctx, "%s: ", f->name);
+        switch (f->type) {
+            case PROTOBUF_C_TYPE_STRING:
+                dump_printf(ctx, "\"%s\"\n", *(const char * const *)member);
+                break;
+            case PROTOBUF_C_TYPE_INT32:
+            case PROTOBUF_C_TYPE_UINT32:
+                dump_printf(ctx, "%u\n", *(const uint32_t *)member);
+                break;
+            case PROTOBUF_C_TYPE_BYTES: {
+                const ProtobufCBinaryData *bd = (const ProtobufCBinaryData *)member;
+                dump_printf(ctx, "<bytes len=%zu, hex_head=%02X%02X...>\n", 
+                            bd->len, bd->len > 0 ? bd->data[0] : 0, bd->len > 1 ? bd->data[1] : 0);
+                break;
+            }
+            case PROTOBUF_C_TYPE_MESSAGE: {
+                const ProtobufCMessage *sub = *(const ProtobufCMessage * const *)member;
+                int old_indent = ctx->indent; ctx->indent = 0;
+                dump_message_recursive(sub, ctx);
+                ctx->indent = old_indent;
+                break;
+            }
+            case PROTOBUF_C_TYPE_ENUM: {
+                int val = *(const int *)member;
+                const ProtobufCEnumDescriptor *ed = (const ProtobufCEnumDescriptor *)f->descriptor;
+                const char *ename = "UNK";
+                for (unsigned k = 0; k < ed->n_values; k++) 
+                    if (ed->values[k].value == val) ename = ed->values[k].name;
+                dump_printf(ctx, "%s(%d)\n", ename, val);
+                break;
+            }
+            default: dump_printf(ctx, "<type %d>\n", f->type); break;
+        }
+    }
+    ctx->indent--;
+}
+
+void log_proto(E2ees__E2eeAddress *addr, const char *title, const void *proto_struct) {
+    if (!proto_struct) return;
+    
+    char *big_buffer = malloc(8192); // allocate 8KB buffer for VERBOSE logging
+    if (!big_buffer) return;
+    
+    dump_context_t ctx = { .buf = big_buffer, .size = 8192, .offset = 0, .indent = 0 };
+    
+    // cast to ProtobufCMessage
+    dump_message_recursive((const ProtobufCMessage *)proto_struct, &ctx);
+    
+    // invoke e2ees_notify_log
+    e2ees_notify_log(addr, VERBOSE_LOG, "%s\n%s", title, big_buffer);
+    
+    free(big_buffer);
+}
+
+void* execute_and_log_proto(
+    E2ees__E2eeAddress *sender_address,
+    const char *auth,
+    const char *label,
+    const void *request,
+    proto_handler_func handler_func
+) {
+    if (!request || !handler_func) return NULL;
+
+    // log request
+    char req_label[128];
+    snprintf(req_label, sizeof(req_label), "--- %s Request ---", label);
+    log_proto(sender_address, req_label, (const ProtobufCMessage *)request);
+
+    // handler_func
+    void *response = handler_func(sender_address, auth, request);
+
+    // log response
+    if (response) {
+        char res_label[128];
+        snprintf(res_label, sizeof(res_label), "--- %s Response ---", label);
+        log_proto(sender_address, res_label, (const ProtobufCMessage *)response);
+    } else {
+        e2ees_notify_log(sender_address, DEBUG_LOG, "%s: Server returned NULL response", label);
+    }
+    
+    return response;
+}
+
+// turn (addr, auth, req) into (request)
+void* register_user_wrapper(E2ees__E2eeAddress *addr, const char *auth, const void *request) {
+    // ignore address and auth,just invoke register_user
+    return get_e2ees_plugin()->proto_handler.register_user((E2ees__RegisterUserRequest *)request);
 }

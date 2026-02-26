@@ -877,13 +877,6 @@ typedef struct e2ees_plugin_t {
     e2ees_event_handler_t event_handler;
 } e2ees_plugin_t;
 
-typedef struct {
-    char *buf;
-    size_t size;
-    size_t offset;
-    int indent;
-} DumpContext;
-
 /**
  * @brief Get digital signature suite by ID.
  *
@@ -965,14 +958,6 @@ e2ees_pack_id_t raw_to_e2ees_pack_id(uint32_t e2ees_pack_id_raw);
  * @param rand_data_len 
  */
 void e2ees_randombytes(uint8_t *rand_data, size_t rand_data_len);
-
-/**
- * @brief Print request, reponse, msg.
- * @param addr
- * @param title
- * @param proto_struct
- */
-void log_proto_verbose(E2ees__E2eeAddress *addr, const char *title, const void *proto_struct);
 
 /**
  * @brief Log function with additional arguments.
