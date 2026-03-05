@@ -246,7 +246,6 @@ int accept_internal(
         ret = E2EES_RESULT_FAIL;
     }
 
-    // e2ees_notify_log(from, DEBUG_LOG, "accept_internal(): from [%s:%s] to [%s:%s]", from->user->user_id, from->user->device_id, to->user->user_id, to->user->device_id);
     if (ret == E2EES_RESULT_SUCC) {
         ret = produce_accept_request(&accept_request, e2ees_pack_id, from, to, session_id, ciphertext_1, our_ratchet_key);
     }
@@ -283,29 +282,38 @@ int accept_internal(
 
 int publish_spk_internal(
     E2ees__PublishSpkResponse **response_out,
-    E2ees__Account *account
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    E2ees__SignedPreKey *new_spk_pair
 ) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__PublishSpkRequest *publish_spk_request = NULL;
     E2ees__PublishSpkResponse *response = NULL;
+    account_ctx ctx = {0};
 
-    ret = produce_publish_spk_request(&publish_spk_request, account);
+    if (!validate_and_prepare_account_ctx(&ctx, ACCOUNT_ACTION_PUBLISH_SPK, e2ees_pack_id, user_address, NULL, new_spk_pair, NULL, 0)) {
+        ret = E2EES_RESULT_FAIL;
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        ret = produce_publish_spk_request_v2(&publish_spk_request, &ctx);
+    }
 
     if (ret == E2EES_RESULT_SUCC) {
         response = (E2ees__PublishSpkResponse *)execute_and_log_proto(
-            account->address, account->auth, "Publish Spk", publish_spk_request, 
+            user_address, ctx.base.auth, "Publish Spk", publish_spk_request, 
             (proto_handler_func)get_e2ees_plugin()->proto_handler.publish_spk
         );
 
         if (is_valid_publish_spk_response(response)) {
-            ret = consume_publish_spk_response(account, response);
+            ret = consume_publish_spk_response(user_address, new_spk_pair, response);
 
             if (ret == E2EES_RESULT_FAIL) {
                 e2ees__publish_spk_response__free_unpacked(response, NULL);
                 response = NULL;
                 // we do not store pending request here
-                e2ees_notify_log(account->address, DEBUG_LOG, "publish_spk_internal() failed, do it on next start");
+                e2ees_notify_log(user_address, DEBUG_LOG, "publish_spk_internal() failed, do it on next start");
             }
         } else {
             if (response != NULL) {
@@ -319,6 +327,7 @@ int publish_spk_internal(
     }
 
     // release
+    cleanup_account_ctx(&ctx);
     free_proto(publish_spk_request);
 
     // done
@@ -332,8 +341,10 @@ int supply_opks_internal(
 ) {
     int ret = E2EES_RESULT_SUCC;
 
+    E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
     E2ees__SupplyOpksRequest *supply_opks_request = NULL;
     E2ees__SupplyOpksResponse *response = NULL;
+    account_ctx ctx = {0};
 
     if (opks_num != 0) {
         if (!is_valid_registered_account(account)) {
@@ -341,13 +352,23 @@ int supply_opks_internal(
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(account->address, BAD_ADDRESS, "supply_opks_internal(): no opks");
+        e2ees_notify_log(account->address, BAD_ADDRESS, "supply_opks_internal(): opks_num is zero");
         ret = E2EES_RESULT_FAIL;
     }
 
-    E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
+    uint32_t e2ees_pack_id = account->e2ees_pack_id;
+    uint32_t cur_opk_id = account->next_one_time_pre_key_id;
+
+    ret = generate_opks(&one_time_pre_key_list, (size_t)opks_num, e2ees_pack_id, cur_opk_id);
+
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_supply_opks_request(&supply_opks_request, &one_time_pre_key_list, account, opks_num);
+        if (!validate_and_prepare_account_ctx(&ctx, ACCOUNT_ACTION_SUPPLY_OPKS, e2ees_pack_id, account->address, NULL, NULL, one_time_pre_key_list, opks_num)) {
+            ret = E2EES_RESULT_FAIL;
+        }
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        ret = produce_supply_opks_request_v2(&supply_opks_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -388,6 +409,7 @@ int supply_opks_internal(
     }
 
     // release
+    cleanup_account_ctx(&ctx);
     free_one_time_pre_key_list(&one_time_pre_key_list, opks_num);
     free_proto(supply_opks_request);
 
@@ -736,20 +758,20 @@ static void resend_pending_request(E2ees__Account *account) {
                 break;
             }
             case E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_PUBLISH_SPK: {
-                E2ees__PublishSpkRequest *publish_spk_request = e2ees__publish_spk_request__unpack(NULL, pending_request->request_data.len, pending_request->request_data.data);
-                E2ees__PublishSpkResponse *publish_spk_response = get_e2ees_plugin()->proto_handler.publish_spk(user_address, auth, publish_spk_request);
-                succ = is_valid_publish_spk_response(publish_spk_response);
-                if (succ) {
-                    ret = consume_publish_spk_response(account, publish_spk_response);
-                    get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
-                } else {
-                    e2ees_notify_log(user_address, DEBUG_LOG, "handle pending publish_spk_request failed");
-                }
+                // E2ees__PublishSpkRequest *publish_spk_request = e2ees__publish_spk_request__unpack(NULL, pending_request->request_data.len, pending_request->request_data.data);
+                // E2ees__PublishSpkResponse *publish_spk_response = get_e2ees_plugin()->proto_handler.publish_spk(user_address, auth, publish_spk_request);
+                // succ = is_valid_publish_spk_response(publish_spk_response);
+                // if (succ) {
+                //     ret = consume_publish_spk_response(account, publish_spk_response);
+                //     get_e2ees_plugin()->db_handler.unload_pending_request_data(user_address, pending_request_id_list[i]);
+                // } else {
+                //     e2ees_notify_log(user_address, DEBUG_LOG, "handle pending publish_spk_request failed");
+                // }
 
-                // release
-                free_proto(publish_spk_request);
-                free_proto(publish_spk_response);
-                break;
+                // // release
+                // free_proto(publish_spk_request);
+                // free_proto(publish_spk_response);
+                // break;
             }
             case E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_SUPPLY_OPKS: {
                 E2ees__SupplyOpksRequest *supply_opks_request = e2ees__supply_opks_request__unpack(NULL, pending_request->request_data.len, pending_request->request_data.data);

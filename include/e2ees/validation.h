@@ -80,6 +80,8 @@ bool is_valid_signed_pre_key_public(E2ees__SignedPreKeyPublic *src);
 
 bool is_valid_one_time_pre_key_public(E2ees__OneTimePreKeyPublic *src);
 
+bool is_valid_one_time_pre_key_public_list(E2ees__OneTimePreKeyPublic **src, size_t len);
+
 bool is_valid_pre_key_bundle(E2ees__PreKeyBundle *src);
 
 bool is_valid_pre_key_bundle_list(E2ees__PreKeyBundle **src, size_t len);
@@ -169,6 +171,26 @@ bool is_valid_certificate(E2ees__Certificate *src);
 bool is_valid_server_signed_signature(E2ees__ServerSignedSignature *src);
 
 bool is_valid_server_signed_signature_list(E2ees__ServerSignedSignature **src, size_t len);
+
+bool validate_and_prepare_account_identity(
+    account_identity *out,
+    const char *user_name,
+    const char *user_id,
+    const char *device_id,
+    const char *authenticator,
+    const char *auth_code
+);
+
+bool validate_and_prepare_account_ctx(
+    account_ctx *ctx, 
+    AccountAction action,
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    E2ees__Account *account,
+    E2ees__SignedPreKey *new_spk,
+    E2ees__OneTimePreKey **new_opk_list,
+    uint32_t opks_num
+);
 
 #ifdef __cplusplus
 }

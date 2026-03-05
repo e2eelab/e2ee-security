@@ -30,6 +30,37 @@ extern "C" {
 
 #include "e2ees/e2ees.h"
 
+// the base of all types of request
+typedef struct {
+    E2ees__E2eeAddress *sender_address;
+    char *auth;
+    uint32_t e2ees_pack_id;
+    const char *label;        // the label of Log, such as "CreateGroup"
+} e2ee_base_ctx;
+
+typedef struct {
+    const char *user_name;
+    const char *user_id;
+    const char *device_id;
+    const char *authenticator;
+    const char *auth_code;
+} account_identity;
+
+typedef struct {
+    E2ees__IdentityKeyPublic *ik;
+    E2ees__SignedPreKeyPublic *spk;
+    E2ees__OneTimePreKeyPublic **opks;
+    size_t opks_num;
+} pre_key_bundle;
+
+typedef struct {
+    e2ee_base_ctx base; // include sender_address, auth, pack_id
+
+    account_identity identity; // include user_id, device_id, user_name
+
+    pre_key_bundle bundle;
+} account_ctx;
+
 /**
  * @brief Type definition of digital signature algorithm parameters.
  */

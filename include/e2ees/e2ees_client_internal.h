@@ -93,7 +93,9 @@ int accept_internal(
  */
 int publish_spk_internal(
     E2ees__PublishSpkResponse **response_out,
-    E2ees__Account *account
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    E2ees__SignedPreKey *new_spk_pair
 );
 
 /**

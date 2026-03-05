@@ -18,6 +18,10 @@
  */
 #include "e2ees/validation.h"
 
+#include <string.h>
+
+#include "e2ees/mem_util.h"
+
 ///-----------------accuracy-----------------///
 bool accurate_key_pair(E2ees__KeyPair *key_pair, uint32_t pub_key_len, uint32_t priv_key_len) {
     if (key_pair != NULL) {
@@ -836,6 +840,23 @@ bool is_valid_one_time_pre_key_public(E2ees__OneTimePreKeyPublic *src) {
     } else {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_one_time_pre_key_public() src == NULL");
         return false;
+    }
+
+    return true;
+}
+
+bool is_valid_one_time_pre_key_public_list(E2ees__OneTimePreKeyPublic **src, size_t len) {
+    if (len > 0 && src == NULL) {
+        return false;
+    }
+    if (len == 0) {
+        return true;
+    }
+    size_t i = 0;
+    for (i = 0; i < len; i++) {
+        if (src[i] == NULL || !is_valid_one_time_pre_key_public(src[i])) {
+            return false;
+        }
     }
 
     return true;
@@ -1975,4 +1996,184 @@ bool is_valid_server_signed_signature_list(E2ees__ServerSignedSignature **src, s
     }
 
     return true;
+}
+
+///-----------------valid function parameters-----------------///
+// e2ees_client_internal.c
+bool get_pre_key_bundle_internal_params(
+    E2ees__E2eeAddress *from,
+    const char *auth,
+    const char *to_user_id,
+    const char *to_domain
+) {
+    if (!is_valid_address(from)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "get_pre_key_bundle_internal(): invalid from");
+        return false;
+    }
+    if (!is_valid_string(auth)) {
+        e2ees_notify_log(NULL, BAD_AUTH, "get_pre_key_bundle_internal(): invalid auth");
+        return false;
+    }
+    if (!is_valid_string(to_user_id)) {
+        e2ees_notify_log(NULL, BAD_USER_ID, "get_pre_key_bundle_internal(): invalid to_user_id");
+        return false;
+    }
+    if (!is_valid_string(to_domain)) {
+        e2ees_notify_log(NULL, BAD_DOMAIN, "get_pre_key_bundle_internal(): invalid to_domain");
+        return false;
+    }
+
+    return true;
+}
+
+bool invite_internal_params() {
+    return true;
+}
+
+bool accept_internal_params(
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *from,
+    E2ees__E2eeAddress *to,
+    char *session_id,
+    ProtobufCBinaryData *our_ratchet_key
+) {
+    if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
+        e2ees_notify_log(NULL, BAD_E2EES_PACK, "accept_internal(): invalid e2ees_pack_id");
+        return false;
+    }
+    if (!is_valid_address(from)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "accept_internal(): invalid from");
+        return false;
+    }
+    if (!is_valid_address(to)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "accept_internal(): invalid to");
+        return false;
+    }
+    if (!is_valid_string(session_id)) {
+        e2ees_notify_log(NULL, BAD_SESSION_ID, "accept_internal(): invalid session_id");
+        return false;
+    }
+    if (!is_valid_protobuf(our_ratchet_key)) {
+        e2ees_notify_log(NULL, BAD_RATCHET_KEY, "accept_internal(): invalid our_ratchet_key");
+        return false;
+    }
+
+    return true;
+}
+
+bool send_one2one_msg_internal_params() {
+    return true;
+}
+
+bool add_group_member_device_internal_params(
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
+    E2ees__E2eeAddress *new_device_address
+) {
+    if (!is_valid_address(sender_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal(): invalid sender_address");
+        return false;
+    }
+    if (!is_valid_address(group_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal(): invalid group_address");
+        return false;
+    }
+    if (!is_valid_address(new_device_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal(): invalid new_device_address");
+        return false;
+    }
+
+    return true;
+}
+
+bool validate_and_prepare_account_identity(
+    account_identity *out,
+    const char *user_name,
+    const char *user_id,
+    const char *device_id,
+    const char *authenticator,
+    const char *auth_code
+) {
+    if (!is_valid_string(user_name)) {
+        e2ees_notify_log(NULL, BAD_USER_NAME, "validate_and_prepare_account_identity(): invalid user_name");
+        return false;
+    }
+    if (!is_valid_string(user_id)) {
+        e2ees_notify_log(NULL, BAD_USER_ID, "validate_and_prepare_account_identity(): invalid user_id");
+        return false;
+    }
+    if (!is_valid_string(device_id)) {
+        e2ees_notify_log(NULL, BAD_DEVICE_ID, "validate_and_prepare_account_identity(): invalid device_id");
+        return false;
+    }
+    if (authenticator && !is_valid_string(authenticator)) {
+        e2ees_notify_log(NULL, BAD_AUTHENTICATOR, "validate_and_prepare_account_identity(): invalid authenticator");
+        return false;
+    }
+    if (!is_valid_string(auth_code)) {
+        e2ees_notify_log(NULL, BAD_AUTH, "validate_and_prepare_account_identity(): invalid auth_code");
+        return false;
+    }
+
+    out->user_name = user_name;
+    out->user_id = user_id;
+    out->device_id = device_id;
+    out->authenticator = authenticator; // authenticator can be empty
+    out->auth_code = auth_code;
+
+    return true;
+}
+
+bool validate_and_prepare_account_ctx(
+    account_ctx *ctx, 
+    AccountAction action,
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    E2ees__Account *account,
+    E2ees__SignedPreKey *new_spk,
+    E2ees__OneTimePreKey **new_opk_list,
+    uint32_t opks_num
+) {
+    const char *label = account_action_to_string(action);
+    ctx->base.label = label;
+
+    if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
+        e2ees_notify_log(NULL, BAD_E2EES_PACK, "validate_and_prepare_account_ctx(): invalid e2ees_pack_id");
+        return false;
+    }
+    ctx->base.e2ees_pack_id = e2ees_pack_id;
+
+    if (action == ACCOUNT_ACTION_REGISTER) {
+        if (!is_valid_unregistered_account(account)) {
+            e2ees_notify_log(NULL, BAD_ACCOUNT, "validate_and_prepare_account_ctx()[%s]: invalid account", label);
+            return false;
+        }
+    } else {
+        if (action == ACCOUNT_ACTION_PUBLISH_SPK) {
+            if (!is_valid_signed_pre_key(new_spk)) {
+                e2ees_notify_log(NULL, BAD_SIGNED_PRE_KEY, "validate_and_prepare_account_ctx()[%s]: invalid new_spk", label);
+                return false;
+            }
+        } else if (action == ACCOUNT_ACTION_SUPPLY_OPKS) {
+            if (opks_num == 0 || !is_valid_one_time_pre_key_list(new_opk_list, opks_num)) {
+                e2ees_notify_log(NULL, BAD_ONE_TIME_PRE_KEY, "validate_and_prepare_account_ctx()[%s]: invalid new_opk_list", label);
+                return false;
+            }
+        } else {
+            e2ees_notify_log(NULL, DEBUG_LOG, "[%s] Invalid label", label);
+            return false;
+        }
+        if (!is_valid_address(user_address)) {
+            e2ees_notify_log(NULL, BAD_ADDRESS, "[%s] Invalid address", label);
+            return false;
+        }
+        ctx->base.sender_address = user_address;
+        get_e2ees_plugin()->db_handler.load_auth(user_address, &(ctx->base.auth));
+        if (!is_valid_string(ctx->base.auth)) {
+            e2ees_notify_log(NULL, BAD_AUTH, "[%s] Invalid auth", label);
+            return false;
+        }
+    }
+
+    return extract_keys_to_bundle(&(ctx->bundle), action, account, new_spk, new_opk_list, opks_num);
 }

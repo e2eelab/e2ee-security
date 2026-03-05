@@ -458,6 +458,66 @@ void copy_opk_public_from_opk_public(E2ees__OneTimePreKeyPublic **dest, E2ees__O
     copy_protobuf_from_protobuf(&((*dest)->public_key), &(src->public_key));
 }
 
+void copy_ik_to_public(E2ees__IdentityKeyPublic **dest, E2ees__IdentityKey *src) {
+    *dest = (E2ees__IdentityKeyPublic *)malloc(sizeof(E2ees__IdentityKeyPublic));
+    e2ees__identity_key_public__init(*dest);
+    copy_protobuf_from_protobuf(&((*dest)->asym_public_key), &(src->asym_key_pair->public_key));
+    copy_protobuf_from_protobuf(&((*dest)->sign_public_key), &(src->sign_key_pair->public_key));
+}
+
+void copy_spk_to_public(E2ees__SignedPreKeyPublic **dest, E2ees__SignedPreKey *src) {
+    *dest = (E2ees__SignedPreKeyPublic *)malloc(sizeof(E2ees__SignedPreKeyPublic));
+    e2ees__signed_pre_key_public__init(*dest);
+    (*dest)->spk_id = src->spk_id;
+    copy_protobuf_from_protobuf(&((*dest)->public_key), &(src->key_pair->public_key));
+    copy_protobuf_from_protobuf(&((*dest)->signature), &(src->signature));
+}
+
+void copy_opk_to_public(E2ees__OneTimePreKeyPublic **dest, E2ees__OneTimePreKey *src) {
+    *dest = (E2ees__OneTimePreKeyPublic *)malloc(sizeof(E2ees__OneTimePreKeyPublic));
+    e2ees__one_time_pre_key_public__init(*dest);
+    (*dest)->opk_id = src->opk_id;
+    copy_protobuf_from_protobuf(&((*dest)->public_key), &(src->key_pair->public_key));
+}
+
+void copy_opk_list_to_public(E2ees__OneTimePreKeyPublic ***dest, E2ees__OneTimePreKey **src, size_t opk_num) {
+    *dest = (E2ees__OneTimePreKeyPublic **)malloc(sizeof(E2ees__OneTimePreKeyPublic *) * opk_num);
+    size_t i;
+    for (i = 0; i < opk_num; i++) {
+        copy_opk_to_public(&(*dest)[i], src[i]);
+    }
+}
+
+bool extract_keys_to_bundle(
+    pre_key_bundle *out,
+    AccountAction action,
+    E2ees__Account *account,
+    E2ees__SignedPreKey *new_spk,
+    E2ees__OneTimePreKey **new_opk_list,
+    uint32_t opks_num
+) {
+    if (action == ACCOUNT_ACTION_REGISTER) {
+        // copy identity public key
+        copy_ik_to_public(&(out->ik), account->identity_key);
+
+        // copy signed pre-key
+        copy_spk_to_public(&(out->spk), account->signed_pre_key);
+
+        // copy one-time pre-key list
+        out->opks_num = account->n_one_time_pre_key_list;
+        copy_opk_list_to_public(&(out->opks), account->one_time_pre_key_list, account->n_one_time_pre_key_list);
+    } else if (action == ACCOUNT_ACTION_PUBLISH_SPK) {
+        // copy new signed pre-key
+        copy_spk_to_public(&(out->spk), new_spk);
+    } else if (action == ACCOUNT_ACTION_SUPPLY_OPKS) {
+        // copy new one-time pre-key list
+        out->opks_num = (size_t)opks_num;
+        copy_opk_list_to_public(&(out->opks), new_opk_list, (size_t)opks_num);
+    }
+
+    return true;
+}
+
 ///-----------------copy group member id-----------------///
 
 void copy_group_member_id(E2ees__GroupMemberInfo **dest, E2ees__GroupMemberInfo *src) {
@@ -806,11 +866,21 @@ void free_protobuf_list(ProtobufCBinaryData **output, size_t protobuf_num) {
 }
 
 void free_mem(void **buffer, size_t buffer_len) {
-    if (buffer_len == 0) {
+    if (buffer == NULL || *buffer == NULL || buffer_len == 0) {
         // skip
         return;
     }
-    unset(*buffer, buffer_len);
+
+    volatile unsigned char *p = (volatile unsigned char *)*buffer;
+    size_t n = buffer_len;
+    while (n--) {
+        *p++ = 0;
+    }
+
+#if defined(__GNUC__) || defined(__clang__)
+    __asm__ __volatile__("" : : "r"(*buffer) : "memory");
+#endif
+
     free(*buffer);
     *buffer = NULL;
 }
@@ -821,4 +891,60 @@ void unset(void volatile *buffer, size_t buffer_len) {
     while (pos != end) {
         *(pos++) = 0;
     }
+}
+
+void secure_unset(void *buffer, size_t len) {
+    if (!buffer || len == 0) return;
+
+    volatile unsigned char *p = (volatile unsigned char *)buffer;
+    while (len--) {
+        *p++ = 0;
+    }
+
+    // memory barrier
+#if defined(__GNUC__) || defined(__clang__)
+    __asm__ __volatile__("" : : "r"(buffer) : "memory");
+#elif defined(_MSC_VER)
+    MemoryBarrier();
+#endif
+}
+
+void cleanup_base_ctx(e2ee_base_ctx *base) {
+    if (!base) return;
+    if (base->auth) {
+        free(base->auth);
+        base->auth = NULL;
+    }
+}
+
+void cleanup_pre_key_bundle(pre_key_bundle *bundle) {
+    if (!bundle) return;
+
+    if (bundle->ik) {
+        e2ees__identity_key_public__free_unpacked(bundle->ik, NULL);
+        bundle->ik = NULL;
+    }
+    if (bundle->spk) {
+        e2ees__signed_pre_key_public__free_unpacked(bundle->spk, NULL);
+        bundle->spk = NULL;
+    }
+
+    if (bundle->opks) {
+        size_t i;
+        for (i = 0; i < bundle->opks_num; i++) {
+            if (bundle->opks[i]) {
+                e2ees__one_time_pre_key_public__free_unpacked(bundle->opks[i], NULL);
+                bundle->opks[i] = NULL;
+            }
+        }
+        free_mem((void **)&(bundle->opks), sizeof(E2ees__OneTimePreKeyPublic *) * bundle->opks_num);
+        bundle->opks = NULL;
+        bundle->opks_num = 0;
+    }
+}
+
+void cleanup_account_ctx(account_ctx *ctx) {
+    if (!ctx) return;
+    cleanup_base_ctx(&(ctx->base));
+    cleanup_pre_key_bundle(&(ctx->bundle));
 }

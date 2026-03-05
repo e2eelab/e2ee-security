@@ -134,6 +134,15 @@ const char* logcode_string(LogCode log_code) {
     }
 }
 
+const char* account_action_to_string(AccountAction action) {
+    switch (action) {
+        case ACCOUNT_ACTION_REGISTER:    return "Register User";
+        case ACCOUNT_ACTION_PUBLISH_SPK: return "Publish Spk";
+        case ACCOUNT_ACTION_SUPPLY_OPKS: return "Supply Opks";
+        default:                         return "UnknownAction";
+    }
+}
+
 void get_stack_trace(char* buffer, size_t buffer_len) {
 #ifdef ENABLE_TRACE
     stack_frame_t *frame = current_stack_top;

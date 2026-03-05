@@ -286,6 +286,9 @@ int generate_signed_pre_key(
 void purge_signed_pre_key(E2ees__Account *account) {
     int ret = E2EES_RESULT_SUCC;
 
+    // the account will be saved only after consume_register_response
+    if (account->saved == false) return;
+
     // check if the signed pre-key expired
     int64_t now = get_e2ees_plugin()->common_handler.gen_ts();
     if (now > account->signed_pre_key->ttl) {
@@ -302,7 +305,7 @@ void purge_signed_pre_key(E2ees__Account *account) {
             account->signed_pre_key = signed_pre_key;
 
             E2ees__PublishSpkResponse *response = NULL;
-            ret = publish_spk_internal(&response, account);
+            ret = publish_spk_internal(&response, e2ees_pack_id, account->address, signed_pre_key);
             // release
             if (response != NULL) {
                 e2ees__publish_spk_response__free_unpacked(response, NULL);
@@ -311,8 +314,10 @@ void purge_signed_pre_key(E2ees__Account *account) {
         }
     }
 
-    // check and remove signed pre-keys (keep last two)
-    get_e2ees_plugin()->db_handler.remove_expired_signed_pre_key(account->address);
+    if (ret == E2EES_RESULT_SUCC) {
+        // check and remove signed pre-keys (keep last two)
+        get_e2ees_plugin()->db_handler.remove_expired_signed_pre_key(account->address);
+    }
 }
 
 E2ees__OneTimePreKey *lookup_one_time_pre_key(E2ees__Account *account, uint32_t one_time_pre_key_id) {

@@ -47,51 +47,27 @@ int register_user(
     E2ees__Account *account = NULL;
     E2ees__RegisterUserRequest *register_user_request = NULL;
     E2ees__RegisterUserResponse *response = NULL;
+    account_ctx ctx = {0};
 
-    if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "register_user(): no e2ees_pack_id");
-        ret = E2EES_RESULT_FAIL;
+    if (!validate_and_prepare_account_identity(&(ctx.identity), user_name, user_id, device_id, authenticator, auth_code)) {
+        return E2EES_RESULT_FAIL;
     }
-    if (!is_valid_string(user_name)) {
-        e2ees_notify_log(NULL, BAD_USER_NAME, "register_user(): no user_name");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_string(user_id)) {
-        e2ees_notify_log(NULL, BAD_USER_ID, "register_user(): no user_id");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_string(device_id)) {
-        e2ees_notify_log(NULL, BAD_DEVICE_ID, "register_user(): no device_id");
-        ret = E2EES_RESULT_FAIL;
-    }
-    // authenticator can be empty
-    // if (!is_valid_string(authenticator)) {
-    //    e2ees_notify_log(NULL, BAD_AUTHENTICATOR, "register_user(): no authenticator");
-    //    ret = E2EES_RESULT_FAIL;
-    // }
-    if (!is_valid_string(auth_code)) {
-        e2ees_notify_log(NULL, BAD_AUTH, "register_user(): no auth_code");
-        ret = E2EES_RESULT_FAIL;
-    }
+
+    // generate an account
+    ret = create_account(&account, e2ees_pack_id);
 
     if (ret == E2EES_RESULT_SUCC) {
-        // generate an account
-        ret = create_account(&account, e2ees_pack_id);
+        if (!validate_and_prepare_account_ctx(&ctx, ACCOUNT_ACTION_REGISTER, e2ees_pack_id, NULL, account, NULL, NULL, 0)) {
+            ret = E2EES_RESULT_FAIL;
+        }
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         // register account to server
-        ret = produce_register_request(&register_user_request, account);
+        ret = produce_register_request_v2(&register_user_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        register_user_request->e2ees_pack_id = e2ees_pack_id;
-        register_user_request->user_name = strdup(user_name);
-        register_user_request->user_id = strdup(user_id);
-        register_user_request->device_id = strdup(device_id);
-        register_user_request->authenticator = strdup(authenticator);
-        register_user_request->auth_code = strdup(auth_code);
-
         response = (E2ees__RegisterUserResponse *)execute_and_log_proto(
             NULL, NULL, "Register User", register_user_request, 
             register_user_wrapper
@@ -109,6 +85,7 @@ int register_user(
     }
 
     // release
+    cleanup_account_ctx(&ctx);
     free_proto(account);
     free_proto(register_user_request);
 

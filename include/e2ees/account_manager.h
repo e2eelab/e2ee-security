@@ -39,6 +39,11 @@ int produce_register_request(
     E2ees__Account *account
 );
 
+int produce_register_request_v2(
+    E2ees__RegisterUserRequest **request_out,
+    account_ctx *ctx
+);
+
 /**
  * @brief Process an incoming RegisterUserResponse message.
  *
@@ -61,6 +66,11 @@ int produce_publish_spk_request(
     E2ees__Account *account
 );
 
+int produce_publish_spk_request_v2(
+    E2ees__PublishSpkRequest **request_out,
+    account_ctx *ctx
+);
+
 /**
  * @brief Process an incoming PublishSpkResponse message.
  *
@@ -69,7 +79,8 @@ int produce_publish_spk_request(
  * @return 0 if success
  */
 int consume_publish_spk_response(
-    E2ees__Account *account,
+    E2ees__E2eeAddress *user_address,
+    E2ees__SignedPreKey *signed_pre_key,
     E2ees__PublishSpkResponse *response
 );
 
@@ -87,6 +98,11 @@ int produce_supply_opks_request(
     E2ees__OneTimePreKey ***one_time_pre_key_list_out,
     E2ees__Account *account,
     uint32_t opks_num
+);
+
+int produce_supply_opks_request_v2(
+    E2ees__SupplyOpksRequest **request_out,
+    account_ctx *ctx
 );
 
 /**

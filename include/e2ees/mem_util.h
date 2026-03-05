@@ -341,6 +341,23 @@ void copy_spk_public_from_spk_public(E2ees__SignedPreKeyPublic **dest, E2ees__Si
  */
 void copy_opk_public_from_opk_public(E2ees__OneTimePreKeyPublic **dest, E2ees__OneTimePreKeyPublic *src);
 
+void copy_ik_to_public(E2ees__IdentityKeyPublic **dest, E2ees__IdentityKey *src);
+
+void copy_spk_to_public(E2ees__SignedPreKeyPublic **dest, E2ees__SignedPreKey *src);
+
+void copy_opk_to_public(E2ees__OneTimePreKeyPublic **dest, E2ees__OneTimePreKey *src);
+
+void copy_opk_list_to_public(E2ees__OneTimePreKeyPublic ***dest, E2ees__OneTimePreKey **src, size_t opk_num);
+
+bool extract_keys_to_bundle(
+    pre_key_bundle *out,
+    AccountAction action,
+    E2ees__Account *account,
+    E2ees__SignedPreKey *new_spk,
+    E2ees__OneTimePreKey **new_opk_list,
+    uint32_t opks_num
+);
+
 /**
  * @brief Copy E2ees__GroupMemberInfo from src to dest.
  *
@@ -535,6 +552,14 @@ void free_mem(void **buffer, size_t buffer_len);
  * This is more resilient to being optimised away than memset or bzero.
  */
 void unset(void volatile *buffer, size_t buffer_len);
+
+void secure_unset(void *buffer, size_t len);
+
+void cleanup_base_ctx(e2ee_base_ctx *base);
+
+void cleanup_pre_key_bundle(pre_key_bundle *bundle);
+
+void cleanup_account_ctx(account_ctx *ctx);
 
 #ifdef __cplusplus
 }

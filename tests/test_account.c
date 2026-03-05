@@ -433,7 +433,7 @@ static void test_publish_spk() {
 
     uint32_t new_spk_id = account->signed_pre_key->spk_id;
     E2ees__PublishSpkResponse *publish_spk_response = NULL;
-    publish_spk_internal(&publish_spk_response, account);
+    publish_spk_internal(&publish_spk_response, e2ees_pack_id, account->address, signed_pre_key);
 
     assert(new_spk_id == old_spk_id + 1);
 
