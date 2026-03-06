@@ -673,6 +673,10 @@ bool is_valid_uncompleted_session(E2ees__Session *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad alice_base_key");
             return false;
         }
+        if (src->n_pre_shared_input_list == 0) {
+            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() n_pre_shared_input_list is zero");
+            return false;
+        }
         if (!is_valid_protobuf_list(src->pre_shared_input_list, src->n_pre_shared_input_list)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad pre_shared_input_list");
             return false;
@@ -2176,4 +2180,133 @@ bool validate_and_prepare_account_ctx(
     }
 
     return extract_keys_to_bundle(&(ctx->bundle), action, account, new_spk, new_opk_list, opks_num);
+}
+
+bool validate_and_prepare_get_pre_key_bundle(
+    session_ctx *ctx,
+    const char *to_user_id,
+    const char *to_domain,
+    const char *to_device_id
+) {
+    if (!is_valid_string(to_user_id)) {
+        e2ees_notify_log(NULL, BAD_USER_ID, "validate_and_prepare_session_ctx(): invalid to_user_id");
+        return false;
+    }
+    if (!is_valid_string(to_domain)) {
+        e2ees_notify_log(NULL, BAD_DOMAIN, "validate_and_prepare_session_ctx(): invalid to_domain");
+        return false;
+    }
+    if (to_device_id && !is_valid_string(to_device_id)) {
+        e2ees_notify_log(NULL, BAD_DEVICE_ID, "validate_and_prepare_session_ctx(): invalid to_device_id");
+        return false;
+    }
+
+    ctx->remote_user_id = to_user_id;
+    ctx->remote_domain = to_domain;
+    ctx->remote_device_id = to_device_id;  // remote_device_id can be empty
+
+    return true;
+}
+
+bool validate_and_prepare_invite(
+    session_ctx *ctx,
+    E2ees__Session *outbound_session
+) {
+    if (is_valid_uncompleted_session(outbound_session)) {
+        get_e2ees_plugin()->db_handler.load_auth(outbound_session->our_address, &(ctx->base.auth));
+        if (!is_valid_string(ctx->base.auth)) {
+            e2ees_notify_log(NULL, BAD_AUTH, "validate_and_prepare_invite(): invalid auth");
+            return false;
+        }
+    } else {
+        e2ees_notify_log(NULL, BAD_SESSION, "validate_and_prepare_invite(): invalid outbound_session");
+        return false;
+    }
+
+    ctx->version = outbound_session->version;
+    ctx->base.e2ees_pack_id = outbound_session->e2ees_pack_id;
+    ctx->session_id = outbound_session->session_id;
+    ctx->base.sender_address = outbound_session->our_address;
+    ctx->remote_address = outbound_session->their_address;
+
+    ctx->n_pre_shared_input_list = outbound_session->n_pre_shared_input_list;
+    ctx->pre_shared_input_list = outbound_session->pre_shared_input_list;
+
+    ctx->alice_base_key.len = outbound_session->alice_base_key->public_key.len;
+    ctx->alice_base_key.data = outbound_session->alice_base_key->public_key.data;
+
+    ctx->bob_signed_pre_key_id = outbound_session->bob_signed_pre_key_id;
+    ctx->bob_one_time_pre_key_id = outbound_session->bob_one_time_pre_key_id;
+
+    ctx->invite_t = outbound_session->invite_t;
+
+    return true;
+}
+
+bool validate_and_prepare_accept(
+    session_ctx *ctx,
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *from,
+    E2ees__E2eeAddress *to,
+    char *session_id,
+    ProtobufCBinaryData *ciphertext_1,
+    ProtobufCBinaryData *our_ratchet_key
+) {
+    if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
+        e2ees_notify_log(NULL, BAD_E2EES_PACK, "validate_and_prepare_accept(): invalid e2ees_pack_id");
+        return false;
+    }
+    if (!is_valid_address(from)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_accept(): invalid from");
+        return false;
+    }
+    if (!is_valid_address(to)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_accept(): invalid to");
+        return false;
+    }
+    if (!is_valid_string(session_id)) {
+        e2ees_notify_log(NULL, BAD_SESSION_ID, "validate_and_prepare_accept(): invalid session_id");
+        return false;
+    }
+    if (ciphertext_1 && !is_valid_protobuf(ciphertext_1)) {
+        e2ees_notify_log(NULL, DEBUG_LOG, "validate_and_prepare_accept(): invalid ciphertext_1");
+        return false;
+    }
+    if (!is_valid_protobuf(our_ratchet_key)) {
+        e2ees_notify_log(NULL, BAD_RATCHET_KEY, "validate_and_prepare_accept(): invalid our_ratchet_key");
+        return false;
+    }
+
+    ctx->base.e2ees_pack_id = e2ees_pack_id;
+    ctx->session_id = session_id;
+    ctx->base.sender_address = from;
+    ctx->remote_address = to;
+    ctx->ciphertext_1 = ciphertext_1;
+    ctx->our_ratchet_key = our_ratchet_key;
+
+    return true;
+}
+
+bool validate_and_prepare_send_one2one_msg(
+    session_ctx *ctx,
+    E2ees__Session *outbound_session,
+    uint32_t notif_level
+) {
+    if (!is_valid_completed_session(outbound_session)) {   // this may be too strict
+        e2ees_notify_log(NULL, BAD_SESSION, "validate_and_prepare_send_one2one_msg(): invalid outbound_session");
+        return false;
+    }
+    get_e2ees_plugin()->db_handler.load_auth(outbound_session->our_address, &(ctx->base.auth));
+    if (!is_valid_string(ctx->base.auth)) {
+        e2ees_notify_log(NULL, BAD_AUTH, "validate_and_prepare_send_one2one_msg(): invalid auth");
+        return false;
+    }
+
+    ctx->version = outbound_session->version;
+    ctx->session_id = outbound_session->session_id;
+    ctx->base.sender_address = outbound_session->our_address;
+    ctx->remote_address = outbound_session->their_address;
+    ctx->notif_level = notif_level;
+
+    return true;
 }

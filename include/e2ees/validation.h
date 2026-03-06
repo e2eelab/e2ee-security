@@ -192,6 +192,34 @@ bool validate_and_prepare_account_ctx(
     uint32_t opks_num
 );
 
+bool validate_and_prepare_get_pre_key_bundle(
+    session_ctx *ctx,
+    const char *to_user_id,
+    const char *to_domain,
+    const char *to_device_id
+);
+
+bool validate_and_prepare_invite(
+    session_ctx *ctx,
+    E2ees__Session *outbound_session
+);
+
+bool validate_and_prepare_accept(
+    session_ctx *ctx,
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *from,
+    E2ees__E2eeAddress *to,
+    char *session_id,
+    ProtobufCBinaryData *ciphertext_1,
+    ProtobufCBinaryData *our_ratchet_key
+);
+
+bool validate_and_prepare_send_one2one_msg(
+    session_ctx *ctx,
+    E2ees__Session *outbound_session,
+    uint32_t notif_level
+);
+
 #ifdef __cplusplus
 }
 #endif

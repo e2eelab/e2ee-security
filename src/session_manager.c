@@ -126,6 +126,25 @@ int produce_get_pre_key_bundle_request(
     return ret;
 }
 
+int produce_get_pre_key_bundle_request_v2(
+    E2ees__GetPreKeyBundleRequest **request_out,
+    session_ctx *ctx
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__GetPreKeyBundleRequest *request = NULL;
+
+    request = (E2ees__GetPreKeyBundleRequest *)malloc(sizeof(E2ees__GetPreKeyBundleRequest));
+    e2ees__get_pre_key_bundle_request__init(request);
+    request->domain = strdup(ctx->remote_domain);
+    request->user_id = strdup(ctx->remote_user_id);
+    request->device_id = ctx->remote_device_id ? strdup(ctx->remote_device_id) : NULL; // device_id may be NULL
+
+    *request_out = request;
+
+    return ret;
+}
+
 int consume_get_pre_key_bundle_response(
     E2ees__InviteResponse ***invite_response_list_out,
     size_t *invite_response_num,
@@ -322,6 +341,35 @@ int produce_send_one2one_msg_request(
     } else {
         *request_out = NULL;
     }
+
+    return ret;
+}
+
+int produce_send_one2one_msg_request_v2(
+    E2ees__SendOne2oneMsgRequest **request_out,
+    session_ctx *ctx,
+    E2ees__One2oneMsgPayload *payload
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    // prepare an e2ee message
+    E2ees__E2eeMsg *e2ee_msg = (E2ees__E2eeMsg *)malloc(sizeof(E2ees__E2eeMsg));
+    e2ees__e2ee_msg__init(e2ee_msg);
+
+    e2ee_msg->version = ctx->version;
+    e2ee_msg->session_id = strdup(ctx->session_id);
+    copy_address_from_address(&(e2ee_msg->from), ctx->base.sender_address);
+    copy_address_from_address(&(e2ee_msg->to), ctx->remote_address);
+    e2ee_msg->msg_id = generate_uuid_str();
+    e2ee_msg->notif_level = ctx->notif_level;
+    e2ee_msg->payload_case = E2EES__E2EE_MSG__PAYLOAD_ONE2ONE_MSG;
+    e2ee_msg->one2one_msg = payload;
+
+    E2ees__SendOne2oneMsgRequest *request = (E2ees__SendOne2oneMsgRequest *)malloc(sizeof(E2ees__SendOne2oneMsgRequest));
+    e2ees__send_one2one_msg_request__init(request);
+    request->msg = e2ee_msg;
+
+    *request_out = request;
 
     return ret;
 }
@@ -769,6 +817,48 @@ int produce_invite_request(
     return ret;
 }
 
+int produce_invite_request_v2(
+    E2ees__InviteRequest **request_out,
+    session_ctx *ctx
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__InviteRequest *request = NULL;
+    E2ees__InviteMsg *msg = NULL;
+
+    msg = (E2ees__InviteMsg *)malloc(sizeof(E2ees__InviteMsg));
+    e2ees__invite_msg__init(msg);
+
+    msg->version = strdup(ctx->version);
+    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+    msg->session_id = strdup(ctx->session_id);
+    copy_address_from_address(&(msg->from), ctx->base.sender_address);
+    copy_address_from_address(&(msg->to), ctx->remote_address);
+
+    msg->n_pre_shared_input_list = ctx->n_pre_shared_input_list;
+    msg->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData) * msg->n_pre_shared_input_list);
+    size_t i;
+    for (i = 0; i < msg->n_pre_shared_input_list; i++) {
+        init_protobuf(&(msg->pre_shared_input_list[i]));
+        copy_protobuf_from_protobuf(&(msg->pre_shared_input_list[i]), &(ctx->pre_shared_input_list[i]));
+    }
+
+    copy_protobuf_from_protobuf(&(msg->alice_base_key), &(ctx->alice_base_key));
+
+    msg->bob_signed_pre_key_id = ctx->bob_signed_pre_key_id;
+    msg->bob_one_time_pre_key_id = ctx->bob_one_time_pre_key_id;
+
+    msg->invite_t = ctx->invite_t;
+
+    request = (E2ees__InviteRequest *)malloc(sizeof(E2ees__InviteRequest));
+    e2ees__invite_request__init(request);
+    request->msg = msg;
+
+    *request_out = request;
+
+    return ret;
+}
+
 int consume_invite_response(
     E2ees__E2eeAddress *user_address,
     E2ees__InviteResponse *response
@@ -945,6 +1035,38 @@ int produce_accept_request(
 
         *request_out = request;
     }
+
+    return ret;
+}
+
+int produce_accept_request_v2(
+    E2ees__AcceptRequest **request_out,
+    session_ctx *ctx
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__AcceptRequest *request = NULL;
+    E2ees__AcceptMsg *msg = NULL;
+
+    msg = (E2ees__AcceptMsg *)malloc(sizeof(E2ees__AcceptMsg));
+    e2ees__accept_msg__init(msg);
+
+    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+    msg->session_id = strdup(ctx->session_id);
+    copy_address_from_address(&(msg->from), ctx->base.sender_address);
+    copy_address_from_address(&(msg->to), ctx->remote_address);
+
+    if (ctx->ciphertext_1 != NULL) {
+        copy_protobuf_from_protobuf(&(msg->encaps_ciphertext), ctx->ciphertext_1);
+    }
+
+    copy_protobuf_from_protobuf(&(msg->ratchet_key), ctx->our_ratchet_key);
+
+    request = (E2ees__AcceptRequest *)malloc(sizeof(E2ees__AcceptRequest));
+    e2ees__accept_request__init(request);
+    request->msg = msg;
+
+    *request_out = request;
 
     return ret;
 }

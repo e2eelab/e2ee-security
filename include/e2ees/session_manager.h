@@ -46,6 +46,11 @@ int produce_get_pre_key_bundle_request(
     bool active
 );
 
+int produce_get_pre_key_bundle_request_v2(
+    E2ees__GetPreKeyBundleRequest **request_out,
+    session_ctx *ctx
+);
+
 /**
  * @brief Process an incoming get_pre_key_bundle_response_payload.
  *
@@ -81,6 +86,12 @@ int produce_send_one2one_msg_request(
     E2ees__Session *outbound_session,
     uint32_t notif_level,
     const uint8_t *plaintext_data, size_t plaintext_data_len
+);
+
+int produce_send_one2one_msg_request_v2(
+    E2ees__SendOne2oneMsgRequest **request_out,
+    session_ctx *ctx,
+    E2ees__One2oneMsgPayload *payload
 );
 
 /**
@@ -147,6 +158,11 @@ int produce_invite_request(
     E2ees__Session *outbound_session
 );
 
+int produce_invite_request_v2(
+    E2ees__InviteRequest **request_out,
+    session_ctx *ctx
+);
+
 /**
  * @brief Process an incoming InviteResponse message.
  *
@@ -193,6 +209,11 @@ int produce_accept_request(
     char *session_id,
     ProtobufCBinaryData *ciphertext_1,
     ProtobufCBinaryData *our_ratchet_key
+);
+
+int produce_accept_request_v2(
+    E2ees__AcceptRequest **request_out,
+    session_ctx *ctx
 );
 
 /**

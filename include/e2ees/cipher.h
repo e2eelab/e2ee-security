@@ -54,12 +54,37 @@ typedef struct {
 } pre_key_bundle;
 
 typedef struct {
-    e2ee_base_ctx base; // include sender_address, auth, pack_id
+    e2ee_base_ctx base; // include sender_address, auth, e2ees_pack_id
 
     account_identity identity; // include user_id, device_id, user_name
 
     pre_key_bundle bundle;
 } account_ctx;
+
+typedef struct {
+    e2ee_base_ctx base;         // include sender_address, auth, e2ees_pack_id
+
+    const char *remote_user_id;
+    const char *remote_domain;
+    const char *remote_device_id;
+    E2ees__E2eeAddress *remote_address; // the other's address
+
+    char *version;
+    char *session_id;
+
+    ProtobufCBinaryData alice_identity_key;
+    ProtobufCBinaryData alice_base_key;
+    size_t n_pre_shared_input_list;
+    ProtobufCBinaryData *pre_shared_input_list;
+    uint32_t bob_signed_pre_key_id;
+    uint32_t bob_one_time_pre_key_id;
+    int64_t invite_t;
+
+    ProtobufCBinaryData *ciphertext_1;
+    ProtobufCBinaryData *our_ratchet_key;
+
+    uint32_t notif_level;
+} session_ctx;
 
 /**
  * @brief Type definition of digital signature algorithm parameters.
