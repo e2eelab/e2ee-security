@@ -308,37 +308,41 @@ void log_proto(E2ees__E2eeAddress *addr, const char *title, const void *proto_st
     free(big_buffer);
 }
 
-void* execute_and_log_proto(
+void* _dispatch_proto_call(
+    void *handler_ptr,
     E2ees__E2eeAddress *sender_address,
     const char *auth,
-    const char *label,
-    const void *request,
-    proto_handler_func handler_func
+    const void *request
 ) {
-    if (!request || !handler_func) return NULL;
+    if (!request || !handler_ptr) return NULL;
+
+    const ProtobufCMessage *msg = (const ProtobufCMessage *)request;
+    const char *auto_label = msg->descriptor->name;
 
     // log request
-    char req_label[128];
-    snprintf(req_label, sizeof(req_label), "--- %s Request ---", label);
-    log_proto(sender_address, req_label, (const ProtobufCMessage *)request);
+    log_proto(sender_address, auto_label, msg);
 
-    // handler_func
-    void *response = handler_func(sender_address, auth, request);
+    void *response = NULL;
+
+    // register: no sender_address and auth
+    if (sender_address == NULL && auth == NULL) {
+        typedef void* (*RegFunc)(const void *);
+        RegFunc f = (RegFunc)handler_ptr;
+        response = f(request);
+    } 
+    // (sender_address, auth, request)
+    else {
+        typedef void* (*StdFunc)(E2ees__E2eeAddress *, const char *, const void *);
+        StdFunc f = (StdFunc)handler_ptr;
+        response = f(sender_address, auth, request);
+    }
 
     // log response
     if (response) {
-        char res_label[128];
-        snprintf(res_label, sizeof(res_label), "--- %s Response ---", label);
-        log_proto(sender_address, res_label, (const ProtobufCMessage *)response);
+        log_proto(sender_address, auto_label, (const ProtobufCMessage *)response);
     } else {
-        e2ees_notify_log(sender_address, DEBUG_LOG, "%s: Server returned NULL response", label);
+        e2ees_notify_log(sender_address, DEBUG_LOG, "%s: Server returned NULL response", auto_label);
     }
-    
-    return response;
-}
 
-// turn (addr, auth, req) into (request)
-void* register_user_wrapper(E2ees__E2eeAddress *addr, const char *auth, const void *request) {
-    // ignore address and auth,just invoke register_user
-    return get_e2ees_plugin()->proto_handler.register_user((E2ees__RegisterUserRequest *)request);
+    return response;
 }
