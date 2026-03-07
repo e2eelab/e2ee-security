@@ -20,6 +20,7 @@
 
 #include <string.h>
 
+#include "e2ees/account_cache.h"
 #include "e2ees/mem_util.h"
 
 ///-----------------accuracy-----------------///
@@ -733,22 +734,22 @@ bool is_valid_completed_session(E2ees__Session *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad associated_data");
             return false;
         }
-        if (!is_valid_protobuf(&(src->temp_shared_secret))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad temp_shared_secret");
-            return false;
-        }
+        // if (!is_valid_protobuf(&(src->temp_shared_secret))) {
+        //     e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad temp_shared_secret");
+        //     return false;
+        // }
         if (!is_valid_protobuf(&(src->fingerprint))) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad fingerprint");
             return false;
         }
-        if (!is_valid_key_pair(src->alice_base_key)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad alice_base_key");
-            return false;
-        }
-        if (!is_valid_protobuf_list(src->pre_shared_input_list, src->n_pre_shared_input_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad pre_shared_input_list");
-            return false;
-        }
+        // if (!is_valid_key_pair(src->alice_base_key)) {
+        //     e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad alice_base_key");
+        //     return false;
+        // }
+        // if (!is_valid_protobuf_list(src->pre_shared_input_list, src->n_pre_shared_input_list)) {
+        //     e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad pre_shared_input_list");
+        //     return false;
+        // }
     } else {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() src == NULL");
         return false;
@@ -2184,10 +2185,20 @@ bool validate_and_prepare_account_ctx(
 
 bool validate_and_prepare_get_pre_key_bundle(
     session_ctx *ctx,
+    E2ees__E2eeAddress *from,
+    const char *auth,
     const char *to_user_id,
     const char *to_domain,
     const char *to_device_id
 ) {
+    if (!is_valid_address(from)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_session_ctx(): invalid from");
+        return false;
+    }
+    if (!is_valid_string(auth)) {
+        e2ees_notify_log(NULL, BAD_AUTH, "validate_and_prepare_session_ctx(): invalid auth");
+        return false;
+    }
     if (!is_valid_string(to_user_id)) {
         e2ees_notify_log(NULL, BAD_USER_ID, "validate_and_prepare_session_ctx(): invalid to_user_id");
         return false;
@@ -2201,6 +2212,8 @@ bool validate_and_prepare_get_pre_key_bundle(
         return false;
     }
 
+    ctx->base.sender_address = from;
+    ctx->base.auth = strdup(auth);
     ctx->remote_user_id = to_user_id;
     ctx->remote_domain = to_domain;
     ctx->remote_device_id = to_device_id;  // remote_device_id can be empty
@@ -2276,6 +2289,11 @@ bool validate_and_prepare_accept(
         e2ees_notify_log(NULL, BAD_RATCHET_KEY, "validate_and_prepare_accept(): invalid our_ratchet_key");
         return false;
     }
+    get_e2ees_plugin()->db_handler.load_auth(from, &(ctx->base.auth));
+    if (!is_valid_string(ctx->base.auth)) {
+        e2ees_notify_log(NULL, BAD_AUTH, "validate_and_prepare_accept(): invalid auth");
+        return false;
+    }
 
     ctx->base.e2ees_pack_id = e2ees_pack_id;
     ctx->session_id = session_id;
@@ -2307,6 +2325,241 @@ bool validate_and_prepare_send_one2one_msg(
     ctx->base.sender_address = outbound_session->our_address;
     ctx->remote_address = outbound_session->their_address;
     ctx->notif_level = notif_level;
+
+    return true;
+}
+
+bool validate_and_prepare_create_group(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    const char *group_name,
+    E2ees__GroupMember **group_members,
+    size_t group_members_num
+) {
+    E2ees__Account *account = NULL;
+
+    if (!is_valid_address(sender_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_create_group(): invalid sender_address");
+        return false;
+    }
+    if (!is_valid_string(group_name)) {
+        e2ees_notify_log(NULL, BAD_GROUP_NAME, "validate_and_prepare_create_group(): invalid group_name");
+        return false;
+    }
+    if (!is_valid_group_member_list(group_members, group_members_num)) {
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "validate_and_prepare_create_group(): invalid group member list");
+        return false;
+    }
+
+    load_e2ees_pack_id_from_cache(&(ctx->base.e2ees_pack_id), sender_address);
+    if (ctx->base.e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
+        get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
+        if (account == NULL) {
+            e2ees_notify_log(sender_address, BAD_ACCOUNT, "validate_and_prepare_create_group(): no account");
+            return false;
+        }
+        ctx->base.e2ees_pack_id = account->e2ees_pack_id;
+        ctx->base.auth = strdup(account->auth);
+    } else {
+        get_e2ees_plugin()->db_handler.load_auth(sender_address, &(ctx->base.auth));
+    }
+
+    ctx->base.sender_address = sender_address;
+    ctx->group_name = group_name;
+    ctx->group_members = group_members;
+    ctx->group_members_num = group_members_num;
+
+    free_proto(account);
+
+    return true;
+}
+
+bool validate_and_prepare_add_group_members(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
+    E2ees__GroupMember **adding_members,
+    size_t adding_members_num,
+    E2ees__GroupSession **outbound_group_session
+) {
+    E2ees__Account *account = NULL;
+
+    if (!is_valid_address(sender_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_add_group_members(): invalid sender_address");
+        return false;
+    }
+    if (!is_valid_address(group_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_add_group_members(): invalid group_address");
+        return false;
+    }
+    if (!is_valid_group_member_list(adding_members, adding_members_num)) {
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "validate_and_prepare_add_group_members(): invalid adding member list");
+        return false;
+    }
+    load_e2ees_pack_id_from_cache(&(ctx->base.e2ees_pack_id), sender_address);
+    if (ctx->base.e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
+        get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
+        if (account == NULL) {
+            e2ees_notify_log(sender_address, BAD_ACCOUNT, "validate_and_prepare_add_group_members(): no account");
+            return false;
+        }
+        ctx->base.e2ees_pack_id = account->e2ees_pack_id;
+    }
+    get_e2ees_plugin()->db_handler.load_auth(sender_address, &(ctx->base.auth));
+    if (is_valid_string(ctx->base.auth)) {
+        get_e2ees_plugin()->db_handler.load_group_session_by_address(
+            sender_address, sender_address, group_address, outbound_group_session
+        );
+        if (!is_valid_group_session(*outbound_group_session)) {
+            e2ees_notify_log(NULL, BAD_GROUP_SESSION, "validate_and_prepare_add_group_members(): invalid outbound_group_session");
+            return false;
+        }
+    } else {
+        e2ees_notify_log(sender_address, BAD_AUTH, "validate_and_prepare_add_group_members(): invalid auth");
+        return false;
+    }
+
+    ctx->base.sender_address = sender_address;
+    ctx->adding_members_num = adding_members_num;
+    ctx->adding_members = adding_members;
+    ctx->sequence = (*outbound_group_session)->sequence;
+    ctx->group_info = (*outbound_group_session)->group_info;
+
+    free_proto(account);
+
+    return true;
+}
+
+bool validate_and_prepare_remove_group_members(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
+    E2ees__GroupMember **removing_members,
+    size_t removing_members_num,
+    E2ees__GroupSession **outbound_group_session
+) {
+    E2ees__Account *account = NULL;
+
+    if (!is_valid_address(sender_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_remove_group_members(): invalid sender_address");
+        return false;
+    }
+    if (!is_valid_address(group_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_remove_group_members(): invalid group_address");
+        return false;
+    }
+    if (!is_valid_group_member_list(removing_members, removing_members_num)) {
+        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "validate_and_prepare_remove_group_members(): invalid removing member list");
+        return false;
+    }
+    load_e2ees_pack_id_from_cache(&(ctx->base.e2ees_pack_id), sender_address);
+    if (ctx->base.e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
+        get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
+        if (account == NULL) {
+            e2ees_notify_log(sender_address, BAD_ACCOUNT, "validate_and_prepare_remove_group_members(): no account");
+            return false;
+        }
+        ctx->base.e2ees_pack_id = account->e2ees_pack_id;
+    }
+    get_e2ees_plugin()->db_handler.load_auth(sender_address, &(ctx->base.auth));
+    if (is_valid_string(ctx->base.auth)) {
+        get_e2ees_plugin()->db_handler.load_group_session_by_address(
+            sender_address, sender_address, group_address, outbound_group_session
+        );
+        if (!is_valid_group_session(*outbound_group_session)) {
+            e2ees_notify_log(NULL, BAD_GROUP_SESSION, "validate_and_prepare_remove_group_members(): invalid outbound_group_session");
+            return false;
+        }
+    } else {
+        e2ees_notify_log(sender_address, BAD_AUTH, "validate_and_prepare_remove_group_members(): invalid auth");
+        return false;
+    }
+
+    ctx->base.sender_address = sender_address;
+    ctx->removing_members_num = removing_members_num;
+    ctx->removing_members = removing_members;
+    ctx->group_info = (*outbound_group_session)->group_info;
+
+    free_proto(account);
+
+    return true;
+}
+
+bool validate_and_prepare_leave_group(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address
+) {
+    if (!is_valid_address(sender_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_leave_group(): invalid sender_address");
+        return false;
+    }
+    if (!is_valid_address(group_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_leave_group(): invalid group_address");
+        return false;
+    }
+    get_e2ees_plugin()->db_handler.load_auth(sender_address, &(ctx->base.auth));
+    if (!is_valid_string(ctx->base.auth)) {
+        e2ees_notify_log(NULL, BAD_AUTH, "validate_and_prepare_leave_group(): invalid auth");
+        return false;
+    }
+
+    ctx->base.sender_address = sender_address;
+    ctx->group_address = group_address;
+
+    return true;
+}
+
+bool validate_and_prepare_add_group_member_device(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
+    E2ees__E2eeAddress *new_device_address,
+    E2ees__GroupSession **outbound_group_session
+) {
+    E2ees__Account *account = NULL;
+
+    if (!is_valid_address(sender_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_add_group_member_device(): invalid sender_address");
+        return false;
+    }
+    if (!is_valid_address(group_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_add_group_member_device(): invalid group_address");
+        return false;
+    }
+    if (!is_valid_address(new_device_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_add_group_member_device(): invalid new_device_address");
+        return false;
+    }
+    load_e2ees_pack_id_from_cache(&(ctx->base.e2ees_pack_id), sender_address);
+    if (ctx->base.e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
+        get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
+        if (account == NULL) {
+            e2ees_notify_log(sender_address, BAD_ACCOUNT, "validate_and_prepare_remove_group_members(): no account");
+            return false;
+        }
+        ctx->base.e2ees_pack_id = account->e2ees_pack_id;
+    }
+    get_e2ees_plugin()->db_handler.load_auth(sender_address, &(ctx->base.auth));
+    if (is_valid_string(ctx->base.auth)) {
+        get_e2ees_plugin()->db_handler.load_group_session_by_address(
+            sender_address, sender_address, group_address, outbound_group_session
+        );
+        if (!is_valid_group_session(*outbound_group_session)) {
+            e2ees_notify_log(NULL, BAD_GROUP_SESSION, "validate_and_prepare_add_group_member_device(): invalid outbound_group_session");
+            return false;
+        }
+    } else {
+        e2ees_notify_log(sender_address, BAD_AUTH, "validate_and_prepare_add_group_member_device(): invalid auth");
+        return false;
+    }
+
+    ctx->base.sender_address = sender_address;
+    ctx->sequence = (*outbound_group_session)->sequence;
+    ctx->group_info = (*outbound_group_session)->group_info;
+    ctx->new_device_address = new_device_address;
+
+    free_proto(account);
 
     return true;
 }

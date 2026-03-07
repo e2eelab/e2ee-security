@@ -947,4 +947,20 @@ void cleanup_account_ctx(account_ctx *ctx) {
     if (!ctx) return;
     cleanup_base_ctx(&(ctx->base));
     cleanup_pre_key_bundle(&(ctx->bundle));
+
+    memset(ctx, 0, sizeof(account_ctx));
+}
+
+void cleanup_session_ctx(session_ctx *ctx) {
+    if (!ctx) return;
+    cleanup_base_ctx(&(ctx->base));
+
+    memset(ctx, 0, sizeof(session_ctx));
+}
+
+void cleanup_group_ctx(group_ctx *ctx) {
+    if (!ctx) return;
+    cleanup_base_ctx(&(ctx->base));
+
+    memset(ctx, 0, sizeof(group_ctx));
 }

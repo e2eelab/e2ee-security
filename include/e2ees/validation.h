@@ -194,6 +194,8 @@ bool validate_and_prepare_account_ctx(
 
 bool validate_and_prepare_get_pre_key_bundle(
     session_ctx *ctx,
+    E2ees__E2eeAddress *from,
+    const char *auth,
     const char *to_user_id,
     const char *to_domain,
     const char *to_device_id
@@ -218,6 +220,46 @@ bool validate_and_prepare_send_one2one_msg(
     session_ctx *ctx,
     E2ees__Session *outbound_session,
     uint32_t notif_level
+);
+
+bool validate_and_prepare_create_group(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    const char *group_name,
+    E2ees__GroupMember **group_members,
+    size_t group_members_num
+);
+
+bool validate_and_prepare_add_group_members(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
+    E2ees__GroupMember **adding_members,
+    size_t adding_members_num,
+    E2ees__GroupSession **outbound_group_session
+);
+
+bool validate_and_prepare_remove_group_members(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
+    E2ees__GroupMember **removing_members,
+    size_t removing_members_num,
+    E2ees__GroupSession **outbound_group_session
+);
+
+bool validate_and_prepare_leave_group(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address
+);
+
+bool validate_and_prepare_add_group_member_device(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
+    E2ees__E2eeAddress *new_device_address,
+    E2ees__GroupSession **outbound_group_session
 );
 
 #ifdef __cplusplus

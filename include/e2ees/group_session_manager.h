@@ -46,6 +46,11 @@ int produce_create_group_request(
     size_t group_members_num
 );
 
+int produce_create_group_request_v2(
+    E2ees__CreateGroupRequest **request_out,
+    group_ctx *ctx
+);
+
 /**
  * @brief Process an incoming CreateGroupResponse message.
  * @param e2ees_pack_id
@@ -98,6 +103,11 @@ int produce_add_group_members_request(
     size_t adding_members_num
 );
 
+int produce_add_group_members_request_v2(
+    E2ees__AddGroupMembersRequest **request_out,
+    group_ctx *ctx
+);
+
 /**
  * @brief Process an incoming AddGroupMembersResponse message.
  * @param outbound_group_session
@@ -137,6 +147,11 @@ int produce_add_group_member_device_request(
     E2ees__E2eeAddress *new_device_address
 );
 
+int produce_add_group_member_device_request_v2(
+    E2ees__AddGroupMemberDeviceRequest **request_out,
+    group_ctx *ctx
+);
+
 /**
  * @brief Process an incoming AddGroupMemberDeviceResponse message.
  * @param outbound_group_session
@@ -172,6 +187,11 @@ int produce_remove_group_members_request(
     E2ees__GroupSession *outbound_group_session,
     E2ees__GroupMember **removing_group_members,
     size_t removing_group_members_num
+);
+
+int produce_remove_group_members_request_v2(
+    E2ees__RemoveGroupMembersRequest **request_out,
+    group_ctx *ctx
 );
 
 /**
@@ -211,6 +231,11 @@ int produce_leave_group_request(
     E2ees__LeaveGroupRequest **request_out,
     E2ees__E2eeAddress *user_address,
     E2ees__E2eeAddress *group_address
+);
+
+int produce_leave_group_request_v2(
+    E2ees__LeaveGroupRequest **request_out,
+    group_ctx *ctx
 );
 
 /**
