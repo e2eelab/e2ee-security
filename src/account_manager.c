@@ -422,7 +422,7 @@ int consume_supply_opks_response(E2ees__Account *account, E2ees__OneTimePreKey *
 }
 
 bool consume_supply_opks_msg(E2ees__E2eeAddress *receiver_address, E2ees__SupplyOpksMsg *msg) {
-    int succ;
+    int ret;
     /** The server notifies us to generate some new one-time pre-keys 
         since our published one-time pre-keys are going to used up. */
 
@@ -442,12 +442,12 @@ bool consume_supply_opks_msg(E2ees__E2eeAddress *receiver_address, E2ees__Supply
     get_e2ees_plugin()->db_handler.load_account_by_address(receiver_address, &account);
 
     E2ees__SupplyOpksResponse *supply_opks_response = NULL;
-    succ = supply_opks_internal(&supply_opks_response, account, opks_num);
+    ret = supply_opks_internal(&supply_opks_response, account, opks_num);
 
     // release
     free_proto(account);
     free_proto(supply_opks_response);
 
     // done
-    return (succ == E2EES_RESULT_SUCC);
+    return (ret == E2EES_RESULT_SUCC);
 }

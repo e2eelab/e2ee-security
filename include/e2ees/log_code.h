@@ -155,9 +155,6 @@ typedef enum {
     ACCOUNT_ACTION_UNKNOWN
 } AccountAction;
 
-#define dispatch_proto_request(handler, addr, auth, req) \
-    _dispatch_proto_call((void*)(handler), (addr), (auth), (const void*)(req))
-
 typedef struct stack_frame {
     const char *function_name;
     const char *file_name;
@@ -222,31 +219,9 @@ void get_stack_trace(char *buffer, size_t buffer_len);
  * e2ees_notify_log with VERBOSE_LOG level for full end-to-end data tracing.
  * 
  * @param addr The E2eeAddress associated with the sender or entity for log categorization.
- * @param title A descriptive label for the log entry (e.g., "Create Group Request").
- * @param proto_struct Pointer to the Protobuf structure (cast to const void*).
+ * @param msg Pointer to the Protobuf structure.
  */
-void log_proto(E2ees__E2eeAddress *addr, const char *title, const void *proto_struct);
-
-/**
- * @brief A generic executor for E2EE protocol requests with automated dual-way logging.
- * 
- * Encapsulates the standard (address, auth, request) communication workflow. It 
- * automatically triggers log_proto before and after the actual RPC call 
- * to capture request/response payloads. This framework ensures consistent VERBOSE 
- * traceability across all protocol actions and reduces boilerplate code in business logic.
- * 
- * @param handler_ptr Pointer to the protocol handler.
- * @param sender_address The address of the message sender.
- * @param auth Authentication credential string.
- * @param request Pointer to the specific Request structure.
- * @return void* Pointer to the server response; must be cast and freed by the caller.
- */
-void* _dispatch_proto_call(
-    void *handler_ptr,
-    E2ees__E2eeAddress *sender_address,
-    const char *auth,
-    const void *request
-);
+void log_proto(E2ees__E2eeAddress *addr, const ProtobufCMessage *msg);
 
 #ifdef __cplusplus
 }

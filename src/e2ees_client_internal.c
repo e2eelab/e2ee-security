@@ -1,5 +1,6 @@
 #include "e2ees/e2ees_client_internal.h"
 
+#include <stdarg.h>
 #include <string.h>
 
 #include "e2ees/account_manager.h"
@@ -9,6 +10,53 @@
 #include "e2ees/session_manager.h"
 #include "e2ees/e2ees_client.h"
 #include "e2ees/account.h"
+
+void *dispatch_proto_request(void *handler_ptr, const void *request, ...) {
+    if (!handler_ptr || !request) {
+        return NULL;
+    }
+
+    E2ees__E2eeAddress *sender_address = NULL;
+    const char *auth = NULL;
+    void *response = NULL;
+
+    // register request or not
+    if (request == get_e2ees_plugin()->proto_handler.register_user) {
+        typedef void* (*proto_fun_t)(const void *);
+        proto_fun_t proto_fun = (proto_fun_t)handler_ptr;
+
+        // log request
+        log_proto(NULL, (const ProtobufCMessage *)request);
+
+        response = proto_fun(request);
+
+         // log response
+        log_proto(NULL, (const ProtobufCMessage *)response);
+    } else {
+        va_list args;
+        va_start(args, request);
+        sender_address = va_arg(args, E2ees__E2eeAddress *);
+        auth = va_arg(args, const char *);
+        va_end(args);
+
+        typedef void* (*proto_fun_t)(E2ees__E2eeAddress *, const char *, const void *);
+        proto_fun_t proto_fun = (proto_fun_t)handler_ptr;
+
+        // log request
+        log_proto(sender_address, (const ProtobufCMessage *)request);
+
+        response = proto_fun(sender_address, auth, request);
+
+        // log response
+        log_proto(sender_address, (const ProtobufCMessage *)response);
+    }
+
+    if (response == NULL) {
+        e2ees_notify_log(sender_address, VERBOSE_LOG, "response is NULL");
+    }
+
+    return response;
+}
 
 int get_pre_key_bundle_internal(
     E2ees__InviteResponse ***invite_response_list_out,

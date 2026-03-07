@@ -1002,7 +1002,7 @@ E2ees__ConsumeProtoMsgResponse *process_proto_msg(uint8_t *proto_msg_data, size_
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        log_proto(receiver_address, "--- Proto Msg ---", (const ProtobufCMessage *)proto_msg);
+        log_proto(receiver_address, (const ProtobufCMessage *)proto_msg);
         switch(proto_msg->payload_case) {
             case E2EES__PROTO_MSG__PAYLOAD_SUPPLY_OPKS_MSG:
                 consumed = consume_supply_opks_msg(receiver_address, proto_msg->supply_opks_msg);

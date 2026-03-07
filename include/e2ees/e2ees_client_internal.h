@@ -27,6 +27,22 @@ extern "C" {
 #endif
 
 /**
+ * @brief A generic executor for E2EE protocol requests with automated dual-way logging.
+ * 
+ * Encapsulates the standard (address, auth, request) communication workflow. It 
+ * automatically triggers log_proto before and after the actual RPC call 
+ * to capture request/response payloads. This framework ensures consistent VERBOSE 
+ * traceability across all protocol actions and reduces boilerplate code in business logic.
+ * 
+ * @param handler_ptr Pointer to the protocol handler.
+ * @param request Pointer to the specific Request structure.
+ * @param sender_address Optional. The address of the message sender.
+ * @param auth Optional. Authentication credential string.
+ * @return void* Pointer to the server response; must be cast and freed by the caller.
+ */
+void *dispatch_proto_request(void *handler_ptr, const void *request, ...);
+
+/**
  * @brief Get the pre-key bundle internal object.
  * @param invite_response_list_out
  * @param invite_response_num_out

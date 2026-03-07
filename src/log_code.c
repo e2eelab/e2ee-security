@@ -291,16 +291,21 @@ static void dump_message_recursive(const ProtobufCMessage *msg, dump_context_t *
     ctx->indent--;
 }
 
-void log_proto(E2ees__E2eeAddress *addr, const char *title, const void *proto_struct) {
-    if (!proto_struct) return;
-    
-    char *big_buffer = malloc(8192); // allocate 8KB buffer for VERBOSE logging
+void log_proto(E2ees__E2eeAddress *addr, const ProtobufCMessage *msg) {
+    if (!msg){ 
+        return;
+    }
+
+    const char *title = msg->descriptor->name;
+
+    // allocate 8KB buffer for VERBOSE logging
+    char *big_buffer = malloc(8192);
     if (!big_buffer) return;
     
     dump_context_t ctx = { .buf = big_buffer, .size = 8192, .offset = 0, .indent = 0 };
     
     // cast to ProtobufCMessage
-    dump_message_recursive((const ProtobufCMessage *)proto_struct, &ctx);
+    dump_message_recursive(msg, &ctx);
     
     // invoke e2ees_notify_log
     e2ees_notify_log(addr, VERBOSE_LOG, "%s\n%s", title, big_buffer);
@@ -308,41 +313,3 @@ void log_proto(E2ees__E2eeAddress *addr, const char *title, const void *proto_st
     free(big_buffer);
 }
 
-void* _dispatch_proto_call(
-    void *handler_ptr,
-    E2ees__E2eeAddress *sender_address,
-    const char *auth,
-    const void *request
-) {
-    if (!request || !handler_ptr) return NULL;
-
-    const ProtobufCMessage *msg = (const ProtobufCMessage *)request;
-    const char *auto_label = msg->descriptor->name;
-
-    // log request
-    log_proto(sender_address, auto_label, msg);
-
-    void *response = NULL;
-
-    // register: no sender_address and auth
-    if (sender_address == NULL && auth == NULL) {
-        typedef void* (*RegFunc)(const void *);
-        RegFunc f = (RegFunc)handler_ptr;
-        response = f(request);
-    } 
-    // (sender_address, auth, request)
-    else {
-        typedef void* (*StdFunc)(E2ees__E2eeAddress *, const char *, const void *);
-        StdFunc f = (StdFunc)handler_ptr;
-        response = f(sender_address, auth, request);
-    }
-
-    // log response
-    if (response) {
-        log_proto(sender_address, auto_label, (const ProtobufCMessage *)response);
-    } else {
-        e2ees_notify_log(sender_address, DEBUG_LOG, "%s: Server returned NULL response", auto_label);
-    }
-
-    return response;
-}
