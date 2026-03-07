@@ -143,6 +143,16 @@ const char* account_action_to_string(AccountAction action) {
     }
 }
 
+const char* session_action_to_string(SessionAction action) {
+    switch (action) {
+        case SESSION_ACTION_GET_BUNDLE: return "Get Pre-key Bundle";
+        case SESSION_ACTION_INVITE:     return "Invite";
+        case SESSION_ACTION_ACCEPT:     return "Accept";
+        case SESSION_ACTION_SEND_MSG:   return "Send One2one Msg";
+        default:                        return "UnknownAction";
+    }
+}
+
 void get_stack_trace(char* buffer, size_t buffer_len) {
 #ifdef ENABLE_TRACE
     stack_frame_t *frame = current_stack_top;

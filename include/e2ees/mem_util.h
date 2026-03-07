@@ -561,6 +561,10 @@ void cleanup_pre_key_bundle(pre_key_bundle *bundle);
 
 void cleanup_account_ctx(account_ctx *ctx);
 
+void cleanup_session_ctx(session_ctx *ctx);
+
+void cleanup_group_ctx(group_ctx *ctx);
+
 #ifdef __cplusplus
 }
 #endif

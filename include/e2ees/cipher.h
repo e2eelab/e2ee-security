@@ -86,6 +86,30 @@ typedef struct {
     uint32_t notif_level;
 } session_ctx;
 
+typedef struct {
+    e2ee_base_ctx base;         // sender_address, auth, e2ees_pack_id
+    
+    const char *group_name;
+    E2ees__E2eeAddress *group_address;
+    E2ees__GroupInfo *group_info;
+    
+    E2ees__GroupMember **group_members;
+    size_t group_members_num;
+
+    E2ees__GroupMember **adding_members;
+    size_t adding_members_num;
+
+    E2ees__GroupMember **removing_members;
+    size_t removing_members_num;
+
+    E2ees__E2eeAddress *new_device_address;
+
+    uint32_t sequence;
+
+    // pending
+    ProtobufCBinaryData group_seed; 
+} group_ctx;
+
 /**
  * @brief Type definition of digital signature algorithm parameters.
  */

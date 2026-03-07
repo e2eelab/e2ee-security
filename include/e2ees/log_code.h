@@ -155,6 +155,14 @@ typedef enum {
     ACCOUNT_ACTION_UNKNOWN
 } AccountAction;
 
+typedef enum {
+    SESSION_ACTION_GET_BUNDLE,
+    SESSION_ACTION_INVITE,
+    SESSION_ACTION_ACCEPT,
+    SESSION_ACTION_SEND_MSG,
+    SESSION_ACTION_UNKNOWN
+} SessionAction;
+
 typedef struct stack_frame {
     const char *function_name;
     const char *file_name;
@@ -201,6 +209,8 @@ typedef void* (*proto_handler_func)(E2ees__E2eeAddress *, const char *, const vo
 const char *logcode_string(LogCode log_code);
 
 const char* account_action_to_string(AccountAction action);
+
+const char* session_action_to_string(SessionAction action);
 
 /**
  * @brief Capture and format stack trace

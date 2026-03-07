@@ -103,6 +103,41 @@ int produce_create_group_request(
     return ret;
 }
 
+int produce_create_group_request_v2(
+    E2ees__CreateGroupRequest **request_out,
+    group_ctx *ctx
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__CreateGroupRequest *request = NULL;
+    E2ees__CreateGroupMsg *msg = NULL;
+
+    request = (E2ees__CreateGroupRequest *)malloc(sizeof(E2ees__CreateGroupRequest));
+    e2ees__create_group_request__init(request);
+
+    msg = (E2ees__CreateGroupMsg *)malloc(sizeof(E2ees__CreateGroupMsg));
+    e2ees__create_group_msg__init(msg);
+
+    copy_address_from_address(&(msg->sender_address), ctx->base.sender_address);
+
+    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+
+    msg->group_info = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
+    E2ees__GroupInfo *group_info = msg->group_info;
+    e2ees__group_info__init(group_info);
+    group_info->group_name = strdup(ctx->group_name);
+    group_info->n_group_member_list = ctx->group_members_num;
+    copy_group_members(&(group_info->group_member_list), ctx->group_members, ctx->group_members_num);
+
+    request->msg = msg;
+
+    if (ret == E2EES_RESULT_SUCC) {
+        *request_out = request;
+    }
+
+    return ret;
+}
+
 int consume_create_group_response(
     uint32_t e2ees_pack_id,
     E2ees__E2eeAddress *sender_address,
@@ -366,6 +401,40 @@ int produce_add_group_members_request(
     return ret;
 }
 
+int produce_add_group_members_request_v2(
+    E2ees__AddGroupMembersRequest **request_out,
+    group_ctx *ctx
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__AddGroupMembersRequest *request = NULL;
+    E2ees__AddGroupMembersMsg *msg = NULL;
+
+    request = (E2ees__AddGroupMembersRequest *)malloc(sizeof(E2ees__AddGroupMembersRequest));
+    e2ees__add_group_members_request__init(request);
+
+    msg = (E2ees__AddGroupMembersMsg *)malloc(sizeof(E2ees__AddGroupMembersMsg));
+    e2ees__add_group_members_msg__init(msg);
+
+    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+
+    copy_address_from_address(&(msg->sender_address), ctx->base.sender_address);
+
+    msg->sequence = ctx->sequence;
+
+    msg->n_adding_member_list = ctx->adding_members_num;
+    copy_group_members(&(msg->adding_member_list), ctx->adding_members, ctx->adding_members_num);
+    add_group_members_to_group_info(&(msg->group_info), ctx->group_info, ctx->adding_members, ctx->adding_members_num);
+
+    request->msg = msg;
+
+    if (ret == E2EES_RESULT_SUCC) {
+        *request_out = request;
+    }
+
+    return ret;
+}
+
 int consume_add_group_members_response(
     E2ees__GroupSession *outbound_group_session,
     E2ees__AddGroupMembersResponse *response,
@@ -587,6 +656,42 @@ int produce_add_group_member_device_request(
     return ret;
 }
 
+int produce_add_group_member_device_request_v2(
+    E2ees__AddGroupMemberDeviceRequest **request_out,
+    group_ctx *ctx
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__AddGroupMemberDeviceRequest *request = NULL;
+    E2ees__AddGroupMemberDeviceMsg *msg = NULL;
+
+    request = (E2ees__AddGroupMemberDeviceRequest *)malloc(sizeof(E2ees__AddGroupMemberDeviceRequest));
+    e2ees__add_group_member_device_request__init(request);
+
+    msg = (E2ees__AddGroupMemberDeviceMsg *)malloc(sizeof(E2ees__AddGroupMemberDeviceMsg));
+    e2ees__add_group_member_device_msg__init(msg);
+
+    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+
+    copy_address_from_address(&(msg->sender_address), ctx->base.sender_address);
+
+    msg->sequence = ctx->sequence;
+
+    copy_group_info(&(msg->group_info), ctx->group_info);
+
+    msg->adding_member_device = (E2ees__GroupMemberInfo *)malloc(sizeof(E2ees__GroupMemberInfo));
+    e2ees__group_member_info__init(msg->adding_member_device);
+    copy_address_from_address(&(msg->adding_member_device->member_address), ctx->new_device_address);
+
+    request->msg = msg;
+
+    if (ret == E2EES_RESULT_SUCC) {
+        *request_out = request;
+    }
+
+    return ret;
+}
+
 int consume_add_group_member_device_response(
     E2ees__GroupSession *outbound_group_session,
     E2ees__AddGroupMemberDeviceResponse *response
@@ -786,6 +891,41 @@ int produce_remove_group_members_request(
 
     // done
     free_proto(account);
+
+    return ret;
+}
+
+int produce_remove_group_members_request_v2(
+    E2ees__RemoveGroupMembersRequest **request_out,
+    group_ctx *ctx
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__RemoveGroupMembersRequest *request = NULL;
+    E2ees__RemoveGroupMembersMsg *msg = NULL;
+
+    request = (E2ees__RemoveGroupMembersRequest *)malloc(sizeof(E2ees__RemoveGroupMembersRequest));
+    e2ees__remove_group_members_request__init(request);
+
+    msg = (E2ees__RemoveGroupMembersMsg *)malloc(sizeof(E2ees__RemoveGroupMembersMsg));
+    e2ees__remove_group_members_msg__init(msg);
+
+    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+
+    copy_address_from_address(&(msg->sender_address), ctx->base.sender_address);
+
+    remove_group_members_from_group_info(
+        &(msg->group_info), ctx->group_info, ctx->removing_members, ctx->removing_members_num
+    );
+
+    msg->n_removing_member_list = ctx->removing_members_num;
+    copy_group_members(&(msg->removing_member_list), ctx->removing_members, ctx->removing_members_num);
+
+    request->msg = msg;
+
+    if (ret == E2EES_RESULT_SUCC) {
+        *request_out = request;
+    }
 
     return ret;
 }
@@ -1068,6 +1208,34 @@ int produce_leave_group_request(
 
         request->msg = msg;
     }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        *request_out = request;
+    }
+
+    // done
+    return ret;
+}
+
+int produce_leave_group_request_v2(
+    E2ees__LeaveGroupRequest **request_out,
+    group_ctx *ctx
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__LeaveGroupRequest *request = NULL;
+    E2ees__LeaveGroupMsg *msg = NULL;
+
+    request = (E2ees__LeaveGroupRequest *)malloc(sizeof(E2ees__LeaveGroupRequest));
+    e2ees__leave_group_request__init(request);
+
+    msg = (E2ees__LeaveGroupMsg *)malloc(sizeof(E2ees__LeaveGroupMsg));
+    e2ees__leave_group_msg__init(msg);
+
+    copy_address_from_address(&(msg->user_address), ctx->base.sender_address);
+    copy_address_from_address(&(msg->group_address), ctx->group_address);
+
+    request->msg = msg;
 
     if (ret == E2EES_RESULT_SUCC) {
         *request_out = request;

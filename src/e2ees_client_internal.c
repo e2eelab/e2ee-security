@@ -10,6 +10,7 @@
 #include "e2ees/session_manager.h"
 #include "e2ees/e2ees_client.h"
 #include "e2ees/account.h"
+#include "e2ees/ratchet.h"
 
 void *dispatch_proto_request(void *handler_ptr, const void *request, ...) {
     if (!handler_ptr || !request) {
@@ -72,6 +73,8 @@ int get_pre_key_bundle_internal(
 ) {
     int ret = E2EES_RESULT_SUCC;
 
+    *invite_response_list_out = NULL;
+    *invite_response_num_out = 0;
     E2ees__GetPreKeyBundleRequest *get_pre_key_bundle_request = NULL;
     E2ees__GetPreKeyBundleResponse *get_pre_key_bundle_response = NULL;
     E2ees__InviteResponse **invite_response_list = NULL;
@@ -86,7 +89,7 @@ int get_pre_key_bundle_internal(
         e2ees_notify_log(NULL, BAD_AUTH, "get_pre_key_bundle_internal(): no auth");
         ret = E2EES_RESULT_FAIL;
     }
-    if (!validate_and_prepare_get_pre_key_bundle(&ctx, to_user_id, to_domain, to_device_id)) {
+    if (!validate_and_prepare_get_pre_key_bundle(&ctx, from, auth, to_user_id, to_domain, to_device_id)) {
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -177,6 +180,7 @@ int get_pre_key_bundle_internal(
     }
 
     // release
+    cleanup_session_ctx(&ctx);
     free_proto(get_pre_key_bundle_request);
     free_proto(get_pre_key_bundle_response);
 
@@ -227,6 +231,8 @@ int invite_internal(
         *response_out = response;
     }
 
+    cleanup_session_ctx(&ctx);
+
     // done
     return ret;
 }
@@ -244,7 +250,6 @@ int accept_internal(
 
     E2ees__AcceptRequest *accept_request = NULL;
     E2ees__AcceptResponse *response = NULL;
-    char *auth = NULL;
     session_ctx ctx = {0};
 
     if (!validate_and_prepare_accept(&ctx, e2ees_pack_id, from, to, session_id, ciphertext_1, our_ratchet_key)) {
@@ -256,7 +261,7 @@ int accept_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.accept, from, auth, accept_request);
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.accept, from, ctx.base.auth, accept_request);
 
         ret = consume_accept_response(from, response);
         if (ret == E2EES_RESULT_FAIL) {
@@ -271,12 +276,13 @@ int accept_internal(
         }
 
         // release
-        free_string(auth);
         free_proto(accept_request);
 
         // output accept response
         *response_out = response;
     }
+
+    cleanup_session_ctx(&ctx);
 
     // done
     return ret;
@@ -442,6 +448,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
     }
 
     // release
+    cleanup_session_ctx(&ctx);
     free_proto(send_one2one_msg_request);
 
     // done
@@ -459,48 +466,18 @@ int add_group_member_device_internal(
     E2ees__AddGroupMemberDeviceRequest *add_group_member_device_request = NULL;
     E2ees__AddGroupMemberDeviceResponse *response = NULL;
     E2ees__GroupSession *outbound_group_session = NULL;
-    char *auth = NULL;
+    group_ctx ctx = {0};
 
-    if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
-
-        if (auth != NULL) {
-            if (is_valid_address(group_address)) {
-                get_e2ees_plugin()->db_handler.load_group_session_by_address(
-                    sender_address, sender_address, group_address, &outbound_group_session
-                );
-
-                // group session might not exist:
-                if (outbound_group_session == NULL) {
-                    e2ees_notify_log(sender_address, BAD_GROUP_SESSION, "add_group_member_device_internal(): no outbound_group_session");
-                    // skip:
-                    // release
-                    free_string(auth);
-                    return ret;
-                }
-            } else {
-                e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal(): no group_address");
-                ret = E2EES_RESULT_FAIL;
-            }
-        } else {
-            e2ees_notify_log(sender_address, BAD_AUTH, "add_group_member_device_internal(): no auth");
-            ret = E2EES_RESULT_FAIL;
-        }
-    } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal(): no sender_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address(new_device_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_member_device_internal(): no new_device_address");
+    if (!validate_and_prepare_add_group_member_device(&ctx, sender_address, group_address, new_device_address, &outbound_group_session)) {
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_add_group_member_device_request(&add_group_member_device_request, outbound_group_session, new_device_address);
+        ret = produce_add_group_member_device_request_v2(&add_group_member_device_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.add_group_member_device, sender_address, auth, add_group_member_device_request);
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.add_group_member_device, sender_address, ctx.base.auth, add_group_member_device_request);
 
         if (!is_valid_add_group_member_device_response(response)) {
             e2ees_notify_log(NULL, BAD_ADD_GROUP_MEMBER_DEVICE_RESPONSE, "add_group_member_device_internal(): invalid add_group_member_device_response");
@@ -528,12 +505,12 @@ int add_group_member_device_internal(
     }
 
     // release
-    free_string(auth);
     free_proto(add_group_member_device_request);
     if (outbound_group_session) {
         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
         outbound_group_session = NULL;
     }
+    cleanup_group_ctx(&ctx);
 
     return ret;
 }

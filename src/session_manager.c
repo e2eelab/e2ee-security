@@ -138,7 +138,7 @@ int produce_get_pre_key_bundle_request_v2(
     e2ees__get_pre_key_bundle_request__init(request);
     request->domain = strdup(ctx->remote_domain);
     request->user_id = strdup(ctx->remote_user_id);
-    request->device_id = ctx->remote_device_id ? strdup(ctx->remote_device_id) : NULL; // device_id may be NULL
+    request->device_id = ctx->remote_device_id ? strdup(ctx->remote_device_id) : strdup(""); // device_id may be NULL
 
     *request_out = request;
 
@@ -356,7 +356,7 @@ int produce_send_one2one_msg_request_v2(
     E2ees__E2eeMsg *e2ee_msg = (E2ees__E2eeMsg *)malloc(sizeof(E2ees__E2eeMsg));
     e2ees__e2ee_msg__init(e2ee_msg);
 
-    e2ee_msg->version = ctx->version;
+    e2ee_msg->version = strdup(ctx->version);
     e2ee_msg->session_id = strdup(ctx->session_id);
     copy_address_from_address(&(e2ee_msg->from), ctx->base.sender_address);
     copy_address_from_address(&(e2ee_msg->to), ctx->remote_address);

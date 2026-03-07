@@ -492,46 +492,19 @@ int create_group(
 
     E2ees__CreateGroupRequest *create_group_request = NULL;
     E2ees__CreateGroupResponse *response = NULL;
-    E2ees__Account *account = NULL;
-    char *auth = NULL;
-    uint32_t e2ees_pack_id = 0;
+    group_ctx ctx = {0};
 
-    if (!is_valid_address(sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "create_group(): no sender_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_string(group_name)) {
-        e2ees_notify_log(NULL, BAD_GROUP_NAME, "create_group(): no group_name");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_group_member_list(group_members, group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "create_group(): invalid group member list");
+    if (!validate_and_prepare_create_group(&ctx, sender_address, group_name, group_members, group_members_num)) {
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        load_e2ees_pack_id_from_cache(&e2ees_pack_id, sender_address);
-
-        if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
-            get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
-            if (account == NULL) {
-                e2ees_notify_log(sender_address, BAD_ACCOUNT, "create_group(): no account");
-                ret = E2EES_RESULT_FAIL;
-            }
-            e2ees_pack_id = account->e2ees_pack_id;
-            auth = strdup(account->auth);
-        } else {
-            get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
-        }
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_create_group_request(&create_group_request, sender_address, group_name, group_members, group_members_num);
+        ret = produce_create_group_request_v2(&create_group_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         // send message to server
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.create_group, sender_address, auth, create_group_request);
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.create_group, sender_address, ctx.base.auth, create_group_request);
 
         if (!is_valid_create_group_response(response)) {
             e2ees_notify_log(sender_address, BAD_CREATE_GROUP_RESPONSE, "create_group(): invalid create_group_response");
@@ -551,16 +524,15 @@ int create_group(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = consume_create_group_response(e2ees_pack_id, sender_address, group_name, group_members, group_members_num, response);
+        ret = consume_create_group_response(ctx.base.e2ees_pack_id, sender_address, group_name, group_members, group_members_num, response);
         if (ret != E2EES_RESULT_SUCC) {
             e2ees_notify_log(sender_address, BAD_CONSUME, "Server created group but local consume response failed");
         }
     }
 
     // release
-    free_proto(account);
-    free_string(auth);
     free_proto(create_group_request);
+    cleanup_group_ctx(&ctx);
 
     // done
     return ret;
@@ -578,48 +550,18 @@ int add_group_members(
     E2ees__AddGroupMembersRequest *add_group_members_request = NULL;
     E2ees__AddGroupMembersResponse *response = NULL;
     E2ees__GroupSession *outbound_group_session = NULL;
-    char *auth = NULL;
+    group_ctx ctx = {0};
 
-    if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
-        if (auth != NULL) {
-            if (is_valid_address(group_address)) {
-                get_e2ees_plugin()->db_handler.load_group_session_by_address(
-                    sender_address, sender_address, group_address, &outbound_group_session
-                );
-
-                if (outbound_group_session == NULL) {
-                    e2ees_notify_log(
-                        sender_address,
-                        BAD_GROUP_SESSION,
-                        "add_group_members() outbound_group_session does not exist, return a response with response code not found"
-                    );        
-                    response = (E2ees__AddGroupMembersResponse *)malloc(sizeof(E2ees__AddGroupMembersResponse));
-                    e2ees__add_group_members_response__init(response);
-                    response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND;
-
-                    ret = E2EES_RESULT_FAIL;
-                }
-            }
-        } else {
-            e2ees_notify_log(sender_address, BAD_AUTH, "add_group_members(): no auth");
-            ret = E2EES_RESULT_FAIL;
-        }
-    } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "add_group_members(): no sender_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_group_member_list(adding_members, adding_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "add_group_members(): invalid adding member list");
+    if (!validate_and_prepare_add_group_members(&ctx, sender_address, group_address, adding_members, adding_members_num, &outbound_group_session)) {
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_add_group_members_request(&add_group_members_request, outbound_group_session, adding_members, adding_members_num);
+        ret = produce_add_group_members_request_v2(&add_group_members_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.add_group_members, sender_address, auth, add_group_members_request);
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.add_group_members, sender_address, ctx.base.auth, add_group_members_request);
 
         if (!is_valid_add_group_members_response(response)) {
             e2ees_notify_log(NULL, BAD_ADD_GROUP_MEMBERS_RESPONSE, "add_group_members(): invalid add_group_members_response");
@@ -648,12 +590,12 @@ int add_group_members(
     }
 
     // release
-    free_string(auth);
     free_proto(add_group_members_request);
     if (outbound_group_session != NULL) {
         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
         outbound_group_session = NULL;
     }
+    cleanup_group_ctx(&ctx);
 
     // done
     return ret;
@@ -671,48 +613,18 @@ int remove_group_members(
     E2ees__RemoveGroupMembersRequest *remove_group_members_request = NULL;
     E2ees__RemoveGroupMembersResponse *response = NULL;
     E2ees__GroupSession *outbound_group_session = NULL;
-    char *auth = NULL;
+    group_ctx ctx = {0};
 
-    if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
-        if (auth != NULL) {
-            if (is_valid_address(group_address)) {
-                get_e2ees_plugin()->db_handler.load_group_session_by_address(
-                    sender_address, sender_address, group_address, &outbound_group_session
-                );
-
-                if (outbound_group_session == NULL) {
-                    e2ees_notify_log(
-                        sender_address,
-                        BAD_GROUP_SESSION,
-                        "remove_group_members(), outbound_group_session is null, return a response with response code not found"
-                    );        
-                    response = (E2ees__RemoveGroupMembersResponse *)malloc(sizeof(E2ees__RemoveGroupMembersResponse));
-                    e2ees__remove_group_members_response__init(response);
-                    response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND;
-
-                    ret = E2EES_RESULT_FAIL;
-                }
-            }
-        } else {
-            e2ees_notify_log(sender_address, BAD_AUTH, "remove_group_members(): no auth");
-            ret = E2EES_RESULT_FAIL;
-        }
-    } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "remove_group_members(): no sender_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_group_member_list(removing_members, removing_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "remove_group_members(): invalid removing member list");
+    if (!validate_and_prepare_remove_group_members(&ctx, sender_address, group_address, removing_members, removing_members_num, &outbound_group_session)) {
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_remove_group_members_request(&remove_group_members_request, outbound_group_session, removing_members, removing_members_num);
+        ret = produce_remove_group_members_request_v2(&remove_group_members_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.remove_group_members, sender_address, auth, remove_group_members_request);
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.remove_group_members, sender_address, ctx.base.auth, remove_group_members_request);
 
         if (!is_valid_remove_group_members_response(response)) {
             e2ees_notify_log(NULL, BAD_REMOVE_GROUP_MEMBERS_RESPONSE, "remove_group_members(): invalid remove_group_members_response");
@@ -741,12 +653,12 @@ int remove_group_members(
     }
 
     // release
-    free_string(auth);
     free_proto(remove_group_members_request);
     if (outbound_group_session != NULL) {
         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
         outbound_group_session = NULL;
     }
+    cleanup_group_ctx(&ctx);
 
     // done
     return ret;
@@ -761,30 +673,18 @@ int leave_group(
 
     E2ees__LeaveGroupRequest *leave_group_request = NULL;
     E2ees__LeaveGroupResponse *response = NULL;
-    char *auth = NULL;
+    group_ctx ctx = {0};
 
-    if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
-
-        if (auth == NULL) {
-            e2ees_notify_log(sender_address, BAD_AUTH, "leave_group(): no auth");
-            ret = E2EES_RESULT_FAIL;
-        }
-    } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "leave_group(): no sender_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address(group_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "leave_group(): no group_address");
+    if (!validate_and_prepare_leave_group(&ctx, sender_address, group_address)) {
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_leave_group_request(&leave_group_request, sender_address, group_address);
+        ret = produce_leave_group_request_v2(&leave_group_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.leave_group, sender_address, auth, leave_group_request);
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.leave_group, sender_address, ctx.base.auth, leave_group_request);
 
         if (!is_valid_leave_group_response(response)) {
             e2ees_notify_log(NULL, BAD_LEAVE_GROUP_RESPONSE, "leave_group(): invalid leave_group_response");
@@ -808,8 +708,8 @@ int leave_group(
     }
 
     // release
-    free_string(auth);
     free_proto(leave_group_request);
+    cleanup_group_ctx(&ctx);
 
     // done
     return ret;
