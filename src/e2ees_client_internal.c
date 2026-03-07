@@ -52,10 +52,7 @@ int get_pre_key_bundle_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        get_pre_key_bundle_response = (E2ees__GetPreKeyBundleResponse *)execute_and_log_proto(
-            from, auth, "Get Pre-key Bundle", get_pre_key_bundle_request, 
-            (proto_handler_func)get_e2ees_plugin()->proto_handler.get_pre_key_bundle
-        );
+        get_pre_key_bundle_response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.get_pre_key_bundle, from, auth, get_pre_key_bundle_request);
 
         if (!is_valid_get_pre_key_bundle_response(get_pre_key_bundle_response)) {
             e2ees_notify_log(NULL, BAD_GET_PRE_KEY_BUNDLE_RESPONSE, "get_pre_key_bundle_internal(): invalid get_pre_key_bundle_response");
@@ -172,10 +169,7 @@ int invite_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = (E2ees__InviteResponse *)execute_and_log_proto(
-            user_address, auth, "Invite", invite_request, 
-            (proto_handler_func)get_e2ees_plugin()->proto_handler.invite
-        );
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.invite, user_address, auth, invite_request);
 
         ret = consume_invite_response(user_address, response);
         if (ret == E2EES_RESULT_FAIL) {
@@ -252,10 +246,7 @@ int accept_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = (E2ees__AcceptResponse *)execute_and_log_proto(
-            from, auth, "Accept", accept_request, 
-            (proto_handler_func)get_e2ees_plugin()->proto_handler.accept
-        );
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.accept, from, auth, accept_request);
 
         ret = consume_accept_response(from, response);
         if (ret == E2EES_RESULT_FAIL) {
@@ -293,10 +284,7 @@ int publish_spk_internal(
     ret = produce_publish_spk_request(&publish_spk_request, account);
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = (E2ees__PublishSpkResponse *)execute_and_log_proto(
-            account->address, account->auth, "Publish Spk", publish_spk_request, 
-            (proto_handler_func)get_e2ees_plugin()->proto_handler.publish_spk
-        );
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.publish_spk, account->address, account->auth, publish_spk_request);
 
         if (is_valid_publish_spk_response(response)) {
             ret = consume_publish_spk_response(account, response);
@@ -351,10 +339,7 @@ int supply_opks_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = (E2ees__SupplyOpksResponse *)execute_and_log_proto(
-            account->address, account->auth, "Supply Opks", supply_opks_request, 
-            (proto_handler_func)get_e2ees_plugin()->proto_handler.supply_opks
-        );
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.supply_opks, account->address, account->auth, supply_opks_request);
 
         if (is_valid_supply_opks_response(response)) {
             ret = consume_supply_opks_response(account, one_time_pre_key_list, opks_num, response);
@@ -415,10 +400,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
 
     ret = produce_send_one2one_msg_request(&send_one2one_msg_request, outbound_session, notif_level, plaintext_data, plaintext_data_len);
 
-    E2ees__SendOne2oneMsgResponse *response = (E2ees__SendOne2oneMsgResponse *)execute_and_log_proto(
-        user_address, auth, "Send One2one Msg", send_one2one_msg_request, 
-        (proto_handler_func)get_e2ees_plugin()->proto_handler.send_one2one_msg
-    );
+    E2ees__SendOne2oneMsgResponse *response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.send_one2one_msg, user_address, auth, send_one2one_msg_request);
 
     bool succ = consume_send_one2one_msg_response(outbound_session, response);
     if (!succ) {
@@ -503,10 +485,7 @@ int add_group_member_device_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = (E2ees__AddGroupMemberDeviceResponse *)execute_and_log_proto(
-            sender_address, auth, "Add Group Member Device", add_group_member_device_request, 
-            (proto_handler_func)get_e2ees_plugin()->proto_handler.add_group_member_device
-        );
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.add_group_member_device, sender_address, auth, add_group_member_device_request);
 
         if (!is_valid_add_group_member_device_response(response)) {
             e2ees_notify_log(NULL, BAD_ADD_GROUP_MEMBER_DEVICE_RESPONSE, "add_group_member_device_internal(): invalid add_group_member_device_response");

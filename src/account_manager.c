@@ -351,11 +351,6 @@ bool consume_supply_opks_msg(E2ees__E2eeAddress *receiver_address, E2ees__Supply
     E2ees__Account *account = NULL;
     get_e2ees_plugin()->db_handler.load_account_by_address(receiver_address, &account);
 
-    if (!is_valid_registered_account(account)) {
-        e2ees_notify_log(receiver_address, BAD_ACCOUNT, "consume_supply_opks_msg(): invalid account");
-        return true;
-    }
-
     E2ees__SupplyOpksResponse *supply_opks_response = NULL;
     supply_opks_internal(&supply_opks_response, account, opks_num);
 

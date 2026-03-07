@@ -148,6 +148,9 @@ enum LogCode {
 
 typedef enum LogCode LogCode;
 
+#define dispatch_proto_request(handler, addr, auth, req) \
+    _dispatch_proto_call((void*)(handler), (addr), (auth), (const void*)(req))
+
 typedef struct stack_frame {
     const char *function_name;
     const char *file_name;
@@ -223,34 +226,18 @@ void log_proto(E2ees__E2eeAddress *addr, const char *title, const void *proto_st
  * to capture request/response payloads. This framework ensures consistent VERBOSE 
  * traceability across all protocol actions and reduces boilerplate code in business logic.
  * 
+ * @param handler_ptr Pointer to the protocol handler.
  * @param sender_address The address of the message sender.
  * @param auth Authentication credential string.
- * @param label Functional tag for identification (e.g., "Add Group Members").
  * @param request Pointer to the specific Request structure.
- * @param handler_func Pointer to the protocol handler (cast to StandardProtoFunc).
  * @return void* Pointer to the server response; must be cast and freed by the caller.
  */
-void* execute_and_log_proto(
+void* _dispatch_proto_call(
+    void *handler_ptr,
     E2ees__E2eeAddress *sender_address,
     const char *auth,
-    const char *label,
-    const void *request,
-    proto_handler_func handler_func
+    const void *request
 );
-
-/**
- * @brief Adapter wrapper for the RegisterUser interface.
- * 
- * Adapts the native RegisterUser interface (which lacks address and auth parameters) 
- * to match the StandardProtoFunc signature. This allows the registration process 
- * to be managed uniformly within the execute_and_log_proto framework.
- * 
- * @param addr Ignored (address is not yet established during registration).
- * @param auth Ignored (authentication is not yet established during registration).
- * @param request Pointer to the E2ees__RegisterUserRequest structure.
- * @return void* Pointer to the E2ees__RegisterUserResponse structure.
- */
-void* register_user_wrapper(E2ees__E2eeAddress *addr, const char *auth, const void *request);
 
 #ifdef __cplusplus
 }
