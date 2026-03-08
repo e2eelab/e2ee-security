@@ -32,21 +32,10 @@ extern "C" {
  * @brief Create a get_pre_key_bundle_request to be sent to messaging server.
  *
  * @param request_out
- * @param to_user_id
- * @param to_domain
- * @param to_device_id
- * @param active
+ * @param ctx
  * @return 0 if success
  */
 int produce_get_pre_key_bundle_request(
-    E2ees__GetPreKeyBundleRequest **request_out,
-    const char *to_user_id,
-    const char *to_domain,
-    const char *to_device_id,
-    bool active
-);
-
-int produce_get_pre_key_bundle_request_v2(
     E2ees__GetPreKeyBundleRequest **request_out,
     session_ctx *ctx
 );
@@ -75,20 +64,11 @@ int consume_get_pre_key_bundle_response(
  * @brief Create a send_one2one_msg_request to be sent to messaging server.
  *
  * @param request_out
- * @param outbound_session
- * @param notif_level
- * @param plaintext_data
- * @param plaintext_data_len
+ * @param ctx
+ * @param payload
  * @return 0 if success
  */
 int produce_send_one2one_msg_request(
-    E2ees__SendOne2oneMsgRequest **request_out,
-    E2ees__Session *outbound_session,
-    uint32_t notif_level,
-    const uint8_t *plaintext_data, size_t plaintext_data_len
-);
-
-int produce_send_one2one_msg_request_v2(
     E2ees__SendOne2oneMsgRequest **request_out,
     session_ctx *ctx,
     E2ees__One2oneMsgPayload *payload
@@ -150,15 +130,10 @@ bool consume_remove_user_device_msg(
  * @brief Create a E2ees__InviteRequest message to be sent to server.
  *
  * @param request_out
- * @param outbound_session
+ * @param ctx
  * @return 0 if success
  */
 int produce_invite_request(
-    E2ees__InviteRequest **request_out,
-    E2ees__Session *outbound_session
-);
-
-int produce_invite_request_v2(
     E2ees__InviteRequest **request_out,
     session_ctx *ctx
 );
@@ -193,25 +168,10 @@ bool consume_invite_msg(
  * @brief Create a E2ees__AcceptRequest message to be sent to server.
  *
  * @param request_out
- * @param e2ees_pack_id
- * @param from
- * @param to
- * @param session_id
- * @param ciphertext_1
- * @param our_ratchet_key
+ * @param ctx
  * @return 0 if success
  */
 int produce_accept_request(
-    E2ees__AcceptRequest **request_out,
-    uint32_t e2ees_pack_id,
-    E2ees__E2eeAddress *from,
-    E2ees__E2eeAddress *to,
-    char *session_id,
-    ProtobufCBinaryData *ciphertext_1,
-    ProtobufCBinaryData *our_ratchet_key
-);
-
-int produce_accept_request_v2(
     E2ees__AcceptRequest **request_out,
     session_ctx *ctx
 );

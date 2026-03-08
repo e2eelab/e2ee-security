@@ -28,66 +28,7 @@
 #include "e2ees/mem_util.h"
 #include "e2ees/validation.h"
 
-int produce_register_request(E2ees__RegisterUserRequest **request_out, E2ees__Account *account) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__IdentityKey *identity_key = NULL;
-    E2ees__KeyPair *identity_key_pair_asym = NULL;
-    E2ees__KeyPair *identity_key_pair_sign = NULL;
-    E2ees__SignedPreKey *signed_pre_key = NULL;
-    E2ees__KeyPair *signed_pre_key_pair = NULL;
-    E2ees__OneTimePreKey *one_time_pre_key = NULL;
-
-    if (is_valid_unregistered_account(account)) {
-        identity_key = account->identity_key;
-        identity_key_pair_asym = identity_key->asym_key_pair;
-        identity_key_pair_sign = identity_key->sign_key_pair;
-        signed_pre_key = account->signed_pre_key;
-        signed_pre_key_pair = signed_pre_key->key_pair;
-    } else {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "produce_register_request(): invalid account");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        E2ees__RegisterUserRequest *request = (E2ees__RegisterUserRequest *)malloc(sizeof(E2ees__RegisterUserRequest));
-        e2ees__register_user_request__init(request);
-
-        // copy identity public key
-        request->identity_key_public = (E2ees__IdentityKeyPublic *)malloc(sizeof(E2ees__IdentityKeyPublic));
-        e2ees__identity_key_public__init(request->identity_key_public);
-        copy_protobuf_from_protobuf(&(request->identity_key_public->asym_public_key), &(identity_key_pair_asym->public_key));
-        copy_protobuf_from_protobuf(&(request->identity_key_public->sign_public_key), &(identity_key_pair_sign->public_key));
-
-        // copy signed pre-key
-        request->signed_pre_key_public = (E2ees__SignedPreKeyPublic *)malloc(sizeof(E2ees__SignedPreKeyPublic));
-        e2ees__signed_pre_key_public__init(request->signed_pre_key_public);
-        request->signed_pre_key_public->spk_id = account->signed_pre_key->spk_id;
-        copy_protobuf_from_protobuf(&(request->signed_pre_key_public->public_key), &(signed_pre_key_pair->public_key));
-        copy_protobuf_from_protobuf(&(request->signed_pre_key_public->signature), &(signed_pre_key->signature));
-
-        // copy one-time pre-key
-        request->n_one_time_pre_key_list = account->n_one_time_pre_key_list;
-        request->one_time_pre_key_list = (E2ees__OneTimePreKeyPublic **)malloc(sizeof(E2ees__OneTimePreKeyPublic *) * request->n_one_time_pre_key_list);
-        size_t i;
-        for (i = 0; i < request->n_one_time_pre_key_list; i++) {
-            request->one_time_pre_key_list[i] = (E2ees__OneTimePreKeyPublic *)malloc(sizeof(E2ees__OneTimePreKeyPublic));
-            e2ees__one_time_pre_key_public__init(request->one_time_pre_key_list[i]);
-
-            one_time_pre_key = account->one_time_pre_key_list[i];
-            request->one_time_pre_key_list[i]->opk_id = one_time_pre_key->opk_id;
-            copy_protobuf_from_protobuf(&(request->one_time_pre_key_list[i]->public_key), &(one_time_pre_key->key_pair->public_key));
-        }
-
-        *request_out = request;
-    } else {
-        *request_out = NULL;
-    }
-
-    return ret;
-}
-
-int produce_register_request_v2(E2ees__RegisterUserRequest **request_out, account_ctx *ctx) {
+int produce_register_request(E2ees__RegisterUserRequest **request_out, account_ctx *ctx) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__IdentityKey *identity_key = NULL;
@@ -239,43 +180,6 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
 
 int produce_publish_spk_request(
     E2ees__PublishSpkRequest **request_out,
-    E2ees__Account *account
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__SignedPreKey *signed_pre_key = NULL;
-    E2ees__KeyPair *signed_pre_key_pair = NULL;
-
-    if (is_valid_registered_account(account)) {
-        signed_pre_key = account->signed_pre_key;
-        signed_pre_key_pair = signed_pre_key->key_pair;
-    } else {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "produce_publish_spk_request(): invalid account");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        E2ees__PublishSpkRequest *request = (E2ees__PublishSpkRequest *)malloc(sizeof(E2ees__PublishSpkRequest));
-        e2ees__publish_spk_request__init(request);
-
-        // copy the new signed pre-key to the message which will be sent to the server
-        copy_address_from_address(&(request->user_address), account->address);
-        request->signed_pre_key_public = (E2ees__SignedPreKeyPublic *)malloc(sizeof(E2ees__SignedPreKeyPublic));
-        e2ees__signed_pre_key_public__init(request->signed_pre_key_public);
-        request->signed_pre_key_public->spk_id = signed_pre_key->spk_id;
-        copy_protobuf_from_protobuf(&(request->signed_pre_key_public->public_key), &(signed_pre_key_pair->public_key));
-        copy_protobuf_from_protobuf(&(request->signed_pre_key_public->signature), &(signed_pre_key->signature));
-
-        *request_out = request;
-    } else {
-        *request_out = NULL;
-    }
-
-    return ret;
-}
-
-int produce_publish_spk_request_v2(
-    E2ees__PublishSpkRequest **request_out,
     account_ctx *ctx
 ) {
     int ret = E2EES_RESULT_SUCC;
@@ -316,56 +220,6 @@ int consume_publish_spk_response(
 }
 
 int produce_supply_opks_request(
-    E2ees__SupplyOpksRequest **request_out,
-    E2ees__OneTimePreKey ***one_time_pre_key_list_out,
-    E2ees__Account *account,
-    uint32_t opks_num
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__SupplyOpksRequest *request = NULL;
-    uint32_t e2ees_pack_id;
-    uint32_t cur_opk_id;
-
-    if (is_valid_registered_account(account)) {
-        e2ees_pack_id = account->e2ees_pack_id;
-        cur_opk_id = account->next_one_time_pre_key_id;
-    } else {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "produce_supply_opks_request(): invalid account");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        // generate a given number of new one-time pre-keys
-        ret = generate_opks(one_time_pre_key_list_out, opks_num, e2ees_pack_id, cur_opk_id);
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        request = (E2ees__SupplyOpksRequest *)malloc(sizeof(E2ees__SupplyOpksRequest));
-        e2ees__supply_opks_request__init(request);
-
-        request->e2ees_pack_id = account->e2ees_pack_id;
-        request->n_one_time_pre_key_public_list = (size_t)opks_num;
-        request->one_time_pre_key_public_list = (E2ees__OneTimePreKeyPublic **)malloc(sizeof(E2ees__OneTimePreKeyPublic *) * opks_num);
-
-        copy_address_from_address(&(request->user_address), account->address);
-
-        // copy the new one-time pre-keys to the message which will be sent to the server
-        uint32_t i;
-        for (i = 0; i < opks_num; i++) {
-            request->one_time_pre_key_public_list[i] = (E2ees__OneTimePreKeyPublic *)malloc(sizeof(E2ees__OneTimePreKeyPublic));
-            e2ees__one_time_pre_key_public__init(request->one_time_pre_key_public_list[i]);
-            request->one_time_pre_key_public_list[i]->opk_id = (*one_time_pre_key_list_out)[i]->opk_id;
-            copy_protobuf_from_protobuf(&(request->one_time_pre_key_public_list[i]->public_key), &((*one_time_pre_key_list_out)[i]->key_pair->public_key));
-        }
-
-        *request_out = request;
-    }
-
-    return ret;
-}
-
-int produce_supply_opks_request_v2(
     E2ees__SupplyOpksRequest **request_out,
     account_ctx *ctx
 ) {

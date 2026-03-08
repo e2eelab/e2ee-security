@@ -30,81 +30,6 @@
 
 int produce_create_group_request(
     E2ees__CreateGroupRequest **request_out,
-    E2ees__E2eeAddress *sender_address,
-    const char *group_name,
-    E2ees__GroupMember **group_member_list,
-    size_t group_members_num
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__CreateGroupRequest *request = NULL;
-    E2ees__CreateGroupMsg *msg = NULL;
-    E2ees__Account *account = NULL;
-    uint32_t e2ees_pack_id = 0;
-
-    if (!is_valid_address(sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_create_group_request(): no sender_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_string(group_name)) {
-        e2ees_notify_log(NULL, BAD_GROUP_NAME, "produce_create_group_request(): no group_name");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_group_member_list(group_member_list, group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_create_group_request(): invalid group member list");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (group_members_num == 0) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_create_group_request(): group_members_num is zero");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        load_e2ees_pack_id_from_cache(&e2ees_pack_id, sender_address);
-
-        if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
-            get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
-            if (account == NULL) {
-                e2ees_notify_log(sender_address, BAD_ACCOUNT, "produce_create_group_request(): no account");
-                ret = E2EES_RESULT_FAIL;
-            }
-            e2ees_pack_id = account->e2ees_pack_id;
-        }
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        request = (E2ees__CreateGroupRequest *)malloc(sizeof(E2ees__CreateGroupRequest));
-        e2ees__create_group_request__init(request);
-
-        msg = (E2ees__CreateGroupMsg *)malloc(sizeof(E2ees__CreateGroupMsg));
-        e2ees__create_group_msg__init(msg);
-
-        copy_address_from_address(&(msg->sender_address), sender_address);
-
-        msg->e2ees_pack_id = e2ees_pack_id;
-
-        msg->group_info = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
-        E2ees__GroupInfo *group_info = msg->group_info;
-        e2ees__group_info__init(group_info);
-        group_info->group_name = strdup(group_name);
-        group_info->n_group_member_list = group_members_num;
-        copy_group_members(&(group_info->group_member_list), group_member_list, group_members_num);
-
-        request->msg = msg;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *request_out = request;
-    }
-
-    // done
-    free_proto(account);
-
-    return ret;
-}
-
-int produce_create_group_request_v2(
-    E2ees__CreateGroupRequest **request_out,
     group_ctx *ctx
 ) {
     int ret = E2EES_RESULT_SUCC;
@@ -338,71 +263,6 @@ bool consume_get_group_response(E2ees__GetGroupResponse *response) {
 
 int produce_add_group_members_request(
     E2ees__AddGroupMembersRequest **request_out,
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__GroupMember **adding_member_list,
-    size_t adding_members_num
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__AddGroupMembersRequest *request = NULL;
-    E2ees__AddGroupMembersMsg *msg = NULL;
-    E2ees__Account *account = NULL;
-    uint32_t e2ees_pack_id = 0;
-
-    if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_add_group_members_request(): no outbound_group_session");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_group_member_list(adding_member_list, adding_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_add_group_members_request(): invalid adding member list");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        load_e2ees_pack_id_from_cache(&e2ees_pack_id, outbound_group_session->session_owner);
-
-        if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
-            get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
-            if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "produce_add_group_members_request(): no account");
-                ret = E2EES_RESULT_FAIL;
-            }
-            e2ees_pack_id = account->e2ees_pack_id;
-        }
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        request = (E2ees__AddGroupMembersRequest *)malloc(sizeof(E2ees__AddGroupMembersRequest));
-        e2ees__add_group_members_request__init(request);
-
-        msg = (E2ees__AddGroupMembersMsg *)malloc(sizeof(E2ees__AddGroupMembersMsg));
-        e2ees__add_group_members_msg__init(msg);
-
-        msg->e2ees_pack_id = e2ees_pack_id;
-
-        copy_address_from_address(&(msg->sender_address), outbound_group_session->session_owner);
-
-        msg->sequence = outbound_group_session->sequence;
-
-        msg->n_adding_member_list = adding_members_num;
-        copy_group_members(&(msg->adding_member_list), adding_member_list, adding_members_num);
-        add_group_members_to_group_info(&(msg->group_info), outbound_group_session->group_info, adding_member_list, adding_members_num);
-
-        request->msg = msg;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *request_out = request;
-    }
-
-    // done
-    free_proto(account);
-
-    return ret;
-}
-
-int produce_add_group_members_request_v2(
-    E2ees__AddGroupMembersRequest **request_out,
     group_ctx *ctx
 ) {
     int ret = E2EES_RESULT_SUCC;
@@ -592,72 +452,6 @@ bool consume_add_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ees__
 
 int produce_add_group_member_device_request(
     E2ees__AddGroupMemberDeviceRequest **request_out,
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__E2eeAddress *new_device_address
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__AddGroupMemberDeviceRequest *request = NULL;
-    E2ees__AddGroupMemberDeviceMsg *msg = NULL;
-    E2ees__Account *account = NULL;
-    uint32_t e2ees_pack_id = 0;
-
-    if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_add_group_member_device_request(): no outbound_group_session");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address(new_device_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_add_group_member_device_request(): no new_device_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        load_e2ees_pack_id_from_cache(&e2ees_pack_id, outbound_group_session->session_owner);
-
-        if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
-            get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
-            if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "produce_add_group_member_device_request(): no account");
-                ret = E2EES_RESULT_FAIL;
-            }
-            e2ees_pack_id = account->e2ees_pack_id;
-        }
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        request = (E2ees__AddGroupMemberDeviceRequest *)malloc(sizeof(E2ees__AddGroupMemberDeviceRequest));
-        e2ees__add_group_member_device_request__init(request);
-
-        msg = (E2ees__AddGroupMemberDeviceMsg *)malloc(sizeof(E2ees__AddGroupMemberDeviceMsg));
-        e2ees__add_group_member_device_msg__init(msg);
-
-        msg->e2ees_pack_id = e2ees_pack_id;
-
-        copy_address_from_address(&(msg->sender_address), outbound_group_session->session_owner);
-
-        msg->sequence = outbound_group_session->sequence;
-
-        copy_group_info(&(msg->group_info), outbound_group_session->group_info);
-
-        msg->adding_member_device = (E2ees__GroupMemberInfo *)malloc(sizeof(E2ees__GroupMemberInfo));
-        e2ees__group_member_info__init(msg->adding_member_device);
-        copy_address_from_address(&(msg->adding_member_device->member_address), new_device_address);
-
-        request->msg = msg;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *request_out = request;
-    }
-
-    // done
-    free_proto(account);
-
-    return ret;
-}
-
-int produce_add_group_member_device_request_v2(
-    E2ees__AddGroupMemberDeviceRequest **request_out,
     group_ctx *ctx
 ) {
     int ret = E2EES_RESULT_SUCC;
@@ -830,72 +624,6 @@ bool consume_add_group_member_device_msg(
 }
 
 int produce_remove_group_members_request(
-    E2ees__RemoveGroupMembersRequest **request_out,
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__GroupMember **removing_group_members,
-    size_t removing_group_members_num
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__RemoveGroupMembersRequest *request = NULL;
-    E2ees__RemoveGroupMembersMsg *msg = NULL;
-    E2ees__Account *account = NULL;
-    uint32_t e2ees_pack_id = 0;
-
-    if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_remove_group_members_request(): no outbound_group_session");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_group_member_list(removing_group_members, removing_group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "produce_remove_group_members_request(): invalid removing group member list");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        load_e2ees_pack_id_from_cache(&e2ees_pack_id, outbound_group_session->session_owner);
-
-        if (e2ees_pack_id == E2EES_PACK_ID_UNSPECIFIED) {
-            get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
-            if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "produce_remove_group_members_request(): no account");
-                ret = E2EES_RESULT_FAIL;
-            }
-            e2ees_pack_id = account->e2ees_pack_id;
-        }
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        request = (E2ees__RemoveGroupMembersRequest *)malloc(sizeof(E2ees__RemoveGroupMembersRequest));
-        e2ees__remove_group_members_request__init(request);
-
-        msg = (E2ees__RemoveGroupMembersMsg *)malloc(sizeof(E2ees__RemoveGroupMembersMsg));
-        e2ees__remove_group_members_msg__init(msg);
-
-        msg->e2ees_pack_id = e2ees_pack_id;
-
-        copy_address_from_address(&(msg->sender_address), outbound_group_session->session_owner);
-
-        remove_group_members_from_group_info(
-            &(msg->group_info), outbound_group_session->group_info, removing_group_members, removing_group_members_num
-        );
-
-        msg->n_removing_member_list = removing_group_members_num;
-        copy_group_members(&(msg->removing_member_list), removing_group_members, removing_group_members_num);
-
-        request->msg = msg;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *request_out = request;
-    }
-
-    // done
-    free_proto(account);
-
-    return ret;
-}
-
-int produce_remove_group_members_request_v2(
     E2ees__RemoveGroupMembersRequest **request_out,
     group_ctx *ctx
 ) {
@@ -1179,46 +907,6 @@ bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ee
 
 int produce_leave_group_request(
     E2ees__LeaveGroupRequest **request_out,
-    E2ees__E2eeAddress *user_address,
-    E2ees__E2eeAddress *group_address
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__LeaveGroupRequest *request = NULL;
-    E2ees__LeaveGroupMsg *msg = NULL;
-
-    if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_leave_group_request(): no user_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address(group_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_leave_group_request(): no group_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        request = (E2ees__LeaveGroupRequest *)malloc(sizeof(E2ees__LeaveGroupRequest));
-        e2ees__leave_group_request__init(request);
-
-        msg = (E2ees__LeaveGroupMsg *)malloc(sizeof(E2ees__LeaveGroupMsg));
-        e2ees__leave_group_msg__init(msg);
-
-        copy_address_from_address(&(msg->user_address), user_address);
-        copy_address_from_address(&(msg->group_address), group_address);
-
-        request->msg = msg;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        *request_out = request;
-    }
-
-    // done
-    return ret;
-}
-
-int produce_leave_group_request_v2(
-    E2ees__LeaveGroupRequest **request_out,
     group_ctx *ctx
 ) {
     int ret = E2EES_RESULT_SUCC;
@@ -1323,156 +1011,54 @@ bool consume_leave_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__LeaveG
 
 int produce_send_group_msg_request(
     E2ees__SendGroupMsgRequest **request_out,
-    E2ees__GroupSession *outbound_group_session,
-    uint32_t notif_level,
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
-    E2ees__E2eeAddress **allow_list,
-    size_t allow_list_len,
-    E2ees__E2eeAddress **deny_list,
-    size_t deny_list_len
+    group_ctx *ctx,
+    char *version,
+    char *session_id,
+    E2ees__GroupMsgPayload *group_msg_payload
 ) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__SendGroupMsgRequest *request = NULL;
-    E2ees__MsgKey *msg_key = NULL;
     E2ees__E2eeMsg *e2ee_msg = NULL;
-    E2ees__GroupMsgPayload *group_msg_payload = NULL;
-    E2ees__Account *account = NULL;
-    E2ees__IdentityKey *identity_key = NULL;
-    cipher_suite_t *cipher_suite = NULL;
-    uint8_t *ciphertext_data = NULL;
-    size_t ciphertext_data_len = 0;
 
-    if (is_valid_group_session(outbound_group_session)) {
-        cipher_suite = get_e2ees_pack(outbound_group_session->e2ees_pack_id)->cipher_suite;
-    } else {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "produce_send_group_msg_request(): no outbound_group_session");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (plaintext_data == NULL) {
-        e2ees_notify_log(NULL, BAD_PLAINTEXT, "produce_send_group_msg_request(): no plaintext_data");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (plaintext_data_len == 0) {
-        e2ees_notify_log(NULL, BAD_PLAINTEXT, "produce_send_group_msg_request(): plaintext_data_len is zero");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address_list(allow_list, allow_list_len)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_group_msg_request(): invalid allow_list");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address_list(deny_list, deny_list_len)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_group_msg_request(): invalid deny_list");
-        ret = E2EES_RESULT_FAIL;
-    }
+    request = (E2ees__SendGroupMsgRequest *)malloc(sizeof(E2ees__SendGroupMsgRequest));
+    e2ees__send_group_msg_request__init(request);
 
-    if (ret == E2EES_RESULT_SUCC) {
-        load_identity_key_from_cache(&identity_key, outbound_group_session->sender);
+    // prepare an e2ee message
+    e2ee_msg = (E2ees__E2eeMsg *)malloc(sizeof(E2ees__E2eeMsg));
+    e2ees__e2ee_msg__init(e2ee_msg);
+    e2ee_msg->version = strdup(version);
+    e2ee_msg->session_id = strdup(session_id);
+    copy_address_from_address(&(e2ee_msg->from), ctx->base.sender_address);
+    copy_address_from_address(&(e2ee_msg->to), ctx->group_address);
+    e2ee_msg->msg_id = generate_uuid_str();
+    e2ee_msg->notif_level = ctx->notif_level;
+    e2ee_msg->payload_case = E2EES__E2EE_MSG__PAYLOAD_GROUP_MSG;
 
-        if (identity_key == NULL) {
-            get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->sender, &account);
-            if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->sender, BAD_ACCOUNT, "produce_send_group_msg_request(): no account");
-                ret = E2EES_RESULT_FAIL;
-            }
-            copy_ik_from_ik(&identity_key, account->identity_key);
+    // optional allow_list and denny_list
+    size_t i;
+    if (ctx->allow_list_len > 0 && ctx->allow_list) {
+        e2ees_notify_log(ctx->base.sender_address, DEBUG_LOG, "produce_send_group_msg_request() with allow_list_len: %d", ctx->allow_list_len);
+        request->n_allow_list = ctx->allow_list_len;
+        request->allow_list = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * ctx->allow_list_len);
+        for (i = 0; i < ctx->allow_list_len; i++) {
+            copy_address_from_address(&((request->allow_list)[i]), ctx->allow_list[i]);
+        }
+    }
+    if (ctx->deny_list_len > 0 && ctx->deny_list) {
+        e2ees_notify_log(ctx->base.sender_address, DEBUG_LOG, "produce_send_group_msg_request() with deny_list_len: %d", ctx->deny_list_len);
+        request->n_deny_list = ctx->deny_list_len;
+        request->deny_list = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * ctx->deny_list_len);
+        for (i = 0; i < ctx->deny_list_len; i++) {
+            copy_address_from_address(&((request->deny_list)[i]), ctx->deny_list[i]);
         }
     }
 
-    if (ret == E2EES_RESULT_SUCC) {
-        // create the message key
-        msg_key = (E2ees__MsgKey *)malloc(sizeof(E2ees__MsgKey));
-        e2ees__msg_key__init(msg_key);
-        create_group_message_key(cipher_suite, &(outbound_group_session->chain_key), msg_key);
-    
-        // encryption
-        ret = cipher_suite->se_suite->encrypt(
-            &(outbound_group_session->associated_data),
-            msg_key->derived_key.data,
-            plaintext_data,
-            plaintext_data_len,
-            &ciphertext_data,
-            &ciphertext_data_len
-        );
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        // prepare a group_msg_payload
-        group_msg_payload = (E2ees__GroupMsgPayload *)malloc(sizeof(E2ees__GroupMsgPayload));
-        e2ees__group_msg_payload__init(group_msg_payload);
-        group_msg_payload->sequence = outbound_group_session->sequence;
-
-        group_msg_payload->ciphertext.data = (uint8_t *)malloc(sizeof(uint8_t) * ciphertext_data_len);
-        memcpy(group_msg_payload->ciphertext.data, ciphertext_data, ciphertext_data_len);
-        group_msg_payload->ciphertext.len = ciphertext_data_len;
-
-        // signature
-        uint32_t sig_len = cipher_suite->ds_suite->get_param().sig_len;
-        group_msg_payload->signature.len = sig_len;
-        group_msg_payload->signature.data = (uint8_t *)malloc(sizeof(uint8_t) * sig_len);
-        size_t signature_out_len;
-        ret = cipher_suite->ds_suite->sign(
-            group_msg_payload->signature.data, &signature_out_len,
-            group_msg_payload->ciphertext.data,
-            group_msg_payload->ciphertext.len,
-            identity_key->sign_key_pair->private_key.data
-        );
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        request = (E2ees__SendGroupMsgRequest *)malloc(sizeof(E2ees__SendGroupMsgRequest));
-        e2ees__send_group_msg_request__init(request);
-
-        // prepare an e2ee message
-        e2ee_msg = (E2ees__E2eeMsg *)malloc(sizeof(E2ees__E2eeMsg));
-        e2ees__e2ee_msg__init(e2ee_msg);
-        e2ee_msg->version = strdup(outbound_group_session->version);
-        e2ee_msg->session_id = strdup(outbound_group_session->session_id);
-        copy_address_from_address(&(e2ee_msg->from), outbound_group_session->session_owner);
-        copy_address_from_address(&(e2ee_msg->to), outbound_group_session->group_info->group_address);
-        e2ee_msg->msg_id = generate_uuid_str();
-        e2ee_msg->notif_level = notif_level;
-        e2ee_msg->payload_case = E2EES__E2EE_MSG__PAYLOAD_GROUP_MSG;
-
-        // optional allow_list and denny_list
-        size_t i;
-        if (allow_list_len > 0 && allow_list) {
-            e2ees_notify_log(outbound_group_session->sender, DEBUG_LOG, "produce_send_group_msg_request() with allow_list_len: %d", allow_list_len);
-            request->n_allow_list = allow_list_len;
-            request->allow_list = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * allow_list_len);
-            for (i = 0; i < allow_list_len; i++) {
-                copy_address_from_address(&((request->allow_list)[i]), allow_list[i]);
-            }
-        }
-        if (deny_list_len > 0 && deny_list) {
-            e2ees_notify_log(outbound_group_session->sender, DEBUG_LOG, "produce_send_group_msg_request() with deny_list_len: %d", deny_list_len);
-            request->n_deny_list = deny_list_len;
-            request->deny_list = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * deny_list_len);
-            for (i = 0; i < deny_list_len; i++) {
-                copy_address_from_address(&((request->deny_list)[i]), deny_list[i]);
-            }
-        }
-
-        e2ee_msg->group_msg = group_msg_payload;
-        request->msg = e2ee_msg;
-    }
+    e2ee_msg->group_msg = group_msg_payload;
+    request->msg = e2ee_msg;
 
     if (ret == E2EES_RESULT_SUCC) {
         *request_out = request;
-    }
-    
-    // release
-    free_proto(account);
-    if (identity_key != NULL) {
-        e2ees__identity_key__free_unpacked(identity_key, NULL);
-        identity_key = NULL;
-    }
-    if (msg_key != NULL) {
-        e2ees__msg_key__free_unpacked(msg_key, NULL);
-        msg_key = NULL;
-    }
-    if (ciphertext_data != NULL) {
-        free_mem((void **)&ciphertext_data, ciphertext_data_len);
     }
 
     return ret;

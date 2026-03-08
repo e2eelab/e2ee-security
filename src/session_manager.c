@@ -92,42 +92,6 @@ static void send_pending_plaintext_data(E2ees__Session *outbound_session) {
 
 int produce_get_pre_key_bundle_request(
     E2ees__GetPreKeyBundleRequest **request_out,
-    const char *to_user_id,
-    const char *to_domain,
-    const char *to_device_id,
-    bool active
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__GetPreKeyBundleRequest *request = NULL;
-
-    if (!is_valid_string(to_user_id)) {
-        e2ees_notify_log(NULL, BAD_USER_ID, "produce_get_pre_key_bundle_request(): no to_user_id");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_string(to_domain)) {
-        e2ees_notify_log(NULL, BAD_DOMAIN, "produce_get_pre_key_bundle_request(): no to_domain");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        request = (E2ees__GetPreKeyBundleRequest *)malloc(sizeof(E2ees__GetPreKeyBundleRequest));
-        e2ees__get_pre_key_bundle_request__init(request);
-        request->domain = strdup(to_domain);
-        request->user_id = strdup(to_user_id);
-        if (to_device_id != NULL) {
-            // the device ID may be empty or nonempty
-            request->device_id = strdup(to_device_id);
-        }
-
-        *request_out = request;
-    }
-
-    return ret;
-}
-
-int produce_get_pre_key_bundle_request_v2(
-    E2ees__GetPreKeyBundleRequest **request_out,
     session_ctx *ctx
 ) {
     int ret = E2EES_RESULT_SUCC;
@@ -279,73 +243,6 @@ int consume_get_pre_key_bundle_response(
 }
 
 int produce_send_one2one_msg_request(
-    E2ees__SendOne2oneMsgRequest **request_out,
-    E2ees__Session *outbound_session,
-    uint32_t notif_level,
-    const uint8_t *plaintext_data, size_t plaintext_data_len
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__One2oneMsgPayload *payload_out = NULL;
-
-    if (outbound_session != NULL) {
-        if (outbound_session->session_id == NULL) {
-            e2ees_notify_log(NULL, BAD_SESSION_ID, "produce_send_one2one_msg_request(): no session_id");
-            ret = E2EES_RESULT_FAIL;
-        }
-        if (outbound_session->our_address == NULL){
-            e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_one2one_msg_request(): no our_address");
-            ret = E2EES_RESULT_FAIL;
-        }
-        if (outbound_session->their_address == NULL){
-            e2ees_notify_log(NULL, BAD_ADDRESS, "produce_send_one2one_msg_request(): no their_address");
-            ret = E2EES_RESULT_FAIL;
-        }
-        if (outbound_session->ratchet == NULL){
-            e2ees_notify_log(NULL, BAD_RATCHET, "produce_send_one2one_msg_request(): no ratchet");
-            ret = E2EES_RESULT_FAIL;
-        }
-    } else {
-        e2ees_notify_log(NULL, BAD_SESSION, "produce_send_one2one_msg_request(): no outbound_session");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(outbound_session->e2ees_pack_id)->cipher_suite;
-        ret = encrypt_ratchet(
-            &payload_out, cipher_suite,
-            outbound_session->ratchet, outbound_session->associated_data,
-            plaintext_data, plaintext_data_len
-        );
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        // prepare an e2ee message
-        E2ees__E2eeMsg *e2ee_msg = (E2ees__E2eeMsg *)malloc(sizeof(E2ees__E2eeMsg));
-        e2ees__e2ee_msg__init(e2ee_msg);
-
-        e2ee_msg->version = strdup(E2EES_PROTOCOL_VERSION);
-        e2ee_msg->session_id = strdup(outbound_session->session_id);
-        copy_address_from_address(&(e2ee_msg->from), outbound_session->our_address);
-        copy_address_from_address(&(e2ee_msg->to), outbound_session->their_address);
-        e2ee_msg->msg_id = generate_uuid_str();
-        e2ee_msg->notif_level = notif_level;
-        e2ee_msg->payload_case = E2EES__E2EE_MSG__PAYLOAD_ONE2ONE_MSG;
-        e2ee_msg->one2one_msg = payload_out;
-
-        E2ees__SendOne2oneMsgRequest *request = (E2ees__SendOne2oneMsgRequest *)malloc(sizeof(E2ees__SendOne2oneMsgRequest));
-        e2ees__send_one2one_msg_request__init(request);
-        request->msg = e2ee_msg;
-
-        *request_out = request;
-    } else {
-        *request_out = NULL;
-    }
-
-    return ret;
-}
-
-int produce_send_one2one_msg_request_v2(
     E2ees__SendOne2oneMsgRequest **request_out,
     session_ctx *ctx,
     E2ees__One2oneMsgPayload *payload
@@ -770,55 +667,6 @@ bool consume_remove_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees_
 
 int produce_invite_request(
     E2ees__InviteRequest **request_out,
-    E2ees__Session *outbound_session
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__InviteRequest *request = NULL;
-    E2ees__InviteMsg *msg = NULL;
-
-    if (!is_valid_uncompleted_session(outbound_session)) {
-        e2ees_notify_log(NULL, BAD_SESSION, "produce_invite_request(): no outbound_session");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        msg = (E2ees__InviteMsg *)malloc(sizeof(E2ees__InviteMsg));
-        e2ees__invite_msg__init(msg);
-
-        msg->version = strdup(outbound_session->version);
-        msg->e2ees_pack_id = outbound_session->e2ees_pack_id;
-        msg->session_id = strdup(outbound_session->session_id);
-        copy_address_from_address(&(msg->from), outbound_session->our_address);
-        copy_address_from_address(&(msg->to), outbound_session->their_address);
-
-        msg->n_pre_shared_input_list = outbound_session->n_pre_shared_input_list;
-        msg->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData) * msg->n_pre_shared_input_list);
-        size_t i;
-        for (i = 0; i < msg->n_pre_shared_input_list; i++) {
-            init_protobuf(&(msg->pre_shared_input_list[i]));
-            copy_protobuf_from_protobuf(&(msg->pre_shared_input_list[i]), &(outbound_session->pre_shared_input_list[i]));
-        }
-
-        copy_protobuf_from_protobuf(&(msg->alice_base_key), &(outbound_session->alice_base_key->public_key));
-
-        msg->bob_signed_pre_key_id = outbound_session->bob_signed_pre_key_id;
-        msg->bob_one_time_pre_key_id = outbound_session->bob_one_time_pre_key_id;
-
-        msg->invite_t = outbound_session->invite_t;
-
-        request = (E2ees__InviteRequest *)malloc(sizeof(E2ees__InviteRequest));
-        e2ees__invite_request__init(request);
-        request->msg = msg;
-
-        *request_out = request;
-    }
-
-    return ret;
-}
-
-int produce_invite_request_v2(
-    E2ees__InviteRequest **request_out,
     session_ctx *ctx
 ) {
     int ret = E2EES_RESULT_SUCC;
@@ -974,72 +822,6 @@ bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *
 }
 
 int produce_accept_request(
-    E2ees__AcceptRequest **request_out,
-    uint32_t e2ees_pack_id,
-    E2ees__E2eeAddress *from,
-    E2ees__E2eeAddress *to,
-    char *session_id,
-    ProtobufCBinaryData *ciphertext_1,
-    ProtobufCBinaryData *our_ratchet_key
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__AcceptRequest *request = NULL;
-    E2ees__AcceptMsg *msg = NULL;
-
-    if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "produce_accept_request(): no e2ees_pack_id");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address(from)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_accept_request(): no from");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address(to)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "produce_accept_request(): no to");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_string(session_id)) {
-        e2ees_notify_log(NULL, BAD_SESSION_ID, "produce_accept_request(): no session_id");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (ciphertext_1 != NULL) {
-        if (!is_valid_protobuf(ciphertext_1)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "produce_accept_request(): no ciphertext_1");
-            ret = E2EES_RESULT_FAIL;
-        }
-    }
-    if (!is_valid_protobuf(our_ratchet_key)) {
-        e2ees_notify_log(NULL, BAD_RATCHET_KEY, "produce_accept_request(): no our_ratchet_key");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        msg = (E2ees__AcceptMsg *)malloc(sizeof(E2ees__AcceptMsg));
-        e2ees__accept_msg__init(msg);
-
-        msg->e2ees_pack_id = e2ees_pack_id;
-        msg->session_id = strdup(session_id);
-        copy_address_from_address(&(msg->from), from);
-        copy_address_from_address(&(msg->to), to);
-
-        if (ciphertext_1 != NULL) {
-            copy_protobuf_from_protobuf(&(msg->encaps_ciphertext), ciphertext_1);
-        }
-
-        copy_protobuf_from_protobuf(&(msg->ratchet_key), our_ratchet_key);
-
-        request = (E2ees__AcceptRequest *)malloc(sizeof(E2ees__AcceptRequest));
-        e2ees__accept_request__init(request);
-        request->msg = msg;
-
-        *request_out = request;
-    }
-
-    return ret;
-}
-
-int produce_accept_request_v2(
     E2ees__AcceptRequest **request_out,
     session_ctx *ctx
 ) {

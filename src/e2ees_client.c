@@ -30,6 +30,7 @@
 #include "e2ees/account_manager.h"
 #include "e2ees/e2ees_client_internal.h"
 #include "e2ees/group_session_manager.h"
+#include "e2ees/group_session.h"
 #include "e2ees/session.h"
 #include "e2ees/session_manager.h"
 
@@ -64,7 +65,7 @@ int register_user(
 
     if (ret == E2EES_RESULT_SUCC) {
         // register account to server
-        ret = produce_register_request_v2(&register_user_request, &ctx);
+        ret = produce_register_request(&register_user_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -499,7 +500,7 @@ int create_group(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_create_group_request_v2(&create_group_request, &ctx);
+        ret = produce_create_group_request(&create_group_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -557,7 +558,7 @@ int add_group_members(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_add_group_members_request_v2(&add_group_members_request, &ctx);
+        ret = produce_add_group_members_request(&add_group_members_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -620,7 +621,7 @@ int remove_group_members(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_remove_group_members_request_v2(&remove_group_members_request, &ctx);
+        ret = produce_remove_group_members_request(&remove_group_members_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -680,7 +681,7 @@ int leave_group(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_leave_group_request_v2(&leave_group_request, &ctx);
+        ret = produce_leave_group_request(&leave_group_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -729,71 +730,45 @@ int send_group_msg_with_filter(
 
     E2ees__SendGroupMsgRequest *send_group_msg_request = NULL;
     E2ees__SendGroupMsgResponse *response = NULL;
+    E2ees__IdentityKey *identity_key = NULL;
     E2ees__GroupSession *outbound_group_session = NULL;
-    char *auth = NULL;
+    E2ees__GroupMsgPayload *group_msg_payload = NULL;
+    group_ctx ctx = {0};
 
-    if (is_valid_address(sender_address)) {
-        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
-        if (auth != NULL) {
-            if (is_valid_address(group_address)) {
-                get_e2ees_plugin()->db_handler.load_group_session_by_address(
-                    sender_address, sender_address, group_address, &outbound_group_session
-                );
+    if (!validate_and_prepare_send_group_msg(
+            &ctx, sender_address, group_address, notif_level,
+            allow_list, allow_list_len, deny_list, deny_list_len,
+            &identity_key, &outbound_group_session
+        )
+    ) {
+        ret = E2EES_RESULT_FAIL;
+    }
 
-                if (outbound_group_session == NULL) {
-                    e2ees_notify_log(
-                        sender_address,
-                        BAD_GROUP_SESSION,
-                        "send_group_msg() outbound_group_session does not exist, return a response with response code not found"
-                    );        
-                    response = (E2ees__SendGroupMsgResponse *)malloc(sizeof(E2ees__SendGroupMsgResponse));
-                    e2ees__send_group_msg_response__init(response);
-                    response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND;
-
-                    ret = E2EES_RESULT_FAIL;
-                }
-            }
-        } else {
-            e2ees_notify_log(sender_address, BAD_AUTH, "send_group_msg(): no auth");
-            ret = E2EES_RESULT_FAIL;
-        }
-    } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "send_group_msg(): no sender_address");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (plaintext_data == NULL) {
-        e2ees_notify_log(NULL, BAD_PLAINTEXT, "send_group_msg(): no plaintext_data");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (plaintext_data_len == 0) {
-        e2ees_notify_log(NULL, BAD_PLAINTEXT, "send_group_msg(): plaintext_data_len is zero");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address_list(allow_list, allow_list_len)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "send_group_msg(): invalid allow_list");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_address_list(deny_list, deny_list_len)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "send_group_msg(): invalid deny_list");
-        ret = E2EES_RESULT_FAIL;
+    if (ret == E2EES_RESULT_SUCC) {
+        ret = encrypt_group_msg(
+            &group_msg_payload,
+            outbound_group_session->e2ees_pack_id,
+            plaintext_data,
+            plaintext_data_len,
+            &(outbound_group_session->chain_key),
+            &(outbound_group_session->associated_data),
+            outbound_group_session->sequence,
+            identity_key
+        );
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = produce_send_group_msg_request(
             &send_group_msg_request,
-            outbound_group_session,
-            notif_level,
-            plaintext_data,
-            plaintext_data_len,
-            allow_list,
-            allow_list_len,
-            deny_list,
-            deny_list_len
+            &ctx,
+            outbound_group_session->version,
+            outbound_group_session->session_id,
+            group_msg_payload
         );
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.send_group_msg, sender_address, auth, send_group_msg_request);
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.send_group_msg, sender_address, ctx.base.auth, send_group_msg_request);
 
         ret = consume_send_group_msg_response(outbound_group_session, response);
         if (ret != E2EES_RESULT_SUCC) {
@@ -818,7 +793,7 @@ int send_group_msg_with_filter(
     }
 
     // release
-    free_string(auth);
+    cleanup_group_ctx(&ctx);
     free_proto(send_group_msg_request);
     if (outbound_group_session != NULL) {
         e2ees__group_session__free_unpacked(outbound_group_session, NULL);

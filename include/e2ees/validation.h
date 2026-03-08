@@ -262,6 +262,19 @@ bool validate_and_prepare_add_group_member_device(
     E2ees__GroupSession **outbound_group_session
 );
 
+bool validate_and_prepare_send_group_msg(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
+    uint32_t notif_level,
+    E2ees__E2eeAddress **allow_list,
+    size_t allow_list_len,
+    E2ees__E2eeAddress **deny_list,
+    size_t deny_list_len,
+    E2ees__IdentityKey **identity_key,
+    E2ees__GroupSession **outbound_group_session
+);
+
 #ifdef __cplusplus
 }
 #endif

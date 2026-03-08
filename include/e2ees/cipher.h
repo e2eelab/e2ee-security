@@ -106,8 +106,11 @@ typedef struct {
 
     uint32_t sequence;
 
-    // pending
-    ProtobufCBinaryData group_seed; 
+    E2ees__E2eeAddress **allow_list;
+    size_t allow_list_len;
+    E2ees__E2eeAddress **deny_list;
+    size_t deny_list_len;
+    uint32_t notif_level;
 } group_ctx;
 
 /**

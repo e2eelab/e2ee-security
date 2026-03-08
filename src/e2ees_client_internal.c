@@ -102,7 +102,7 @@ int get_pre_key_bundle_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_get_pre_key_bundle_request_v2(&get_pre_key_bundle_request, &ctx);
+        ret = produce_get_pre_key_bundle_request(&get_pre_key_bundle_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -211,7 +211,7 @@ int invite_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_invite_request_v2(&invite_request, &ctx);
+        ret = produce_invite_request(&invite_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -265,7 +265,7 @@ int accept_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_accept_request_v2(&accept_request, &ctx);
+        ret = produce_accept_request(&accept_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -313,7 +313,7 @@ int publish_spk_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_publish_spk_request_v2(&publish_spk_request, &ctx);
+        ret = produce_publish_spk_request(&publish_spk_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -381,7 +381,7 @@ int supply_opks_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_supply_opks_request_v2(&supply_opks_request, &ctx);
+        ret = produce_supply_opks_request(&supply_opks_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -427,7 +427,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
     );
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_send_one2one_msg_request_v2(&send_one2one_msg_request, &ctx, payload_out);
+        ret = produce_send_one2one_msg_request(&send_one2one_msg_request, &ctx, payload_out);
     }
 
     E2ees__SendOne2oneMsgResponse *response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.send_one2one_msg, outbound_session->our_address, ctx.base.auth, send_one2one_msg_request);
@@ -481,7 +481,7 @@ int add_group_member_device_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_add_group_member_device_request_v2(&add_group_member_device_request, &ctx);
+        ret = produce_add_group_member_device_request(&add_group_member_device_request, &ctx);
     }
 
     if (ret == E2EES_RESULT_SUCC) {

@@ -2563,3 +2563,72 @@ bool validate_and_prepare_add_group_member_device(
 
     return true;
 }
+
+bool validate_and_prepare_send_group_msg(
+    group_ctx *ctx,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
+    uint32_t notif_level,
+    E2ees__E2eeAddress **allow_list,
+    size_t allow_list_len,
+    E2ees__E2eeAddress **deny_list,
+    size_t deny_list_len,
+    E2ees__IdentityKey **identity_key,
+    E2ees__GroupSession **outbound_group_session
+) {
+    int ret = E2EES_RESULT_SUCC;
+    E2ees__Account *account = NULL;
+
+    if (!is_valid_address(sender_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_send_group_msg(): invalid sender_address");
+        return false;
+    }
+    if (!is_valid_address(group_address)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_send_group_msg(): invalid group_address");
+        return false;
+    }
+    if (!is_valid_address_list(allow_list, allow_list_len)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_send_group_msg(): invalid allow_list");
+        return false;
+    }
+    if (!is_valid_address_list(deny_list, deny_list_len)) {
+        e2ees_notify_log(NULL, BAD_ADDRESS, "validate_and_prepare_send_group_msg(): invalid deny_list");
+        return false;
+    }
+    get_e2ees_plugin()->db_handler.load_auth(sender_address, &(ctx->base.auth));
+    if (!is_valid_string(ctx->base.auth)) {
+        e2ees_notify_log(NULL, BAD_AUTH, "validate_and_prepare_send_group_msg(): invalid auth");
+        return false;
+    }
+    get_e2ees_plugin()->db_handler.load_group_session_by_address(
+        sender_address, sender_address, group_address, outbound_group_session
+    );
+    if (!is_valid_group_session(*outbound_group_session)) {
+        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "validate_and_prepare_send_group_msg(): invalid outbound_group_session");
+        return false;
+    }
+    load_identity_key_from_cache(identity_key, sender_address);
+    if ((*identity_key) == NULL) {
+        get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
+        if (!account || !is_valid_identity_key(account->identity_key)) {
+            e2ees_notify_log(NULL, BAD_KEY_PAIR, "validate_and_prepare_send_group_msg(): invalid identity_key");
+            ret = E2EES_RESULT_FAIL;
+        } else {
+            copy_ik_from_ik(identity_key, account->identity_key);
+        }
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        ctx->base.sender_address = sender_address;
+        ctx->group_address = group_address;
+        ctx->notif_level = notif_level;
+        ctx->allow_list = allow_list;
+        ctx->allow_list_len = allow_list_len;
+        ctx->deny_list = deny_list;
+        ctx->deny_list_len = deny_list_len;
+    }
+
+    free_proto(account);
+
+    return true;
+}

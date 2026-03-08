@@ -32,21 +32,10 @@ extern "C" {
 /**
  * @brief Create a CreateGroupRequest message to be sent to server.
  * @param request_out
- * @param sender_address
- * @param group_name
- * @param group_members
- * @param group_members_num
+ * @param ctx
  * @return 0 if success
  */
 int produce_create_group_request(
-    E2ees__CreateGroupRequest **request_out,
-    E2ees__E2eeAddress *sender_address,
-    const char *group_name,
-    E2ees__GroupMember **group_member_list,
-    size_t group_members_num
-);
-
-int produce_create_group_request_v2(
     E2ees__CreateGroupRequest **request_out,
     group_ctx *ctx
 );
@@ -91,19 +80,10 @@ bool consume_get_group_response(E2ees__GetGroupResponse *response);
 /**
  * @brief Create a AddGroupMembersRequest message to be sent to server.
  * @param request_out
- * @param outbound_group_session
- * @param adding_members
- * @param adding_members_num
+ * @param ctx
  * @return 0 if success
  */
 int produce_add_group_members_request(
-    E2ees__AddGroupMembersRequest **request_out,
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__GroupMember **adding_member_list,
-    size_t adding_members_num
-);
-
-int produce_add_group_members_request_v2(
     E2ees__AddGroupMembersRequest **request_out,
     group_ctx *ctx
 );
@@ -137,17 +117,10 @@ bool consume_add_group_members_msg(
 /**
  * @brief Create a AddGroupMemberDeviceRequest message to be sent to server.
  * @param request_out
- * @param outbound_group_session
- * @param new_device_address
+ * @param ctx
  * @return 0 if success
  */
 int produce_add_group_member_device_request(
-    E2ees__AddGroupMemberDeviceRequest **request_out,
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__E2eeAddress *new_device_address
-);
-
-int produce_add_group_member_device_request_v2(
     E2ees__AddGroupMemberDeviceRequest **request_out,
     group_ctx *ctx
 );
@@ -177,19 +150,10 @@ bool consume_add_group_member_device_msg(
 /**
  * @brief Create a RemoveGroupMembersRequest message to be sent to server.
  * @param request_out
- * @param outbound_group_session
- * @param removing_group_members
- * @param removing_group_members_num
+ * @param ctx
  * @return 0 if success
  */
 int produce_remove_group_members_request(
-    E2ees__RemoveGroupMembersRequest **request_out,
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__GroupMember **removing_group_members,
-    size_t removing_group_members_num
-);
-
-int produce_remove_group_members_request_v2(
     E2ees__RemoveGroupMembersRequest **request_out,
     group_ctx *ctx
 );
@@ -223,17 +187,10 @@ bool consume_remove_group_members_msg(
 /**
  * @brief Create a E2ees__LeaveGroupRequest message to be sent to server.
  * @param request_out
- * @param user_address
- * @param group_address
+ * @param ctx
  * @return 0 if success
  */
 int produce_leave_group_request(
-    E2ees__LeaveGroupRequest **request_out,
-    E2ees__E2eeAddress *user_address,
-    E2ees__E2eeAddress *group_address
-);
-
-int produce_leave_group_request_v2(
     E2ees__LeaveGroupRequest **request_out,
     group_ctx *ctx
 );
@@ -263,25 +220,18 @@ bool consume_leave_group_msg(
 /**
  * @brief Create a SendGroupMsgRequest message to be sent to server.
  * @param request_out
- * @param group_session
- * @param notif_level
- * @param plaintext_data
- * @param plaintext_data_len
- * @param allow_list
- * @param allow_list_len
- * @param denny_list
- * @param denny_list_len
+ * @param ctx
+ * @param version
+ * @param session_id
+ * @param group_msg_payload
  * @return 0 if success
  */
 int produce_send_group_msg_request(
     E2ees__SendGroupMsgRequest **request_out,
-    E2ees__GroupSession *outbound_group_session,
-    uint32_t notif_level,
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
-    E2ees__E2eeAddress **allow_list,
-    size_t allow_list_len,
-    E2ees__E2eeAddress **deny_list,
-    size_t deny_list_len
+    group_ctx *ctx,
+    char *version,
+    char *session_id,
+    E2ees__GroupMsgPayload *group_msg_payload
 );
 
 /**

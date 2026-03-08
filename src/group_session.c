@@ -114,6 +114,77 @@ void create_group_message_key(
     );
 }
 
+int encrypt_group_msg(
+    E2ees__GroupMsgPayload **group_msg_payload_out,
+    uint32_t e2ees_pack_id,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
+    const ProtobufCBinaryData *chain_key,
+    const ProtobufCBinaryData *assoicated_data,
+    uint32_t sequence,
+    E2ees__IdentityKey *identity_key
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__MsgKey *msg_key = NULL;
+    E2ees__GroupMsgPayload *group_msg_payload = NULL;
+    uint8_t *ciphertext_data = NULL;
+    size_t ciphertext_data_len = 0;
+    const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
+
+    msg_key = (E2ees__MsgKey *)malloc(sizeof(E2ees__MsgKey));
+    e2ees__msg_key__init(msg_key);
+    create_group_message_key(cipher_suite, chain_key, msg_key);
+
+    // encryption
+    ret = cipher_suite->se_suite->encrypt(
+        assoicated_data,
+        msg_key->derived_key.data,
+        plaintext_data,
+        plaintext_data_len,
+        &ciphertext_data,
+        &ciphertext_data_len
+    );
+
+    if (ret == E2EES_RESULT_SUCC) {
+        // prepare a group_msg_payload
+        group_msg_payload = (E2ees__GroupMsgPayload *)malloc(sizeof(E2ees__GroupMsgPayload));
+        e2ees__group_msg_payload__init(group_msg_payload);
+        group_msg_payload->sequence = sequence;
+
+        group_msg_payload->ciphertext.data = (uint8_t *)malloc(sizeof(uint8_t) * ciphertext_data_len);
+        memcpy(group_msg_payload->ciphertext.data, ciphertext_data, ciphertext_data_len);
+        group_msg_payload->ciphertext.len = ciphertext_data_len;
+
+        // signature
+        uint32_t sig_len = cipher_suite->ds_suite->get_param().sig_len;
+        group_msg_payload->signature.len = sig_len;
+        group_msg_payload->signature.data = (uint8_t *)malloc(sizeof(uint8_t) * sig_len);
+        size_t signature_out_len;
+        ret = cipher_suite->ds_suite->sign(
+            group_msg_payload->signature.data, &signature_out_len,
+            group_msg_payload->ciphertext.data,
+            group_msg_payload->ciphertext.len,
+            identity_key->sign_key_pair->private_key.data
+        );
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        *group_msg_payload_out = group_msg_payload;
+    }
+
+    // release
+    free_proto(msg_key);
+    if (ciphertext_data != NULL) {
+        free_mem((void **)&ciphertext_data, ciphertext_data_len);
+    }
+    if (ret == E2EES_RESULT_FAIL) {
+        free_proto(group_msg_payload);
+    }
+
+    return ret;
+}
+
 static void pack_group_pre_key(
     E2ees__GroupPreKeyBundle *group_pre_key_bundle,
     uint8_t **group_pre_key_plaintext_data,

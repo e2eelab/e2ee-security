@@ -53,6 +53,17 @@ void create_group_message_key(
     E2ees__MsgKey *message_key
 );
 
+int encrypt_group_msg(
+    E2ees__GroupMsgPayload **group_msg_payload_out,
+    uint32_t e2ees_pack_id,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
+    const ProtobufCBinaryData *chain_key,
+    const ProtobufCBinaryData *assoicated_data,
+    uint32_t sequence,
+    E2ees__IdentityKey *identity_key
+);
+
 /**
  * @brief Pack the group pre-keys.
  *

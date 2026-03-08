@@ -31,15 +31,10 @@ extern "C" {
  * @brief Create a RegisterUserRequest message to be sent to server.
  *
  * @param request_out
- * @param account
+ * @param ctx
  * @return 0 if success
  */
 int produce_register_request(
-    E2ees__RegisterUserRequest **request_out,
-    E2ees__Account *account
-);
-
-int produce_register_request_v2(
     E2ees__RegisterUserRequest **request_out,
     account_ctx *ctx
 );
@@ -58,15 +53,10 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
  * @brief Create a PublishSpkRequest message to be sent to server.
  *
  * @param request_out
- * @param account
+ * @param ctx
  * @return 0 if success
  */
 int produce_publish_spk_request(
-    E2ees__PublishSpkRequest **request_out,
-    E2ees__Account *account
-);
-
-int produce_publish_spk_request_v2(
     E2ees__PublishSpkRequest **request_out,
     account_ctx *ctx
 );
@@ -88,19 +78,10 @@ int consume_publish_spk_response(
  * @brief Create a SupplyOpksRequest message to be sent to server.
  *
  * @param request_out
- * @param one_time_pre_key_list_out
- * @param account
- * @param opks_num
+ * @param ctx
  * @return 0 if success
  */
 int produce_supply_opks_request(
-    E2ees__SupplyOpksRequest **request_out,
-    E2ees__OneTimePreKey ***one_time_pre_key_list_out,
-    E2ees__Account *account,
-    uint32_t opks_num
-);
-
-int produce_supply_opks_request_v2(
     E2ees__SupplyOpksRequest **request_out,
     account_ctx *ctx
 );
