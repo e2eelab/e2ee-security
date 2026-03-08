@@ -27,20 +27,31 @@ extern "C" {
 #endif
 
 /**
- * @brief A generic executor for E2EE protocol requests with automated dual-way logging.
- * 
- * Encapsulates the standard (address, auth, request) communication workflow. It 
- * automatically triggers log_proto before and after the actual RPC call 
- * to capture request/response payloads. This framework ensures consistent VERBOSE 
- * traceability across all protocol actions and reduces boilerplate code in business logic.
- * 
- * @param handler_ptr Pointer to the protocol handler.
- * @param request Pointer to the specific Request structure.
- * @param sender_address Optional. The address of the message sender.
- * @param auth Optional. Authentication credential string.
- * @return void* Pointer to the server response; must be cast and freed by the caller.
+ * @brief Dispatcher for protocol-specific requests.
+ *
+ * This function parses variadic arguments and dispatches the request to the 
+ * corresponding handler. It supports two distinct calling conventions based on 
+ * the provided handler_ptr:
+ *
+ * ### 1. Registration Mode
+ * Used when handler_ptr matches `register_user`.
+ * @code
+ * dispatch_proto_request(handler, NULL, NULL, request_ptr);
+ * @endcode
+ *
+ * ### 2. Standard Mode
+ * Used for all other protocol handlers (e.g., invite, create_group).
+ * @code
+ * dispatch_proto_request(handler, sender_address, auth_string, request_ptr);
+ * @endcode
+ *
+ * @param handler_ptr Pointer to the handler function (from proto_handler struct).
+ * @param arg1        First argument (NULL for Registration Mode; E2ees__E2eeAddress* for Standard Mode).
+ * @param ...         Additional arguments (auth string and/or request pointer).
+ *
+ * @return void*      Pointer to the response message, or NULL if the request fails or is empty.
  */
-void *dispatch_proto_request(void *handler_ptr, const void *request, ...);
+void *dispatch_proto_request(void *handler_ptr, const void *arg1, ...);
 
 /**
  * @brief Get the pre-key bundle internal object.

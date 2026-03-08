@@ -12,43 +12,51 @@
 #include "e2ees/account.h"
 #include "e2ees/ratchet.h"
 
-void *dispatch_proto_request(void *handler_ptr, const void *request, ...) {
-    if (!handler_ptr || !request) {
+void *dispatch_proto_request(void *handler_ptr, const void *arg1, ...) {
+    if (!handler_ptr) {
         return NULL;
     }
 
     E2ees__E2eeAddress *sender_address = NULL;
     const char *auth = NULL;
+    const void *actual_request = NULL;
     void *response = NULL;
 
     // register request or not
-    if (request == get_e2ees_plugin()->proto_handler.register_user) {
-        typedef void* (*proto_fun_t)(const void *);
-        proto_fun_t proto_fun = (proto_fun_t)handler_ptr;
-
-        // log request
-        log_proto(NULL, (const ProtobufCMessage *)request);
-
-        response = proto_fun(request);
-
-         // log response
-        log_proto(NULL, (const ProtobufCMessage *)response);
-    } else {
+    if (handler_ptr == get_e2ees_plugin()->proto_handler.register_user) {
+        // (handler, NULL, NULL, request), arg1 is NULL
         va_list args;
-        va_start(args, request);
-        sender_address = va_arg(args, E2ees__E2eeAddress *);
-        auth = va_arg(args, const char *);
+        va_start(args, arg1);
+        va_arg(args, void *); // auth is NULL
+        actual_request = va_arg(args, const void *); // get register_user_request
         va_end(args);
 
-        typedef void* (*proto_fun_t)(E2ees__E2eeAddress *, const char *, const void *);
-        proto_fun_t proto_fun = (proto_fun_t)handler_ptr;
+        if (!actual_request) return NULL;
 
-        // log request
-        log_proto(sender_address, (const ProtobufCMessage *)request);
+        typedef void* (*proto_fun_reg_t)(const void *);
+        proto_fun_reg_t proto_fun = (proto_fun_reg_t)handler_ptr;
 
-        response = proto_fun(sender_address, auth, request);
+        log_proto(NULL, (const ProtobufCMessage *)actual_request);
+        response = proto_fun(actual_request);
+        log_proto(NULL, (const ProtobufCMessage *)response);
+    } 
+    else {
+        // (handler, sender_address, auth, request)
+        sender_address = (E2ees__E2eeAddress *)arg1;
+        
+        va_list args;
+        va_start(args, arg1);
+        auth = va_arg(args, const char *);
+        actual_request = va_arg(args, const void *);
+        va_end(args);
 
-        // log response
+        if (!actual_request) return NULL;
+
+        typedef void* (*proto_fun_std_t)(E2ees__E2eeAddress *, const char *, const void *);
+        proto_fun_std_t proto_fun = (proto_fun_std_t)handler_ptr;
+
+        log_proto(sender_address, (const ProtobufCMessage *)actual_request);
+        response = proto_fun(sender_address, auth, actual_request);
         log_proto(sender_address, (const ProtobufCMessage *)response);
     }
 
