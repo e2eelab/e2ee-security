@@ -27,31 +27,29 @@ extern "C" {
 #endif
 
 /**
- * @brief Dispatcher for protocol-specific requests.
- *
- * This function parses variadic arguments and dispatches the request to the 
- * corresponding handler. It supports two distinct calling conventions based on 
- * the provided handler_ptr:
- *
- * ### 1. Registration Mode
- * Used when handler_ptr matches `register_user`.
+ * @brief Dispatches protocol-specific requests to their respective handlers.
+ * 
+ * @note **Updated Argument Ordering:**
+ * The request pointer is now the second fixed argument.
+ * 
+ * **1. User Registration:**
  * @code
- * dispatch_proto_request(handler, NULL, NULL, request_ptr);
+ * dispatch_proto_request(handler, request);
  * @endcode
- *
- * ### 2. Standard Mode
- * Used for all other protocol handlers (e.g., invite, create_group).
+ * 
+ * **2. Standard Request:**
  * @code
- * dispatch_proto_request(handler, sender_address, auth_string, request_ptr);
+ * dispatch_proto_request(handler, request, sender_address, auth);
  * @endcode
- *
- * @param handler_ptr Pointer to the handler function (from proto_handler struct).
- * @param arg1        First argument (NULL for Registration Mode; E2ees__E2eeAddress* for Standard Mode).
- * @param ...         Additional arguments (auth string and/or request pointer).
- *
- * @return void*      Pointer to the response message, or NULL if the request fails or is empty.
+ * 
+ * @param[in] handler_ptr The function pointer from the @c proto_handler structure.
+ * @param[in] request     [Fixed] Pointer to the request message (ProtobufCMessage).
+ * @param[in] ...         Optional: [E2ees__E2eeAddress *sender, const char *auth] 
+ *                        required for standard handlers.
+ * 
+ * @return void* Pointer to the response, or @c NULL on failure.
  */
-void *dispatch_proto_request(void *handler_ptr, const void *arg1, ...);
+void *dispatch_proto_request(void *handler_ptr, const void *request, ...);
 
 /**
  * @brief Get the pre-key bundle internal object.
