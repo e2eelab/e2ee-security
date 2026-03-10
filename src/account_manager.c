@@ -28,7 +28,7 @@
 #include "e2ees/mem_util.h"
 #include "e2ees/validation.h"
 
-int produce_register_request(E2ees__RegisterUserRequest **request_out, account_ctx *ctx) {
+int produce_register_request(E2ees__RegisterUserRequest **request_out, register_user_params *params, E2ees__Account *account) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__IdentityKey *identity_key = NULL;
@@ -41,29 +41,24 @@ int produce_register_request(E2ees__RegisterUserRequest **request_out, account_c
     E2ees__RegisterUserRequest *request = (E2ees__RegisterUserRequest *)malloc(sizeof(E2ees__RegisterUserRequest));
     e2ees__register_user_request__init(request);
 
-    request->e2ees_pack_id = ctx->base.e2ees_pack_id;
-    request->user_name = strdup(ctx->identity.user_name);
-    request->user_id = strdup(ctx->identity.user_id);
-    request->device_id = strdup(ctx->identity.device_id);
-    request->authenticator = ctx->identity.authenticator ? strdup(ctx->identity.authenticator) : NULL; // authenticator may be NULL
-    request->auth_code = strdup(ctx->identity.auth_code);
+    request->e2ees_pack_id = params->e2ees_pack_id;
+    request->user_name = strdup(params->user_name);
+    request->user_id = strdup(params->user_id);
+    request->device_id = strdup(params->device_id);
+    request->authenticator = params->authenticator ? strdup(params->authenticator) : NULL; // authenticator may be NULL
+    request->auth_code = strdup(params->auth_code);
 
     // copy identity public key
     request->identity_key_public = (E2ees__IdentityKeyPublic *)malloc(sizeof(E2ees__IdentityKeyPublic));
-    copy_ik_public_from_ik_public(&(request->identity_key_public), ctx->bundle.ik);
+    copy_ik_to_public(&(request->identity_key_public), account->identity_key);
 
     // copy signed pre-key
     request->signed_pre_key_public = (E2ees__SignedPreKeyPublic *)malloc(sizeof(E2ees__SignedPreKeyPublic));
-    copy_spk_public_from_spk_public(&(request->signed_pre_key_public), ctx->bundle.spk);
+    copy_spk_to_public(&(request->signed_pre_key_public), account->signed_pre_key);
 
     // copy one-time pre-key
-    request->n_one_time_pre_key_list = ctx->bundle.opks_num;
-    request->one_time_pre_key_list = (E2ees__OneTimePreKeyPublic **)malloc(sizeof(E2ees__OneTimePreKeyPublic *) * request->n_one_time_pre_key_list);
-    size_t i;
-    for (i = 0; i < request->n_one_time_pre_key_list; i++) {
-        request->one_time_pre_key_list[i] = (E2ees__OneTimePreKeyPublic *)malloc(sizeof(E2ees__OneTimePreKeyPublic));
-        copy_opk_public_from_opk_public(&(request->one_time_pre_key_list[i]), ctx->bundle.opks[i]);
-    }
+    request->n_one_time_pre_key_list = account->n_one_time_pre_key_list;
+    copy_opk_list_to_public(&(request->one_time_pre_key_list), account->one_time_pre_key_list, account->n_one_time_pre_key_list);
 
     *request_out = request;
 
@@ -180,7 +175,7 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
 
 int produce_publish_spk_request(
     E2ees__PublishSpkRequest **request_out,
-    account_ctx *ctx
+    publish_spk_params *params
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -191,8 +186,8 @@ int produce_publish_spk_request(
     e2ees__publish_spk_request__init(request);
 
     // copy the new signed pre-key to the message which will be sent to the server
-    copy_address_from_address(&(request->user_address), ctx->base.sender_address);
-    copy_spk_public_from_spk_public(&(request->signed_pre_key_public), ctx->bundle.spk);
+    copy_address_from_address(&(request->user_address), params->user_address);
+    copy_spk_to_public(&(request->signed_pre_key_public), params->new_spk);
 
     *request_out = request;
 
@@ -221,7 +216,8 @@ int consume_publish_spk_response(
 
 int produce_supply_opks_request(
     E2ees__SupplyOpksRequest **request_out,
-    account_ctx *ctx
+    supply_opks_params *params,
+    E2ees__OneTimePreKey **one_time_pre_key_list
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -230,21 +226,11 @@ int produce_supply_opks_request(
     request = (E2ees__SupplyOpksRequest *)malloc(sizeof(E2ees__SupplyOpksRequest));
     e2ees__supply_opks_request__init(request);
 
-    request->e2ees_pack_id = ctx->base.e2ees_pack_id;
-    copy_address_from_address(&(request->user_address), ctx->base.sender_address);
+    request->e2ees_pack_id = params->account->e2ees_pack_id;
+    copy_address_from_address(&(request->user_address), params->account->address);
 
-    request->n_one_time_pre_key_public_list = ctx->bundle.opks_num;
-    request->one_time_pre_key_public_list = (E2ees__OneTimePreKeyPublic **)malloc(sizeof(E2ees__OneTimePreKeyPublic *) * ctx->bundle.opks_num);
-
-    size_t i;
-    E2ees__OneTimePreKeyPublic *cur = NULL;
-    for (i = 0; i < ctx->bundle.opks_num; i++) {
-        request->one_time_pre_key_public_list[i] = (E2ees__OneTimePreKeyPublic *)malloc(sizeof(E2ees__OneTimePreKeyPublic));
-        cur = request->one_time_pre_key_public_list[i];
-        e2ees__one_time_pre_key_public__init(cur);
-        cur->opk_id = ctx->bundle.opks[i]->opk_id;
-        copy_protobuf_from_protobuf(&(cur->public_key), &(ctx->bundle.opks[i]->public_key));
-    }
+    request->n_one_time_pre_key_public_list = params->opks_num;
+    copy_opk_list_to_public(&(request->one_time_pre_key_public_list), one_time_pre_key_list, params->opks_num);
 
     *request_out = request;
 

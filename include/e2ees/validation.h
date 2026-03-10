@@ -172,6 +172,28 @@ bool is_valid_server_signed_signature(E2ees__ServerSignedSignature *src);
 
 bool is_valid_server_signed_signature_list(E2ees__ServerSignedSignature **src, size_t len);
 
+bool is_valid_register_user_inputs(const register_user_params *params);
+
+bool is_valid_publish_spk_inputs(const publish_spk_params *params);
+
+bool is_valid_supply_opks_inputs(const supply_opks_params *params);
+
+bool is_valid_get_pre_key_bundle_inputs(const get_pre_key_bundle_params *params);
+
+bool is_valid_accept_inputs(const accept_params *params);
+
+bool is_valid_create_group_inputs(const create_group_params *params);
+
+bool is_valid_add_group_members_inputs(const add_group_members_params *params);
+
+bool is_valid_remove_group_members_inputs(const remove_group_members_params *params);
+
+bool is_valid_add_group_member_device_inputs(const add_group_member_device_params *params);
+
+bool is_valid_leave_group_inputs(const leave_group_params *params);
+
+bool is_valid_send_group_msg_inputs(const send_group_msg_params *params);
+
 bool validate_and_prepare_account_identity(
     account_identity *out,
     const char *user_name,

@@ -23,6 +23,7 @@
 #include "e2ees/account_cache.h"
 #include "e2ees/cipher.h"
 #include "e2ees/e2ees_client.h"
+#include "e2ees/e2ees_client_internal.h"
 #include "e2ees/group_session.h"
 #include "e2ees/mem_util.h"
 #include "e2ees/validation.h"
@@ -30,7 +31,8 @@
 
 int produce_create_group_request(
     E2ees__CreateGroupRequest **request_out,
-    group_ctx *ctx
+    create_group_params *params,
+    uint32_t e2ees_pack_id
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -43,16 +45,16 @@ int produce_create_group_request(
     msg = (E2ees__CreateGroupMsg *)malloc(sizeof(E2ees__CreateGroupMsg));
     e2ees__create_group_msg__init(msg);
 
-    copy_address_from_address(&(msg->sender_address), ctx->base.sender_address);
+    copy_address_from_address(&(msg->sender_address), params->sender_address);
 
-    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+    msg->e2ees_pack_id = e2ees_pack_id;
 
     msg->group_info = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
     E2ees__GroupInfo *group_info = msg->group_info;
     e2ees__group_info__init(group_info);
-    group_info->group_name = strdup(ctx->group_name);
-    group_info->n_group_member_list = ctx->group_members_num;
-    copy_group_members(&(group_info->group_member_list), ctx->group_members, ctx->group_members_num);
+    group_info->group_name = strdup(params->group_name);
+    group_info->n_group_member_list = params->group_members_num;
+    copy_group_members(&(group_info->group_member_list), params->group_members, params->group_members_num);
 
     request->msg = msg;
 
@@ -263,7 +265,8 @@ bool consume_get_group_response(E2ees__GetGroupResponse *response) {
 
 int produce_add_group_members_request(
     E2ees__AddGroupMembersRequest **request_out,
-    group_ctx *ctx
+    add_group_members_params *params,
+    E2ees__GroupSession *outbound_group_session
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -276,15 +279,15 @@ int produce_add_group_members_request(
     msg = (E2ees__AddGroupMembersMsg *)malloc(sizeof(E2ees__AddGroupMembersMsg));
     e2ees__add_group_members_msg__init(msg);
 
-    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+    msg->e2ees_pack_id = outbound_group_session->e2ees_pack_id;
 
-    copy_address_from_address(&(msg->sender_address), ctx->base.sender_address);
+    copy_address_from_address(&(msg->sender_address), params->sender_address);
 
-    msg->sequence = ctx->sequence;
+    msg->sequence = outbound_group_session->sequence;
 
-    msg->n_adding_member_list = ctx->adding_members_num;
-    copy_group_members(&(msg->adding_member_list), ctx->adding_members, ctx->adding_members_num);
-    add_group_members_to_group_info(&(msg->group_info), ctx->group_info, ctx->adding_members, ctx->adding_members_num);
+    msg->n_adding_member_list = params->adding_members_num;
+    copy_group_members(&(msg->adding_member_list), params->adding_members, params->adding_members_num);
+    add_group_members_to_group_info(&(msg->group_info), outbound_group_session->group_info, params->adding_members, params->adding_members_num);
 
     request->msg = msg;
 
@@ -625,7 +628,8 @@ bool consume_add_group_member_device_msg(
 
 int produce_remove_group_members_request(
     E2ees__RemoveGroupMembersRequest **request_out,
-    group_ctx *ctx
+    remove_group_members_params *params,
+    E2ees__GroupSession *outbound_group_session
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -638,16 +642,16 @@ int produce_remove_group_members_request(
     msg = (E2ees__RemoveGroupMembersMsg *)malloc(sizeof(E2ees__RemoveGroupMembersMsg));
     e2ees__remove_group_members_msg__init(msg);
 
-    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+    msg->e2ees_pack_id = outbound_group_session->e2ees_pack_id;
 
-    copy_address_from_address(&(msg->sender_address), ctx->base.sender_address);
+    copy_address_from_address(&(msg->sender_address), params->sender_address);
 
     remove_group_members_from_group_info(
-        &(msg->group_info), ctx->group_info, ctx->removing_members, ctx->removing_members_num
+        &(msg->group_info), outbound_group_session->group_info, params->removing_members, params->removing_members_num
     );
 
-    msg->n_removing_member_list = ctx->removing_members_num;
-    copy_group_members(&(msg->removing_member_list), ctx->removing_members, ctx->removing_members_num);
+    msg->n_removing_member_list = params->removing_members_num;
+    copy_group_members(&(msg->removing_member_list), params->removing_members, params->removing_members_num);
 
     request->msg = msg;
 
@@ -907,7 +911,7 @@ bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ee
 
 int produce_leave_group_request(
     E2ees__LeaveGroupRequest **request_out,
-    group_ctx *ctx
+    leave_group_params *params
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -920,8 +924,8 @@ int produce_leave_group_request(
     msg = (E2ees__LeaveGroupMsg *)malloc(sizeof(E2ees__LeaveGroupMsg));
     e2ees__leave_group_msg__init(msg);
 
-    copy_address_from_address(&(msg->user_address), ctx->base.sender_address);
-    copy_address_from_address(&(msg->group_address), ctx->group_address);
+    copy_address_from_address(&(msg->user_address), params->sender_address);
+    copy_address_from_address(&(msg->group_address), params->group_address);
 
     request->msg = msg;
 
@@ -1011,9 +1015,9 @@ bool consume_leave_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__LeaveG
 
 int produce_send_group_msg_request(
     E2ees__SendGroupMsgRequest **request_out,
-    group_ctx *ctx,
-    char *version,
-    char *session_id,
+    send_group_msg_params *params,
+    uint32_t notif_level,
+    E2ees__GroupSession *outbound_group_session,
     E2ees__GroupMsgPayload *group_msg_payload
 ) {
     int ret = E2EES_RESULT_SUCC;
@@ -1027,30 +1031,30 @@ int produce_send_group_msg_request(
     // prepare an e2ee message
     e2ee_msg = (E2ees__E2eeMsg *)malloc(sizeof(E2ees__E2eeMsg));
     e2ees__e2ee_msg__init(e2ee_msg);
-    e2ee_msg->version = strdup(version);
-    e2ee_msg->session_id = strdup(session_id);
-    copy_address_from_address(&(e2ee_msg->from), ctx->base.sender_address);
-    copy_address_from_address(&(e2ee_msg->to), ctx->group_address);
+    e2ee_msg->version = strdup(outbound_group_session->version);
+    e2ee_msg->session_id = strdup(outbound_group_session->session_id);
+    copy_address_from_address(&(e2ee_msg->from), params->sender_address);
+    copy_address_from_address(&(e2ee_msg->to), params->group_address);
     e2ee_msg->msg_id = generate_uuid_str();
-    e2ee_msg->notif_level = ctx->notif_level;
+    e2ee_msg->notif_level = notif_level;
     e2ee_msg->payload_case = E2EES__E2EE_MSG__PAYLOAD_GROUP_MSG;
 
     // optional allow_list and denny_list
     size_t i;
-    if (ctx->allow_list_len > 0 && ctx->allow_list) {
-        e2ees_notify_log(ctx->base.sender_address, DEBUG_LOG, "produce_send_group_msg_request() with allow_list_len: %d", ctx->allow_list_len);
-        request->n_allow_list = ctx->allow_list_len;
-        request->allow_list = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * ctx->allow_list_len);
-        for (i = 0; i < ctx->allow_list_len; i++) {
-            copy_address_from_address(&((request->allow_list)[i]), ctx->allow_list[i]);
+    if (params->allow_list_len > 0 && params->allow_list) {
+        e2ees_notify_log(params->sender_address, DEBUG_LOG, "produce_send_group_msg_request() with allow_list_len: %d", params->allow_list_len);
+        request->n_allow_list = params->allow_list_len;
+        request->allow_list = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * params->allow_list_len);
+        for (i = 0; i < params->allow_list_len; i++) {
+            copy_address_from_address(&((request->allow_list)[i]), params->allow_list[i]);
         }
     }
-    if (ctx->deny_list_len > 0 && ctx->deny_list) {
-        e2ees_notify_log(ctx->base.sender_address, DEBUG_LOG, "produce_send_group_msg_request() with deny_list_len: %d", ctx->deny_list_len);
-        request->n_deny_list = ctx->deny_list_len;
-        request->deny_list = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * ctx->deny_list_len);
-        for (i = 0; i < ctx->deny_list_len; i++) {
-            copy_address_from_address(&((request->deny_list)[i]), ctx->deny_list[i]);
+    if (params->deny_list_len > 0 && params->deny_list) {
+        e2ees_notify_log(params->sender_address, DEBUG_LOG, "produce_send_group_msg_request() with deny_list_len: %d", params->deny_list_len);
+        request->n_deny_list = params->deny_list_len;
+        request->deny_list = (E2ees__E2eeAddress **)malloc(sizeof(E2ees__E2eeAddress *) * params->deny_list_len);
+        for (i = 0; i < params->deny_list_len; i++) {
+            copy_address_from_address(&((request->deny_list)[i]), params->deny_list[i]);
         }
     }
 

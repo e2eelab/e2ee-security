@@ -35,6 +35,73 @@ typedef struct {
     const char *auth_code;
 } register_user_params;
 
+typedef struct {
+    uint32_t e2ees_pack_id;
+    E2ees__E2eeAddress *user_address;
+    E2ees__SignedPreKey *new_spk;
+} publish_spk_params;
+
+typedef struct {
+    E2ees__Account *account;
+    uint32_t opks_num;
+} supply_opks_params;
+
+typedef struct {
+    E2ees__E2eeAddress *from;
+    const char *auth;
+    const char *to_user_id;
+    const char *to_domain;
+    const char *to_device_id;
+} get_pre_key_bundle_params;
+
+typedef struct {
+    uint32_t e2ees_pack_id;
+    E2ees__E2eeAddress *from;
+    E2ees__E2eeAddress *to;
+    char *session_id;
+    ProtobufCBinaryData *ciphertext_1;
+    ProtobufCBinaryData *our_ratchet_key;
+} accept_params;
+
+typedef struct {
+    E2ees__E2eeAddress *sender_address;
+    const char *group_name;
+    E2ees__GroupMember **group_members;
+    size_t group_members_num;
+} create_group_params;
+
+typedef struct {
+    E2ees__E2eeAddress *sender_address;
+    E2ees__E2eeAddress *group_address;
+    E2ees__GroupMember **adding_members;
+    size_t adding_members_num;
+} add_group_members_params;
+
+typedef struct {
+    E2ees__E2eeAddress *sender_address;
+    E2ees__E2eeAddress *group_address;
+    E2ees__GroupMember **removing_members;
+    size_t removing_members_num;
+} remove_group_members_params;
+
+typedef struct {
+    
+} add_group_member_device_params;
+
+typedef struct {
+    E2ees__E2eeAddress *sender_address;
+    E2ees__E2eeAddress *group_address;
+} leave_group_params;
+
+typedef struct {
+    E2ees__E2eeAddress *sender_address;
+    E2ees__E2eeAddress *group_address;
+    E2ees__E2eeAddress **allow_list;
+    size_t allow_list_len;
+    E2ees__E2eeAddress **deny_list;
+    size_t deny_list_len;
+} send_group_msg_params;
+
 /**
  * @brief Dispatches protocol-specific requests to their respective handlers.
  * 

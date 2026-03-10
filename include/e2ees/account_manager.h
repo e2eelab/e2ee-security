@@ -31,12 +31,14 @@ extern "C" {
  * @brief Create a RegisterUserRequest message to be sent to server.
  *
  * @param request_out
- * @param ctx
+ * @param params
+ * @param account
  * @return 0 if success
  */
 int produce_register_request(
     E2ees__RegisterUserRequest **request_out,
-    account_ctx *ctx
+    register_user_params *params,
+    E2ees__Account *account
 );
 
 /**
@@ -53,12 +55,12 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
  * @brief Create a PublishSpkRequest message to be sent to server.
  *
  * @param request_out
- * @param ctx
+ * @param params
  * @return 0 if success
  */
 int produce_publish_spk_request(
     E2ees__PublishSpkRequest **request_out,
-    account_ctx *ctx
+    publish_spk_params *params
 );
 
 /**
@@ -78,12 +80,14 @@ int consume_publish_spk_response(
  * @brief Create a SupplyOpksRequest message to be sent to server.
  *
  * @param request_out
- * @param ctx
+ * @param params
+ * @param one_time_pre_key_list
  * @return 0 if success
  */
 int produce_supply_opks_request(
     E2ees__SupplyOpksRequest **request_out,
-    account_ctx *ctx
+    supply_opks_params *params,
+    E2ees__OneTimePreKey **one_time_pre_key_list
 );
 
 /**

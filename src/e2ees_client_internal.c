@@ -53,6 +53,114 @@ void *dispatch_proto_request(void *handler_ptr, const void *request, ...) {
     return response;
 }
 
+int publish_spk_internal(
+    E2ees__PublishSpkResponse **response_out,
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    E2ees__SignedPreKey *new_spk_pair
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__PublishSpkRequest *publish_spk_request = NULL;
+    E2ees__PublishSpkResponse *response = NULL;
+    char *auth = NULL;
+    publish_spk_params params = {
+        .e2ees_pack_id = e2ees_pack_id,
+        .user_address = user_address,
+        .new_spk = new_spk_pair
+    };
+
+    if (!is_valid_publish_spk_inputs(&params)) {
+        ret = E2EES_RESULT_FAIL;
+    }
+
+    get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
+    if (!is_valid_string(auth)) {
+        e2ees_notify_log(NULL, BAD_AUTH, "publish_spk_internal(): invalid auth");
+        return false;
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        ret = produce_publish_spk_request(&publish_spk_request, &params);
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.publish_spk, publish_spk_request, user_address, auth);
+
+        if (is_valid_publish_spk_response(response)) {
+            ret = consume_publish_spk_response(user_address, new_spk_pair, response);
+
+            if (ret == E2EES_RESULT_FAIL) {
+                e2ees__publish_spk_response__free_unpacked(response, NULL);
+                response = NULL;
+                // we do not store pending request here
+                e2ees_notify_log(user_address, DEBUG_LOG, "publish_spk_internal() failed, do it on next start");
+            }
+        } else {
+            if (response != NULL) {
+                e2ees__publish_spk_response__free_unpacked(response, NULL);
+                response = NULL;
+            }
+        }
+
+        // output publish_spk response
+        *response_out = response;
+    }
+
+    // release
+    free_string(auth);
+    free_proto(publish_spk_request);
+
+    // done
+    return ret;
+}
+
+int supply_opks_internal(
+    E2ees__SupplyOpksResponse **response_out,
+    E2ees__Account *account,
+    uint32_t opks_num
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
+    E2ees__SupplyOpksRequest *supply_opks_request = NULL;
+    E2ees__SupplyOpksResponse *response = NULL;
+    supply_opks_params params = {
+        .account = account,
+        .opks_num = opks_num
+    };
+
+    if (!is_valid_supply_opks_inputs(&params)) {
+        ret = E2EES_RESULT_FAIL;
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        ret = generate_opks(&one_time_pre_key_list, (size_t)opks_num, account->e2ees_pack_id, account->next_one_time_pre_key_id);
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        ret = produce_supply_opks_request(&supply_opks_request, &params, one_time_pre_key_list);
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.supply_opks, supply_opks_request, account->address, account->auth);
+
+        if (is_valid_supply_opks_response(response)) {
+            ret = consume_supply_opks_response(account, one_time_pre_key_list, opks_num, response);
+        }
+
+        // output supply_opks response
+        *response_out = response;
+    }
+
+    // release
+    free_one_time_pre_key_list(&one_time_pre_key_list, opks_num);
+    free_proto(supply_opks_request);
+
+    // done
+    return ret;
+}
+
 int get_pre_key_bundle_internal(
     E2ees__InviteResponse ***invite_response_list_out,
     size_t *invite_response_num_out,
@@ -73,22 +181,20 @@ int get_pre_key_bundle_internal(
     E2ees__GetPreKeyBundleResponse *get_pre_key_bundle_response = NULL;
     E2ees__InviteResponse **invite_response_list = NULL;
     size_t invite_response_num;
-    session_ctx ctx = {0};
+    get_pre_key_bundle_params params = {
+        .from = from,
+        .auth = auth,
+        .to_user_id = to_user_id,
+        .to_domain = to_domain,
+        .to_device_id = to_device_id
+    };
 
-    if (!is_valid_address(from)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "get_pre_key_bundle_internal(): no from");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!is_valid_string(auth)) {
-        e2ees_notify_log(NULL, BAD_AUTH, "get_pre_key_bundle_internal(): no auth");
-        ret = E2EES_RESULT_FAIL;
-    }
-    if (!validate_and_prepare_get_pre_key_bundle(&ctx, from, auth, to_user_id, to_domain, to_device_id)) {
+    if (!is_valid_get_pre_key_bundle_inputs(&params)) {
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_get_pre_key_bundle_request(&get_pre_key_bundle_request, &ctx);
+        ret = produce_get_pre_key_bundle_request(&get_pre_key_bundle_request, &params);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -174,7 +280,6 @@ int get_pre_key_bundle_internal(
     }
 
     // release
-    cleanup_session_ctx(&ctx);
     free_proto(get_pre_key_bundle_request);
     free_proto(get_pre_key_bundle_response);
 
@@ -190,20 +295,28 @@ int invite_internal(
 
     E2ees__InviteRequest *invite_request = NULL;
     E2ees__InviteResponse *response = NULL;
-    session_ctx ctx = {0};
+    char *auth = NULL;
 
-    if (!validate_and_prepare_invite(&ctx, outbound_session)) {
+    if (!is_valid_uncompleted_session(outbound_session)) {
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_invite_request(&invite_request, &ctx);
+        get_e2ees_plugin()->db_handler.load_auth(outbound_session->our_address, &auth);
+        if (!is_valid_string(auth)) {
+            e2ees_notify_log(NULL, BAD_AUTH, "invite_internal: invalid auth");
+            ret = E2EES_RESULT_FAIL;
+        }
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.invite, invite_request, ctx.base.sender_address, ctx.base.auth);
+        ret = produce_invite_request(&invite_request, outbound_session);
+    }
 
-        ret = consume_invite_response(ctx.base.sender_address, response);
+    if (ret == E2EES_RESULT_SUCC) {
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.invite, invite_request, outbound_session->our_address, auth);
+
+        ret = consume_invite_response(outbound_session->our_address, response);
         if (ret == E2EES_RESULT_FAIL) {
             // pack invite_request to request_data
             size_t request_data_len = e2ees__invite_request__get_packed_size(invite_request);
@@ -212,7 +325,7 @@ int invite_internal(
 
             // store the request_data into pending
             store_pending_request_internal(
-                ctx.base.sender_address, E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_INVITE, request_data, request_data_len, NULL, 0
+                outbound_session->our_address, E2EES__PENDING_REQUEST_TYPE__PENDING_REQUEST_TYPE_INVITE, request_data, request_data_len, NULL, 0
             );
             // release
             free_mem((void **)&request_data, request_data_len);
@@ -225,7 +338,8 @@ int invite_internal(
         *response_out = response;
     }
 
-    cleanup_session_ctx(&ctx);
+    // release
+    free_string(auth);
 
     // done
     return ret;
@@ -244,18 +358,34 @@ int accept_internal(
 
     E2ees__AcceptRequest *accept_request = NULL;
     E2ees__AcceptResponse *response = NULL;
-    session_ctx ctx = {0};
+    char *auth = NULL;
+    accept_params params = {
+        .e2ees_pack_id = e2ees_pack_id,
+        .from = from,
+        .to = to,
+        .session_id = session_id,
+        .ciphertext_1 = ciphertext_1,
+        .our_ratchet_key = our_ratchet_key
+    };
 
-    if (!validate_and_prepare_accept(&ctx, e2ees_pack_id, from, to, session_id, ciphertext_1, our_ratchet_key)) {
+    if (!is_valid_accept_inputs(&params)) {
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_accept_request(&accept_request, &ctx);
+        get_e2ees_plugin()->db_handler.load_auth(from, &auth);
+        if (!is_valid_string(auth)) {
+            e2ees_notify_log(NULL, BAD_AUTH, "accept_internal: invalid auth");
+            ret = E2EES_RESULT_FAIL;
+        }
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.accept, accept_request, from, ctx.base.auth);
+        ret = produce_accept_request(&accept_request, &params);
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.accept, accept_request, from, auth);
 
         ret = consume_accept_response(from, response);
         if (ret == E2EES_RESULT_FAIL) {
@@ -276,115 +406,8 @@ int accept_internal(
         *response_out = response;
     }
 
-    cleanup_session_ctx(&ctx);
-
-    // done
-    return ret;
-}
-
-int publish_spk_internal(
-    E2ees__PublishSpkResponse **response_out,
-    uint32_t e2ees_pack_id,
-    E2ees__E2eeAddress *user_address,
-    E2ees__SignedPreKey *new_spk_pair
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__PublishSpkRequest *publish_spk_request = NULL;
-    E2ees__PublishSpkResponse *response = NULL;
-    account_ctx ctx = {0};
-
-    if (!validate_and_prepare_account_ctx(&ctx, ACCOUNT_ACTION_PUBLISH_SPK, e2ees_pack_id, user_address, NULL, new_spk_pair, NULL, 0)) {
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_publish_spk_request(&publish_spk_request, &ctx);
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.publish_spk, publish_spk_request, user_address, ctx.base.auth);
-
-        if (is_valid_publish_spk_response(response)) {
-            ret = consume_publish_spk_response(user_address, new_spk_pair, response);
-
-            if (ret == E2EES_RESULT_FAIL) {
-                e2ees__publish_spk_response__free_unpacked(response, NULL);
-                response = NULL;
-                // we do not store pending request here
-                e2ees_notify_log(user_address, DEBUG_LOG, "publish_spk_internal() failed, do it on next start");
-            }
-        } else {
-            if (response != NULL) {
-                e2ees__publish_spk_response__free_unpacked(response, NULL);
-                response = NULL;
-            }
-        }
-
-        // output publish_spk response
-        *response_out = response;
-    }
-
     // release
-    cleanup_account_ctx(&ctx);
-    free_proto(publish_spk_request);
-
-    // done
-    return ret;
-}
-
-int supply_opks_internal(
-    E2ees__SupplyOpksResponse **response_out,
-    E2ees__Account *account,
-    uint32_t opks_num
-) {
-    int ret = E2EES_RESULT_SUCC;
-
-    E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
-    E2ees__SupplyOpksRequest *supply_opks_request = NULL;
-    E2ees__SupplyOpksResponse *response = NULL;
-    account_ctx ctx = {0};
-
-    if (opks_num != 0) {
-        if (!is_valid_registered_account(account)) {
-            e2ees_notify_log(account->address, BAD_ACCOUNT, "supply_opks_internal(): invalid account");
-            ret = E2EES_RESULT_FAIL;
-        }
-    } else {
-        e2ees_notify_log(account->address, BAD_ADDRESS, "supply_opks_internal(): opks_num is zero");
-        ret = E2EES_RESULT_FAIL;
-    }
-
-    uint32_t e2ees_pack_id = account->e2ees_pack_id;
-    uint32_t cur_opk_id = account->next_one_time_pre_key_id;
-
-    ret = generate_opks(&one_time_pre_key_list, (size_t)opks_num, e2ees_pack_id, cur_opk_id);
-
-    if (ret == E2EES_RESULT_SUCC) {
-        if (!validate_and_prepare_account_ctx(&ctx, ACCOUNT_ACTION_SUPPLY_OPKS, e2ees_pack_id, account->address, NULL, NULL, one_time_pre_key_list, opks_num)) {
-            ret = E2EES_RESULT_FAIL;
-        }
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_supply_opks_request(&supply_opks_request, &ctx);
-    }
-
-    if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.supply_opks, supply_opks_request, account->address, account->auth);
-
-        if (is_valid_supply_opks_response(response)) {
-            ret = consume_supply_opks_response(account, one_time_pre_key_list, opks_num, response);
-        }
-
-        // output supply_opks response
-        *response_out = response;
-    }
-
-    // release
-    cleanup_account_ctx(&ctx);
-    free_one_time_pre_key_list(&one_time_pre_key_list, opks_num);
-    free_proto(supply_opks_request);
+    free_string(auth);
 
     // done
     return ret;
@@ -399,24 +422,35 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
 
     E2ees__SendOne2oneMsgRequest *send_one2one_msg_request = NULL;
     E2ees__One2oneMsgPayload *payload_out = NULL;
-    session_ctx ctx = {0};
+    char *auth = NULL;
 
-    if (!validate_and_prepare_send_one2one_msg(&ctx, outbound_session, notif_level)) {
-        return NULL;
+    if (!is_valid_completed_session(outbound_session)) {
+        ret = E2EES_RESULT_FAIL;
     }
-
-    const cipher_suite_t *cipher_suite = get_e2ees_pack(outbound_session->e2ees_pack_id)->cipher_suite;
-    ret = encrypt_ratchet(
-        &payload_out, cipher_suite,
-        outbound_session->ratchet, outbound_session->associated_data,
-        plaintext_data, plaintext_data_len
-    );
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_send_one2one_msg_request(&send_one2one_msg_request, &ctx, payload_out);
+        get_e2ees_plugin()->db_handler.load_auth(outbound_session->our_address, &auth);
+        if (!is_valid_string(auth)) {
+            e2ees_notify_log(NULL, BAD_AUTH, "accept_internal: invalid auth");
+            ret = E2EES_RESULT_FAIL;
+        }
     }
 
-    E2ees__SendOne2oneMsgResponse *response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.send_one2one_msg, send_one2one_msg_request, outbound_session->our_address, ctx.base.auth);
+    // encrypt the plaintext
+    if (ret == E2EES_RESULT_SUCC) {
+        const cipher_suite_t *cipher_suite = get_e2ees_pack(outbound_session->e2ees_pack_id)->cipher_suite;
+        ret = encrypt_ratchet(
+            &payload_out, cipher_suite,
+            outbound_session->ratchet, outbound_session->associated_data,
+            plaintext_data, plaintext_data_len
+        );
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        ret = produce_send_one2one_msg_request(&send_one2one_msg_request, &outbound_session, notif_level, payload_out);
+    }
+
+    E2ees__SendOne2oneMsgResponse *response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.send_one2one_msg, send_one2one_msg_request, outbound_session->our_address, auth);
 
     bool succ = consume_send_one2one_msg_response(outbound_session, response);
     if (!succ) {
@@ -442,7 +476,6 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
     }
 
     // release
-    cleanup_session_ctx(&ctx);
     free_proto(send_one2one_msg_request);
 
     // done

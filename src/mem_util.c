@@ -488,36 +488,6 @@ void copy_opk_list_to_public(E2ees__OneTimePreKeyPublic ***dest, E2ees__OneTimeP
     }
 }
 
-bool extract_keys_to_bundle(
-    pre_key_bundle *out,
-    AccountAction action,
-    E2ees__Account *account,
-    E2ees__SignedPreKey *new_spk,
-    E2ees__OneTimePreKey **new_opk_list,
-    uint32_t opks_num
-) {
-    if (action == ACCOUNT_ACTION_REGISTER) {
-        // copy identity public key
-        copy_ik_to_public(&(out->ik), account->identity_key);
-
-        // copy signed pre-key
-        copy_spk_to_public(&(out->spk), account->signed_pre_key);
-
-        // copy one-time pre-key list
-        out->opks_num = account->n_one_time_pre_key_list;
-        copy_opk_list_to_public(&(out->opks), account->one_time_pre_key_list, account->n_one_time_pre_key_list);
-    } else if (action == ACCOUNT_ACTION_PUBLISH_SPK) {
-        // copy new signed pre-key
-        copy_spk_to_public(&(out->spk), new_spk);
-    } else if (action == ACCOUNT_ACTION_SUPPLY_OPKS) {
-        // copy new one-time pre-key list
-        out->opks_num = (size_t)opks_num;
-        copy_opk_list_to_public(&(out->opks), new_opk_list, (size_t)opks_num);
-    }
-
-    return true;
-}
-
 ///-----------------copy group member id-----------------///
 
 void copy_group_member_id(E2ees__GroupMemberInfo **dest, E2ees__GroupMemberInfo *src) {

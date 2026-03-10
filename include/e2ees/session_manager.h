@@ -37,7 +37,7 @@ extern "C" {
  */
 int produce_get_pre_key_bundle_request(
     E2ees__GetPreKeyBundleRequest **request_out,
-    session_ctx *ctx
+    get_pre_key_bundle_params *params
 );
 
 /**
@@ -64,13 +64,15 @@ int consume_get_pre_key_bundle_response(
  * @brief Create a send_one2one_msg_request to be sent to messaging server.
  *
  * @param request_out
- * @param ctx
+ * @param outbound_session
+ * @param notif_level
  * @param payload
  * @return 0 if success
  */
 int produce_send_one2one_msg_request(
     E2ees__SendOne2oneMsgRequest **request_out,
-    session_ctx *ctx,
+    E2ees__Session *outbound_session,
+    uint32_t notif_level,
     E2ees__One2oneMsgPayload *payload
 );
 
@@ -130,12 +132,12 @@ bool consume_remove_user_device_msg(
  * @brief Create a E2ees__InviteRequest message to be sent to server.
  *
  * @param request_out
- * @param ctx
+ * @param outbound_session
  * @return 0 if success
  */
 int produce_invite_request(
     E2ees__InviteRequest **request_out,
-    session_ctx *ctx
+    E2ees__Session *outbound_session
 );
 
 /**
@@ -168,12 +170,12 @@ bool consume_invite_msg(
  * @brief Create a E2ees__AcceptRequest message to be sent to server.
  *
  * @param request_out
- * @param ctx
+ * @param params
  * @return 0 if success
  */
 int produce_accept_request(
     E2ees__AcceptRequest **request_out,
-    session_ctx *ctx
+    accept_params *params
 );
 
 /**

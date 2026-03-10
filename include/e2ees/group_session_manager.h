@@ -32,12 +32,14 @@ extern "C" {
 /**
  * @brief Create a CreateGroupRequest message to be sent to server.
  * @param request_out
- * @param ctx
+ * @param params
+ * @param e2ees_pack_id
  * @return 0 if success
  */
 int produce_create_group_request(
     E2ees__CreateGroupRequest **request_out,
-    group_ctx *ctx
+    create_group_params *params,
+    uint32_t e2ees_pack_id
 );
 
 /**
@@ -80,12 +82,14 @@ bool consume_get_group_response(E2ees__GetGroupResponse *response);
 /**
  * @brief Create a AddGroupMembersRequest message to be sent to server.
  * @param request_out
- * @param ctx
+ * @param params
+ * @param outbound_group_session
  * @return 0 if success
  */
 int produce_add_group_members_request(
     E2ees__AddGroupMembersRequest **request_out,
-    group_ctx *ctx
+    add_group_members_params *params,
+    E2ees__GroupSession *outbound_group_session
 );
 
 /**
@@ -150,12 +154,14 @@ bool consume_add_group_member_device_msg(
 /**
  * @brief Create a RemoveGroupMembersRequest message to be sent to server.
  * @param request_out
- * @param ctx
+ * @param params
+ * @param outbound_group_session
  * @return 0 if success
  */
 int produce_remove_group_members_request(
     E2ees__RemoveGroupMembersRequest **request_out,
-    group_ctx *ctx
+    remove_group_members_params *params,
+    E2ees__GroupSession *outbound_group_session
 );
 
 /**
@@ -187,12 +193,12 @@ bool consume_remove_group_members_msg(
 /**
  * @brief Create a E2ees__LeaveGroupRequest message to be sent to server.
  * @param request_out
- * @param ctx
+ * @param params
  * @return 0 if success
  */
 int produce_leave_group_request(
     E2ees__LeaveGroupRequest **request_out,
-    group_ctx *ctx
+    leave_group_params *params
 );
 
 /**
@@ -220,17 +226,17 @@ bool consume_leave_group_msg(
 /**
  * @brief Create a SendGroupMsgRequest message to be sent to server.
  * @param request_out
- * @param ctx
- * @param version
- * @param session_id
+ * @param params
+ * @param notif_level
+ * @param outbound_group_session
  * @param group_msg_payload
  * @return 0 if success
  */
 int produce_send_group_msg_request(
     E2ees__SendGroupMsgRequest **request_out,
-    group_ctx *ctx,
-    char *version,
-    char *session_id,
+    send_group_msg_params *params,
+    uint32_t notif_level,
+    E2ees__GroupSession *outbound_group_session,
     E2ees__GroupMsgPayload *group_msg_payload
 );
 

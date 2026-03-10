@@ -92,7 +92,7 @@ static void send_pending_plaintext_data(E2ees__Session *outbound_session) {
 
 int produce_get_pre_key_bundle_request(
     E2ees__GetPreKeyBundleRequest **request_out,
-    session_ctx *ctx
+    get_pre_key_bundle_params *params
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -100,9 +100,9 @@ int produce_get_pre_key_bundle_request(
 
     request = (E2ees__GetPreKeyBundleRequest *)malloc(sizeof(E2ees__GetPreKeyBundleRequest));
     e2ees__get_pre_key_bundle_request__init(request);
-    request->domain = strdup(ctx->remote_domain);
-    request->user_id = strdup(ctx->remote_user_id);
-    request->device_id = ctx->remote_device_id ? strdup(ctx->remote_device_id) : strdup(""); // device_id may be NULL
+    request->domain = strdup(params->to_domain);
+    request->user_id = strdup(params->to_user_id);
+    request->device_id = params->to_device_id ? strdup(params->to_device_id) : strdup(""); // device_id may be NULL
 
     *request_out = request;
 
@@ -244,7 +244,8 @@ int consume_get_pre_key_bundle_response(
 
 int produce_send_one2one_msg_request(
     E2ees__SendOne2oneMsgRequest **request_out,
-    session_ctx *ctx,
+    E2ees__Session *outbound_session,
+    uint32_t notif_level,
     E2ees__One2oneMsgPayload *payload
 ) {
     int ret = E2EES_RESULT_SUCC;
@@ -253,12 +254,12 @@ int produce_send_one2one_msg_request(
     E2ees__E2eeMsg *e2ee_msg = (E2ees__E2eeMsg *)malloc(sizeof(E2ees__E2eeMsg));
     e2ees__e2ee_msg__init(e2ee_msg);
 
-    e2ee_msg->version = strdup(ctx->version);
-    e2ee_msg->session_id = strdup(ctx->session_id);
-    copy_address_from_address(&(e2ee_msg->from), ctx->base.sender_address);
-    copy_address_from_address(&(e2ee_msg->to), ctx->remote_address);
+    e2ee_msg->version = strdup(outbound_session->version);
+    e2ee_msg->session_id = strdup(outbound_session->session_id);
+    copy_address_from_address(&(e2ee_msg->from), outbound_session->our_address);
+    copy_address_from_address(&(e2ee_msg->to), outbound_session->their_address);
     e2ee_msg->msg_id = generate_uuid_str();
-    e2ee_msg->notif_level = ctx->notif_level;
+    e2ee_msg->notif_level = notif_level;
     e2ee_msg->payload_case = E2EES__E2EE_MSG__PAYLOAD_ONE2ONE_MSG;
     e2ee_msg->one2one_msg = payload;
 
@@ -667,7 +668,7 @@ bool consume_remove_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees_
 
 int produce_invite_request(
     E2ees__InviteRequest **request_out,
-    session_ctx *ctx
+    E2ees__Session *outbound_session
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -677,26 +678,26 @@ int produce_invite_request(
     msg = (E2ees__InviteMsg *)malloc(sizeof(E2ees__InviteMsg));
     e2ees__invite_msg__init(msg);
 
-    msg->version = strdup(ctx->version);
-    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
-    msg->session_id = strdup(ctx->session_id);
-    copy_address_from_address(&(msg->from), ctx->base.sender_address);
-    copy_address_from_address(&(msg->to), ctx->remote_address);
+    msg->version = strdup(outbound_session->version);
+    msg->e2ees_pack_id = outbound_session->e2ees_pack_id;
+    msg->session_id = strdup(outbound_session->session_id);
+    copy_address_from_address(&(msg->from), outbound_session->our_address);
+    copy_address_from_address(&(msg->to), outbound_session->their_address);
 
-    msg->n_pre_shared_input_list = ctx->n_pre_shared_input_list;
+    msg->n_pre_shared_input_list = outbound_session->n_pre_shared_input_list;
     msg->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData) * msg->n_pre_shared_input_list);
     size_t i;
     for (i = 0; i < msg->n_pre_shared_input_list; i++) {
         init_protobuf(&(msg->pre_shared_input_list[i]));
-        copy_protobuf_from_protobuf(&(msg->pre_shared_input_list[i]), &(ctx->pre_shared_input_list[i]));
+        copy_protobuf_from_protobuf(&(msg->pre_shared_input_list[i]), &(outbound_session->pre_shared_input_list[i]));
     }
 
-    copy_protobuf_from_protobuf(&(msg->alice_base_key), &(ctx->alice_base_key));
+    copy_protobuf_from_protobuf(&(msg->alice_base_key), &(outbound_session->alice_base_key));
 
-    msg->bob_signed_pre_key_id = ctx->bob_signed_pre_key_id;
-    msg->bob_one_time_pre_key_id = ctx->bob_one_time_pre_key_id;
+    msg->bob_signed_pre_key_id = outbound_session->bob_signed_pre_key_id;
+    msg->bob_one_time_pre_key_id = outbound_session->bob_one_time_pre_key_id;
 
-    msg->invite_t = ctx->invite_t;
+    msg->invite_t = outbound_session->invite_t;
 
     request = (E2ees__InviteRequest *)malloc(sizeof(E2ees__InviteRequest));
     e2ees__invite_request__init(request);
@@ -823,7 +824,7 @@ bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *
 
 int produce_accept_request(
     E2ees__AcceptRequest **request_out,
-    session_ctx *ctx
+    accept_params *params
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -833,16 +834,16 @@ int produce_accept_request(
     msg = (E2ees__AcceptMsg *)malloc(sizeof(E2ees__AcceptMsg));
     e2ees__accept_msg__init(msg);
 
-    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
-    msg->session_id = strdup(ctx->session_id);
-    copy_address_from_address(&(msg->from), ctx->base.sender_address);
-    copy_address_from_address(&(msg->to), ctx->remote_address);
+    msg->e2ees_pack_id = params->e2ees_pack_id;
+    msg->session_id = strdup(params->session_id);
+    copy_address_from_address(&(msg->from), params->from);
+    copy_address_from_address(&(msg->to), params->to);
 
-    if (ctx->ciphertext_1 != NULL) {
-        copy_protobuf_from_protobuf(&(msg->encaps_ciphertext), ctx->ciphertext_1);
+    if (params->ciphertext_1 != NULL) {
+        copy_protobuf_from_protobuf(&(msg->encaps_ciphertext), params->ciphertext_1);
     }
 
-    copy_protobuf_from_protobuf(&(msg->ratchet_key), ctx->our_ratchet_key);
+    copy_protobuf_from_protobuf(&(msg->ratchet_key), params->our_ratchet_key);
 
     request = (E2ees__AcceptRequest *)malloc(sizeof(E2ees__AcceptRequest));
     e2ees__accept_request__init(request);

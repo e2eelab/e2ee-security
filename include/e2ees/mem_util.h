@@ -349,15 +349,6 @@ void copy_opk_to_public(E2ees__OneTimePreKeyPublic **dest, E2ees__OneTimePreKey 
 
 void copy_opk_list_to_public(E2ees__OneTimePreKeyPublic ***dest, E2ees__OneTimePreKey **src, size_t opk_num);
 
-bool extract_keys_to_bundle(
-    pre_key_bundle *out,
-    AccountAction action,
-    E2ees__Account *account,
-    E2ees__SignedPreKey *new_spk,
-    E2ees__OneTimePreKey **new_opk_list,
-    uint32_t opks_num
-);
-
 /**
  * @brief Copy E2ees__GroupMemberInfo from src to dest.
  *
@@ -554,16 +545,6 @@ void free_mem(void **buffer, size_t buffer_len);
 void unset(void volatile *buffer, size_t buffer_len);
 
 void secure_unset(void *buffer, size_t len);
-
-void cleanup_base_ctx(e2ee_base_ctx *base);
-
-void cleanup_pre_key_bundle(pre_key_bundle *bundle);
-
-void cleanup_account_ctx(account_ctx *ctx);
-
-void cleanup_session_ctx(session_ctx *ctx);
-
-void cleanup_group_ctx(group_ctx *ctx);
 
 #ifdef __cplusplus
 }
