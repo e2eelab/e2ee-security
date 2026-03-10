@@ -26,6 +26,15 @@
 extern "C" {
 #endif
 
+typedef struct {
+    uint32_t e2ees_pack_id;
+    const char *user_name;
+    const char *user_id;
+    const char *device_id;
+    const char *authenticator;
+    const char *auth_code;
+} register_user_params;
+
 /**
  * @brief Dispatches protocol-specific requests to their respective handlers.
  * 
