@@ -455,7 +455,8 @@ bool consume_add_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ees__
 
 int produce_add_group_member_device_request(
     E2ees__AddGroupMemberDeviceRequest **request_out,
-    group_ctx *ctx
+    add_group_member_device_params *params,
+    E2ees__GroupSession *outbound_group_session
 ) {
     int ret = E2EES_RESULT_SUCC;
 
@@ -468,17 +469,17 @@ int produce_add_group_member_device_request(
     msg = (E2ees__AddGroupMemberDeviceMsg *)malloc(sizeof(E2ees__AddGroupMemberDeviceMsg));
     e2ees__add_group_member_device_msg__init(msg);
 
-    msg->e2ees_pack_id = ctx->base.e2ees_pack_id;
+    msg->e2ees_pack_id = outbound_group_session->e2ees_pack_id;
 
-    copy_address_from_address(&(msg->sender_address), ctx->base.sender_address);
+    copy_address_from_address(&(msg->sender_address), params->sender_address);
 
-    msg->sequence = ctx->sequence;
+    msg->sequence = outbound_group_session->sequence;
 
-    copy_group_info(&(msg->group_info), ctx->group_info);
+    copy_group_info(&(msg->group_info), outbound_group_session->group_info);
 
     msg->adding_member_device = (E2ees__GroupMemberInfo *)malloc(sizeof(E2ees__GroupMemberInfo));
     e2ees__group_member_info__init(msg->adding_member_device);
-    copy_address_from_address(&(msg->adding_member_device->member_address), ctx->new_device_address);
+    copy_address_from_address(&(msg->adding_member_device->member_address), params->new_device_address);
 
     request->msg = msg;
 

@@ -310,9 +310,15 @@ static void test_pending_request_data() {
     memcpy(our_ratchet_key->data, "abcdefghijklmnopqrstuvwxyz012345", 32);
 
     E2ees__AcceptRequest *accept_request = NULL;
-    session_ctx ctx = {0};
-    validate_and_prepare_accept(&ctx, e2ees_pack_id, alice_address, bob_address, session_id, NULL, our_ratchet_key);
-    produce_accept_request(&accept_request, &ctx);
+    accept_params params = {
+        .e2ees_pack_id = e2ees_pack_id,
+        .from = alice_address,
+        .to = bob_address,
+        .session_id = session_id,
+        .ciphertext_1 = NULL,
+        .our_ratchet_key = our_ratchet_key
+    };
+    produce_accept_request(&accept_request, &params);
 
     // pack request to request_data
     size_t request_data_len = e2ees__accept_request__get_packed_size(accept_request);

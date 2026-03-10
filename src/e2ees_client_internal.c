@@ -492,19 +492,41 @@ int add_group_member_device_internal(
 
     E2ees__AddGroupMemberDeviceRequest *add_group_member_device_request = NULL;
     E2ees__AddGroupMemberDeviceResponse *response = NULL;
+    char *auth = NULL;
     E2ees__GroupSession *outbound_group_session = NULL;
-    group_ctx ctx = {0};
+    add_group_member_device_params params = {
+        .sender_address = sender_address,
+        .group_address = group_address,
+        .new_device_address = new_device_address
+    };
 
-    if (!validate_and_prepare_add_group_member_device(&ctx, sender_address, group_address, new_device_address, &outbound_group_session)) {
+    if (!is_valid_add_group_member_device_inputs(&params)) {
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_add_group_member_device_request(&add_group_member_device_request, &ctx);
+        get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
+        if (!is_valid_string(auth)) {
+            e2ees_notify_log(NULL, BAD_AUTH, "add_group_member_device_internal: invalid auth");
+            ret = E2EES_RESULT_FAIL;
+        }
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.add_group_member_device, add_group_member_device_request, sender_address, ctx.base.auth);
+        get_e2ees_plugin()->db_handler.load_group_session_by_address(
+            sender_address, sender_address, group_address, &outbound_group_session
+        );
+        if (!is_valid_group_session(outbound_group_session)) {
+            ret = E2EES_RESULT_FAIL;
+        }
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        ret = produce_add_group_member_device_request(&add_group_member_device_request, &params, outbound_group_session);
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.add_group_member_device, add_group_member_device_request, sender_address, auth);
 
         if (!is_valid_add_group_member_device_response(response)) {
             e2ees_notify_log(NULL, BAD_ADD_GROUP_MEMBER_DEVICE_RESPONSE, "add_group_member_device_internal(): invalid add_group_member_device_response");
@@ -533,11 +555,11 @@ int add_group_member_device_internal(
 
     // release
     free_proto(add_group_member_device_request);
+    free_string(auth);
     if (outbound_group_session) {
         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
         outbound_group_session = NULL;
     }
-    cleanup_group_ctx(&ctx);
 
     return ret;
 }

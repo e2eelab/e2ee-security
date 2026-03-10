@@ -85,7 +85,9 @@ typedef struct {
 } remove_group_members_params;
 
 typedef struct {
-    
+    E2ees__E2eeAddress *sender_address;
+    E2ees__E2eeAddress *group_address;
+    E2ees__E2eeAddress *new_device_address;
 } add_group_member_device_params;
 
 typedef struct {

@@ -121,12 +121,14 @@ bool consume_add_group_members_msg(
 /**
  * @brief Create a AddGroupMemberDeviceRequest message to be sent to server.
  * @param request_out
- * @param ctx
+ * @param params
+ * @param outbound_group_session
  * @return 0 if success
  */
 int produce_add_group_member_device_request(
     E2ees__AddGroupMemberDeviceRequest **request_out,
-    group_ctx *ctx
+    add_group_member_device_params *params,
+    E2ees__GroupSession *outbound_group_session
 );
 
 /**
