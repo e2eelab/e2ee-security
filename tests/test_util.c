@@ -376,9 +376,16 @@ bool is_equal_ratchet(E2ees__Ratchet *ratchet_1, E2ees__Ratchet *ratchet_2) {
             return false;
         }
     }
-    if (!is_equal_receiver_chain(ratchet_1->receiver_chain, ratchet_2->receiver_chain)) {
-        printf("receiver_chain not match");
-        return false;
+    if (is_not_null(ratchet_1->receiver_chain, ratchet_2->receiver_chain)) {
+        if (!is_equal_receiver_chain(ratchet_1->receiver_chain, ratchet_2->receiver_chain)) {
+            printf("receiver_chain not match");
+            return false;
+        }
+    } else {
+        if (!is_null(ratchet_1->receiver_chain, ratchet_2->receiver_chain)) {
+            printf("receiver_chain not match");
+            return false;
+        }
     }
     if (ratchet_1->n_skipped_msg_key_list != ratchet_2->n_skipped_msg_key_list) {
         printf("n_skipped_msg_key_list not match");
@@ -423,6 +430,17 @@ bool is_equal_session(E2ees__Session *session_1, E2ees__Session *session_2) {
     } else {
         if (!is_null(session_1->their_address, session_2->their_address)) {
             printf("their_address not match");
+            return false;
+        }
+    }
+    if (is_not_null(session_1->ratchet, session_2->ratchet)) {
+        if (!is_equal_ratchet(session_1->ratchet, session_2->ratchet)) {
+            printf("ratchet not match");
+            return false;
+        }
+    } else {
+        if (!is_null(session_1->ratchet, session_2->ratchet)) {
+            printf("ratchet not match");
             return false;
         }
     }

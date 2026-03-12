@@ -36,744 +36,489 @@
 #include "test_plugin.h"
 #include "test_util.h"
 
-static const cipher_suite_t *test_cipher_suite;
-
-void test_load_outbound_session(uint32_t e2ees_pack_id)
-{
+void test_store_and_load_outbound_session() {
     tear_up();
 
-    // create session and two addresses
-    E2ees__Session *session = (E2ees__Session *)malloc(sizeof(E2ees__Session));
-    E2ees__E2eeAddress *from, *to;
-    mock_address(&from, "alice", "alice's domain", "alice's device");
-    mock_address(&to, "bob", "bob's domain", "bob's device");
-    initialise_session(session, e2ees_pack_id, from, to);
-    copy_address_from_address(&(session->our_address), from);
+    // initialize
+    E2ees__Session dummy_session;
+    e2ees__session__init(&dummy_session);
 
-    // create mock public keys
-    session->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
-    session->pre_shared_input_list[0].len = 32;
-    session->pre_shared_input_list[0].data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(session->pre_shared_input_list[0].data, "abcdefghijklmnopqrstuvwxyz012345", 32);
+    // mock address(alice)
+    E2ees__E2eeAddress our_address;
+    e2ees__e2ee_address__init(&our_address);
+    E2ees__PeerUser our_user;
+    e2ees__peer_user__init(&our_user);
+    
+    our_user.user_id = "alice";
+    our_user.device_id = "device_A";
+    our_address.domain = "test.com";
+    our_address.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    our_address.user = &our_user;
 
-    session->associated_data.len = 64;
-    session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
+    // mock address(bob)
+    E2ees__E2eeAddress their_address;
+    e2ees__e2ee_address__init(&their_address);
+    E2ees__PeerUser their_user;
+    e2ees__peer_user__init(&their_user);
+    
+    their_user.user_id = "bob";
+    their_user.device_id = "device_B";
+    their_address.domain = "test.com";
+    their_address.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    their_address.user = &their_user;
 
-    session->session_id = generate_uuid_str();
+    // initialize ratchet
+    E2ees__Ratchet dummy_ratchet;
+    e2ees__ratchet__init(&dummy_ratchet);
+    uint8_t fake_root_key[32] = { 0xDE, 0xAD, 0xBE, 0xEF };
+    dummy_ratchet.root_key.data = fake_root_key;
+    dummy_ratchet.root_key.len = sizeof(fake_root_key);
 
-    // insert to the db
-    store_session(session);
+    // input date into session
+    dummy_session.version = "1.0.0";
+    dummy_session.e2ees_pack_id = 999;
+    dummy_session.session_id = "session_mock_777";
+    dummy_session.our_address = &our_address;
+    dummy_session.their_address = &their_address;
+    dummy_session.ratchet = &dummy_ratchet;
 
-    // load_outbound_session
-    E2ees__Session *session_copy;
-    load_outbound_session(from, to, &session_copy);
+    // store into db
+    store_session(&dummy_session);
 
-    // assert session equals to session_copy
-    print_result("test_load_outbound_session", is_equal_session(session, session_copy));
+    // load
+    E2ees__Session *loaded_session = NULL;
+    load_outbound_session(&our_address, &their_address, &loaded_session);
 
-    // free
-    e2ees__e2ee_address__free_unpacked(from, NULL);
-    e2ees__e2ee_address__free_unpacked(to, NULL);
-    e2ees__session__free_unpacked(session, NULL);
-    e2ees__session__free_unpacked(session_copy, NULL);
+    // assert
+    bool is_success = false;
+    if (loaded_session != NULL) {
+        is_success = is_equal_session(&dummy_session, loaded_session);
+    } else {
+        printf("test_store_and_load_outbound_session: failed (loaded_session is NULL)\n");
+    }
+
+    print_result("test_store_and_load_outbound_session", is_success);
+
+    // release
+    if (loaded_session != NULL) {
+        e2ees__session__free_unpacked(loaded_session, NULL);
+        loaded_session = NULL;
+    }
 
     tear_down();
 }
 
-void test_load_outbound_sessions(uint32_t e2ees_pack_id)
-{
+void test_store_and_load_session() {
     tear_up();
 
-    // create sessions
-    E2ees__Session *session_1, *session_2, *session_3;
-    session_1 = (E2ees__Session *)malloc(sizeof(E2ees__Session));
-    session_2 = (E2ees__Session *)malloc(sizeof(E2ees__Session));
-    session_3 = (E2ees__Session *)malloc(sizeof(E2ees__Session));
+    E2ees__Session dummy_session;
+    e2ees__session__init(&dummy_session);
 
-    // create addresses
-    E2ees__E2eeAddress *from, *to_1, *to_2, *to_3;
-    mock_address(&from, "alice", "alice's domain", "alice's device");
-    mock_address(&to_1, "bob", "bob's domain", "bob's device 1");
-    mock_address(&to_2, "bob", "bob's domain", "bob's device 2");
-    mock_address(&to_3, "bob", "bob's domain", "bob's device 3");
+    E2ees__E2eeAddress our_address;
+    e2ees__e2ee_address__init(&our_address);
+    E2ees__PeerUser our_user;
+    e2ees__peer_user__init(&our_user);
+    
+    our_user.user_id = "alice";
+    our_user.device_id = "device_A";
+    our_address.domain = "test.com";
+    our_address.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    our_address.user = &our_user;
 
-    // initialise sessions
-    initialise_session(session_1, e2ees_pack_id, from, to_1);
-    copy_address_from_address(&(session_1->our_address), from);
-    initialise_session(session_2, e2ees_pack_id, from, to_2);
-    copy_address_from_address(&(session_2->our_address), from);
-    initialise_session(session_3, e2ees_pack_id, from, to_3);
-    copy_address_from_address(&(session_3->our_address), from);
+    E2ees__E2eeAddress their_address;
+    e2ees__e2ee_address__init(&their_address);
+    E2ees__PeerUser their_user;
+    e2ees__peer_user__init(&their_user);
+    
+    their_user.user_id = "bob";
+    their_user.device_id = "device_B";
+    their_address.domain = "test.com";
+    their_address.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    their_address.user = &their_user;
 
-    // create mock public keys for session_1
-    session_1->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
-    session_1->pre_shared_input_list[0].len = 32;
-    session_1->pre_shared_input_list[0].data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(session_1->pre_shared_input_list[0].data, "abcdefghijklmnopqrstuvwxyz012345", 32);
+    E2ees__Ratchet dummy_ratchet;
+    e2ees__ratchet__init(&dummy_ratchet);
+    uint8_t fake_root_key[32] = { 0xDE, 0xAD, 0xBE, 0xEF };
+    dummy_ratchet.root_key.data = fake_root_key;
+    dummy_ratchet.root_key.len = sizeof(fake_root_key);
 
-    session_1->associated_data.len = 64;
-    session_1->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session_1->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
+    dummy_session.version = "1.0.0";
+    dummy_session.e2ees_pack_id = 999;
+    dummy_session.session_id = "session_mock_777";
+    dummy_session.our_address = &our_address;
+    dummy_session.their_address = &their_address;
+    dummy_session.ratchet = &dummy_ratchet;
 
-    session_1->session_id = generate_uuid_str();
+    store_session(&dummy_session);
 
-    // insert to the db
-    store_session(session_1);
+    E2ees__Session *loaded_session = NULL;
+    load_session("session_mock_777", &our_address, &loaded_session);
 
-    // create mock public keys for session_2
-    session_2->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
-    session_2->pre_shared_input_list[0].len = 32;
-    session_2->pre_shared_input_list[0].data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(session_2->pre_shared_input_list[0].data, "abcdefghijklmnopqrstuvwxyz012345", 32);
+    bool is_success = false;
+    if (loaded_session != NULL) {
+        is_success = is_equal_session(&dummy_session, loaded_session);
+    } else {
+        printf("test_store_and_load_session: failed (loaded_session is NULL)\n");
+    }
+    
+    print_result("test_store_and_load_session", is_success);
 
-    session_2->associated_data.len = 64;
-    session_2->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session_2->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
-
-    session_2->session_id = generate_uuid_str();
-
-    // insert to the db
-    store_session(session_2);
-
-    // create mock public keys for session_3
-    session_3->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
-    session_3->pre_shared_input_list[0].len = 32;
-    session_3->pre_shared_input_list[0].data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(session_3->pre_shared_input_list[0].data, "abcdefghijklmnopqrstuvwxyz012345", 32);
-
-    session_3->associated_data.len = 64;
-    session_3->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session_3->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
-
-    session_3->session_id = generate_uuid_str();
-
-    // insert to the db
-    store_session(session_3);
-
-    E2ees__Session **sessions = (E2ees__Session **)malloc(sizeof(E2ees__Session *) * 3);
-    sessions[0] = session_1;
-    sessions[1] = session_2;
-    sessions[2] = session_3;
-
-    // load_outbound_session
-    E2ees__Session **sessions_copy;
-    load_outbound_sessions(from, to_1->user->user_id, to_1->domain, &sessions_copy);
-
-    // assert session equals to session_copy
-    print_result("test_load_outbound_sessions", is_equal_sessions(sessions, sessions_copy, 3));
-
-    // free
-    e2ees__e2ee_address__free_unpacked(from, NULL);
-    e2ees__e2ee_address__free_unpacked(to_1, NULL);
-    e2ees__e2ee_address__free_unpacked(to_2, NULL);
-    e2ees__e2ee_address__free_unpacked(to_3, NULL);
-    e2ees__session__free_unpacked(session_1, NULL);
-    e2ees__session__free_unpacked(session_2, NULL);
-    e2ees__session__free_unpacked(session_3, NULL);
+    if (loaded_session != NULL) {
+        e2ees__session__free_unpacked(loaded_session, NULL);
+        loaded_session = NULL;
+    }
 
     tear_down();
 }
 
-void test_load_session(uint32_t e2ees_pack_id)
-{
+void test_store_and_load_outbound_sessions() {
     tear_up();
 
-    // create session and two addresses
-    E2ees__Session *session = (E2ees__Session *)malloc(sizeof(E2ees__Session));
-    e2ees__session__init(session);
+    E2ees__Session dummy_session;
+    e2ees__session__init(&dummy_session);
 
-    E2ees__E2eeAddress *from, *to;
-    mock_address(&from, "alice", "alice's domain", "alice's device");
-    mock_address(&to, "bob", "bob's domain", "bob's device");
-    initialise_session(session, e2ees_pack_id, from, to);
-    copy_address_from_address(&(session->our_address), to);
+    E2ees__E2eeAddress our_address;
+    e2ees__e2ee_address__init(&our_address);
+    E2ees__PeerUser our_user;
+    e2ees__peer_user__init(&our_user);
+    
+    our_user.user_id = "alice";
+    our_user.device_id = "device_A";
+    our_address.domain = "test.com";
+    our_address.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    our_address.user = &our_user;
 
-    // create mock public keys
-    session->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
-    session->pre_shared_input_list[0].len = 32;
-    session->pre_shared_input_list[0].data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(session->pre_shared_input_list[0].data, "abcdefghijklmnopqrstuvwxyz012345", 32);
+    E2ees__E2eeAddress their_address;
+    e2ees__e2ee_address__init(&their_address);
+    E2ees__PeerUser their_user;
+    e2ees__peer_user__init(&their_user);
+    
+    their_user.user_id = "bob"; 
+    their_user.device_id = "device_B";
+    their_address.domain = "test.com";
+    their_address.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    their_address.user = &their_user;
 
-    session->associated_data.len = 64;
-    session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
+    E2ees__Ratchet dummy_ratchet;
+    e2ees__ratchet__init(&dummy_ratchet);
+    uint8_t fake_root_key[32] = { 0xDE, 0xAD, 0xBE, 0xEF };
+    dummy_ratchet.root_key.data = fake_root_key;
+    dummy_ratchet.root_key.len = sizeof(fake_root_key);
 
-    session->session_id = generate_uuid_str();
+    dummy_session.version = "1.0.0";
+    dummy_session.e2ees_pack_id = 999;
+    dummy_session.session_id = "session_mock_777";
+    dummy_session.our_address = &our_address;
+    dummy_session.their_address = &their_address;
+    dummy_session.ratchet = &dummy_ratchet;
 
-    // insert to the db
-    store_session(session);
+    store_session(&dummy_session);
 
-    // load_session
-    E2ees__Session *session_copy;
-    load_session(session->session_id, to, &session_copy);
+    E2ees__Session **loaded_sessions = NULL;
 
-    // assert session equals to session_copy
-    print_result("test_load_session", is_equal_session(session, session_copy));
+    size_t count = load_outbound_sessions(&our_address, "bob", "test.com", &loaded_sessions);
 
-    // free
-    e2ees__e2ee_address__free_unpacked(from, NULL);
-    e2ees__e2ee_address__free_unpacked(to, NULL);
-    e2ees__session__free_unpacked(session, NULL);
-    e2ees__session__free_unpacked(session_copy, NULL);
+    bool is_success = false;
 
-    tear_down();
-}
+    if (count > 0 && loaded_sessions != NULL && loaded_sessions[0] != NULL) {
+        is_success = is_equal_session(&dummy_session, loaded_sessions[0]);
+    } else {
+        printf("test_store_and_load_outbound_sessions: failed (count is 0 or array is NULL)\n");
+    }
+    
+    print_result("test_store_and_load_outbound_sessions", is_success);
 
-void test_load_group_session_by_address(uint32_t e2ees_pack_id)
-{
-    tear_up();
-
-    // create two addresses
-    E2ees__E2eeAddress *Alice, *Bob;
-    mock_address(&Alice, "alice", "alice's domain", "alice's device");
-    mock_address(&Bob, "bob", "bob's domain", "bob's device");
-
-    // create group_member_list
-    E2ees__GroupMember **group_member_list = (E2ees__GroupMember **)malloc(sizeof(E2ees__GroupMember *) * 2);
-    group_member_list[0] = (E2ees__GroupMember *)malloc(sizeof(E2ees__GroupMember));
-    e2ees__group_member__init(group_member_list[0]);
-    group_member_list[0]->user_id = strdup("alice");
-    group_member_list[0]->domain = strdup("alice's domain");
-    group_member_list[0]->role = E2EES__GROUP_ROLE__GROUP_ROLE_MANAGER;
-    group_member_list[1] = (E2ees__GroupMember *)malloc(sizeof(E2ees__GroupMember));
-    e2ees__group_member__init(group_member_list[1]);
-    group_member_list[1]->user_id = strdup("bob");
-    group_member_list[1]->domain = strdup("bob's domain");
-    group_member_list[1]->role = E2EES__GROUP_ROLE__GROUP_ROLE_MEMBER;
-
-    // mock group address
-    E2ees__E2eeAddress *group_address = (E2ees__E2eeAddress *)malloc(sizeof(E2ees__E2eeAddress));
-    e2ees__e2ee_address__init(group_address);
-    group_address->group = (E2ees__PeerGroup *)malloc(sizeof(E2ees__PeerGroup));
-    e2ees__peer_group__init(group_address->group);
-    group_address->peer_case = E2EES__E2EE_ADDRESS__PEER_GROUP;
-    group_address->domain = mock_domain_str();
-    group_address->group->group_id = generate_uuid_str();
-
-    // create outbound group session
-    E2ees__GroupSession *group_session = (E2ees__GroupSession *)malloc(sizeof(E2ees__GroupSession));
-    e2ees__group_session__init(group_session);
-
-    group_session->version = strdup(E2EES_PROTOCOL_VERSION);
-
-    copy_address_from_address(&(group_session->sender), Alice);
-    copy_address_from_address(&(group_session->session_owner), Alice);
-    group_session->session_id = generate_uuid_str();
-
-    group_session->group_info =
-    (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
-    E2ees__GroupInfo *group_info = group_session->group_info;
-    e2ees__group_info__init(group_info);
-    group_info->group_name = strdup("test_group");
-    copy_address_from_address(&(group_info->group_address), group_address);
-    group_info->n_group_member_list = 2;
-    copy_group_members(&(group_info->group_member_list), group_member_list, 2);
-
-    group_session->sequence = 0;
-
-    group_session->chain_key.len = 32;
-    group_session->chain_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(group_session->chain_key.data, "01234567890123456789012345678901", 32);
-
-    group_session->group_seed.len = 32;
-    group_session->group_seed.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(group_session->group_seed.data, "01234567890123456789012345678901", 32);
-
-    group_session->associated_data.len = 64;
-    group_session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(group_session->associated_data.data, group_session->chain_key.data, 32);
-    memcpy((group_session->associated_data.data) + 32, group_session->group_seed.data, CURVE25519_KEY_LENGTH);
-
-    // insert to the db
-    store_group_session(group_session);
-
-    // load_outbound_group_session
-    E2ees__GroupSession *group_session_copy;
-    load_group_session_by_address(Alice, Alice, group_address, &group_session_copy);
-
-    // assert session equals to session_copy
-    print_result("test_load_group_session_by_address", is_equal_group_session(group_session, group_session_copy));
-
-    // free
-    e2ees__e2ee_address__free_unpacked(Alice, NULL);
-    e2ees__e2ee_address__free_unpacked(Bob, NULL);
-    e2ees__e2ee_address__free_unpacked(group_address, NULL);
-    e2ees__group_session__free_unpacked(group_session, NULL);
-    e2ees__group_session__free_unpacked(group_session_copy, NULL);
-
-    tear_down();
-}
-
-void test_load_group_session_by_id(uint32_t e2ees_pack_id)
-{
-    tear_up();
-
-    // create two addresses
-    E2ees__E2eeAddress *Alice, *Bob;
-    mock_address(&Alice, "alice", E2EELAB_DOMAIN, "alice's device");
-    mock_address(&Bob, "bob", E2EELAB_DOMAIN, "bob's device");
-
-    // create group_member_list
-    E2ees__GroupMember **group_member_list = (E2ees__GroupMember **)malloc(sizeof(E2ees__GroupMember *) * 2);
-    group_member_list[0] = (E2ees__GroupMember *)malloc(sizeof(E2ees__GroupMember));
-    e2ees__group_member__init(group_member_list[0]);
-    group_member_list[0]->user_id = strdup("alice");
-    group_member_list[0]->domain = strdup("alice's domain");
-    group_member_list[0]->role = E2EES__GROUP_ROLE__GROUP_ROLE_MANAGER;
-    group_member_list[1] = (E2ees__GroupMember *)malloc(sizeof(E2ees__GroupMember));
-    e2ees__group_member__init(group_member_list[1]);
-    group_member_list[1]->user_id = strdup("bob");
-    group_member_list[1]->domain = strdup("bob's domain");
-    group_member_list[1]->role = E2EES__GROUP_ROLE__GROUP_ROLE_MEMBER;
-
-    // mock group address
-    E2ees__E2eeAddress *group_address = (E2ees__E2eeAddress *)malloc(sizeof(E2ees__E2eeAddress));
-    e2ees__e2ee_address__init(group_address);
-    group_address->group = (E2ees__PeerGroup *)malloc(sizeof(E2ees__PeerGroup));
-    e2ees__peer_group__init(group_address->group);
-    group_address->peer_case = E2EES__E2EE_ADDRESS__PEER_GROUP;
-    group_address->domain = mock_domain_str();
-    group_address->group->group_id = generate_uuid_str();
-
-    // create inbound group session
-    E2ees__GroupSession *group_session = (E2ees__GroupSession *)malloc(sizeof(E2ees__GroupSession));
-    e2ees__group_session__init(group_session);
-
-    group_session->version = strdup(E2EES_PROTOCOL_VERSION);
-
-    copy_address_from_address(&(group_session->sender), Bob);
-    copy_address_from_address(&(group_session->session_owner), Alice);
-    group_session->session_id = generate_uuid_str();
-
-    group_session->group_info =
-    (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
-    E2ees__GroupInfo *group_info = group_session->group_info;
-    e2ees__group_info__init(group_info);
-    group_info->group_name = strdup("test_group");
-    copy_address_from_address(&(group_info->group_address), group_address);
-    group_info->n_group_member_list = 2;
-    copy_group_members(&(group_info->group_member_list), group_member_list, 2);
-
-    group_session->sequence = 0;
-
-    group_session->chain_key.len = 32;
-    group_session->chain_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(group_session->chain_key.data, "01234567890123456789012345678901", 32);
-
-    group_session->associated_data.len = 64;
-    group_session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(group_session->associated_data.data, group_session->chain_key.data, CURVE25519_KEY_LENGTH);
-    memcpy((group_session->associated_data.data) + CURVE25519_KEY_LENGTH, group_session->chain_key.data, CURVE25519_KEY_LENGTH);
-
-    // insert to the db
-    store_group_session(group_session);
-
-    // load_inbound_group_session for owner: Alice
-    E2ees__GroupSession *group_session_copy = NULL;
-    load_group_session_by_id(Bob, Alice, group_session->session_id, &group_session_copy);
-
-    // assert session equals to session_copy
-    print_result("test_load_group_session_by_id", is_equal_group_session(group_session, group_session_copy));
-
-    // free
-    e2ees__e2ee_address__free_unpacked(Alice, NULL);
-    e2ees__e2ee_address__free_unpacked(Bob, NULL);
-    e2ees__e2ee_address__free_unpacked(group_address, NULL);
-    e2ees__group_session__free_unpacked(group_session, NULL);
-    e2ees__group_session__free_unpacked(group_session_copy, NULL);
-
-    tear_down();
-}
-
-void test_load_group_addresses(uint32_t e2ees_pack_id) {
-    tear_up();
-
-    // create two addresses
-    E2ees__E2eeAddress *Alice, *Bob;
-    mock_address(&Alice, "alice", E2EELAB_DOMAIN, "alice's device");
-    mock_address(&Bob, "bob", E2EELAB_DOMAIN, "bob's device");
-
-    // create group_member_list
-    E2ees__GroupMember **group_member_list = (E2ees__GroupMember **)malloc(sizeof(E2ees__GroupMember *) * 2);
-    group_member_list[0] = (E2ees__GroupMember *)malloc(sizeof(E2ees__GroupMember));
-    e2ees__group_member__init(group_member_list[0]);
-    group_member_list[0]->user_id = strdup("alice");
-    group_member_list[0]->domain = strdup("alice's domain");
-    group_member_list[0]->role = E2EES__GROUP_ROLE__GROUP_ROLE_MANAGER;
-    group_member_list[1] = (E2ees__GroupMember *)malloc(sizeof(E2ees__GroupMember));
-    e2ees__group_member__init(group_member_list[1]);
-    group_member_list[1]->user_id = strdup("bob");
-    group_member_list[1]->domain = strdup("bob's domain");
-    group_member_list[1]->role = E2EES__GROUP_ROLE__GROUP_ROLE_MEMBER;
-
-    // mock two group addresses
-    E2ees__E2eeAddress *group_address = (E2ees__E2eeAddress *)malloc(sizeof(E2ees__E2eeAddress));
-    e2ees__e2ee_address__init(group_address);
-    group_address->group = (E2ees__PeerGroup *)malloc(sizeof(E2ees__PeerGroup));
-    e2ees__peer_group__init(group_address->group);
-    group_address->peer_case = E2EES__E2EE_ADDRESS__PEER_GROUP;
-    group_address->domain = mock_domain_str();
-    group_address->group->group_id = generate_uuid_str();
-
-    E2ees__E2eeAddress *group_address_2 = (E2ees__E2eeAddress *)malloc(sizeof(E2ees__E2eeAddress));
-    e2ees__e2ee_address__init(group_address_2);
-    group_address_2->group = (E2ees__PeerGroup *)malloc(sizeof(E2ees__PeerGroup));
-    e2ees__peer_group__init(group_address_2->group);
-    group_address_2->peer_case = E2EES__E2EE_ADDRESS__PEER_GROUP;
-    group_address_2->domain = mock_domain_str();
-    group_address_2->group->group_id = generate_uuid_str();
-
-    // create an outbound group session
-    E2ees__GroupSession *group_session = (E2ees__GroupSession *)malloc(sizeof(E2ees__GroupSession));
-    e2ees__group_session__init(group_session);
-
-    group_session->version = strdup(E2EES_PROTOCOL_VERSION);
-
-    copy_address_from_address(&(group_session->sender), Alice);
-    copy_address_from_address(&(group_session->session_owner), Alice);
-    group_session->session_id = generate_uuid_str();
-
-    group_session->group_info =
-    (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
-    E2ees__GroupInfo *group_info = group_session->group_info;
-    e2ees__group_info__init(group_info);
-    group_info->group_name = strdup("test_group");
-    copy_address_from_address(&(group_info->group_address), group_address);
-    group_info->n_group_member_list = 2;
-    copy_group_members(&(group_info->group_member_list), group_member_list, 2);
-
-    // insert to the db
-    store_group_session(group_session);
-
-    // create a second outbound group session
-    E2ees__GroupSession *group_session_2 = (E2ees__GroupSession *)malloc(sizeof(E2ees__GroupSession));
-    e2ees__group_session__init(group_session_2);
-
-    group_session_2->version = strdup(E2EES_PROTOCOL_VERSION);
-
-    copy_address_from_address(&(group_session_2->sender), Alice);
-    copy_address_from_address(&(group_session_2->session_owner), Alice);
-    group_session_2->session_id = generate_uuid_str();
-
-    group_session_2->group_info =
-    (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
-    group_info = group_session_2->group_info;
-    e2ees__group_info__init(group_info);
-    group_info->group_name = strdup("test_group");
-    copy_address_from_address(&(group_info->group_address), group_address_2);
-    group_info->n_group_member_list = 2;
-    copy_group_members(&(group_info->group_member_list), group_member_list, 2);
-
-    // insert to the db
-    store_group_session(group_session_2);
-
-    // load the group address
-    E2ees__E2eeAddress **group_addresses;
-    size_t n_group_addresses = load_group_addresses(Alice, Alice, &group_addresses);
-
-    // assert the group addresses
-    bool success = false;
-    if (compare_address(group_addresses[0], group_address)) {
-        if (compare_address(group_addresses[1], group_address_2)) {
-            success = true;
+    if (loaded_sessions != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            if (loaded_sessions[i] != NULL) {
+                e2ees__session__free_unpacked(loaded_sessions[i], NULL); 
+            }
         }
+        free_mem((void **)&loaded_sessions, sizeof(E2ees__Session *) * count); 
     }
-    print_result("test_load_group_addresses", success);
 
-    // free
-    e2ees__e2ee_address__free_unpacked(Alice, NULL);
-    e2ees__e2ee_address__free_unpacked(Bob, NULL);
-    e2ees__e2ee_address__free_unpacked(group_address, NULL);
-    e2ees__e2ee_address__free_unpacked(group_address_2, NULL);
-    e2ees__group_session__free_unpacked(group_session, NULL);
-    e2ees__group_session__free_unpacked(group_session_2, NULL);
-    size_t i;
-    for (i = 0; i < n_group_addresses; i++) {
-        e2ees__e2ee_address__free_unpacked(group_addresses[i], NULL);
+    tear_down();
+}
+
+void test_load_group_session_by_address() {
+    tear_up();
+
+    // sender (Alice)
+    E2ees__E2eeAddress sender_addr;
+    e2ees__e2ee_address__init(&sender_addr);
+    E2ees__PeerUser sender_user;
+    e2ees__peer_user__init(&sender_user);
+    sender_user.user_id = "alice";
+    sender_addr.domain = "test.com";
+    sender_addr.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    sender_addr.user = &sender_user;
+
+    // owner (Bob)
+    E2ees__E2eeAddress owner_addr;
+    e2ees__e2ee_address__init(&owner_addr);
+    E2ees__PeerUser owner_user;
+    e2ees__peer_user__init(&owner_user);
+    owner_user.user_id = "bob";
+    owner_addr.domain = "test.com";
+    owner_addr.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    owner_addr.user = &owner_user;
+
+    // group address (Group 1)
+    E2ees__E2eeAddress group_addr;
+    e2ees__e2ee_address__init(&group_addr);
+    E2ees__PeerGroup group_peer; 
+    e2ees__peer_group__init(&group_peer);
+    group_peer.group_name = "Top Secret Avengers";
+    group_peer.group_id = "group_123";
+    group_addr.domain = "test.com";
+    group_addr.peer_case = E2EES__E2EE_ADDRESS__PEER_GROUP;
+    group_addr.group = &group_peer;
+
+    // group members
+    E2ees__GroupMember member1;
+    e2ees__group_member__init(&member1);
+    member1.user_id = "alice";
+    member1.domain = "test.com";
+    member1.role = E2EES__GROUP_ROLE__GROUP_ROLE_MEMBER;
+    
+    E2ees__GroupMember *members_array[1] = { &member1 };
+
+    // group info
+    E2ees__GroupInfo group_info;
+    e2ees__group_info__init(&group_info);
+    group_info.group_name = "Top Secret Avengers";
+    group_info.group_address = &group_addr;
+    group_info.n_group_member_list = 1;
+    group_info.group_member_list = members_array;
+
+    // group session
+    E2ees__GroupSession dummy_group_session;
+    e2ees__group_session__init(&dummy_group_session);
+    dummy_group_session.version = "1.0.0";
+    dummy_group_session.e2ees_pack_id = 999;
+    dummy_group_session.session_id = "group_session_mock_777";
+    dummy_group_session.sender = &sender_addr;
+    dummy_group_session.session_owner = &owner_addr;
+    dummy_group_session.group_info = &group_info;
+
+    uint8_t fake_key[32] = { 0xAA, 0xBB, 0xCC };
+    dummy_group_session.chain_key.data = fake_key;
+    dummy_group_session.chain_key.len = sizeof(fake_key);
+    dummy_group_session.group_seed.data = fake_key;
+    dummy_group_session.group_seed.len = sizeof(fake_key);
+
+    store_group_session(&dummy_group_session);
+
+    E2ees__GroupSession *loaded_session = NULL;
+    load_group_session_by_address(&sender_addr, &owner_addr, &group_addr, &loaded_session);
+
+    bool is_success = false;
+    if (loaded_session != NULL) {
+        is_success = is_equal_group_session(&dummy_group_session, loaded_session);
+    } else {
+        printf("test_load_group_session_by_address: failed (loaded_session is NULL)\n");
     }
-    free(group_addresses);
+
+    print_result("test_load_group_session_by_address", is_success);
+
+    if (loaded_session != NULL) {
+        e2ees__group_session__free_unpacked(loaded_session, NULL);
+        loaded_session = NULL;
+    }
 
     tear_down();
 }
 
-void test_store_session(uint32_t e2ees_pack_id)
-{
+void test_load_group_session_by_id() {
     tear_up();
 
-    // create session and two addresses
-    E2ees__Session *session = (E2ees__Session *)malloc(sizeof(E2ees__Session));
-    E2ees__E2eeAddress *from, *to;
-    mock_address(&from, "alice", "alice's domain", "alice's device");
-    mock_address(&to, "bob", "bob's domain", "bob's device");
-    initialise_session(session, e2ees_pack_id, from, to);
-    copy_address_from_address(&(session->our_address), from);
+    // sender (Alice)
+    E2ees__E2eeAddress sender_addr;
+    e2ees__e2ee_address__init(&sender_addr);
+    E2ees__PeerUser sender_user;
+    e2ees__peer_user__init(&sender_user);
+    sender_user.user_id = "alice";
+    sender_addr.domain = "test.com";
+    sender_addr.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    sender_addr.user = &sender_user;
 
-    // create mock public keys
-    session->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
-    session->pre_shared_input_list[0].len = 32;
-    session->pre_shared_input_list[0].data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(session->pre_shared_input_list[0].data, "abcdefghijklmnopqrstuvwxyz012345", 32);
+    // owner (Bob)
+    E2ees__E2eeAddress owner_addr;
+    e2ees__e2ee_address__init(&owner_addr);
+    E2ees__PeerUser owner_user;
+    e2ees__peer_user__init(&owner_user);
+    owner_user.user_id = "bob";
+    owner_addr.domain = "test.com";
+    owner_addr.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    owner_addr.user = &owner_user;
 
-    session->associated_data.len = 64;
-    session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
+    // group address (Group 1)
+    E2ees__E2eeAddress group_addr;
+    e2ees__e2ee_address__init(&group_addr);
+    E2ees__PeerGroup group_peer; 
+    e2ees__peer_group__init(&group_peer);
+    group_peer.group_name = "Top Secret Avengers";
+    group_peer.group_id = "group_123";
+    group_addr.domain = "test.com";
+    group_addr.peer_case = E2EES__E2EE_ADDRESS__PEER_GROUP;
+    group_addr.group = &group_peer;
 
-    session->session_id = generate_uuid_str();
+    // group members
+    E2ees__GroupMember member1;
+    e2ees__group_member__init(&member1);
+    member1.user_id = "alice";
+    member1.domain = "test.com";
+    member1.role = E2EES__GROUP_ROLE__GROUP_ROLE_MEMBER;
+    
+    E2ees__GroupMember *members_array[1] = { &member1 };
 
-    uint8_t secret[128] = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwx";
-    ProtobufCBinaryData their_ratchet_key;
-    their_ratchet_key.len = 32;
-    their_ratchet_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(their_ratchet_key.data, "11111111111111111111111111111111", 32);
-    E2ees__KeyPair *our_ratchet_key = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
-    e2ees__key_pair__init(our_ratchet_key);
-    our_ratchet_key->private_key.len = 32;
-    our_ratchet_key->private_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(our_ratchet_key->private_key.data, "abcdefghijklmnopqrstuvwxyz012345", 32);
-    our_ratchet_key->public_key.len = 32;
-    our_ratchet_key->public_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(our_ratchet_key->public_key.data, "012345abcdefghijklmnopqrstuvwxyz", 32);
+    // group info
+    E2ees__GroupInfo group_info;
+    e2ees__group_info__init(&group_info);
+    group_info.group_name = "Top Secret Avengers";
+    group_info.group_address = &group_addr;
+    group_info.n_group_member_list = 1;
+    group_info.group_member_list = members_array;
 
-    ProtobufCBinaryData their_encaps_ciphertext;
-    their_encaps_ciphertext.len = 32;
-    their_encaps_ciphertext.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(their_encaps_ciphertext.data, "11111111111111111111111111111111", 32);
+    // group session
+    E2ees__GroupSession dummy_group_session;
+    e2ees__group_session__init(&dummy_group_session);
+    dummy_group_session.version = "1.0.0";
+    dummy_group_session.e2ees_pack_id = 999;
+    dummy_group_session.session_id = "group_session_mock_777";
+    dummy_group_session.sender = &sender_addr;
+    dummy_group_session.session_owner = &owner_addr;
+    dummy_group_session.group_info = &group_info;
 
-    initialise_as_alice(&(session->ratchet), test_cipher_suite, secret, 128, our_ratchet_key, &their_ratchet_key, &their_encaps_ciphertext);
+    uint8_t fake_key[32] = { 0xAA, 0xBB, 0xCC };
+    dummy_group_session.chain_key.data = fake_key;
+    dummy_group_session.chain_key.len = sizeof(fake_key);
+    dummy_group_session.group_seed.data = fake_key;
+    dummy_group_session.group_seed.len = sizeof(fake_key);
 
-    // insert to the db
-    store_session(session);
+    store_group_session(&dummy_group_session);
 
-    session->ratchet->sender_chain->chain_key->index += 1;
-    store_session(session);
+    E2ees__GroupSession *loaded_session = NULL;
+    load_group_session_by_id(&sender_addr, &owner_addr, "group_session_mock_777", &loaded_session);
 
-    // load_outbound_session
-    E2ees__Session *session_copy;
-    load_outbound_session(from, to, &session_copy);
+    bool is_success = false;
+    if (loaded_session != NULL) {
+        is_success = is_equal_group_session(&dummy_group_session, loaded_session);
+    } else {
+        printf("test_load_group_session_by_id: failed (loaded_session is NULL)\n");
+    }
+    
+    print_result("test_load_group_session_by_id", is_success);
 
-    // assert session equals to session_copy
-    bool is_equal_index;
-    is_equal_index = (session->ratchet->sender_chain->chain_key->index == session_copy->ratchet->sender_chain->chain_key->index);
-    print_result("test_store_session", is_equal_index);
-
-    // free
-    e2ees__e2ee_address__free_unpacked(from, NULL);
-    e2ees__e2ee_address__free_unpacked(to, NULL);
-    e2ees__session__free_unpacked(session, NULL);
-    e2ees__session__free_unpacked(session_copy, NULL);
+    if (loaded_session != NULL) {
+        e2ees__group_session__free_unpacked(loaded_session, NULL);
+        loaded_session = NULL;
+    }
 
     tear_down();
 }
 
-void test_equal_ratchet_outbound(uint32_t e2ees_pack_id)
-{
+void test_load_group_addresses() {
     tear_up();
 
-    // create session and two addresses
-    E2ees__Session *session = (E2ees__Session *)malloc(sizeof(E2ees__Session));
-    E2ees__E2eeAddress *from, *to;
-    mock_address(&from, "alice", "alice's domain", "alice's device");
-    mock_address(&to, "bob", "bob's domain", "bob's device");
-    initialise_session(session, e2ees_pack_id, from, to);
-    copy_address_from_address(&(session->our_address), from);
+    // sender (Alice)
+    E2ees__E2eeAddress sender_addr;
+    e2ees__e2ee_address__init(&sender_addr);
+    E2ees__PeerUser sender_user;
+    e2ees__peer_user__init(&sender_user);
+    sender_user.user_id = "alice";
+    sender_addr.domain = "test.com";
+    sender_addr.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    sender_addr.user = &sender_user;
 
-    // create mock public keys
-    session->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
-    session->pre_shared_input_list[0].len = 32;
-    session->pre_shared_input_list[0].data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(session->pre_shared_input_list[0].data, "abcdefghijklmnopqrstuvwxyz012345", 32);
+    // owner (Bob)
+    E2ees__E2eeAddress owner_addr;
+    e2ees__e2ee_address__init(&owner_addr);
+    E2ees__PeerUser owner_user;
+    e2ees__peer_user__init(&owner_user);
+    owner_user.user_id = "bob";
+    owner_addr.domain = "test.com";
+    owner_addr.peer_case = E2EES__E2EE_ADDRESS__PEER_USER;
+    owner_addr.user = &owner_user;
 
-    session->associated_data.len = 64;
-    session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
+    // group address (Group 1)
+    E2ees__E2eeAddress group_addr;
+    e2ees__e2ee_address__init(&group_addr);
+    E2ees__PeerGroup group_peer; 
+    e2ees__peer_group__init(&group_peer);
+    group_peer.group_name = "Top Secret Avengers";
+    group_peer.group_id = "group_123";
+    group_addr.domain = "test.com";
+    group_addr.peer_case = E2EES__E2EE_ADDRESS__PEER_GROUP;
+    group_addr.group = &group_peer;
 
-    session->session_id = generate_uuid_str();
+    // group members
+    E2ees__GroupMember member1;
+    e2ees__group_member__init(&member1);
+    member1.user_id = "alice";
+    member1.domain = "test.com";
+    member1.role = E2EES__GROUP_ROLE__GROUP_ROLE_MEMBER;
+    
+    E2ees__GroupMember *members_array[1] = { &member1 };
 
-    uint8_t secret[128] = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwx";
-    ProtobufCBinaryData their_ratchet_key;
-    their_ratchet_key.len = 32;
-    their_ratchet_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(their_ratchet_key.data, "11111111111111111111111111111111", 32);
-    E2ees__KeyPair *our_ratchet_key = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
-    e2ees__key_pair__init(our_ratchet_key);
-    our_ratchet_key->private_key.len = 32;
-    our_ratchet_key->private_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(our_ratchet_key->private_key.data, "abcdefghijklmnopqrstuvwxyz012345", 32);
-    our_ratchet_key->public_key.len = 32;
-    our_ratchet_key->public_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(our_ratchet_key->public_key.data, "012345abcdefghijklmnopqrstuvwxyz", 32);
+    // group info
+    E2ees__GroupInfo group_info;
+    e2ees__group_info__init(&group_info);
+    group_info.group_name = "Top Secret Avengers";
+    group_info.group_address = &group_addr;
+    group_info.n_group_member_list = 1;
+    group_info.group_member_list = members_array;
 
-    ProtobufCBinaryData their_encaps_ciphertext;
-    their_encaps_ciphertext.len = 32;
-    their_encaps_ciphertext.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(their_encaps_ciphertext.data, "11111111111111111111111111111111", 32);
+    // group session
+    E2ees__GroupSession dummy_group_session;
+    e2ees__group_session__init(&dummy_group_session);
+    dummy_group_session.version = "1.0.0";
+    dummy_group_session.e2ees_pack_id = 999;
+    dummy_group_session.session_id = "group_session_mock_777";
+    dummy_group_session.sender = &sender_addr;
+    dummy_group_session.session_owner = &owner_addr;
+    dummy_group_session.group_info = &group_info;
 
-    initialise_as_alice(&(session->ratchet), test_cipher_suite, secret, 128, our_ratchet_key, &their_ratchet_key, &their_encaps_ciphertext);
+    uint8_t fake_key[32] = { 0xAA, 0xBB, 0xCC };
+    dummy_group_session.chain_key.data = fake_key;
+    dummy_group_session.chain_key.len = sizeof(fake_key);
+    dummy_group_session.group_seed.data = fake_key;
+    dummy_group_session.group_seed.len = sizeof(fake_key);
 
-    // insert to the db
-    store_session(session);
+    store_group_session(&dummy_group_session);
 
-    // load_outbound_session
-    E2ees__Session *session_copy;
-    load_outbound_session(from, to, &session_copy);
+    E2ees__E2eeAddress **loaded_addresses = NULL;
+    
+    size_t count = load_group_addresses(&sender_addr, &owner_addr, &loaded_addresses);
 
-    // assert session equals to session_copy
-    print_result("test_equal_ratchet_outbound", is_equal_ratchet(session->ratchet, session_copy->ratchet));
+    bool is_success = false;
+    if (count > 0 && loaded_addresses != NULL && loaded_addresses[0] != NULL) {
+        is_success = compare_address(&group_addr, loaded_addresses[0]);
+    } else {
+        printf("test_load_group_addresses: failed (count is 0 or array is NULL)\n");
+    }
+    
+    print_result("test_load_group_addresses", is_success);
 
-    // free
-    e2ees__e2ee_address__free_unpacked(from, NULL);
-    e2ees__e2ee_address__free_unpacked(to, NULL);
-    e2ees__session__free_unpacked(session, NULL);
-    e2ees__session__free_unpacked(session_copy, NULL);
-
-    tear_down();
-}
-
-void test_equal_ratchet_inbound(uint32_t e2ees_pack_id)
-{
-    tear_up();
-
-    // create session and two addresses
-    E2ees__Session *session = (E2ees__Session *)malloc(sizeof(E2ees__Session));
-    E2ees__E2eeAddress *from, *to;
-    mock_address(&from, "alice", "alice's domain", "alice's device");
-    mock_address(&to, "bob", "bob's domain", "bob's device");
-    initialise_session(session, e2ees_pack_id, from, to);
-    copy_address_from_address(&(session->our_address), to);
-
-    // create mock public keys
-    session->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
-    session->pre_shared_input_list[0].len = 32;
-    session->pre_shared_input_list[0].data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(session->pre_shared_input_list[0].data, "abcdefghijklmnopqrstuvwxyz012345", 32);
-
-    session->associated_data.len = 64;
-    session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
-
-    session->session_id = generate_uuid_str();
-
-    // mock ratchet key pairs
-    ProtobufCBinaryData their_ratchet_key;
-    their_ratchet_key.len = 32;
-    their_ratchet_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(their_ratchet_key.data, "11111111111111111111111111111111", 32);
-    uint8_t secret[128] = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwx";
-    E2ees__KeyPair *our_ratchet_key = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
-    e2ees__key_pair__init(our_ratchet_key);
-    our_ratchet_key->private_key.len = 32;
-    our_ratchet_key->private_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(our_ratchet_key->private_key.data, "abcdefghijklmnopqrstuvwxyz012345", 32);
-    our_ratchet_key->public_key.len = 32;
-    our_ratchet_key->public_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(our_ratchet_key->public_key.data, "012345abcdefghijklmnopqrstuvwxyz", 32);
-
-    initialise_as_bob(&session->ratchet, test_cipher_suite, secret, 128, our_ratchet_key, &their_ratchet_key);
-
-    // insert to the db
-    store_session(session);
-
-    // create mock receiver chain
-    E2ees__ReceiverChainNode *chain = (E2ees__ReceiverChainNode *)malloc(sizeof(E2ees__ReceiverChainNode));
-    e2ees__receiver_chain_node__init(chain);
-    chain->chain_key = (E2ees__ChainKey *)malloc(sizeof(E2ees__ChainKey));
-    e2ees__chain_key__init(chain->chain_key);
-    chain->chain_key->index = 0;
-    chain->chain_key->shared_key.len = 32;
-    chain->chain_key->shared_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(chain->chain_key->shared_key.data, "abcdefghijklmnopqrstuvwxyz012345", 32);
-    chain->their_ratchet_public_key.len = 32;
-    chain->their_ratchet_public_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(chain->their_ratchet_public_key.data, "012345abcdefghijklmnopqrstuvwxyz", 32);
-    chain->our_ratchet_private_key.len = 32;
-    chain->our_ratchet_private_key.data = (uint8_t *)malloc(sizeof(uint8_t) * 32);
-    memcpy(chain->our_ratchet_private_key.data, "abcdefghijkl012345mnopqrstuvwxyz", 32);
-    session->ratchet->receiver_chain = chain;
-
-    // store session again
-    store_session(session);
-
-    // load_session
-    E2ees__Session *session_copy;
-    load_session(session->session_id, to, &session_copy);
-
-    // assert session equals to session_copy
-    print_result("test_equal_ratchet_inbound", is_equal_ratchet(session->ratchet, session_copy->ratchet));
-
-    // free
-    e2ees__e2ee_address__free_unpacked(from, NULL);
-    e2ees__e2ee_address__free_unpacked(to, NULL);
-    e2ees__session__free_unpacked(session, NULL);
-    e2ees__session__free_unpacked(session_copy, NULL);
-
-    tear_down();
-}
-
-void test_session_timestamp(uint32_t e2ees_pack_id) {
-    tear_up();
-
-    // create sessions
-    E2ees__E2eeAddress *from_1, *to_1, *from_2, *to_2;
-    mock_address(&from_1, "alice", "alice's domain", "alice's device");
-    mock_address(&to_1, "bob", "bob's domain", "bob's device");
-    mock_address(&from_2, "claire", "claire's domain", "claire's device");
-    mock_address(&to_2, "david", "david's domain", "david's device");
-
-    E2ees__Session *session_1 = (E2ees__Session *)malloc(sizeof(E2ees__Session));
-    initialise_session(session_1, e2ees_pack_id, from_1, to_1);
-    session_1->session_id = generate_uuid_str();
-    session_1->associated_data.len = 64;
-    session_1->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session_1->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
-    store_session(session_1);
-
-    E2ees__Session *session_2 = (E2ees__Session *)malloc(sizeof(E2ees__Session));
-    initialise_session(session_2, e2ees_pack_id, from_2, to_2);
-    session_2->session_id = generate_uuid_str();
-    session_2->associated_data.len = 64;
-    session_2->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session_2->associated_data.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
-    store_session(session_2);
-
-    sleep(3);
-
-    // modify session_1
-    session_1->fingerprint.len = 64;
-    session_1->fingerprint.data = (uint8_t *)malloc(sizeof(uint8_t) * 64);
-    memcpy(session_1->fingerprint.data, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl", 64);
-    store_session(session_1);
-
-    // unload
-    unload_old_session(from_1, to_1, session_1->invite_t);
-    unload_old_session(from_2, to_2, session_2->invite_t);
-
-    // free
-    e2ees__e2ee_address__free_unpacked(from_1, NULL);
-    e2ees__e2ee_address__free_unpacked(to_1, NULL);
-    e2ees__session__free_unpacked(session_1, NULL);
-
-    e2ees__e2ee_address__free_unpacked(from_2, NULL);
-    e2ees__e2ee_address__free_unpacked(to_2, NULL);
-    e2ees__session__free_unpacked(session_2, NULL);
+    if (loaded_addresses != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            if (loaded_addresses[i] != NULL) {
+                e2ees__e2ee_address__free_unpacked(loaded_addresses[i], NULL); 
+            }
+        }
+        free_mem((void **)&loaded_addresses, sizeof(E2ees__E2eeAddress *) * count); 
+    }
 
     tear_down();
 }
 
 int main(){
-    uint32_t e2ees_pack_id = gen_e2ees_pack_id_pqc();
-    test_cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
-
-    test_load_outbound_session(e2ees_pack_id);
-    test_load_outbound_sessions(e2ees_pack_id);
-    test_load_session(e2ees_pack_id);
-    test_load_group_session_by_address(e2ees_pack_id);
-    test_load_group_session_by_id(e2ees_pack_id);
-    test_load_group_addresses(e2ees_pack_id);
-    test_store_session(e2ees_pack_id);
-    test_equal_ratchet_outbound(e2ees_pack_id);
-    test_equal_ratchet_inbound(e2ees_pack_id);
-    // test_session_timestamp(e2ees_pack_id);
+    test_store_and_load_outbound_session();
+    test_store_and_load_session();
+    test_store_and_load_outbound_sessions();
+    test_load_group_session_by_address();
+    test_load_group_session_by_id();
+    test_load_group_addresses();
 
     return 0;
 }

@@ -201,6 +201,9 @@ int consume_get_pre_key_bundle_response(
             invite_response_list_len = invite_response_list_len + 1;
         }
         invite_response_list = (E2ees__InviteResponse **)malloc(sizeof(E2ees__InviteResponse *) * invite_response_list_len);
+        if (invite_response_list != NULL) {
+            memset(invite_response_list, 0, sizeof(E2ees__InviteResponse *) * invite_response_list_len);
+        }
 
         int insert_pos = 0;
         for (i = 0; i < n_pre_key_bundles; i++) {
@@ -235,7 +238,7 @@ int consume_get_pre_key_bundle_response(
             insert_pos++;
         }
         *invite_response_list_out = invite_response_list;
-        *invite_response_num = n_pre_key_bundles;
+        *invite_response_num = invite_response_list_len;
     }
 
     // done
@@ -692,7 +695,7 @@ int produce_invite_request(
         copy_protobuf_from_protobuf(&(msg->pre_shared_input_list[i]), &(outbound_session->pre_shared_input_list[i]));
     }
 
-    copy_protobuf_from_protobuf(&(msg->alice_base_key), &(outbound_session->alice_base_key));
+    copy_protobuf_from_protobuf(&(msg->alice_base_key), &(outbound_session->alice_base_key->public_key));
 
     msg->bob_signed_pre_key_id = outbound_session->bob_signed_pre_key_id;
     msg->bob_one_time_pre_key_id = outbound_session->bob_one_time_pre_key_id;

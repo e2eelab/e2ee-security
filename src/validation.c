@@ -21,7 +21,6 @@
 #include <string.h>
 
 #include "e2ees/account_cache.h"
-#include "e2ees/e2ees_client_internal.h"
 #include "e2ees/mem_util.h"
 
 ///-----------------accuracy-----------------///
@@ -2041,11 +2040,11 @@ bool is_valid_publish_spk_inputs(const publish_spk_params *params) {
         return false;
     }
     if (!is_valid_address(params->user_address)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "is_valid_publish_spk_inputs(): invalid e2ees_pack_id");
+        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_publish_spk_inputs(): invalid user_address");
         return false;
     }
     if (!is_valid_signed_pre_key(params->new_spk)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "is_valid_publish_spk_inputs(): invalid new_spk");
+        e2ees_notify_log(NULL, BAD_SIGNED_PRE_KEY, "is_valid_publish_spk_inputs(): invalid new_spk");
         return false;
     }
 
@@ -2058,7 +2057,7 @@ bool is_valid_supply_opks_inputs(const supply_opks_params *params) {
         return false;
     }
     if (!is_valid_registered_account(params->account)) {
-        e2ees_notify_log(NULL, BAD_ONE_TIME_PRE_KEY, "is_valid_supply_opks_inputs(): invalid account");
+        e2ees_notify_log(NULL, BAD_ACCOUNT, "is_valid_supply_opks_inputs(): invalid account");
         return false;
     }
 

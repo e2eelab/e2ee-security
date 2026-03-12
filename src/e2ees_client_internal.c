@@ -447,7 +447,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = produce_send_one2one_msg_request(&send_one2one_msg_request, &outbound_session, notif_level, payload_out);
+        ret = produce_send_one2one_msg_request(&send_one2one_msg_request, outbound_session, notif_level, payload_out);
     }
 
     E2ees__SendOne2oneMsgResponse *response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.send_one2one_msg, send_one2one_msg_request, outbound_session->our_address, auth);

@@ -426,7 +426,7 @@ static void test_publish_spk() {
 
     // update the signed pre-key
     E2ees__SignedPreKey *signed_pre_key = NULL;
-    generate_signed_pre_key(&signed_pre_key, e2ees_pack_id, 1, account->signed_pre_key->key_pair->private_key.data);
+    generate_signed_pre_key(&signed_pre_key, e2ees_pack_id, 1, account->identity_key->sign_key_pair->private_key.data);
 
     e2ees__signed_pre_key__free_unpacked(account->signed_pre_key, NULL);
     account->signed_pre_key = signed_pre_key;

@@ -167,8 +167,6 @@ E2ees__InviteResponse *invite(
         ret = E2EES_RESULT_FAIL;
     }
 
-    // e2ees_notify_log(from, DEBUG_LOG, "invite(): from [%s:%s] to_user_id [%s]", from->user->user_id, from->user->device_id, to_user_id);
-
     // we should always call get_pre_key_bundle_internal() since there may be new devices for to_user_id@to_domain
     // not just check outbound sessions in db currently.
 

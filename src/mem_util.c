@@ -878,37 +878,3 @@ void secure_unset(void *buffer, size_t len) {
     MemoryBarrier();
 #endif
 }
-
-void cleanup_base_ctx(e2ee_base_ctx *base) {
-    if (!base) return;
-    if (base->auth) {
-        free(base->auth);
-        base->auth = NULL;
-    }
-}
-
-void cleanup_pre_key_bundle(pre_key_bundle *bundle) {
-    if (!bundle) return;
-
-    if (bundle->ik) {
-        e2ees__identity_key_public__free_unpacked(bundle->ik, NULL);
-        bundle->ik = NULL;
-    }
-    if (bundle->spk) {
-        e2ees__signed_pre_key_public__free_unpacked(bundle->spk, NULL);
-        bundle->spk = NULL;
-    }
-
-    if (bundle->opks) {
-        size_t i;
-        for (i = 0; i < bundle->opks_num; i++) {
-            if (bundle->opks[i]) {
-                e2ees__one_time_pre_key_public__free_unpacked(bundle->opks[i], NULL);
-                bundle->opks[i] = NULL;
-            }
-        }
-        free_mem((void **)&(bundle->opks), sizeof(E2ees__OneTimePreKeyPublic *) * bundle->opks_num);
-        bundle->opks = NULL;
-        bundle->opks_num = 0;
-    }
-}

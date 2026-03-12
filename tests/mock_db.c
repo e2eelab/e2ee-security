@@ -696,7 +696,10 @@ void mock_db_begin() {
 }
 
 void mock_db_end() {
-    sqlite3_close(db);
+    if (db != NULL) {
+        sqlite3_close(db);
+        db = NULL;
+    }
     sqlite3_shutdown();
 }
 // NOTE: NEW

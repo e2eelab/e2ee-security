@@ -101,6 +101,7 @@ extern "C" {
 #endif
 
 #include "e2ees/cipher.h"
+#include "e2ees/e2ees_client_internal.h"
 #include "e2ees/session.h"
 #include "e2ees/log_code.h"
 

@@ -104,6 +104,9 @@ void start_mock_server_sending() {
 
 void stop_mock_server_sending() {
     running = false;
-    pthread_join(thread, 0);
+    if (thread != NULL) {
+        pthread_join(thread, 0);
+        thread = NULL;
+    }
     pthread_mutex_destroy(&lock);
 }

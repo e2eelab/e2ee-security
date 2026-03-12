@@ -723,12 +723,14 @@ E2ees__GetPreKeyBundleResponse *mock_get_pre_key_bundle(E2ees__E2eeAddress *from
         for (k = 0; k < cur_data->n_one_time_pre_key_list; k++) {
             if (cur_data->one_time_pre_key_list[k]) {
                 copy_opk_public_from_opk_public(&(response->pre_key_bundles[j]->one_time_pre_key_public), cur_data->one_time_pre_key_list[k]);
+
+                // release the one-time pre-key
+                e2ees__one_time_pre_key_public__free_unpacked(cur_data->one_time_pre_key_list[k], NULL);
+                cur_data->one_time_pre_key_list[k] = NULL;
+
                 break;
             }
         }
-        // release the one-time pre-key
-        e2ees__one_time_pre_key_public__free_unpacked(cur_data->one_time_pre_key_list[k], NULL);
-        cur_data->one_time_pre_key_list[k] = NULL;
 
         // generate server signed signature
         pre_key_bundle_hash(
