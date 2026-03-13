@@ -134,25 +134,6 @@ const char* logcode_string(LogCode log_code) {
     }
 }
 
-const char* account_action_to_string(AccountAction action) {
-    switch (action) {
-        case ACCOUNT_ACTION_REGISTER:    return "Register User";
-        case ACCOUNT_ACTION_PUBLISH_SPK: return "Publish Spk";
-        case ACCOUNT_ACTION_SUPPLY_OPKS: return "Supply Opks";
-        default:                         return "UnknownAction";
-    }
-}
-
-const char* session_action_to_string(SessionAction action) {
-    switch (action) {
-        case SESSION_ACTION_GET_BUNDLE: return "Get Pre-key Bundle";
-        case SESSION_ACTION_INVITE:     return "Invite";
-        case SESSION_ACTION_ACCEPT:     return "Accept";
-        case SESSION_ACTION_SEND_MSG:   return "Send One2one Msg";
-        default:                        return "UnknownAction";
-    }
-}
-
 void get_stack_trace(char* buffer, size_t buffer_len) {
 #ifdef ENABLE_TRACE
     stack_frame_t *frame = current_stack_top;
