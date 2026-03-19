@@ -888,27 +888,33 @@ int decrypt_ratchet(
                 if (payload->sending_message_sequence - ratchet->received_message_sequence > payload->sequence + 1) {
                     // we skipped some messages in the previous ratchet
                     size_t skipped_num = payload->sending_message_sequence - ratchet->received_message_sequence - (payload->sequence + 1);
-                    if (ratchet->skipped_msg_key_list == NULL){
-                        ratchet->skipped_msg_key_list = (E2ees__SkippedMsgKeyNode **)malloc(sizeof(E2ees__SkippedMsgKeyNode *) * skipped_num);
-                    } else{
-                        E2ees__SkippedMsgKeyNode **temp_skipped_message_keys;
-                        temp_skipped_message_keys = (E2ees__SkippedMsgKeyNode **)malloc(sizeof(E2ees__SkippedMsgKeyNode *) * (ratchet->n_skipped_msg_key_list + skipped_num));
-                        copy_skipped_msg_key_node(temp_skipped_message_keys, ratchet->skipped_msg_key_list, ratchet->n_skipped_msg_key_list);
-                        free_skipped_message_key(&(ratchet->skipped_msg_key_list), ratchet->n_skipped_msg_key_list);
-                        ratchet->skipped_msg_key_list = temp_skipped_message_keys;
-                    }
-                    size_t cur_seq;
-                    for (cur_seq = 0; cur_seq < skipped_num; cur_seq++){
-                        // insert data
-                        E2ees__SkippedMsgKeyNode *key = (E2ees__SkippedMsgKeyNode *)malloc(sizeof(E2ees__SkippedMsgKeyNode));
-                        e2ees__skipped_msg_key_node__init(key);
-                        key->msg_key = NULL;
-                        create_msg_keys(cipher_suite, ratchet->receiver_chain->chain_key, &(key->msg_key));
-                        copy_protobuf_from_protobuf(&(key->ratchet_key_public), &(ratchet->receiver_chain->their_ratchet_public_key));
+                    // check the limit
+                    if (ratchet->n_skipped_msg_key_list + skipped_num > MAX_SKIPPED_MESSAGE_KEY_NODES) {
+                        e2ees_notify_log(NULL, DEBUG_LOG, "decrypt_ratchet(): Too many skipped keys in previous chain! Bomb defused.");
+                        ret = E2EES_RESULT_FAIL;
+                    } else {
+                        if (ratchet->skipped_msg_key_list == NULL){
+                            ratchet->skipped_msg_key_list = (E2ees__SkippedMsgKeyNode **)malloc(sizeof(E2ees__SkippedMsgKeyNode *) * skipped_num);
+                        } else{
+                            E2ees__SkippedMsgKeyNode **temp_skipped_message_keys;
+                            temp_skipped_message_keys = (E2ees__SkippedMsgKeyNode **)malloc(sizeof(E2ees__SkippedMsgKeyNode *) * (ratchet->n_skipped_msg_key_list + skipped_num));
+                            copy_skipped_msg_key_node(temp_skipped_message_keys, ratchet->skipped_msg_key_list, ratchet->n_skipped_msg_key_list);
+                            free_skipped_message_key(&(ratchet->skipped_msg_key_list), ratchet->n_skipped_msg_key_list);
+                            ratchet->skipped_msg_key_list = temp_skipped_message_keys;
+                        }
+                        size_t cur_seq;
+                        for (cur_seq = 0; cur_seq < skipped_num; cur_seq++){
+                            // insert data
+                            E2ees__SkippedMsgKeyNode *key = (E2ees__SkippedMsgKeyNode *)malloc(sizeof(E2ees__SkippedMsgKeyNode));
+                            e2ees__skipped_msg_key_node__init(key);
+                            key->msg_key = NULL;
+                            create_msg_keys(cipher_suite, ratchet->receiver_chain->chain_key, &(key->msg_key));
+                            copy_protobuf_from_protobuf(&(key->ratchet_key_public), &(ratchet->receiver_chain->their_ratchet_public_key));
 
-                        ratchet->skipped_msg_key_list[ratchet->n_skipped_msg_key_list] = key;
-                        (ratchet->n_skipped_msg_key_list)++;
-                        advance_chain_key(cipher_suite, ratchet->receiver_chain->chain_key);
+                            ratchet->skipped_msg_key_list[ratchet->n_skipped_msg_key_list] = key;
+                            (ratchet->n_skipped_msg_key_list)++;
+                            advance_chain_key(cipher_suite, ratchet->receiver_chain->chain_key);
+                        }
                     }
                 }
 
@@ -984,26 +990,32 @@ int decrypt_ratchet(
                 * We will generate the corresponding message keys and store them
                 * together with their ratchet key in the skipped message key list. */
                 size_t skipped_num = payload->sequence - corresponding_receiver_chain->chain_key->index;
-                if (ratchet->skipped_msg_key_list == NULL){
-                    ratchet->skipped_msg_key_list = (E2ees__SkippedMsgKeyNode **)malloc(sizeof(E2ees__SkippedMsgKeyNode *) * skipped_num);
-                } else{
-                    E2ees__SkippedMsgKeyNode **temp_skipped_message_keys;
-                    temp_skipped_message_keys = (E2ees__SkippedMsgKeyNode **)malloc(sizeof(E2ees__SkippedMsgKeyNode *) * (ratchet->n_skipped_msg_key_list + skipped_num));
-                    copy_skipped_msg_key_node(temp_skipped_message_keys, ratchet->skipped_msg_key_list, ratchet->n_skipped_msg_key_list);
-                    free_skipped_message_key(&(ratchet->skipped_msg_key_list), ratchet->n_skipped_msg_key_list);
-                    ratchet->skipped_msg_key_list = temp_skipped_message_keys;
-                }
-                while (corresponding_receiver_chain->chain_key->index < payload->sequence){
-                    // insert data
-                    E2ees__SkippedMsgKeyNode *key = (E2ees__SkippedMsgKeyNode *)malloc(sizeof(E2ees__SkippedMsgKeyNode));
-                    e2ees__skipped_msg_key_node__init(key);
-                    key->msg_key = NULL;
-                    create_msg_keys(cipher_suite, corresponding_receiver_chain->chain_key, &(key->msg_key));
-                    copy_protobuf_from_protobuf(&(key->ratchet_key_public), &(corresponding_receiver_chain->their_ratchet_public_key));
+                // check the limit
+                if (ratchet->n_skipped_msg_key_list + skipped_num > MAX_SKIPPED_MESSAGE_KEY_NODES) {
+                    e2ees_notify_log(NULL, DEBUG_LOG, "decrypt_ratchet(): Too many skipped keys in current chain! Bomb defused.");
+                    ret = E2EES_RESULT_FAIL;
+                } else {
+                    if (ratchet->skipped_msg_key_list == NULL){
+                        ratchet->skipped_msg_key_list = (E2ees__SkippedMsgKeyNode **)malloc(sizeof(E2ees__SkippedMsgKeyNode *) * skipped_num);
+                    } else{
+                        E2ees__SkippedMsgKeyNode **temp_skipped_message_keys;
+                        temp_skipped_message_keys = (E2ees__SkippedMsgKeyNode **)malloc(sizeof(E2ees__SkippedMsgKeyNode *) * (ratchet->n_skipped_msg_key_list + skipped_num));
+                        copy_skipped_msg_key_node(temp_skipped_message_keys, ratchet->skipped_msg_key_list, ratchet->n_skipped_msg_key_list);
+                        free_skipped_message_key(&(ratchet->skipped_msg_key_list), ratchet->n_skipped_msg_key_list);
+                        ratchet->skipped_msg_key_list = temp_skipped_message_keys;
+                    }
+                    while (corresponding_receiver_chain->chain_key->index < payload->sequence){
+                        // insert data
+                        E2ees__SkippedMsgKeyNode *key = (E2ees__SkippedMsgKeyNode *)malloc(sizeof(E2ees__SkippedMsgKeyNode));
+                        e2ees__skipped_msg_key_node__init(key);
+                        key->msg_key = NULL;
+                        create_msg_keys(cipher_suite, corresponding_receiver_chain->chain_key, &(key->msg_key));
+                        copy_protobuf_from_protobuf(&(key->ratchet_key_public), &(corresponding_receiver_chain->their_ratchet_public_key));
 
-                    ratchet->skipped_msg_key_list[ratchet->n_skipped_msg_key_list] = key;
-                    (ratchet->n_skipped_msg_key_list)++;
-                    advance_chain_key(cipher_suite, corresponding_receiver_chain->chain_key);
+                        ratchet->skipped_msg_key_list[ratchet->n_skipped_msg_key_list] = key;
+                        (ratchet->n_skipped_msg_key_list)++;
+                        advance_chain_key(cipher_suite, corresponding_receiver_chain->chain_key);
+                    }
                 }
 
                 ratchet->received_message_sequence = payload->sending_message_sequence;

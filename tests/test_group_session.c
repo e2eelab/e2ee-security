@@ -508,6 +508,10 @@ static void test_encryption(
         plaintext_data, plaintext_data_len
     );
 
+    if (ret != E2EES_RESULT_SUCC) {
+        printf("\n❌ test_encryption FAILED for user: %s\n", sender_address->user->user_id);
+    }
+
     assert(ret == E2EES_RESULT_SUCC);
     
     // release
