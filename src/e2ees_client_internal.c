@@ -243,7 +243,7 @@ int get_pre_key_bundle_internal(
         }
     } else {
         if (get_pre_key_bundle_response != NULL) {
-            if (get_pre_key_bundle_response->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_NO_CONTENT) {
+            if (get_pre_key_bundle_response->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
                 e2ees_notify_log(from, DEBUG_LOG, "get_pre_key_bundle_internal() get_pre_key_bundle_response got error, pending request will be stored.");
                 // pack request to get_pre_key_bundle_request_data which will be freed inside store_pending_request_internal
                 size_t get_pre_key_bundle_request_data_len = e2ees__get_pre_key_bundle_request__get_packed_size(get_pre_key_bundle_request);
@@ -703,7 +703,7 @@ static void resend_pending_request(E2ees__Account *account) {
                 } else {
                     // if the get_pre_key_bundle_response code is no content, we will unload the pending request data
                     if (get_pre_key_bundle_response != NULL) {
-                        if (get_pre_key_bundle_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NO_CONTENT) {
+                        if (get_pre_key_bundle_response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND) {
                             e2ees_notify_log(
                                 user_address,
                                 DEBUG_LOG,
