@@ -106,6 +106,16 @@ E2ees__SendOne2oneMsgResponse *mock_send_one2one_msg(E2ees__E2eeAddress *from, c
 E2ees__CreateGroupResponse *mock_create_group(E2ees__E2eeAddress *from, const char *auth, E2ees__CreateGroupRequest *request);
 
 /**
+ * @brief Renew a group
+ * 
+ * @param from 
+ * @param auth 
+ * @param request 
+ * @return E2ees__RenewGroupResponse* 
+ */
+E2ees__RenewGroupResponse *mock_renew_group(E2ees__E2eeAddress *from, const char *auth, E2ees__RenewGroupRequest *request);
+
+/**
  * @brief 
  * 
  * @param from 

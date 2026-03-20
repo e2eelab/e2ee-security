@@ -534,6 +534,8 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
         ret = E2EES_RESULT_FAIL;
     }
 
+    log_proto(NULL, (const ProtobufCMessage *)inbound_session);
+
     // release
     if (inbound_session != NULL) {
         e2ees__session__free_unpacked(inbound_session, NULL);

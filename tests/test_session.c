@@ -631,6 +631,49 @@ static void test_continual_messages() {
     print_test_case_final();
 }
 
+static void test_interaction_continual() {
+    // print test case
+    //print_test_case("v1.0iss02", "test_interaction");
+
+    // test start
+    tear_up();
+    test_begin();
+
+    mock_alice_account("alice");
+    mock_bob_account("bob");
+
+    E2ees__E2eeAddress *alice_address = account_data[0]->address;
+    E2ees__E2eeAddress *bob_address = account_data[1]->address;
+    char *alice_user_id = alice_address->user->user_id;
+    char *alice_domain = alice_address->domain;
+    char *bob_user_id = bob_address->user->user_id;
+    char *bob_domain = bob_address->domain;
+
+    // Alice invites Bob to create a session
+    E2ees__InviteResponse *response = invite(alice_address, bob_user_id, bob_domain);
+
+    sleep(1);
+    int i;
+    for (i = 0; i < 50; i++) {
+        // Alice sends an encrypted message to Bob, and Bob decrypts the message
+        test_encryption(alice_address, bob_user_id, bob_domain, test_plaintext, test_plaintext_len);
+
+        // Bob sends an encrypted message to Alice, and Alice decrypts the message
+        test_encryption(bob_address, alice_user_id, alice_domain, test_plaintext, test_plaintext_len);
+
+        usleep(10000);
+    }
+
+    printf("Waiting for background threads to process all messages...\n");
+    sleep(3);
+
+    // test stop
+    e2ees__invite_response__free_unpacked(response, NULL);
+    test_end();
+    tear_down();
+    //print_test_case_final();
+}
+
 static void test_one_to_many() {
     // print test case
     print_test_case("v1.0iss04", "test_one_to_many");
@@ -914,6 +957,7 @@ int main() {
     test_session_no_opk();
     test_invite_twice();
     test_invite_interaction();
+    // test_interaction_continual();
 
     return 0;
 }

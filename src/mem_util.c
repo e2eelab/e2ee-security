@@ -559,6 +559,28 @@ void copy_create_group_msg(E2ees__CreateGroupMsg **dest, E2ees__CreateGroupMsg *
     }
 }
 
+void copy_renew_group_msg(E2ees__RenewGroupMsg **dest, E2ees__RenewGroupMsg *src) {
+    *dest = (E2ees__RenewGroupMsg *)malloc(sizeof(E2ees__RenewGroupMsg));
+    e2ees__renew_group_msg__init(*dest);
+    if (src != NULL) {
+        (*dest)->e2ees_pack_id = src->e2ees_pack_id;
+        
+        if (src->sender_address != NULL) {
+            copy_address_from_address(&((*dest)->sender_address), src->sender_address);
+        }
+            
+        if (src->group_info != NULL) {
+            copy_group_info(&((*dest)->group_info), src->group_info);
+        }
+            
+        (*dest)->n_member_info_list = src->n_member_info_list;
+        
+        if (src->member_info_list != NULL) {
+            copy_group_member_ids(&((*dest)->member_info_list), src->member_info_list, src->n_member_info_list);
+        }
+    }
+}
+
 void copy_add_group_members_msg(E2ees__AddGroupMembersMsg **dest, E2ees__AddGroupMembersMsg *src) {
     *dest = (E2ees__AddGroupMembersMsg *)malloc(sizeof(E2ees__AddGroupMembersMsg));
     e2ees__add_group_members_msg__init(*dest);

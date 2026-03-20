@@ -250,6 +250,160 @@ bool consume_create_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__Creat
     return true;
 }
 
+int produce_renew_group_request(
+    E2ees__RenewGroupRequest **request_out,
+    E2ees__GroupSession *outbound_group_session
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    E2ees__RenewGroupRequest *request = NULL;
+    E2ees__RenewGroupMsg *msg = NULL;
+
+    request = (E2ees__RenewGroupRequest *)malloc(sizeof(E2ees__RenewGroupRequest));
+    e2ees__renew_group_request__init(request);
+
+    msg = (E2ees__RenewGroupMsg *)malloc(sizeof(E2ees__RenewGroupMsg));
+    e2ees__renew_group_msg__init(msg);
+
+    msg->e2ees_pack_id = outbound_group_session->e2ees_pack_id;
+    copy_address_from_address(&(msg->sender_address), outbound_group_session->session_owner);
+
+    msg->group_info = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
+    E2ees__GroupInfo *group_info = msg->group_info;
+    e2ees__group_info__init(group_info);
+    
+    // 複製舊群組的資訊 (名稱、群組地址、成員名單)
+    group_info->group_name = strdup(outbound_group_session->group_info->group_name);
+    copy_address_from_address(&(group_info->group_address), outbound_group_session->group_info->group_address);
+    group_info->n_group_member_list = outbound_group_session->group_info->n_group_member_list;
+    copy_group_members(
+        &(group_info->group_member_list), 
+        outbound_group_session->group_info->group_member_list, 
+        outbound_group_session->group_info->n_group_member_list
+    );
+
+    // 請求階段我們不需要給 member_info_list，讓 Server 回傳給我們即可
+    msg->n_member_info_list = 0;
+    msg->member_info_list = NULL;
+
+    request->msg = msg;
+
+    if (ret == E2EES_RESULT_SUCC) {
+        *request_out = request;
+    }
+
+    return ret;
+}
+
+int consume_renew_group_response(
+    E2ees__GroupSession *outbound_group_session,
+    E2ees__RenewGroupResponse *response
+) {
+    int ret = E2EES_RESULT_SUCC;
+
+    if (!is_valid_group_session(outbound_group_session)) {
+        return E2EES_RESULT_FAIL;
+    }
+    
+    if (response == NULL || response->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
+        e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG, "consume_renew_group_response() failed or not OK");
+        return E2EES_RESULT_FAIL;
+    }
+
+    uint32_t e2ees_pack_id = outbound_group_session->e2ees_pack_id;
+    E2ees__E2eeAddress *sender_address = outbound_group_session->session_owner;
+    char *group_name = outbound_group_session->group_info->group_name;
+    E2ees__E2eeAddress *group_address = response->group_address;
+    E2ees__GroupMember **group_member_list = outbound_group_session->group_info->group_member_list;
+    size_t group_members_num = outbound_group_session->group_info->n_group_member_list;
+    char *old_session_id = outbound_group_session->session_id;
+
+    if (ret == E2EES_RESULT_SUCC) {
+        // 🌟 關鍵 1：卸載舊的 Outbound Session
+        get_e2ees_plugin()->db_handler.unload_group_session_by_id(sender_address, old_session_id);
+
+        // 🌟 關鍵 2：使用 Server 給的新 member_info_list 與 old_session_id 重建
+        ret = new_outbound_group_session_by_sender(
+            response->n_member_info_list, response->member_info_list,
+            e2ees_pack_id, sender_address, group_name, group_address, 
+            group_member_list, group_members_num, old_session_id
+        );
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        // notify (可以復用 group_created，或者未來新增 group_renewed)
+        e2ees_notify_log(sender_address, DEBUG_LOG, "Group renewed successfully by sender");
+    } else {
+        e2ees_notify_log(sender_address, DEBUG_LOG, "Group renewal failed");
+    }
+
+    return ret;
+}
+
+bool consume_renew_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__RenewGroupMsg *msg) {
+    int ret = E2EES_RESULT_SUCC;
+
+    uint32_t e2ees_pack_id = msg->e2ees_pack_id;
+    E2ees__GroupInfo *group_info = msg->group_info;
+    char *group_name = group_info->group_name;
+    E2ees__E2eeAddress *sender_address = msg->sender_address;
+    E2ees__E2eeAddress *group_address = group_info->group_address;
+    size_t group_members_num = group_info->n_group_member_list;
+    E2ees__GroupMember **group_member_list = group_info->group_member_list;
+
+    E2ees__GroupSession *old_outbound_group_session = NULL;
+    E2ees__GroupSession *new_inbound_group_session = NULL;
+    size_t i;
+
+    // 🌟 1. 清理本地端與該群組相關的舊 Session
+    get_e2ees_plugin()->db_handler.unload_group_session_by_address(receiver_address, group_address);
+
+    // 🌟 2. 根據新的 member_info_list 建立全新的 Inbound Sessions
+    if (ret == E2EES_RESULT_SUCC) {
+        for (i = 0; i < msg->n_member_info_list; i++) {
+            E2ees__GroupMemberInfo *cur_group_member_info = (msg->member_info_list)[i];
+            if (!compare_address(cur_group_member_info->member_address, receiver_address)) {
+                ret = new_inbound_group_session_by_member_id(e2ees_pack_id, receiver_address, cur_group_member_info, group_info);
+                if (ret == E2EES_RESULT_FAIL) {
+                    e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_renew_group_msg() new_inbound failed");
+                }
+            }
+        }
+    }
+
+    // 🌟 3. 取得發送者剛剛建好的新 Inbound Session，從裡面萃取 group_seed 來建立自己的 Outbound Session
+    if (ret == E2EES_RESULT_SUCC) {
+        get_e2ees_plugin()->db_handler.load_group_session_by_address(sender_address, receiver_address, group_address, &new_inbound_group_session);
+        
+        if (new_inbound_group_session != NULL) {
+            ret = new_outbound_group_session_by_receiver(
+                &(new_inbound_group_session->group_seed),
+                e2ees_pack_id,
+                receiver_address,
+                group_name,
+                group_address,
+                new_inbound_group_session->session_id,
+                group_member_list,
+                group_members_num
+            );
+        } else {
+            ret = E2EES_RESULT_FAIL;
+        }
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+        e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_renew_group_msg() processed successfully");
+    }
+
+    // release
+    if (new_inbound_group_session != NULL) {
+        e2ees__group_session__free_unpacked(new_inbound_group_session, NULL);
+        new_inbound_group_session = NULL;
+    }
+
+    return true;
+}
+
 bool consume_get_group_response(E2ees__GetGroupResponse *response) {
     if (response != NULL && response->code == E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
         char *group_name = response->group_name;
@@ -1104,6 +1258,7 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
     E2ees__MsgKey *msg_key = NULL;
     uint8_t *plaintext_data = NULL;
     size_t plaintext_data_len = 0;
+    E2ees__RenewGroupResponse *response = NULL;
 
     if (is_valid_address(receiver_address)) {
         if (is_valid_e2ee_msg(e2ee_msg)) {
@@ -1171,9 +1326,11 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
                 get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
             } else {
                 e2ees_notify_log(inbound_group_session->session_owner, BAD_MESSAGE_DECRYPTION, "consume_group_msg(): decryption failed");
+                // renew_group_internal(&response, inbound_group_session->session_owner, inbound_group_session->group_info->group_address);
             }
         } else {
             e2ees_notify_log(inbound_group_session->session_owner, BAD_SIGNATURE, "consume_group_msg(): verification failed");
+            // renew_group_internal(&response, inbound_group_session->session_owner, inbound_group_session->group_info->group_address);
         }
     }
 

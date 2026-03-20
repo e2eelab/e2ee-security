@@ -229,6 +229,19 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
 );
 
 /**
+ * @brief Renew a group.
+ * @param response_out
+ * @param sender_address
+ * @param group_address
+ * @return 0 if success
+ */
+int renew_group_internal(
+    E2ees__RenewGroupResponse **response_out,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address
+);
+
+/**
  * @brief Send add_group_member_device request to server.
  * @param response_out
  * @param sender_address

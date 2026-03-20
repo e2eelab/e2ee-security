@@ -140,6 +140,7 @@ struct e2ees_plugin_t mock_plugin = {
         mock_supply_opks,
         mock_send_one2one_msg,
         mock_create_group,
+        mock_renew_group,
         mock_add_group_members,
         mock_add_group_member_device,
         mock_remove_group_members,

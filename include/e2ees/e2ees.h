@@ -81,6 +81,9 @@
 #include "e2ees/RemoveGroupMembersRequest.pb-c.h"
 #include "e2ees/RemoveGroupMembersResponse.pb-c.h"
 #include "e2ees/RemoveUserDeviceMsg.pb-c.h"
+#include "e2ees/RenewGroupMsg.pb-c.h"
+#include "e2ees/RenewGroupRequest.pb-c.h"
+#include "e2ees/RenewGroupResponse.pb-c.h"
 #include "e2ees/ResponseCode.pb-c.h"
 #include "e2ees/SendGroupMsgRequest.pb-c.h"
 #include "e2ees/SendGroupMsgResponse.pb-c.h"
@@ -642,6 +645,18 @@ typedef struct e2ees_proto_handler_t {
         E2ees__E2eeAddress *from,
         const char *auth,
         E2ees__CreateGroupRequest *request
+    );
+    /**
+     * @brief Renew group
+     * @param from
+     * @param auth
+     * @param request
+     * @return response
+     */
+    E2ees__RenewGroupResponse *(*renew_group)(
+        E2ees__E2eeAddress *from,
+        const char *auth,
+        E2ees__RenewGroupRequest *request
     );
     /**
      * @brief Add group members

@@ -73,6 +73,39 @@ bool consume_create_group_msg(
 );
 
 /**
+ * @brief Create a RenewGroupRequest message to be sent to server.
+ * @param request_out
+ * @param outbound_group_session
+ * @return 0 if success
+ */
+int produce_renew_group_request(
+    E2ees__RenewGroupRequest **request_out,
+    E2ees__GroupSession *outbound_group_session
+);
+
+/**
+ * @brief Process an incoming RenewGroupResponse message.
+ * @param outbound_group_session
+ * @param response
+ * @return 0 if success
+ */
+int consume_renew_group_response(
+    E2ees__GroupSession *outbound_group_session,
+    E2ees__RenewGroupResponse *response
+);
+
+/**
+ * @brief Create a RenewGroupMsg message to be sent to server.
+ * @param receiver_address
+ * @param msg
+ * @return true for success
+ */
+bool consume_renew_group_msg(
+    E2ees__E2eeAddress *receiver_address,
+    E2ees__RenewGroupMsg *msg
+);
+
+/**
  * @brief Process an incoming GetGroupResponse message.
  * @param response
  *

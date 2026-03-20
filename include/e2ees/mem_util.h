@@ -400,6 +400,14 @@ void copy_group_info(E2ees__GroupInfo **dest, E2ees__GroupInfo *src);
 void copy_create_group_msg(E2ees__CreateGroupMsg **dest, E2ees__CreateGroupMsg *src);
 
 /**
+ * @brief Copy E2ees__RenewGroupMsg from src to dest.
+ *
+ * @param dest
+ * @param src
+ */
+void copy_renew_group_msg(E2ees__RenewGroupMsg **dest, E2ees__RenewGroupMsg *src);
+
+/**
  * @brief Copy E2ees__AddGroupMembersMsg from src to dest.
  *
  * @param dest

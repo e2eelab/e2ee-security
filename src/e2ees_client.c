@@ -837,6 +837,25 @@ int send_group_msg_with_filter(
         }
     }
 
+    // // proactive rotation
+    // if (ret == E2EES_RESULT_SUCC) {
+    //     if (outbound_group_session->sequence >= 100) {
+    //         e2ees_notify_log(sender_address, DEBUG_LOG, "Sequence limit reached, renewing group...");
+
+    //         // renew group
+    //         renew_group_internal(sender_address, group_address);
+
+    //         // release
+    //         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
+    //         outbound_group_session = NULL;
+
+    //         // load the outbound_group_session created just now(in renew_group_internal)
+    //         get_e2ees_plugin()->db_handler.load_group_session_by_address(
+    //             sender_address, sender_address, group_address, &outbound_group_session
+    //         );
+    //     }
+    // }
+
     if (ret == E2EES_RESULT_SUCC) {
         ret = encrypt_group_msg(
             &group_msg_payload,

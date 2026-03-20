@@ -1180,6 +1180,171 @@ E2ees__CreateGroupResponse *mock_create_group(E2ees__E2eeAddress *from, const ch
     return response;
 }
 
+E2ees__RenewGroupResponse *mock_renew_group(E2ees__E2eeAddress *from, const char *auth, E2ees__RenewGroupRequest *request) {
+    if (request == NULL || request->msg == NULL) {
+        return NULL;
+    }
+
+    E2ees__GroupInfo *group_info = request->msg->group_info;
+    E2ees__E2eeAddress *group_address = group_info->group_address;
+    size_t group_members_num = group_info->n_group_member_list;
+
+    // 🌟 差異 1：尋找舊群組在 group_data_set 中的位置 (用來正確更新 group_record)
+    int current_group_index = 0;
+    for (int k = 0; k < group_data_set_insert_pos; k++) {
+        if (compare_address(group_data_set[k].group_address, group_address)) {
+            current_group_index = k;
+            break;
+        }
+    }
+
+    // create renew_group_msg
+    E2ees__RenewGroupMsg *renew_group_msg = NULL;
+    copy_renew_group_msg(&(renew_group_msg), request->msg);
+
+    /*-------------------insert each group member's identity key into renew_group_msg-------------------*/
+    // total #(address) to be sent, including users' every device
+    size_t to_member_addresses_total_num = 0;
+    size_t i, j;
+
+    // store the number of addresses of each group member
+    size_t *to_member_addresses_num_list = (size_t *)malloc(sizeof(size_t) * group_members_num);
+    index_node **index_address_list = (index_node **)malloc(sizeof(index_node *) * group_members_num);
+
+    for (i = 0; i < group_members_num; i++) {
+        index_address_list[i] = NULL;
+        to_member_addresses_num_list[i] = find_device_index_and_addresses(group_info->group_member_list[i]->user_id, &(index_address_list[i]));
+        to_member_addresses_total_num += to_member_addresses_num_list[i];
+    }
+
+    renew_group_msg->n_member_info_list = to_member_addresses_total_num;
+    E2ees__GroupMemberInfo **common_member_ids = (E2ees__GroupMemberInfo **)malloc(sizeof(E2ees__GroupMemberInfo *) * to_member_addresses_total_num);
+
+    size_t member_id_insert_pos = 0;
+    index_node *ptr;
+    E2ees__E2eeAddress *to_member_address;
+    uint8_t member_pos;
+
+    // copy addresses and public key into common_member_ids
+    for (i = 0; i < group_members_num; i++) {
+        ptr = index_address_list[i];
+
+        for (j = 0; j < to_member_addresses_num_list[i]; j++) {
+            to_member_address = ptr->device_address;
+            member_pos = ptr->index;
+
+            // insert the group member data
+            common_member_ids[member_id_insert_pos] = (E2ees__GroupMemberInfo *)malloc(sizeof(E2ees__GroupMemberInfo));
+            E2ees__GroupMemberInfo *cur_common_member_id = common_member_ids[member_id_insert_pos];
+            e2ees__group_member_info__init(cur_common_member_id);
+            copy_address_from_address(&(cur_common_member_id->member_address), to_member_address);
+            copy_protobuf_from_protobuf(&(cur_common_member_id->sign_public_key), &(user_data_set[member_pos].identity_key_public->sign_public_key));
+            member_id_insert_pos++;
+
+            ptr = ptr->next;
+        }
+    }
+    
+    // copy common_member_ids into renewMsg
+    copy_group_member_ids(&(renew_group_msg->member_info_list), common_member_ids, to_member_addresses_total_num);
+
+    // pack RenewGroupMsg
+    size_t renew_group_msg_data_len = e2ees__renew_group_msg__get_packed_size(renew_group_msg);
+    uint8_t renew_group_msg_data[renew_group_msg_data_len];
+    e2ees__renew_group_msg__pack(renew_group_msg, renew_group_msg_data);
+
+    // send msg to each group member
+    E2ees__E2eeAddress *sender_address = renew_group_msg->sender_address;
+    const char *sender_user_id = sender_address->user->user_id;
+
+    uint8_t *msg = NULL;
+    size_t msg_len;
+    for (i = 0; i < group_members_num; i++) {
+        ptr = index_address_list[i];
+
+        for (j = 0; j < to_member_addresses_num_list[i]; j++) {
+            to_member_address = ptr->device_address;
+            member_pos = ptr->index;
+
+            // 🌟 差異 2：更新特定 group index 的紀錄
+            group_record[member_pos][current_group_index] = true;
+
+            if (safe_strcmp(sender_user_id, to_member_address->user->user_id)) {
+                if (compare_address(sender_address, to_member_address)) {
+                    ptr = ptr->next;
+                    continue;
+                }
+            }
+
+            E2ees__ProtoMsg *proto_msg = (E2ees__ProtoMsg *)malloc(sizeof(E2ees__ProtoMsg));
+            e2ees__proto_msg__init(proto_msg);
+            copy_address_from_address(&(proto_msg->from), sender_address);
+            copy_address_from_address(&(proto_msg->to), to_member_address);
+
+            proto_msg->payload_case = E2EES__PROTO_MSG__PAYLOAD_RENEW_GROUP_MSG;
+            proto_msg->renew_group_msg = e2ees__renew_group_msg__unpack(NULL, renew_group_msg_data_len, renew_group_msg_data);
+
+            proto_msg_hash(
+                &msg, &msg_len,
+                NULL,
+                proto_msg->from,
+                proto_msg->to,
+                proto_msg->payload_case,
+                proto_msg->renew_group_msg
+            );
+            proto_msg->n_signature_list = 1;
+            proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
+            mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
+
+            send_proto_msg(proto_msg);
+
+            ptr = ptr->next;
+
+            // release
+            e2ees__proto_msg__free_unpacked(proto_msg, NULL);
+            free_mem((void **)&msg, msg_len);
+        }
+    }
+
+    /*-------------------------------------*/
+
+    // prepare response
+    E2ees__RenewGroupResponse *response = (E2ees__RenewGroupResponse *)malloc(sizeof(E2ees__RenewGroupResponse));
+    e2ees__renew_group_response__init(response);
+    response->n_member_info_list = to_member_addresses_total_num;
+    copy_group_member_ids(&(response->member_info_list), common_member_ids, to_member_addresses_total_num);
+    copy_address_from_address(&(response->group_address), group_address);
+
+    response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_OK;
+
+    // release
+    e2ees__renew_group_msg__free_unpacked(renew_group_msg, NULL);
+    free_mem((void **)&to_member_addresses_num_list, sizeof(size_t) * group_members_num);
+
+    for (i = 0; i < to_member_addresses_total_num; i++) {
+        e2ees__group_member_info__free_unpacked(common_member_ids[i], NULL);
+    }
+    free_mem((void **)&common_member_ids, sizeof(E2ees__GroupMemberInfo *) * to_member_addresses_total_num);
+
+    index_node *current, *next;
+    for (i = 0; i < group_members_num; i++) {
+        current = index_address_list[i];
+        while (current != NULL) {
+            next = current->next;
+            if (current->device_address != NULL) {
+                e2ees__e2ee_address__free_unpacked(current->device_address, NULL);
+                current->device_address = NULL;
+            }
+            free_mem((void **)&current, sizeof(index_node));
+            current = next;
+        }
+    }
+    free_mem((void **)&index_address_list, sizeof(index_node *) * group_members_num);
+
+    // done
+    return response;
+}
+
 E2ees__AddGroupMembersResponse *mock_add_group_members(E2ees__E2eeAddress *from, const char *auth, E2ees__AddGroupMembersRequest *request) {
     E2ees__AddGroupMembersMsg *add_group_members_msg = NULL;
     copy_add_group_members_msg(&(add_group_members_msg), request->msg);
