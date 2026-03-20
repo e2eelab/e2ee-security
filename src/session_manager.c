@@ -448,6 +448,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                     for (i = 0; i < inbound_group_sessions_num; i++) {
                         if (compare_address(receiver_address, inbound_group_sessions[i]->sender)) {
                             // skip
+                            e2ees__group_session__free_unpacked(inbound_group_sessions[i], NULL);
                             continue;
                         }
                         complete_inbound_group_session_by_pre_key_bundle(inbound_group_sessions[i], group_pre_key_bundle);
