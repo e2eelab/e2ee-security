@@ -494,8 +494,10 @@ int pqc_complete_outbound_session(E2ees__Session **outbound_session_out, E2ees__
         cipher_suite = get_e2ees_pack(session->e2ees_pack_id)->cipher_suite;
 
         copy_protobuf_from_protobuf(&their_ratchet_key, &(session->ratchet->sender_chain->their_ratchet_public_key));
-        e2ees__sender_chain_node__free_unpacked(session->ratchet->sender_chain, NULL);
-        session->ratchet->sender_chain = NULL;
+
+        // renew session->ratchet later
+        e2ees__ratchet__free_unpacked(session->ratchet, NULL);
+        session->ratchet = NULL;
 
         session->responded = true;
 

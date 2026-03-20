@@ -49,8 +49,8 @@ E2ees__InviteResponse *crypto_curve25519_new_outbound_session(
         their_pre_key_bundle->identity_key_public->sign_public_key.data
     );
     if (result < 0) {
-       e2ees_notify_log(outbound_session->our_address, BAD_SIGNATURE, "crypto_curve25519_new_outbound_session()");
-       return NULL;
+        e2ees_notify_log(outbound_session->our_address, BAD_SIGNATURE, "crypto_curve25519_new_outbound_session()");
+        return NULL;
     }
 
     // set the version
