@@ -142,7 +142,7 @@ static void free_account_cacheer(account_cacheer *cacheer) {
         cacheer->identity_key = NULL;
     }
     free_protobuf(&(cacheer->server_public_key));
-    cacheer = NULL;
+    free(cacheer);
 }
 
 void free_account_cacheer_list() {

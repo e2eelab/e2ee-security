@@ -1352,6 +1352,8 @@ int renew_outbound_group_session_by_welcome_and_add(
                             E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION,
                             group_ratchet_state_plaintext_data, group_ratchet_state_plaintext_data_len
                         );
+                        e2ees__send_one2one_msg_response__free_unpacked(response, NULL);
+                        response = NULL;
                     } else {
                         /** Since the other has not responded, we store the group pre-key first so that
                          *  we can send it right after receiving the other's accept message.
@@ -1475,10 +1477,6 @@ int renew_outbound_group_session_by_welcome_and_add(
             free_mem((void **)&(their_chain_keys[i]), sizeof(ProtobufCBinaryData));
         }
         free_mem((void **)&their_chain_keys, sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
-    }
-    if (response != NULL) {
-        e2ees__send_one2one_msg_response__free_unpacked(response, NULL);
-        response = NULL;
     }
     for (i = 0; i < inbound_group_sessions_num; i++) {
         e2ees__group_session__free_unpacked(inbound_group_sessions[i], NULL);

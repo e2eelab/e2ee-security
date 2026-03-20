@@ -304,6 +304,8 @@ size_t crypto_decrypt_aes_data_with_iv(
     if (diff == 0) {
         return plaintext_data_len;
     } else {
+        free_mem((void **)plaintext_data, plaintext_data_len);
+        *plaintext_data = NULL;
         return 0;
     }
 }
