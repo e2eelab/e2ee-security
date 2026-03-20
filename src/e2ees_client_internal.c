@@ -77,7 +77,8 @@ int publish_spk_internal(
     get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
     if (!is_valid_string(auth)) {
         e2ees_notify_log(NULL, BAD_AUTH, "publish_spk_internal(): invalid auth");
-        return false;
+        free_string(auth);
+        return E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -305,6 +306,7 @@ int invite_internal(
         get_e2ees_plugin()->db_handler.load_auth(outbound_session->our_address, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(NULL, BAD_AUTH, "invite_internal: invalid auth");
+            free_string(auth);
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -376,6 +378,7 @@ int accept_internal(
         get_e2ees_plugin()->db_handler.load_auth(from, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(NULL, BAD_AUTH, "accept_internal: invalid auth");
+            free_string(auth);
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -432,6 +435,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
         get_e2ees_plugin()->db_handler.load_auth(outbound_session->our_address, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(NULL, BAD_AUTH, "accept_internal: invalid auth");
+            free_string(auth);
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -477,6 +481,7 @@ E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
 
     // release
     free_proto(send_one2one_msg_request);
+    free_string(auth);
 
     // done
     return response;
@@ -508,6 +513,7 @@ int add_group_member_device_internal(
         get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(NULL, BAD_AUTH, "add_group_member_device_internal: invalid auth");
+            free_string(auth);
             ret = E2EES_RESULT_FAIL;
         }
     }

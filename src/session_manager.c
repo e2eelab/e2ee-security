@@ -364,6 +364,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                         to_user_id,
                         to_domain
                     );
+                    free_string(auth);
                     ret = E2EES_RESULT_FAIL;
                 }
 

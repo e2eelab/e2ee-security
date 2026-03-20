@@ -144,7 +144,7 @@ E2ees__InviteResponse *invite(
 
     if (is_valid_address(from)) {
         get_e2ees_plugin()->db_handler.load_auth(from, &auth);
-        if (auth == NULL) {
+        if (!is_valid_string(auth)) {
             e2ees_notify_log(
                 from, BAD_ACCOUNT, "invite() from [%s:%s] to [%s@%s]",
                 from->user->user_id,
@@ -152,6 +152,7 @@ E2ees__InviteResponse *invite(
                 to_user_id,
                 to_domain
             );
+            free_string(auth);
             ret = E2EES_RESULT_FAIL;
         }
     } else {
@@ -574,6 +575,7 @@ int add_group_members(
         get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(NULL, BAD_AUTH, "add_group_members: invalid auth");
+            free_string(auth);
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -660,6 +662,7 @@ int remove_group_members(
         get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(NULL, BAD_AUTH, "remove_group_members: invalid auth");
+            free_string(auth);
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -741,6 +744,7 @@ int leave_group(
         get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(NULL, BAD_AUTH, "leave_group: invalid auth");
+            free_string(auth);
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -816,6 +820,7 @@ int send_group_msg_with_filter(
         get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
         if (!is_valid_string(auth)) {
             e2ees_notify_log(NULL, BAD_AUTH, "send_group_msg_with_filter: invalid auth");
+            free_string(auth);
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -888,6 +893,7 @@ int send_group_msg_with_filter(
     // release
     free_proto(send_group_msg_request);
     free_proto(account);
+    free_string(auth);
     if (outbound_group_session != NULL) {
         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
         outbound_group_session = NULL;
@@ -917,8 +923,9 @@ E2ees__ConsumeProtoMsgResponse *consume_proto_msg(E2ees__E2eeAddress *sender_add
     char *auth = NULL;
     get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
 
-    if (auth == NULL) {
+    if (!is_valid_string(auth)) {
         e2ees_notify_log(sender_address, BAD_ACCOUNT, "consume_proto_msg(): no auth");
+        free_string(auth);
         return NULL;
     }
 

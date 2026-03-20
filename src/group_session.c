@@ -178,7 +178,7 @@ int encrypt_group_msg(
     if (ciphertext_data != NULL) {
         free_mem((void **)&ciphertext_data, ciphertext_data_len);
     }
-    if (ret == E2EES_RESULT_FAIL) {
+    if (ret != E2EES_RESULT_SUCC) {
         free_proto(group_msg_payload);
     }
 
@@ -450,8 +450,9 @@ int new_outbound_group_session_by_sender(
             }
         } else {
             get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
-            if (auth == NULL) {
+            if (!is_valid_string(auth)) {
                 e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender(): no auth");
+                free_string(auth);
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = identity_key->sign_key_pair->public_key.data;
@@ -535,6 +536,12 @@ int new_outbound_group_session_by_sender(
                         );
                     }
                 }
+                // release outbound_sessions
+                for (j = 0; j < outbound_sessions_num; j++) {
+                    e2ees__session__free_unpacked(outbound_sessions[j], NULL);
+                    outbound_sessions[j] = NULL;
+                }
+                free_mem((void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
             } else {
                 /** Since we haven't created any session, we need to create a session before sending the group pre-key. */
                 int invite_response_ret = get_pre_key_bundle_internal(
@@ -570,11 +577,6 @@ int new_outbound_group_session_by_sender(
     free_proto(identity_key);
     e2ees__group_session__free_unpacked(outbound_group_session, NULL);
     free_mem((void **)&group_pre_key_plaintext_data, sizeof(uint8_t) * group_pre_key_plaintext_data_len);
-    for (j = 0; j < outbound_sessions_num; j++) {
-        e2ees__session__free_unpacked(outbound_sessions[j], NULL);
-        outbound_sessions[j] = NULL;
-    }
-    free_mem((void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
 
     return ret;
 }
@@ -1290,8 +1292,9 @@ int renew_outbound_group_session_by_welcome_and_add(
             }
         } else {
             get_e2ees_plugin()->db_handler.load_auth(outbound_group_session->session_owner, &auth);
-            if (auth == NULL) {
+            if (!is_valid_string(auth)) {
                 e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add(): no auth");
+                free_string(auth);
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = &(identity_key->sign_key_pair->public_key);
@@ -1362,6 +1365,12 @@ int renew_outbound_group_session_by_welcome_and_add(
                         );
                     }
                 }
+                // release outbound_sessions
+                for (j = 0; j < outbound_sessions_num; j++) {
+                    e2ees__session__free_unpacked(outbound_sessions[j], NULL);
+                    outbound_sessions[j] = NULL;
+                }
+                free_mem((void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
             } else {
                 /** Since we haven't created any session, we need to create a session before sending the group pre-key. */
                 E2ees__InviteResponse **invite_response_list = NULL;
@@ -1460,11 +1469,6 @@ int renew_outbound_group_session_by_welcome_and_add(
         old_group_info = NULL;
     }
     free_mem((void **)&group_ratchet_state_plaintext_data, sizeof(uint8_t) * group_ratchet_state_plaintext_data_len);
-    for (j = 0; j < outbound_sessions_num; j++) {
-        e2ees__session__free_unpacked(outbound_sessions[j], NULL);
-        outbound_sessions[j] = NULL;
-    }
-    free_mem((void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
     if (their_chain_keys != NULL) {
         for (i = 0; i < n_adding_member_info_list; i++) {
             free_protobuf(their_chain_keys[i]);
@@ -1577,8 +1581,9 @@ int renew_group_sessions_with_new_device(
             }
         } else {
             get_e2ees_plugin()->db_handler.load_auth(outbound_group_session->session_owner, &auth);
-            if (auth == NULL) {
+            if (!is_valid_string(auth)) {
                 e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device(): no auth");
+                free_string(auth);
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = &(identity_key->sign_key_pair->public_key);
