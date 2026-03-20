@@ -271,7 +271,7 @@ bool consume_supply_opks_msg(E2ees__E2eeAddress *receiver_address, E2ees__Supply
         return true;
     }
     if (is_valid_supply_opks_msg(msg)) {
-        if (!compare_address(receiver_address, msg->user_address)){
+        if (!compare_address(receiver_address, msg->user_address)) {
             e2ees_notify_log(receiver_address, BAD_SUPPLY_OPKS_MSG, "consume_supply_opks_msg(): invalid supply_opks_msg");
             return true;
         }

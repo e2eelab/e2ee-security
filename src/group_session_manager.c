@@ -1143,7 +1143,7 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
         );
         if (ret == E2EES_RESULT_SUCC) {
             // advance the chain key
-            while (inbound_group_session->sequence < group_msg_payload->sequence){
+            while (inbound_group_session->sequence < group_msg_payload->sequence) {
                 advance_group_chain_key(cipher_suite, &(inbound_group_session->chain_key));
                 inbound_group_session->sequence += 1;
             }

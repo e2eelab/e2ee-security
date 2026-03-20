@@ -283,7 +283,7 @@ static void dump_message_recursive(const ProtobufCMessage *msg, dump_context_t *
 }
 
 void log_proto(E2ees__E2eeAddress *addr, const ProtobufCMessage *msg) {
-    if (!msg){ 
+    if (!msg) { 
         return;
     }
 
