@@ -30,8 +30,14 @@ extern "C" {
 
 #include "e2ees/e2ees.h"
 
+/**
+ * @brief Begin the account operations and initialize resources.
+ */
 void account_begin();
 
+/**
+ * @brief End the account operations and clean up resources.
+ */
 void account_end();
 
 /**
@@ -44,6 +50,13 @@ void account_end();
  */
 int create_account(E2ees__Account **account_out, uint32_t e2ees_pack_id);
 
+/**
+ * @brief Generate an identity key pair.
+ *
+ * @param identity_key_out The generated identity key
+ * @param e2ees_pack_id The e2ee pack ID
+ * @return 0 if success
+ */
 int generate_identity_key(
     E2ees__IdentityKey **identity_key_out,
     uint32_t e2ees_pack_id
@@ -96,6 +109,14 @@ int generate_opks(
     uint32_t e2ees_pack_id, uint32_t cur_opk_id
 );
 
+/**
+ * @brief Insert one-time pre-keys into an account.
+ *
+ * @param account The account to store the pre-keys
+ * @param src The source array of pre-keys
+ * @param src_num The number of pre-keys to insert
+ * @return 0 if success
+ */
 int insert_opks(E2ees__Account *account, E2ees__OneTimePreKey **src, size_t src_num);
 
 /**

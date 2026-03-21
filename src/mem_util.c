@@ -168,7 +168,8 @@ ProtobufCBinaryData *get_identity_public_key_ds_bytes_from_account(E2ees__Accoun
 ///-----------------copy protobuf-----------------///
 
 void copy_protobuf_from_protobuf(ProtobufCBinaryData *dest, const ProtobufCBinaryData *src) {
-    if (src->len == 0)
+    // skip copy
+    if (src == NULL || src->len == 0)
         return;
     dest->len = src->len;
     dest->data = (uint8_t *)malloc(sizeof(uint8_t) * src->len);
@@ -205,6 +206,9 @@ void copy_protobuf_list_from_protobuf_list(
 ///-----------------copy address-----------------///
 
 void copy_address_from_address(E2ees__E2eeAddress **dest, const E2ees__E2eeAddress *src) {
+    // skip copy
+    if (src == NULL) return;
+    
     *dest = (E2ees__E2eeAddress *)malloc(sizeof(E2ees__E2eeAddress));
     e2ees__e2ee_address__init(*dest);
     if (src != NULL) {
@@ -235,6 +239,9 @@ void copy_address_from_address(E2ees__E2eeAddress **dest, const E2ees__E2eeAddre
 ///-----------------copy key pair, ik, spk, opk-----------------///
 
 void copy_key_pair_from_key_pair(E2ees__KeyPair **dest, E2ees__KeyPair *src) {
+    // skip copy
+    if (src == NULL) return;
+    
     *dest = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
     e2ees__key_pair__init(*dest);
     copy_protobuf_from_protobuf(&((*dest)->private_key), &(src->private_key));
@@ -357,6 +364,9 @@ void copy_account_from_account(E2ees__Account **dest, E2ees__Account *src) {
 ///-----------------copy chain key, message key, ratchet, session-----------------///
 
 void copy_chain_key_from_chain_key(E2ees__ChainKey **dest, E2ees__ChainKey *src) {
+    // skip copy
+    if (src == NULL) return;
+    
     *dest = (E2ees__ChainKey *)malloc(sizeof(E2ees__ChainKey));
     e2ees__chain_key__init(*dest);
     (*dest)->index = src->index;
@@ -371,6 +381,9 @@ void copy_msg_key_from_msg_key(E2ees__MsgKey **dest, E2ees__MsgKey *src) {
 }
 
 void copy_sender_chain_from_sender_chain(E2ees__SenderChainNode **dest, E2ees__SenderChainNode *src) {
+    // skip copy
+    if(src == NULL) return;
+
     *dest = (E2ees__SenderChainNode *)malloc(sizeof(E2ees__SenderChainNode));
     e2ees__sender_chain_node__init(*dest);
     copy_protobuf_from_protobuf(&((*dest)->our_ratchet_public_key), &(src->our_ratchet_public_key));
@@ -379,6 +392,9 @@ void copy_sender_chain_from_sender_chain(E2ees__SenderChainNode **dest, E2ees__S
 }
 
 void copy_receiver_chain_from_receiver_chain(E2ees__ReceiverChainNode **dest, E2ees__ReceiverChainNode *src) {
+    // skip copy
+    if(src == NULL) return;
+    
     *dest = (E2ees__ReceiverChainNode *)malloc(sizeof(E2ees__ReceiverChainNode));
     e2ees__receiver_chain_node__init(*dest);
     copy_protobuf_from_protobuf(&((*dest)->their_ratchet_public_key), &(src->their_ratchet_public_key));

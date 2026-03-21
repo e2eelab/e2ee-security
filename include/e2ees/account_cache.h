@@ -38,16 +38,43 @@ typedef struct account_cacheer {
     struct account_cacheer *next;
 } account_cacheer;
 
+/**
+ * @brief Store an account into the cache.
+ * @param account The account to store.
+ */
 void store_account_into_cache(E2ees__Account *account);
 
+/**
+ * @brief Load the protocol version from the cache for a given address.
+ * @param version_out Pointer to string to be allocated and filled.
+ * @param address The address to lookup.
+ */
 void load_version_from_cache(char **version_out, E2ees__E2eeAddress *address);
 
+/**
+ * @brief Load the E2EE pack ID from the cache for a given address.
+ * @param e2ees_pack_id_out Pointer to the pack ID to be filled.
+ * @param address The address to lookup.
+ */
 void load_e2ees_pack_id_from_cache(uint32_t *e2ees_pack_id_out, E2ees__E2eeAddress *address);
 
+/**
+ * @brief Load the identity key from the cache for a given address.
+ * @param identity_key_out Pointer to the identity key to be allocated and filled.
+ * @param address The address to lookup.
+ */
 void load_identity_key_from_cache(E2ees__IdentityKey **identity_key_out, E2ees__E2eeAddress *address);
 
+/**
+ * @brief Load the server public key from the cache for a given address.
+ * @param server_public_key Pointer to the binary data to be filled.
+ * @param address The address to lookup.
+ */
 void load_server_public_key_from_cache(ProtobufCBinaryData *server_public_key, E2ees__E2eeAddress *address);
 
+/**
+ * @brief Free all entries in the account cache list.
+ */
 void free_account_cacheer_list();
 
 #ifdef __cplusplus

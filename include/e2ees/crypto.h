@@ -66,32 +66,84 @@ extern "C" {
 /** buffer length for file encryption/decryption */
 #define FILE_ENCRYPTION_BUFFER_LENGTH 8192
 
+/**
+ * @brief Generate a random key pair for Curve25519 digital signature.
+ * @param pub_key The generated public key.
+ * @param priv_key The generated private key.
+ * @return 0 if success.
+ */
 int crypto_ds_key_gen_curve25519(ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key);
 
+/**
+ * @brief Generate a random key pair for Curve25519 KEM.
+ * @param pub_key The generated public key.
+ * @param priv_key The generated private key.
+ * @return 0 if success.
+ */
 int crypto_kem_asym_key_gen_curve25519(ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key);
 
+/**
+ * @brief Sign a message using Curve25519.
+ * @param signature_out Output signature buffer.
+ * @param signature_out_len Output signature length.
+ * @param msg The message to sign.
+ * @param msg_len The message length.
+ * @param private_key The private key.
+ * @return 0 if success.
+ */
 int crypto_ds_sign_curve25519(
     uint8_t *signature_out, size_t *signature_out_len,
     const uint8_t *msg, size_t msg_len,
     const uint8_t *private_key
 );
 
+/**
+ * @brief Verify a signature using Curve25519.
+ * @param signature_in The signature to verify.
+ * @param signature_in_len The signature length.
+ * @param msg The message.
+ * @param msg_len The message length.
+ * @param public_key The public key.
+ * @return 0 if success, non-zero on failure.
+ */
 int crypto_ds_verify_curve25519(
     const uint8_t *signature_in, size_t signature_in_len,
     const uint8_t *msg, size_t msg_len,
     const uint8_t *public_key
 );
 
+/**
+ * @brief Decapsulate a shared secret using Curve25519 KEM.
+ * @param shared_secret Buffer to store the decapsulated secret.
+ * @param our_key Our private key.
+ * @param ciphertext The incoming ciphertext.
+ * @return 0 if success.
+ */
 int crypto_kem_decaps_curve25519(
     uint8_t *shared_secret,
     const ProtobufCBinaryData *our_key,
     const ProtobufCBinaryData *ciphertext
 );
 
+/**
+ * @brief Sign a message using Curve25519 (raw form).
+ * @param private_key The private key.
+ * @param msg The message.
+ * @param msg_len The message length.
+ * @param signature_out The generated signature.
+ */
 void crypto_sign_curve25519(uint8_t *private_key,
     uint8_t *msg, size_t msg_len, uint8_t *signature_out
 );
 
+/**
+ * @brief Verify a signature using Curve25519 (raw form).
+ * @param signature_in The signature to verify.
+ * @param public_key The public key.
+ * @param msg The message.
+ * @param msg_len The message length.
+ * @return 0 if success, non-zero on failure.
+ */
 int crypto_verify_curve25519(
     uint8_t *signature_in, uint8_t *public_key,
     uint8_t *msg, size_t msg_len

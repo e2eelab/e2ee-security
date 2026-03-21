@@ -26,6 +26,9 @@
 extern "C" {
 #endif
 
+/**
+ * @brief Parameters for registering a user.
+ */
 typedef struct {
     uint32_t e2ees_pack_id;
     const char *user_name;
@@ -35,17 +38,26 @@ typedef struct {
     const char *auth_code;
 } register_user_params;
 
+/**
+ * @brief Parameters for publishing a signed pre-key.
+ */
 typedef struct {
     uint32_t e2ees_pack_id;
     E2ees__E2eeAddress *user_address;
     E2ees__SignedPreKey *new_spk;
 } publish_spk_params;
 
+/**
+ * @brief Parameters for supplying one-time pre-keys.
+ */
 typedef struct {
     E2ees__Account *account;
     uint32_t opks_num;
 } supply_opks_params;
 
+/**
+ * @brief Parameters for getting a pre-key bundle.
+ */
 typedef struct {
     E2ees__E2eeAddress *from;
     const char *auth;
@@ -54,6 +66,9 @@ typedef struct {
     const char *to_device_id;
 } get_pre_key_bundle_params;
 
+/**
+ * @brief Parameters for accepting an incoming session.
+ */
 typedef struct {
     uint32_t e2ees_pack_id;
     E2ees__E2eeAddress *from;
@@ -63,6 +78,9 @@ typedef struct {
     ProtobufCBinaryData *our_ratchet_key;
 } accept_params;
 
+/**
+ * @brief Parameters for creating a group.
+ */
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     const char *group_name;
@@ -70,6 +88,9 @@ typedef struct {
     size_t group_members_num;
 } create_group_params;
 
+/**
+ * @brief Parameters for adding members to a group.
+ */
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     E2ees__E2eeAddress *group_address;
@@ -77,6 +98,9 @@ typedef struct {
     size_t adding_members_num;
 } add_group_members_params;
 
+/**
+ * @brief Parameters for removing members from a group.
+ */
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     E2ees__E2eeAddress *group_address;
@@ -84,17 +108,26 @@ typedef struct {
     size_t removing_members_num;
 } remove_group_members_params;
 
+/**
+ * @brief Parameters for adding a member device to a group.
+ */
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     E2ees__E2eeAddress *group_address;
     E2ees__E2eeAddress *new_device_address;
 } add_group_member_device_params;
 
+/**
+ * @brief Parameters for leaving a group.
+ */
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     E2ees__E2eeAddress *group_address;
 } leave_group_params;
 
+/**
+ * @brief Parameters for sending a message to a group.
+ */
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     E2ees__E2eeAddress *group_address;

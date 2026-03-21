@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "e2ees/mem_util.h"
 #include "e2ees/validation.h"
@@ -34,6 +35,24 @@
 #include "e2ees/session.h"
 #include "e2ees/session_manager.h"
 
+static pthread_mutex_t client_mutex;
+static pthread_once_t client_mutex_once = PTHREAD_ONCE_INIT;
+
+static void init_client_mutex(void) {
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&client_mutex, &attr);
+    pthread_mutexattr_destroy(&attr);
+}
+
+#define CLIENT_LOCK() \
+    pthread_once(&client_mutex_once, init_client_mutex); \
+    pthread_mutex_lock(&client_mutex)
+
+#define CLIENT_UNLOCK() \
+    pthread_mutex_unlock(&client_mutex)
+
 int register_user(
     E2ees__RegisterUserResponse **response_out,
     uint32_t e2ees_pack_id,
@@ -43,6 +62,7 @@ int register_user(
     const char *authenticator,
     const char *auth_code
 ) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__Account *account = NULL;
@@ -90,10 +110,12 @@ int register_user(
     free_proto(register_user_request);
 
     // done
+    CLIENT_UNLOCK();
     return ret;
 }
 
 E2ees__InviteResponse *reinvite(E2ees__Session *outbound_session) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__InviteResponse *response = NULL;
@@ -107,6 +129,7 @@ E2ees__InviteResponse *reinvite(E2ees__Session *outbound_session) {
                 DEBUG_LOG,
                 "reinvite(): skipped for not exceed E2EES_INVITE_WAITING_TIME_MS(60s)"
             );
+            CLIENT_UNLOCK();
             return NULL;
         }
 
@@ -129,12 +152,14 @@ E2ees__InviteResponse *reinvite(E2ees__Session *outbound_session) {
         }
     }
 
+    CLIENT_UNLOCK();
     return response;
 }
 
 E2ees__InviteResponse *invite(
     E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain
 ) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
 
     char *auth = NULL;
@@ -199,10 +224,12 @@ E2ees__InviteResponse *invite(
     free_invite_response_list(&invite_response_list, invite_response_num);
 
     // done
+    CLIENT_UNLOCK();
     return invite_response;
 }
 
 void send_sync_msg(E2ees__E2eeAddress *from, const uint8_t *plaintext_data, size_t plaintext_data_len) {
+    CLIENT_LOCK();
     E2ees__Session **self_outbound_sessions = NULL;
     size_t self_outbound_sessions_num = get_e2ees_plugin()->db_handler.load_outbound_sessions(from, from->user->user_id, from->domain, &self_outbound_sessions);
 
@@ -264,9 +291,11 @@ void send_sync_msg(E2ees__E2eeAddress *from, const uint8_t *plaintext_data, size
         free_mem((void **)&common_plaintext_data, common_plaintext_data_len);
         free_mem((void **)&self_outbound_sessions, sizeof(E2ees__Session *) * self_outbound_sessions_num);
     }
+    CLIENT_UNLOCK();
 }
 
 void send_sync_invite_msg(E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain, char **to_device_id_list, size_t to_device_num) {
+    CLIENT_LOCK();
     E2ees__Session **self_outbound_sessions = NULL;
     size_t self_outbound_sessions_num = get_e2ees_plugin()->db_handler.load_outbound_sessions(from, from->user->user_id, from->domain, &self_outbound_sessions);
 
@@ -340,6 +369,7 @@ void send_sync_invite_msg(E2ees__E2eeAddress *from, const char *to_user_id, cons
         free_mem((void **)&invite_msg_data, invite_msg_data_len);
         free_mem((void **)&self_outbound_sessions, sizeof(E2ees__Session *) * self_outbound_sessions_num);
     }
+    CLIENT_UNLOCK();
 }
 
 int send_one2one_msg(
@@ -348,6 +378,7 @@ int send_one2one_msg(
     uint32_t notif_level,
     const uint8_t *plaintext_data, size_t plaintext_data_len
 ) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__SendOne2oneMsgResponse *response = NULL;
@@ -473,6 +504,7 @@ int send_one2one_msg(
     }
     *response_out = response;
 
+    CLIENT_UNLOCK();
     return ret;
 }
 
@@ -483,6 +515,7 @@ int create_group(
     E2ees__GroupMember **group_members,
     size_t group_members_num
 ) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__CreateGroupRequest *create_group_request = NULL;
@@ -544,6 +577,7 @@ int create_group(
     free_proto(create_group_request);
 
     // done
+    CLIENT_UNLOCK();
     return ret;
 }
 
@@ -554,6 +588,7 @@ int add_group_members(
     E2ees__GroupMember **adding_members,
     size_t adding_members_num
 ) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__AddGroupMembersRequest *add_group_members_request = NULL;
@@ -631,6 +666,7 @@ int add_group_members(
     }
 
     // done
+    CLIENT_UNLOCK();
     return ret;
 }
 
@@ -641,6 +677,7 @@ int remove_group_members(
     E2ees__GroupMember **removing_members,
     size_t removing_members_num
 ) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__RemoveGroupMembersRequest *remove_group_members_request = NULL;
@@ -718,6 +755,7 @@ int remove_group_members(
     }
 
     // done
+    CLIENT_UNLOCK();
     return ret;
 }
 
@@ -726,6 +764,7 @@ int leave_group(
     E2ees__E2eeAddress *sender_address,
     E2ees__E2eeAddress *group_address
 ) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__LeaveGroupRequest *leave_group_request = NULL;
@@ -782,6 +821,7 @@ int leave_group(
     free_string(auth);
 
     // done
+    CLIENT_UNLOCK();
     return ret;
 }
 
@@ -795,6 +835,7 @@ int send_group_msg_with_filter(
     E2ees__E2eeAddress **deny_list,
     size_t deny_list_len
 ) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__SendGroupMsgRequest *send_group_msg_request = NULL;
@@ -900,6 +941,7 @@ int send_group_msg_with_filter(
     }
 
     // done
+    CLIENT_UNLOCK();
     return ret;
 }
 
@@ -911,21 +953,26 @@ int send_group_msg(
     const uint8_t *plaintext_data,
     size_t plaintext_data_len
 ) {
-    return send_group_msg_with_filter(
+    CLIENT_LOCK();
+    int ret = send_group_msg_with_filter(
         response_out,
         sender_address, group_address, notif_level,
         plaintext_data, plaintext_data_len,
         NULL, 0, NULL, 0
     );
+    CLIENT_UNLOCK();
+    return ret;
 }
 
 E2ees__ConsumeProtoMsgResponse *consume_proto_msg(E2ees__E2eeAddress *sender_address, const char *proto_msg_id) {
+    CLIENT_LOCK();
     char *auth = NULL;
     get_e2ees_plugin()->db_handler.load_auth(sender_address, &auth);
 
     if (!is_valid_string(auth)) {
         e2ees_notify_log(sender_address, BAD_ACCOUNT, "consume_proto_msg(): no auth");
         free_string(auth);
+        CLIENT_UNLOCK();
         return NULL;
     }
 
@@ -939,10 +986,12 @@ E2ees__ConsumeProtoMsgResponse *consume_proto_msg(E2ees__E2eeAddress *sender_add
     e2ees__consume_proto_msg_request__free_unpacked(request, NULL);
 
     // done
+    CLIENT_UNLOCK();
     return response;
 }
 
 E2ees__ConsumeProtoMsgResponse *process_proto_msg(uint8_t *proto_msg_data, size_t proto_msg_data_len) {
+    CLIENT_LOCK();
     int ret = E2EES_RESULT_SUCC;
     int server_check = 0;
     bool consumed = false;
@@ -1072,10 +1121,12 @@ E2ees__ConsumeProtoMsgResponse *process_proto_msg(uint8_t *proto_msg_data, size_
     }
 
     // done
+    CLIENT_UNLOCK();
     return response;
 }
 
 void resume_connection() {
+    CLIENT_LOCK();
     // loop on all accounts
     E2ees__Account **accounts = NULL;
     size_t account_num = get_e2ees_plugin()->db_handler.load_accounts(&accounts);
@@ -1092,4 +1143,5 @@ void resume_connection() {
     // release
     if (accounts != NULL)
         free(accounts);
+    CLIENT_UNLOCK();
 }

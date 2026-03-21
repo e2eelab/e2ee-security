@@ -22,8 +22,10 @@
 #include <string.h>
 
 #include "e2ees/mem_util.h"
+#include <pthread.h>
 
 static account_cacheer *account_cacheer_list = NULL;
+static pthread_mutex_t cache_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static account_cacheer* find_account_in_cache(E2ees__E2eeAddress *address) {
     account_cacheer *cur = account_cacheer_list;
@@ -61,8 +63,13 @@ static void insert_account_cacheer(
 void store_account_into_cache(E2ees__Account *account) {
     if (!account || !account->address) return;
 
+    pthread_mutex_lock(&cache_mutex);
+
     // check if the address is in the cache already
-    if (find_account_in_cache(account->address)) return;
+    if (find_account_in_cache(account->address)) {
+        pthread_mutex_unlock(&cache_mutex);
+        return;
+    }
 
     // double pointer
     account_cacheer **pp = &account_cacheer_list;
@@ -72,48 +79,62 @@ void store_account_into_cache(E2ees__Account *account) {
 
     // allocate the memory
     *pp = (account_cacheer *)malloc(sizeof(account_cacheer));
-    if (*pp == NULL) return; // malloc error
+    if (*pp == NULL) {
+        pthread_mutex_unlock(&cache_mutex);
+        return; // malloc error
+    }
 
     insert_account_cacheer(*pp, account);
+    pthread_mutex_unlock(&cache_mutex);
 }
 
 void load_version_from_cache(char **version_out, E2ees__E2eeAddress *address) {
+    pthread_mutex_lock(&cache_mutex);
     account_cacheer *cur = account_cacheer_list;
     while (cur != NULL) {
         if (compare_address(cur->address, address)) {
             *version_out = strdup(cur->version);
+            pthread_mutex_unlock(&cache_mutex);
             return;
         }
         cur = cur->next;
     }
     *version_out = NULL;
+    pthread_mutex_unlock(&cache_mutex);
 }
 
 void load_e2ees_pack_id_from_cache(uint32_t *e2ees_pack_id_out, E2ees__E2eeAddress *address) {
+    pthread_mutex_lock(&cache_mutex);
     account_cacheer *cur = account_cacheer_list;
     while (cur != NULL) {
         if (compare_address(cur->address, address)) {
             *e2ees_pack_id_out = cur->e2ees_pack_id;
+            pthread_mutex_unlock(&cache_mutex);
             return;
         }
         cur = cur->next;
     }
     *e2ees_pack_id_out = E2EES_PACK_ID_UNSPECIFIED;
+    pthread_mutex_unlock(&cache_mutex);
 }
 
 void load_identity_key_from_cache(E2ees__IdentityKey **identity_key_out, E2ees__E2eeAddress *address) {
+    pthread_mutex_lock(&cache_mutex);
     account_cacheer *cur = account_cacheer_list;
     while (cur != NULL) {
         if (compare_address(cur->address, address)) {
             copy_ik_from_ik(identity_key_out, cur->identity_key);
+            pthread_mutex_unlock(&cache_mutex);
             return;
         }
         cur = cur->next;
     }
     *identity_key_out = NULL;
+    pthread_mutex_unlock(&cache_mutex);
 }
 
 void load_server_public_key_from_cache(ProtobufCBinaryData *server_public_key, E2ees__E2eeAddress *address) {
+    pthread_mutex_lock(&cache_mutex);
     server_public_key->len = 0;
     server_public_key->data = NULL;
 
@@ -121,10 +142,12 @@ void load_server_public_key_from_cache(ProtobufCBinaryData *server_public_key, E
     while (cur != NULL) {
         if (compare_address(cur->address, address)) {
             copy_protobuf_from_protobuf(server_public_key, &(cur->server_public_key));
+            pthread_mutex_unlock(&cache_mutex);
             return;
         }
         cur = cur->next;
     }
+    pthread_mutex_unlock(&cache_mutex);
 }
 
 static void free_account_cacheer(account_cacheer *cacheer) {
@@ -146,6 +169,7 @@ static void free_account_cacheer(account_cacheer *cacheer) {
 }
 
 void free_account_cacheer_list() {
+    pthread_mutex_lock(&cache_mutex);
     account_cacheer *cur = account_cacheer_list;
     account_cacheer *temp;
     while (cur != NULL) {
@@ -154,4 +178,5 @@ void free_account_cacheer_list() {
         free_account_cacheer(temp);
     }
     account_cacheer_list = NULL;
+    pthread_mutex_unlock(&cache_mutex);
 }

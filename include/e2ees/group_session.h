@@ -53,6 +53,19 @@ void create_group_message_key(
     E2ees__MsgKey *message_key
 );
 
+/**
+ * @brief Encrypt a group message payload.
+ *
+ * @param group_msg_payload_out Output group message payload.
+ * @param e2ees_pack_id The pack ID.
+ * @param plaintext_data Plaintext data to encrypt.
+ * @param plaintext_data_len Length of the plaintext data.
+ * @param chain_key The current chain key.
+ * @param assoicated_data Associated data for the AEAD.
+ * @param sequence The sequence number of the message.
+ * @param identity_key The sender's identity key.
+ * @return 0 if success, < 0 for error.
+ */
 int encrypt_group_msg(
     E2ees__GroupMsgPayload **group_msg_payload_out,
     uint32_t e2ees_pack_id,

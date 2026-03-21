@@ -104,6 +104,7 @@ extern "C" {
 #include "e2ees/e2ees_client_internal.h"
 #include "e2ees/session.h"
 #include "e2ees/log_code.h"
+#include "e2ees/e2ees_notify.h"
 
 #define E2EES_PROTOCOL_VERSION                                "\001"
 #define E2EES_PLAINTEXT_VERSION                               "\001"
@@ -959,125 +960,6 @@ e2ees_pack_id_t raw_to_e2ees_pack_id(uint32_t e2ees_pack_id_raw);
  * @param rand_data_len 
  */
 void e2ees_randombytes(uint8_t *rand_data, size_t rand_data_len);
-
-/**
- * @brief Log function with additional arguments.
- * @param user_address
- * @param log_code
- * @param log_msg
- */
-void e2ees_notify_log(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg, ...);
-
-/**
- * @brief Event for notifying that user is registered.
- * @param account
- */
-void e2ees_notify_user_registered(E2ees__Account *account);
-
-/**
- * @brief Event for notifying that an inbound session is invited.
- * @param user_address
- * @param from
- */
-void e2ees_notify_inbound_session_invited(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from);
-
-/**
- * @brief Event for notifying that an inbound session is ready.
- * @param user_address
- * @param inbound_session
- */
-void e2ees_notify_inbound_session_ready(E2ees__E2eeAddress *user_address, E2ees__Session *inbound_session);
-
-/**
- * @brief Event for notifying that an outbound session is ready.
- * @param user_address
- * @param outbound_session
- */
-void e2ees_notify_outbound_session_ready(E2ees__E2eeAddress *user_address, E2ees__Session *outbound_session);
-
-/**
- * @brief Event for notifying that an one2one msg is received.
- * @param user_address
- * @param from_address
- * @param to_address
- * @param plaintext
- * @param plaintext_len
- */
-void e2ees_notify_one2one_msg(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *to_address,
-    uint8_t *plaintext, size_t plaintext_len
-);
-
-/**
- * @brief Event for notifying that a msg from user of other device is received.
- * @param user_address
- * @param from_address
- * @param to_address
- * @param plaintext
- * @param plaintext_len
- */
-void e2ees_notify_other_device_msg(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *to_address,
-    uint8_t *plaintext, size_t plaintext_len
-);
-
-/**
- * @brief Event for notifying that a group is received.
- * @param user_address
- * @param from_address
- * @param group_address
- * @param plaintext
- * @param plaintext_len
- */
-void e2ees_notify_group_msg(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *group_address,
-    uint8_t *plaintext, size_t plaintext_len
-);
-
-/**
- * @brief Event for notifying that a group is created.
- * @param user_address
- * @param group_address
- * @param group_name
- * @param group_members
- * @param group_members_num
- */
-void e2ees_notify_group_created(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *group_address, const char *group_name,
-    E2ees__GroupMember **group_members, size_t group_members_num
-);
-
-/**
- * @brief Event for notifying that some group members are added.
- * @param user_address
- * @param group_address
- * @param group_name
- * @param group_members
- * @param group_members_num
- * @param added_group_members
- * @param added_group_members_num
- */
-void e2ees_notify_group_members_added(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *group_address, const char *group_name,
-    E2ees__GroupMember **group_members, size_t group_members_num,
-    E2ees__GroupMember **added_group_members, size_t added_group_members_num
-);
-
-/**
- * @brief Event for notifying that some group members are removed.
- * @param user_address
- * @param group_address
- * @param group_name
- * @param group_members
- * @param group_members_num
- * @param removed_group_members
- * @param removed_group_members_num
- */
-void e2ees_notify_group_members_removed(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *group_address, const char *group_name,
-    E2ees__GroupMember **group_members, size_t group_members_num,
-    E2ees__GroupMember **removed_group_members, size_t removed_group_members_num
-);
 
 #ifdef __cplusplus
 }
