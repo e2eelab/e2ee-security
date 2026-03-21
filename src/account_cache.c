@@ -153,4 +153,5 @@ void free_account_cacheer_list() {
         cur = cur->next;
         free_account_cacheer(temp);
     }
+    account_cacheer_list = NULL;
 }
