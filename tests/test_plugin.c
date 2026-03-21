@@ -167,13 +167,14 @@ struct e2ees_plugin_t mock_plugin = {
 void tear_up() {
     mock_db_begin();
     mock_server_begin();
+    start_mock_server_sending();
     e2ees_begin(&mock_plugin);
 }
 
 void tear_down() {
     invite_time = 0;
+    stop_mock_server_sending();
     mock_db_end();
     mock_server_end();
-    stop_mock_server_sending();
     e2ees_end();
 }

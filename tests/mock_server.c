@@ -456,13 +456,33 @@ static void dispatch_signed_mock_msg(
 
     // Unhook the payload from proto_msg so e2ees__proto_msg__free_unpacked won't free the caller's payload memory
     switch (payload_case) {
-        case E2EES__PROTO_MSG__PAYLOAD_INVITE_MSG: proto_msg->invite_msg = NULL; break;
-        case E2EES__PROTO_MSG__PAYLOAD_ACCEPT_MSG: proto_msg->accept_msg = NULL; break;
-        case E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG: proto_msg->e2ee_msg = NULL; break;
+        case E2EES__PROTO_MSG__PAYLOAD_CREATE_GROUP_MSG:
+            proto_msg->create_group_msg = NULL;
+            break;
+        case E2EES__PROTO_MSG__PAYLOAD_ADD_USER_DEVICE_MSG:
+            proto_msg->add_user_device_msg = NULL;
+            break;
+        case E2EES__PROTO_MSG__PAYLOAD_ADD_GROUP_MEMBERS_MSG:
+            proto_msg->add_group_members_msg = NULL;
+            break;
+        case E2EES__PROTO_MSG__PAYLOAD_ADD_GROUP_MEMBER_DEVICE_MSG:
+            proto_msg->add_group_member_device_msg = NULL;
+            break;
+        case E2EES__PROTO_MSG__PAYLOAD_REMOVE_GROUP_MEMBERS_MSG:
+            proto_msg->remove_group_members_msg = NULL;
+            break;
+        case E2EES__PROTO_MSG__PAYLOAD_LEAVE_GROUP_MSG:
+            proto_msg->leave_group_msg = NULL;
+            break;
+        case E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG:
+            proto_msg->e2ee_msg = NULL;
+            break;
         // ... (other cases set to NULL) ...
         default: break;
     }
-
+    
+    // release
+    // payload_msg will also released
     e2ees__proto_msg__free_unpacked(proto_msg, NULL);
     free_mem((void **)&msg, msg_len);
 }
@@ -663,11 +683,12 @@ E2ees__RegisterUserResponse *mock_register_user(E2ees__RegisterUserRequest *requ
     }
 
     for (j = 0; j < receiver_num; j++) {
+        // add_user_device_msg will not released after dispatched
         dispatch_signed_mock_msg(cur_data->address, receiver_addresses[j], E2EES__PROTO_MSG__PAYLOAD_ADD_USER_DEVICE_MSG, add_user_device_msg);
     }
-    e2ees__add_user_device_msg__free_unpacked(add_user_device_msg, NULL);
 
     // release
+    e2ees__add_user_device_msg__free_unpacked(add_user_device_msg, NULL);
     if (client_data != NULL) {
         for (i = 0; i < other_device_num; i++) {
             e2ees__e2ee_address__free_unpacked(other_device_address_list[i], NULL);
@@ -795,8 +816,6 @@ E2ees__InviteResponse *mock_invite(E2ees__E2eeAddress *from, const char *auth, E
 
         dispatch_signed_mock_msg(invite_msg->from, invite_msg->to, E2EES__PROTO_MSG__PAYLOAD_INVITE_MSG, unpacked_invite);
         
-        e2ees__invite_msg__free_unpacked(unpacked_invite, NULL);
-
         response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_OK;
     } else {
         response->code = E2EES__RESPONSE_CODE__RESPONSE_CODE_NOT_FOUND;
@@ -816,8 +835,6 @@ E2ees__AcceptResponse *mock_accept(E2ees__E2eeAddress *from, const char *auth, E
 
     dispatch_signed_mock_msg(accept_msg->from, accept_msg->to, E2EES__PROTO_MSG__PAYLOAD_ACCEPT_MSG, unpacked_accept);
     
-    e2ees__accept_msg__free_unpacked(unpacked_accept, NULL);
-
     // set the session record
     uint8_t inviter = find_address(accept_msg->to);
     uint8_t invitee = find_address(accept_msg->from);
@@ -906,71 +923,28 @@ E2ees__SupplyOpksResponse *mock_supply_opks(E2ees__E2eeAddress *from, const char
 
 E2ees__SendOne2oneMsgResponse *mock_send_one2one_msg(E2ees__E2eeAddress *from, const char *auth, E2ees__SendOne2oneMsgRequest *request) {
     E2ees__E2eeMsg *e2ee_msg = request->msg;
-    size_t e2ee_msg_data_len = e2ees__e2ee_msg__get_packed_size(e2ee_msg);
-    uint8_t e2ee_msg_data[e2ee_msg_data_len];
-    e2ees__e2ee_msg__pack(e2ee_msg, e2ee_msg_data);
 
-    uint8_t *msg = NULL;
-    size_t msg_len;
-    E2ees__ProtoMsg *proto_msg = NULL;
-    // E2ees__ConsumeProtoMsgResponse *consume_proto_msg_response = NULL;
     // check if the receiver's device id exists
     if ((e2ee_msg->to->user->device_id)[0] != '\0') {
-        // forward a copy of E2eeMsg
-        proto_msg = (E2ees__ProtoMsg *)malloc(sizeof(E2ees__ProtoMsg));
-        e2ees__proto_msg__init(proto_msg);
-        copy_address_from_address(&(proto_msg->from), e2ee_msg->from);
-        copy_address_from_address(&(proto_msg->to), e2ee_msg->to);
-        proto_msg->payload_case = E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG;
-        proto_msg->e2ee_msg = e2ees__e2ee_msg__unpack(NULL, e2ee_msg_data_len, e2ee_msg_data);
-
-        proto_msg_hash(
-            &msg, &msg_len,
-            NULL,
-            proto_msg->from,
-            proto_msg->to,
-            proto_msg->payload_case,
-            proto_msg->e2ee_msg
-        );
-        proto_msg->n_signature_list = 1;
-        proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
-        mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
-
-        send_proto_msg(proto_msg);
-
-        // release
-        e2ees__proto_msg__free_unpacked(proto_msg, NULL);
-        free_mem((void **)&msg, msg_len);
+        // e2ee_msg will not released after dispatched
+        dispatch_signed_mock_msg(e2ee_msg->from, e2ee_msg->to, E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG, e2ee_msg);
+        // e2ee_msg is kept in request, let request handle it's release
     } else {
         E2ees__E2eeAddress **to_addresses = NULL;
         size_t to_address_num = find_device_addresses(e2ee_msg->to->user->user_id, &to_addresses);
         size_t i;
         for (i = 0; i < to_address_num; i++) {
-            // forward a copy of E2eeMsg
-            proto_msg = (E2ees__ProtoMsg *)malloc(sizeof(E2ees__ProtoMsg));
-            e2ees__proto_msg__init(proto_msg);
-            copy_address_from_address(&(proto_msg->from), e2ee_msg->from);
-            copy_address_from_address(&(proto_msg->to), to_addresses[i]);
-            proto_msg->payload_case = E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG;
-            proto_msg->e2ee_msg = e2ees__e2ee_msg__unpack(NULL, e2ee_msg_data_len, e2ee_msg_data);
-
-            proto_msg_hash(
-                &msg, &msg_len,
-                NULL,
-                proto_msg->from,
-                proto_msg->to,
-                proto_msg->payload_case,
-                proto_msg->e2ee_msg
-            );
-            proto_msg->n_signature_list = 1;
-            proto_msg->signature_list = (E2ees__ServerSignedSignature **)malloc(sizeof(E2ees__ServerSignedSignature *) * 1);
-            mock_server_signed_signature(&(proto_msg->signature_list[0]), msg, msg_len);
-
-            send_proto_msg(proto_msg);
-
-            // release
-            e2ees__proto_msg__free_unpacked(proto_msg, NULL);
-            free_mem((void **)&msg, msg_len);
+            // e2ee_msg will not released after dispatched
+            dispatch_signed_mock_msg(e2ee_msg->from, to_addresses[i], E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG, e2ee_msg);
+            // e2ee_msg is kept in request, let request handle it's release
+        }
+        
+        // release dynamically allocated addresses array memory to prevent memory leak
+        if (to_addresses != NULL) {
+            for (i = 0; i < to_address_num; i++) {
+                e2ees__e2ee_address__free_unpacked(to_addresses[i], NULL);
+            }
+            free_mem((void **)&to_addresses, sizeof(E2ees__E2eeAddress *) * to_address_num);
         }
     }
 
@@ -1083,7 +1057,9 @@ E2ees__CreateGroupResponse *mock_create_group(E2ees__E2eeAddress *from, const ch
                 }
             }
 
+            // create_group_msg will not released after dispatched
             dispatch_signed_mock_msg(sender_address, to_member_address, E2EES__PROTO_MSG__PAYLOAD_CREATE_GROUP_MSG, create_group_msg);
+            
             ptr = ptr->next;
         }
     }
@@ -1252,6 +1228,7 @@ E2ees__AddGroupMembersResponse *mock_add_group_members(E2ees__E2eeAddress *from,
                 }
             }
 
+            // add_group_members_msg will not released after dispatched
             dispatch_signed_mock_msg(sender_address, to_member_address, E2EES__PROTO_MSG__PAYLOAD_ADD_GROUP_MEMBERS_MSG, add_group_members_msg);
             ptr = ptr->next;
         }
@@ -1398,6 +1375,7 @@ E2ees__AddGroupMemberDeviceResponse *mock_add_group_member_device(
                 }
             }
 
+            // add_group_members_msg will not released after dispatched
             dispatch_signed_mock_msg(sender_address, to_member_address, E2EES__PROTO_MSG__PAYLOAD_ADD_GROUP_MEMBER_DEVICE_MSG, add_group_member_device_msg);
             ptr = ptr->next;
         }
@@ -1565,6 +1543,7 @@ E2ees__RemoveGroupMembersResponse *mock_remove_group_members(E2ees__E2eeAddress 
                 if (compare_address(sender_address, to_member_address))
                     continue;
             }
+            // remove_group_members_msg_to_removed will not released after dispatched
             dispatch_signed_mock_msg(sender_address, to_member_address, E2EES__PROTO_MSG__PAYLOAD_REMOVE_GROUP_MEMBERS_MSG, remove_group_members_msg_to_removed);
             ptr = ptr->next;
         }
@@ -1584,6 +1563,7 @@ E2ees__RemoveGroupMembersResponse *mock_remove_group_members(E2ees__E2eeAddress 
                     continue;
                 }
             }
+            // remove_group_members_msg_to_remained will not released after dispatched
             dispatch_signed_mock_msg(sender_address, to_member_address, E2EES__PROTO_MSG__PAYLOAD_REMOVE_GROUP_MEMBERS_MSG, remove_group_members_msg_to_remained);
             ptr = ptr->next;
         }
@@ -1729,6 +1709,7 @@ E2ees__LeaveGroupResponse *mock_leave_group(E2ees__E2eeAddress *from, const char
     group_manager_device_num = find_device_addresses(group_manager->user_id, &group_manager_device_addresses);
 
     // send to the group manager
+    // leave_group_msg will not released after dispatched
     dispatch_signed_mock_msg(sender_address, group_manager_device_addresses[0], E2EES__PROTO_MSG__PAYLOAD_LEAVE_GROUP_MSG, leave_group_msg);
 
     // prepare response
@@ -1795,7 +1776,9 @@ E2ees__SendGroupMsgResponse *mock_send_group_msg(E2ees__E2eeAddress *from, const
                 if (compare_address(sender_address, to_member_address))
                     continue;
             }
-                dispatch_signed_mock_msg(sender_address, to_member_address, E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG, e2ee_msg);
+            // e2ee_msg will not released after dispatched
+            dispatch_signed_mock_msg(sender_address, to_member_address, E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG, e2ee_msg);
+            // e2ee_msg is kept in request, let request handles its release
         }
         // release
         if (to_member_addresses != NULL) {

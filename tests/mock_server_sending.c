@@ -28,11 +28,11 @@
 
 #define QUEUE_SIZE 16384
 
-pthread_mutex_t lock;
-pthread_cond_t cond;
-bool running;
-pthread_t thread;
-bool thread_started = false;
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+static bool running = false;
+static pthread_t thread;
+static bool thread_started = false;
 
 E2ees__ProtoMsg *proto_msg_queue[QUEUE_SIZE];
 int proto_msg_queue_insert_head = 0;
@@ -95,31 +95,26 @@ void *process_outgoing_queue(void *arg) {
 }
 
 void start_mock_server_sending() {
-    if (pthread_mutex_init(&lock, NULL) != 0) {
-        printf("\n mutex init failed\n");
-        return;
+    pthread_mutex_lock(&lock);
+    if (!thread_started) {
+        running = true;
+        if (pthread_create(&thread, NULL, process_outgoing_queue, NULL) == 0) {
+            thread_started = true;
+        }
     }
-    if (pthread_cond_init(&cond, NULL) != 0) {
-        printf("\n cond init failed\n");
-        return;
-    }
-    running = true;
-    if (pthread_create(&thread, NULL, process_outgoing_queue, NULL) == 0) {
-        thread_started = true;
-    }
+    pthread_mutex_unlock(&lock);
 }
 
 void stop_mock_server_sending() {
     pthread_mutex_lock(&lock);
     running = false;
     pthread_cond_broadcast(&cond); // Wake up the thread so it can exit
+    bool should_join = thread_started;
+    pthread_t thread_to_join = thread;
+    thread_started = false;
     pthread_mutex_unlock(&lock);
 
-    if (thread_started) {
-        pthread_join(thread, NULL);
-        thread_started = false;
+    if (should_join) {
+        pthread_join(thread_to_join, NULL);
     }
-
-    pthread_mutex_destroy(&lock);
-    pthread_cond_destroy(&cond);
 }

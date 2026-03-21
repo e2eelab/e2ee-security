@@ -239,13 +239,9 @@ static void test_begin(){
     account_data_insert_pos = 0;
 
     get_e2ees_plugin()->event_handler = test_event_handler;
-
-    start_mock_server_sending();
 }
 
 static void test_end(){
-    stop_mock_server_sending();
-
     int i;
     for (i = 0; i < account_data_max; i++) {
         if (account_data[i] != NULL) {
