@@ -863,15 +863,17 @@ void free_mem(void **buffer, size_t buffer_len) {
         return;
     }
 
-    volatile unsigned char *p = (volatile unsigned char *)*buffer;
-    size_t n = buffer_len;
-    while (n--) {
-        *p++ = 0;
-    }
+    if (buffer_len > 0) {
+        volatile unsigned char *p = (volatile unsigned char *)*buffer;
+        size_t n = buffer_len;
+        while (n--) {
+            *p++ = 0;
+        }
 
 #if defined(__GNUC__) || defined(__clang__)
     __asm__ __volatile__("" : : "r"(*buffer) : "memory");
 #endif
+    }
 
     free(*buffer);
     *buffer = NULL;
