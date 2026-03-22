@@ -30,7 +30,8 @@ endif()
 
 add_library(db STATIC
     mock_db.c)
-
+target_compile_options(db PRIVATE -fsanitize=address -fno-omit-frame-pointer -g)
+target_link_options(db PRIVATE -fsanitize=address)
 target_include_directories(db
     PRIVATE
         ${sqlite3_DIR}
@@ -53,17 +54,19 @@ add_library(test_env STATIC
     test_plugin.c
     mock_db.c
     test_util.c)
-
+target_compile_options(test_env PRIVATE -fsanitize=address -fno-omit-frame-pointer -g)
+target_link_options(test_env PRIVATE -fsanitize=address)
 target_include_directories(test_env
     PRIVATE
         ${sqlite3_DIR}
         $<BUILD_INTERFACE:${protobuf-c_DIR}>
         $<BUILD_INTERFACE:${PROTO_DIS_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>)
-
+        
 add_library(test_util STATIC
     test_util.c)
-
+target_compile_options(test_util PRIVATE -fsanitize=address -fno-omit-frame-pointer -g)
+target_link_options(test_util PRIVATE -fsanitize=address)
 target_include_directories(test_util
     PRIVATE
         $<BUILD_INTERFACE:${protobuf-c_DIR}>
@@ -100,6 +103,8 @@ endif()
 
 foreach(test IN ITEMS ${test_e2ees})
   add_executable(${test} ${test}.c)
+  target_compile_options(${test} PRIVATE -fsanitize=address -fno-omit-frame-pointer -g)
+  target_link_options(${test} PRIVATE -fsanitize=address)
   target_include_directories(${test}
     PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>

@@ -28,8 +28,8 @@
 #include "e2ees/group_session.h"
 #include "e2ees/mem_util.h"
 #include "e2ees/ratchet.h"
-#include "e2ees/validation.h"
 #include "e2ees/session.h"
+#include "e2ees/validation.h"
 
 typedef struct group_address_node {
     E2ees__E2eeAddress *group_address;
@@ -43,34 +43,15 @@ static void send_pending_plaintext_data(E2ees__Session *outbound_session) {
     uint8_t **pending_plaintext_data_list = NULL;
     size_t *pending_plaintext_data_len_list = NULL;
     E2ees__NotifLevel *notif_level_list = NULL;
-    pending_plaintext_data_list_num =
-        get_e2ees_plugin()->db_handler.load_pending_plaintext_data(
-            outbound_session->our_address,
-            outbound_session->their_address,
-            &pending_plaintext_id_list,
-            &pending_plaintext_data_list,
-            &pending_plaintext_data_len_list,
-            &notif_level_list
-        );
+    pending_plaintext_data_list_num = get_e2ees_plugin()->db_handler.load_pending_plaintext_data(outbound_session->our_address, outbound_session->their_address, &pending_plaintext_id_list,
+                                                                                                 &pending_plaintext_data_list, &pending_plaintext_data_len_list, &notif_level_list);
     if (pending_plaintext_data_list_num > 0) {
-        e2ees_notify_log(
-            outbound_session->our_address,
-            DEBUG_LOG,
-            "send_pending_plaintext_data(): list num = %d",
-            pending_plaintext_data_list_num
-        );
+        e2ees_notify_log(outbound_session->our_address, DEBUG_LOG, "send_pending_plaintext_data(): list num = %d", pending_plaintext_data_list_num);
         uint32_t i;
         for (i = 0; i < pending_plaintext_data_list_num; i++) {
-            E2ees__SendOne2oneMsgResponse *response = send_one2one_msg_internal(
-                outbound_session,
-                notif_level_list[i],
-                pending_plaintext_data_list[i],
-                pending_plaintext_data_len_list[i]
-            );
+            E2ees__SendOne2oneMsgResponse *response = send_one2one_msg_internal(outbound_session, notif_level_list[i], pending_plaintext_data_list[i], pending_plaintext_data_len_list[i]);
             // always unload
-            get_e2ees_plugin()->db_handler.unload_pending_plaintext_data(
-                outbound_session->our_address, outbound_session->their_address, pending_plaintext_id_list[i]
-            );
+            get_e2ees_plugin()->db_handler.unload_pending_plaintext_data(outbound_session->our_address, outbound_session->their_address, pending_plaintext_id_list[i]);
             // release
             if (response != NULL) {
                 e2ees__send_one2one_msg_response__free_unpacked(response, NULL);
@@ -90,10 +71,7 @@ static void send_pending_plaintext_data(E2ees__Session *outbound_session) {
     }
 }
 
-int produce_get_pre_key_bundle_request(
-    E2ees__GetPreKeyBundleRequest **request_out,
-    get_pre_key_bundle_params *params
-) {
+int produce_get_pre_key_bundle_request(E2ees__GetPreKeyBundleRequest **request_out, get_pre_key_bundle_params *params) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__GetPreKeyBundleRequest *request = NULL;
@@ -109,14 +87,8 @@ int produce_get_pre_key_bundle_request(
     return ret;
 }
 
-int consume_get_pre_key_bundle_response(
-    E2ees__InviteResponse ***invite_response_list_out,
-    size_t *invite_response_num,
-    E2ees__E2eeAddress *from,
-    uint8_t *group_pre_key_plaintext_data,
-    size_t group_pre_key_plaintext_data_len,
-    E2ees__GetPreKeyBundleResponse *get_pre_key_bundle_response
-) {
+int consume_get_pre_key_bundle_response(E2ees__InviteResponse ***invite_response_list_out, size_t *invite_response_num, E2ees__E2eeAddress *from, uint8_t *group_pre_key_plaintext_data,
+                                        size_t group_pre_key_plaintext_data_len, E2ees__GetPreKeyBundleResponse *get_pre_key_bundle_response) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__PreKeyBundle **their_pre_key_bundles = NULL;
@@ -127,7 +99,7 @@ int consume_get_pre_key_bundle_response(
     E2ees__InviteResponse **invite_response_list = NULL;
     size_t invite_response_list_len = 0;
     E2ees__InviteResponse *cur_invite_response = NULL;
-    int invite_response_ret = E2EES_RESULT_SUCC;    // this parameter may be useful    
+    int invite_response_ret = E2EES_RESULT_SUCC; // this parameter may be useful
     ProtobufCBinaryData server_public_key = {0, NULL};
     bool is_self = false;
     char *from_user_id = NULL;
@@ -142,7 +114,7 @@ int consume_get_pre_key_bundle_response(
         } else {
             e2ees_notify_log(NULL, BAD_GET_PRE_KEY_BUNDLE_RESPONSE, "consume_get_pre_key_bundle_response(): invalid get_pre_key_bundle_response");
             ret = E2EES_RESULT_FAIL;
-        } 
+        }
     } else {
         e2ees_notify_log(NULL, BAD_ADDRESS, "consume_get_pre_key_bundle_response(): no from");
         ret = E2EES_RESULT_FAIL;
@@ -164,13 +136,9 @@ int consume_get_pre_key_bundle_response(
                 load_server_public_key_from_cache(&server_public_key, from);
                 if (server_public_key.data != NULL) {
                     ds_suite_t *digital_signature_suite = get_ds_suite(cur_pre_key_bundle->signature->signing_alg);
-                    int server_check = digital_signature_suite->verify(
-                        cur_pre_key_bundle->signature->signature.data,
-                        cur_pre_key_bundle->signature->signature.len,
-                        cur_pre_key_bundle->signature->msg_fingerprint.data,
-                        cur_pre_key_bundle->signature->msg_fingerprint.len,
-                        server_public_key.data
-                    );
+                    int server_check =
+                        digital_signature_suite->verify(cur_pre_key_bundle->signature->signature.data, cur_pre_key_bundle->signature->signature.len,
+                                                        cur_pre_key_bundle->signature->msg_fingerprint.data, cur_pre_key_bundle->signature->msg_fingerprint.len, server_public_key.data);
                     // release
                     free_mem((void **)&(server_public_key.data), server_public_key.len);
 
@@ -192,7 +160,7 @@ int consume_get_pre_key_bundle_response(
     if (ret == E2EES_RESULT_SUCC) {
         for (i = 0; i < n_pre_key_bundles; i++) {
             // the same user_id
-            if (is_self) { 
+            if (is_self) {
                 // the same device_id
                 if (compare_address(from, their_pre_key_bundles[i]->user_address)) {
                     continue;
@@ -220,14 +188,8 @@ int consume_get_pre_key_bundle_response(
             if (group_pre_key_plaintext_data != NULL) {
                 e2ees_notify_log(from, DEBUG_LOG, "consume_get_pre_key_bundle_response() store the group pre-keys");
                 char *pending_plaintext_id = generate_uuid_str();
-                get_e2ees_plugin()->db_handler.store_pending_plaintext_data(
-                    from,
-                    to_address,
-                    pending_plaintext_id,
-                    group_pre_key_plaintext_data,
-                    group_pre_key_plaintext_data_len,
-                    E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION
-                );
+                get_e2ees_plugin()->db_handler.store_pending_plaintext_data(from, to_address, pending_plaintext_id, group_pre_key_plaintext_data, group_pre_key_plaintext_data_len,
+                                                                            E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION);
                 // release
                 free(pending_plaintext_id);
                 pending_plaintext_id = NULL;
@@ -245,12 +207,7 @@ int consume_get_pre_key_bundle_response(
     return ret;
 }
 
-int produce_send_one2one_msg_request(
-    E2ees__SendOne2oneMsgRequest **request_out,
-    E2ees__Session *outbound_session,
-    uint32_t notif_level,
-    E2ees__One2oneMsgPayload *payload
-) {
+int produce_send_one2one_msg_request(E2ees__SendOne2oneMsgRequest **request_out, E2ees__Session *outbound_session, uint32_t notif_level, E2ees__One2oneMsgPayload *payload) {
     int ret = E2EES_RESULT_SUCC;
 
     // prepare an e2ee message
@@ -275,10 +232,7 @@ int produce_send_one2one_msg_request(
     return ret;
 }
 
-bool consume_send_one2one_msg_response(
-    E2ees__Session *outbound_session,
-    E2ees__SendOne2oneMsgResponse *response
-) {
+bool consume_send_one2one_msg_response(E2ees__Session *outbound_session, E2ees__SendOne2oneMsgResponse *response) {
     bool succ = false;
     bool remove_session = false;
     if (response != NULL) {
@@ -357,13 +311,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                 get_e2ees_plugin()->db_handler.load_auth(receiver_address, &auth);
 
                 if (!is_valid_string(auth)) {
-                    e2ees_notify_log(
-                        receiver_address, BAD_ACCOUNT, "invite() from [%s:%s] to [%s@%s]",
-                        receiver_address->user->user_id,
-                        receiver_address->user->device_id,
-                        to_user_id,
-                        to_domain
-                    );
+                    e2ees_notify_log(receiver_address, BAD_ACCOUNT, "invite() from [%s:%s] to [%s@%s]", receiver_address->user->user_id, receiver_address->user->device_id, to_user_id, to_domain);
                     free_string(auth);
                     ret = E2EES_RESULT_FAIL;
                 }
@@ -376,34 +324,14 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                     size_t i;
                     if (their_devices_num == 0) {
                         // this paragraph may be useless
-                        ret = get_pre_key_bundle_internal(
-                            &invite_response_list,
-                            &invite_response_num,
-                            receiver_address,
-                            auth,
-                            to_user_id,
-                            to_domain,
-                            NULL,
-                            false,
-                            NULL, 0
-                        );
+                        ret = get_pre_key_bundle_internal(&invite_response_list, &invite_response_num, receiver_address, auth, to_user_id, to_domain, NULL, false, NULL, 0);
                         // release
                         free_invite_response_list(&invite_response_list, invite_response_num);
                     } else {
                         char *cur_device_id = NULL;
                         for (i = 0; i < their_devices_num; i++) {
                             cur_device_id = their_device_id_list->device_id_list[i];
-                            ret = get_pre_key_bundle_internal(
-                                &invite_response_list,
-                                &invite_response_num,
-                                receiver_address,
-                                auth,
-                                to_user_id,
-                                to_domain,
-                                cur_device_id,
-                                false,
-                                NULL, 0
-                            );
+                            ret = get_pre_key_bundle_internal(&invite_response_list, &invite_response_num, receiver_address, auth, to_user_id, to_domain, cur_device_id, false, NULL, 0);
                             // release
                             free_invite_response_list(&invite_response_list, invite_response_num);
                         }
@@ -420,29 +348,16 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                 // unload the old outbound and inbound group sessions
                 if ((group_pre_key_bundle->old_session_id)[0] != '\0') {
                     get_e2ees_plugin()->db_handler.unload_group_session_by_id(receiver_address, group_pre_key_bundle->old_session_id);
-                    e2ees_notify_log(
-                        receiver_address,
-                        DEBUG_LOG,
-                        "unload the old outbound and inbound group sessions session_id: %s, session_owner: [%s:%s]",
-                        group_pre_key_bundle->old_session_id,
-                        receiver_address->user->user_id,
-                        receiver_address->user->device_id
-                    );
+                    e2ees_notify_log(receiver_address, DEBUG_LOG, "unload the old outbound and inbound group sessions session_id: %s, session_owner: [%s:%s]", group_pre_key_bundle->old_session_id,
+                                     receiver_address->user->user_id, receiver_address->user->device_id);
                 }
 
                 // try to load the new group sessions
                 E2ees__GroupInfo *cur_group_info = group_pre_key_bundle->group_info;
                 E2ees__GroupSession **inbound_group_sessions = NULL;
-                size_t inbound_group_sessions_num = get_e2ees_plugin()->db_handler.load_group_sessions(
-                    receiver_address, group_pre_key_bundle->group_info->group_address, &inbound_group_sessions
-                );
-                e2ees_notify_log(
-                    receiver_address,
-                    DEBUG_LOG,
-                    "consume_one2one_msg() E2EES__PLAINTEXT__PAYLOAD_GROUP_PRE_KEY_BUNDLE : inbound_group_sessions_num: %d, inbound_group_sessions: %p",
-                    inbound_group_sessions_num,
-                    inbound_group_sessions
-                );
+                size_t inbound_group_sessions_num = get_e2ees_plugin()->db_handler.load_group_sessions(receiver_address, group_pre_key_bundle->group_info->group_address, &inbound_group_sessions);
+                e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_one2one_msg() E2EES__PLAINTEXT__PAYLOAD_GROUP_PRE_KEY_BUNDLE : inbound_group_sessions_num: %d, inbound_group_sessions: %p",
+                                 inbound_group_sessions_num, inbound_group_sessions);
                 if (inbound_group_sessions_num > 0 && inbound_group_sessions != NULL) {
                     size_t i;
                     for (i = 0; i < inbound_group_sessions_num; i++) {
@@ -452,51 +367,25 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                             continue;
                         }
                         complete_inbound_group_session_by_pre_key_bundle(inbound_group_sessions[i], group_pre_key_bundle);
-                        e2ees_notify_log(
-                            receiver_address,
-                            DEBUG_LOG,
-                            "complete_inbound_group_session_by_pre_key_bundle: %s, session_owner: [%s:%s]",
-                            group_pre_key_bundle->session_id,
-                            receiver_address->user->user_id,
-                            receiver_address->user->device_id
-                        );
+                        e2ees_notify_log(receiver_address, DEBUG_LOG, "complete_inbound_group_session_by_pre_key_bundle: %s, session_owner: [%s:%s]", group_pre_key_bundle->session_id,
+                                         receiver_address->user->user_id, receiver_address->user->device_id);
 
                         // release inbound_group_sessions[i]
                         e2ees__group_session__free_unpacked(inbound_group_sessions[i], NULL);
                     }
                     // release inbound_group_sessions
-                    free_mem((void **)&inbound_group_sessions, sizeof(E2ees__Session *) * inbound_group_sessions_num);
+                    free_mem((void **)&inbound_group_sessions, sizeof(E2ees__GroupSession *) * inbound_group_sessions_num);
 
                     // create the outbound group session
-                    new_outbound_group_session_by_receiver(
-                        &(group_pre_key_bundle->group_seed),
-                        group_pre_key_bundle->e2ees_pack_id,
-                        receiver_address,
-                        cur_group_info->group_name,
-                        cur_group_info->group_address,
-                        group_pre_key_bundle->session_id,
-                        cur_group_info->group_member_list,
-                        cur_group_info->n_group_member_list
-                    );
-                    e2ees_notify_log(
-                        receiver_address,
-                        DEBUG_LOG,
-                        "new_outbound_group_session_by_receiver: %s, session_owner: [%s:%s]",
-                        group_pre_key_bundle->session_id,
-                        receiver_address->user->user_id,
-                        receiver_address->user->device_id
-                    );
+                    new_outbound_group_session_by_receiver(&(group_pre_key_bundle->group_seed), group_pre_key_bundle->e2ees_pack_id, receiver_address, cur_group_info->group_name,
+                                                           cur_group_info->group_address, group_pre_key_bundle->session_id, cur_group_info->group_member_list, cur_group_info->n_group_member_list);
+                    e2ees_notify_log(receiver_address, DEBUG_LOG, "new_outbound_group_session_by_receiver: %s, session_owner: [%s:%s]", group_pre_key_bundle->session_id,
+                                     receiver_address->user->user_id, receiver_address->user->device_id);
                 } else {
                     // the sender in the inbound group session is the one who creates the group
                     new_inbound_group_session_by_pre_key_bundle(group_pre_key_bundle->e2ees_pack_id, receiver_address, group_pre_key_bundle);
-                    e2ees_notify_log(
-                        receiver_address,
-                        DEBUG_LOG,
-                        "new_inbound_group_session_by_pre_key_bundle: %s, session_owner: [%s:%s]",
-                        group_pre_key_bundle->session_id,
-                        receiver_address->user->user_id,
-                        receiver_address->user->device_id
-                    );
+                    e2ees_notify_log(receiver_address, DEBUG_LOG, "new_inbound_group_session_by_pre_key_bundle: %s, session_owner: [%s:%s]", group_pre_key_bundle->session_id,
+                                     receiver_address->user->user_id, receiver_address->user->device_id);
                 }
             } else if (plaintext->payload_case == E2EES__PLAINTEXT__PAYLOAD_GROUP_UPDATE_KEY_BUNDLE) {
                 E2ees__GroupUpdateKeyBundle *group_update_key_bundle = plaintext->group_update_key_bundle;
@@ -504,24 +393,12 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                 if (group_update_key_bundle->adding == true) {
                     // create the outbound group session
                     new_outbound_group_session_invited(group_update_key_bundle, receiver_address);
-                    e2ees_notify_log(
-                        receiver_address,
-                        DEBUG_LOG,
-                        "new_outbound_group_session_invited: %s, session_owner: [%s:%s]",
-                        group_update_key_bundle->session_id,
-                        receiver_address->user->user_id,
-                        receiver_address->user->device_id
-                    );
+                    e2ees_notify_log(receiver_address, DEBUG_LOG, "new_outbound_group_session_invited: %s, session_owner: [%s:%s]", group_update_key_bundle->session_id,
+                                     receiver_address->user->user_id, receiver_address->user->device_id);
                 }
                 new_and_complete_inbound_group_session_with_ratchet_state(group_update_key_bundle, receiver_address);
-                e2ees_notify_log(
-                    receiver_address,
-                    DEBUG_LOG,
-                    "new_and_complete_inbound_group_session_with_ratchet_state: %s, session_owner: [%s:%s]",
-                    group_update_key_bundle->session_id,
-                    receiver_address->user->user_id,
-                    receiver_address->user->device_id
-                );
+                e2ees_notify_log(receiver_address, DEBUG_LOG, "new_and_complete_inbound_group_session_with_ratchet_state: %s, session_owner: [%s:%s]", group_update_key_bundle->session_id,
+                                 receiver_address->user->user_id, receiver_address->user->device_id);
             }
             e2ees__plaintext__free_unpacked(plaintext, NULL);
             // success
@@ -631,9 +508,7 @@ bool consume_add_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__Ad
         cur_group_address_node = group_address_list;
         while (cur_group_address_node != NULL) {
             E2ees__AddGroupMemberDeviceResponse *add_group_member_device_response = NULL;
-            ret = add_group_member_device_internal(
-                &add_group_member_device_response, receiver_address, cur_group_address_node->group_address, new_user_address
-            );
+            ret = add_group_member_device_internal(&add_group_member_device_response, receiver_address, cur_group_address_node->group_address, new_user_address);
 
             // release
             free_proto(add_group_member_device_response);
@@ -671,10 +546,7 @@ bool consume_remove_user_device_msg(E2ees__E2eeAddress *receiver_address, E2ees_
     return true;
 }
 
-int produce_invite_request(
-    E2ees__InviteRequest **request_out,
-    E2ees__Session *outbound_session
-) {
+int produce_invite_request(E2ees__InviteRequest **request_out, E2ees__Session *outbound_session) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__InviteRequest *request = NULL;
@@ -713,10 +585,7 @@ int produce_invite_request(
     return ret;
 }
 
-int consume_invite_response(
-    E2ees__E2eeAddress *user_address,
-    E2ees__InviteResponse *response
-) {
+int consume_invite_response(E2ees__E2eeAddress *user_address, E2ees__InviteResponse *response) {
     int ret = E2EES_RESULT_SUCC;
     bool succ = false;
 
@@ -827,10 +696,7 @@ bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *
     return true;
 }
 
-int produce_accept_request(
-    E2ees__AcceptRequest **request_out,
-    accept_params *params
-) {
+int produce_accept_request(E2ees__AcceptRequest **request_out, accept_params *params) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__AcceptRequest *request = NULL;
@@ -912,11 +778,7 @@ bool consume_accept_msg(E2ees__E2eeAddress *receiver_address, E2ees__AcceptMsg *
         // try to send group pre-keys if necessary
         send_pending_plaintext_data(outbound_session);
     } else {
-        e2ees_notify_log(
-            receiver_address,
-            DEBUG_LOG,
-            "consume_accept_msg(): complete_outbound_session error"
-        );
+        e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_accept_msg(): complete_outbound_session error");
     }
 
     // release

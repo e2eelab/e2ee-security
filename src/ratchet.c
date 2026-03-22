@@ -861,7 +861,7 @@ int decrypt_ratchet(uint8_t **decrypted_data_out, size_t *decrypted_data_len_out
                 new_receiver_chain->chain_key = (E2ees__ChainKey *)malloc(sizeof(E2ees__ChainKey));
                 e2ees__chain_key__init(new_receiver_chain->chain_key);
                 create_chain_key(cipher_suite, ratchet->root_key, &(ratchet->receiver_chain->our_ratchet_private_key), &(new_receiver_chain->their_ratchet_public_key), &(ratchet->root_key),
-                    new_receiver_chain->chain_key, NULL);
+                                 new_receiver_chain->chain_key, NULL);
 
                 corresponding_receiver_chain = new_receiver_chain;
 
@@ -882,7 +882,7 @@ int decrypt_ratchet(uint8_t **decrypted_data_out, size_t *decrypted_data_len_out
                     copy_protobuf_from_protobuf(&(new_sender_chain->our_ratchet_public_key), &(new_ratchet_key_pair->public_key));
                     copy_protobuf_from_protobuf(&(new_sender_chain->their_ratchet_public_key), &(new_receiver_chain->their_ratchet_public_key));
                     create_chain_key(cipher_suite, ratchet->root_key, &(new_ratchet_key_pair->private_key), &(new_sender_chain->their_ratchet_public_key), &(ratchet->root_key),
-                        new_sender_chain->chain_key, NULL);
+                                     new_sender_chain->chain_key, NULL);
 
                     e2ees__key_pair__free_unpacked(new_ratchet_key_pair, NULL);
                 } else {
@@ -891,7 +891,7 @@ int decrypt_ratchet(uint8_t **decrypted_data_out, size_t *decrypted_data_len_out
 
                     copy_protobuf_from_protobuf(&(new_sender_chain->their_ratchet_public_key), &(ratchet->sender_chain->their_ratchet_public_key));
                     create_chain_key(cipher_suite, ratchet->root_key, NULL, &(new_sender_chain->their_ratchet_public_key), &(ratchet->root_key), new_sender_chain->chain_key,
-                        &(new_sender_chain->our_ratchet_public_key));
+                                     &(new_sender_chain->our_ratchet_public_key));
                 }
 
                 e2ees__receiver_chain_node__free_unpacked(ratchet->receiver_chain, NULL);
@@ -922,6 +922,10 @@ int decrypt_ratchet(uint8_t **decrypted_data_out, size_t *decrypted_data_len_out
                             (E2ees__SkippedMsgKeyNode **)realloc(ratchet->skipped_msg_key_list, sizeof(E2ees__SkippedMsgKeyNode *) * (ratchet->n_skipped_msg_key_list + skipped_num));
                         if (temp_skipped_message_keys != NULL) {
                             ratchet->skipped_msg_key_list = temp_skipped_message_keys;
+                        } else {
+                            e2ees_notify_log(NULL, DEBUG_LOG, "decrypt_ratchet(): Memory allocation failed for skipped_msg_key_list.");
+                            ret = E2EES_RESULT_FAIL;
+                            break;
                         }
                     }
                     while (corresponding_receiver_chain->chain_key->index < payload->sequence) {
