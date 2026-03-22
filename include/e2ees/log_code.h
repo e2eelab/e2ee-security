@@ -30,111 +30,113 @@ extern "C" {
 #include "e2ees/e2ees.h"
 
 enum LogCode {
-    DEBUG_LOG = 0,
+    DEBUG_LOG   = 0,
     VERBOSE_LOG = 1,
 
     // cipher suite
     BAD_CIPHER_SUITE = 1001,
-    BAD_E2EES_PACK = 1002,
+    BAD_E2EES_PACK   = 1002,
 
     // account
-    BAD_ACCOUNT = 2001,
-    BAD_KEY_PAIR = 2002,
-    BAD_SIGNED_PRE_KEY = 2003,
-    BAD_SIGNATURE = 2004,
+    BAD_ACCOUNT          = 2001,
+    BAD_KEY_PAIR         = 2002,
+    BAD_SIGNED_PRE_KEY   = 2003,
+    BAD_SIGNATURE        = 2004,
     BAD_ONE_TIME_PRE_KEY = 2005,
-    BAD_AUTH = 2006,
-    BAD_AUTHENTICATOR = 2007,
-    BAD_PRIVATE_KEY = 2008,
-    BAD_PUBLIC_KEY = 2009,
-    BAD_REMOVE_OPK = 2010,
+    BAD_AUTH             = 2006,
+    BAD_AUTHENTICATOR    = 2007,
+    BAD_PRIVATE_KEY      = 2008,
+    BAD_PUBLIC_KEY       = 2009,
+    BAD_REMOVE_OPK       = 2010,
 
     // address
-    BAD_ADDRESS = 3001,
-    BAD_USER_ID = 3002,
+    BAD_ADDRESS   = 3001,
+    BAD_USER_ID   = 3002,
     BAD_DEVICE_ID = 3003,
-    BAD_DOMAIN = 3004,
+    BAD_DOMAIN    = 3004,
     BAD_USER_NAME = 3005,
 
     // ratchet
     BAD_MESSAGE_ENCRYPTION = 4001,
     BAD_MESSAGE_DECRYPTION = 4002,
-    BAD_FILE_ENCRYPTION = 4003,
-    BAD_FILE_DECRYPTION = 4004,
-    BAD_MESSAGE_KEY = 4005,
-    BAD_MESSAGE_SEQUENCE = 4006,
-    BAD_RATCHET = 4007,
-    BAD_RATCHET_KEY = 4008,
+    BAD_FILE_ENCRYPTION    = 4003,
+    BAD_FILE_DECRYPTION    = 4004,
+    BAD_MESSAGE_KEY        = 4005,
+    BAD_MESSAGE_SEQUENCE   = 4006,
+    BAD_RATCHET            = 4007,
+    BAD_RATCHET_KEY        = 4008,
 
     // session
-    BAD_SESSION = 5001,
-    BAD_SESSION_ID = 5002,
+    BAD_SESSION        = 5001,
+    BAD_SESSION_ID     = 5002,
     BAD_PRE_KEY_BUNDLE = 5101,
 
     // group session
-    BAD_GROUP_SESSION = 6001,
-    BAD_GROUP_SESSION_ID = 6002,
-    BAD_GROUP_NAME = 6003,
-    BAD_GROUP_ADDRESS = 6004,
-    BAD_GROUP_MEMBERS = 6005,
-    BAD_GROUP_MEMBER_INFO = 6006,
-    BAD_GROUP_INFO = 6007,
-    BAD_GROUP_SEED = 6008,
-    BAD_GROUP_CHAIN_KEY = 6009,
-    BAD_GROUP_PRE_KEY_BUNDLE = 6101,
+    BAD_GROUP_SESSION           = 6001,
+    BAD_GROUP_SESSION_ID        = 6002,
+    BAD_GROUP_NAME              = 6003,
+    BAD_GROUP_ADDRESS           = 6004,
+    BAD_GROUP_MEMBERS           = 6005,
+    BAD_GROUP_MEMBER_INFO       = 6006,
+    BAD_GROUP_INFO              = 6007,
+    BAD_GROUP_SEED              = 6008,
+    BAD_GROUP_CHAIN_KEY         = 6009,
+    BAD_GROUP_PRE_KEY_BUNDLE    = 6101,
     BAD_GROUP_UPDATE_KEY_BUNDLE = 6102,
 
     // request
-    BAD_ACCEPT_REQUEST = 7001,
+    BAD_ACCEPT_REQUEST                  = 7001,
     BAD_ADD_GROUP_MEMBER_DEVICE_REQUEST = 7011,
-    BAD_ADD_GROUP_MEMBERS_REQUEST = 7021,
-    BAD_CONSUME_PROTO_MSG_REQUEST = 7031,
-    BAD_CREATE_GROUP_REQUEST = 7041,
-    BAD_GET_GROUP_REQUEST = 7051,
-    BAD_GET_PRE_KEY_BUNDLE_REQUEST = 7061,
-    BAD_INVITE_REQUEST = 7071,
-    BAD_LEAVE_GROUP_REQUEST = 7081,
-    BAD_PUBLISH_SPK_REQUEST = 7091,
-    BAD_REGISTER_USER_REQUEST = 7101,
-    BAD_REMOVE_GROUP_MEMBERS_REQUEST = 7111,
-    BAD_SEND_GROUP_MSG_REQUEST = 7121,
-    BAD_SEND_ONE2ONE_MSG_REQUEST = 7131,
-    BAD_SUPPLY_OPKS_REQUEST = 7141,
-    BAD_UPDATE_USER_REQUEST = 7151,
+    BAD_ADD_GROUP_MEMBERS_REQUEST       = 7021,
+    BAD_CONSUME_PROTO_MSG_REQUEST       = 7031,
+    BAD_CREATE_GROUP_REQUEST            = 7041,
+    BAD_GET_GROUP_REQUEST               = 7051,
+    BAD_GET_PRE_KEY_BUNDLE_REQUEST      = 7061,
+    BAD_INVITE_REQUEST                  = 7071,
+    BAD_LEAVE_GROUP_REQUEST             = 7081,
+    BAD_PUBLISH_SPK_REQUEST             = 7091,
+    BAD_REGISTER_USER_REQUEST           = 7101,
+    BAD_REMOVE_GROUP_MEMBERS_REQUEST    = 7111,
+    BAD_SEND_GROUP_MSG_REQUEST          = 7121,
+    BAD_SEND_ONE2ONE_MSG_REQUEST        = 7131,
+    BAD_SUPPLY_OPKS_REQUEST             = 7141,
+    BAD_UPDATE_USER_REQUEST             = 7151,
+
     // response
-    BAD_ACCEPT_RESPONSE = 7301,
+    BAD_ACCEPT_RESPONSE                  = 7301,
     BAD_ADD_GROUP_MEMBER_DEVICE_RESPONSE = 7311,
-    BAD_ADD_GROUP_MEMBERS_RESPONSE = 7321,
-    BAD_CONSUME_PROTO_MSG_RESPONSE = 7331,
-    BAD_CREATE_GROUP_RESPONSE = 7341,
-    BAD_GET_GROUP_RESPONSE = 7351,
-    BAD_GET_PRE_KEY_BUNDLE_RESPONSE = 7361,
-    BAD_INVITE_RESPONSE = 7371,
-    BAD_LEAVE_GROUP_RESPONSE = 7381,
-    BAD_PUBLISH_SPK_RESPONSE = 7391,
-    BAD_REGISTER_USER_RESPONSE = 7401,
-    BAD_REMOVE_GROUP_MEMBERS_RESPONSE = 7411,
-    BAD_SEND_GROUP_MSG_RESPONSE = 7421,
-    BAD_SEND_ONE2ONE_MSG_RESPONSE = 7431,
-    BAD_SUPPLY_OPKS_RESPONSE = 7441,
-    BAD_UPDATE_USER_RESPONSE = 7451,
+    BAD_ADD_GROUP_MEMBERS_RESPONSE       = 7321,
+    BAD_CONSUME_PROTO_MSG_RESPONSE       = 7331,
+    BAD_CREATE_GROUP_RESPONSE            = 7341,
+    BAD_GET_GROUP_RESPONSE               = 7351,
+    BAD_GET_PRE_KEY_BUNDLE_RESPONSE      = 7361,
+    BAD_INVITE_RESPONSE                  = 7371,
+    BAD_LEAVE_GROUP_RESPONSE             = 7381,
+    BAD_PUBLISH_SPK_RESPONSE             = 7391,
+    BAD_REGISTER_USER_RESPONSE           = 7401,
+    BAD_REMOVE_GROUP_MEMBERS_RESPONSE    = 7411,
+    BAD_SEND_GROUP_MSG_RESPONSE          = 7421,
+    BAD_SEND_ONE2ONE_MSG_RESPONSE        = 7431,
+    BAD_SUPPLY_OPKS_RESPONSE             = 7441,
+    BAD_UPDATE_USER_RESPONSE             = 7451,
+
     // msg
-    BAD_ACCEPT_MSG = 7601,
+    BAD_ACCEPT_MSG                  = 7601,
     BAD_ADD_GROUP_MEMBER_DEVICE_MSG = 7611,
-    BAD_ADD_GROUP_MEMBERS_MSG = 7621,
-    BAD_ADD_USER_DEVICE_MSG = 7631,
-    BAD_CREATE_GROUP_MSG = 7641,
-    BAD_E2EE_MSG = 7651,
-    BAD_GET_GROUP_MSG = 7661,
-    BAD_GET_PRE_KEY_BUNDLE_MSG = 7671,
-    BAD_INVITE_MSG = 7681,
-    BAD_LEAVE_GROUP_MSG = 7691,
-    BAD_PROTO_MSG = 7696,
-    BAD_PUBLISH_SPK_MSG = 7701,
-    BAD_REGISTER_USER_MSG = 7711,
-    BAD_REMOVE_GROUP_MEMBERS_MSG = 7721,
-    BAD_SUPPLY_OPKS_MSG = 7731,
-    BAD_UPDATE_USER_MSG = 7741,
+    BAD_ADD_GROUP_MEMBERS_MSG       = 7621,
+    BAD_ADD_USER_DEVICE_MSG         = 7631,
+    BAD_CREATE_GROUP_MSG            = 7641,
+    BAD_E2EE_MSG                    = 7651,
+    BAD_GET_GROUP_MSG               = 7661,
+    BAD_GET_PRE_KEY_BUNDLE_MSG      = 7671,
+    BAD_INVITE_MSG                  = 7681,
+    BAD_LEAVE_GROUP_MSG             = 7691,
+    BAD_PROTO_MSG                   = 7696,
+    BAD_PUBLISH_SPK_MSG             = 7701,
+    BAD_REGISTER_USER_MSG           = 7711,
+    BAD_REMOVE_GROUP_MEMBERS_MSG    = 7721,
+    BAD_SUPPLY_OPKS_MSG             = 7731,
+    BAD_UPDATE_USER_MSG             = 7741,
 
     // consume
     BAD_CONSUME = 8001,
@@ -159,21 +161,25 @@ typedef struct stack_frame {
 extern __thread stack_frame_t *current_stack_top;
 
 #ifdef ENABLE_TRACE
-#define TRACE_ENTER() \
-        do { \
-            stack_frame_t new_frame = {__func__, __FILE__, __LINE__, current_stack_top}; \
-            current_stack_top = &new_frame; \
-        } while(0)
+#define TRACE_ENTER()                                                                              \
+    do {                                                                                           \
+        stack_frame_t new_frame = { __func__, __FILE__, __LINE__, current_stack_top };             \
+        current_stack_top       = &new_frame;                                                      \
+    } while (0)
 
-#define TRACE_EXIT() \
-        do { \
-            if (current_stack_top != NULL) { \
-                current_stack_top = current_stack_top->prev; \
-            } \
-        } while(0)
+#define TRACE_EXIT()                                                                               \
+    do {                                                                                           \
+        if (current_stack_top != NULL) {                                                           \
+            current_stack_top = current_stack_top->prev;                                           \
+        }                                                                                          \
+    } while (0)
 #else
-#define TRACE_ENTER() do { } while(0)
-#define TRACE_EXIT() do { } while(0)
+#define TRACE_ENTER()                                                                              \
+    do {                                                                                           \
+    } while (0)
+#define TRACE_EXIT()                                                                               \
+    do {                                                                                           \
+    } while (0)
 #endif
 
 typedef struct {
@@ -183,7 +189,7 @@ typedef struct {
     int indent;
 } dump_context_t;
 
-typedef void* (*proto_handler_func)(E2ees__E2eeAddress *, const char *, const void *);
+typedef void *(*proto_handler_func)(E2ees__E2eeAddress *, const char *, const void *);
 
 /**
  * @brief Get the string representation of a given log code.
@@ -201,15 +207,18 @@ const char *logcode_string(LogCode log_code);
 void get_stack_trace(char *buffer, size_t buffer_len);
 
 /**
- * @brief Performs deep inspection and logging of Protobuf messages using reflection.
- * 
- * This function utilizes the Protobuf-C reflection mechanism to automatically traverse 
- * message descriptors. It recursively expands all fields, including nested messages 
- * and repeated arrays, while correctly filtering inactive union members in 'oneof' 
- * structures based on the current case selector. Results are dispatched via 
- * e2ees_notify_log with VERBOSE_LOG level for full end-to-end data tracing.
- * 
- * @param addr The E2eeAddress associated with the sender or entity for log categorization.
+ * @brief Performs deep inspection and logging of Protobuf messages using
+ * reflection.
+ *
+ * This function utilizes the Protobuf-C reflection mechanism to automatically
+ * traverse message descriptors. It recursively expands all fields, including
+ * nested messages and repeated arrays, while correctly filtering inactive union
+ * members in 'oneof' structures based on the current case selector. Results are
+ * dispatched via e2ees_notify_log with VERBOSE_LOG level for full end-to-end
+ * data tracing.
+ *
+ * @param addr The E2eeAddress associated with the sender or entity for log
+ * categorization.
  * @param msg Pointer to the Protobuf structure.
  */
 void log_proto(E2ees__E2eeAddress *addr, const ProtobufCMessage *msg);

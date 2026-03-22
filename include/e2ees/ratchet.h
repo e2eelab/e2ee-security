@@ -20,21 +20,21 @@
 #ifndef RATCHET_H_
 #define RATCHET_H_
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "e2ees/e2ees.h"
 #include "e2ees/cipher.h"
+#include "e2ees/e2ees.h"
 
 /**
  * The context strings that are used by the HKDF
  * for deriving next root key and chain key.
  */
-#define KDF_INFO_ROOT "ROOT"
+#define KDF_INFO_ROOT    "ROOT"
 #define KDF_INFO_RATCHET "RATCHET"
 
 /** Initialise the session using a shared secret and the public part of the
@@ -42,9 +42,10 @@ extern "C" {
 int initialise_as_bob(
     E2ees__Ratchet **ratchet_out,
     const cipher_suite_t *cipher_suite,
-    const uint8_t *shared_secret, size_t shared_secret_len,
-    const E2ees__KeyPair *our_ratchet_key, ProtobufCBinaryData *their_ratchet_key
-);
+    const uint8_t *shared_secret,
+    size_t shared_secret_len,
+    const E2ees__KeyPair *our_ratchet_key,
+    ProtobufCBinaryData *their_ratchet_key);
 
 /** Initialise the session using a shared secret and the public/private key
  * pair for the first ratchet key */
@@ -55,8 +56,7 @@ int initialise_as_alice(
     size_t shared_secret_len,
     const E2ees__KeyPair *our_ratchet_key,
     ProtobufCBinaryData *their_ratchet_key,
-    ProtobufCBinaryData *their_encaps_ciphertext
-);
+    ProtobufCBinaryData *their_encaps_ciphertext);
 
 /**
  * @brief Encrypt plaintext_data to E2ees__One2oneMsgPayload payload
@@ -74,8 +74,8 @@ int encrypt_ratchet(
     const cipher_suite_t *cipher_suite,
     E2ees__Ratchet *ratchet,
     ProtobufCBinaryData ad,
-    const uint8_t *plaintext_data, size_t plaintext_data_len
-);
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len);
 
 /**
  * @brief Decrypt E2ees__One2oneMsgPayload payload to plaintext_data
@@ -91,10 +91,12 @@ int encrypt_ratchet(
  * @return 0 for error
  */
 int decrypt_ratchet(
-    uint8_t **decrypted_data_out, size_t *decrypted_data_len_out,
+    uint8_t **decrypted_data_out,
+    size_t *decrypted_data_len_out,
     const cipher_suite_t *cipher_suite,
-    E2ees__Ratchet *ratchet, ProtobufCBinaryData ad, E2ees__One2oneMsgPayload *payload
-);
+    E2ees__Ratchet *ratchet,
+    ProtobufCBinaryData ad,
+    E2ees__One2oneMsgPayload *payload);
 
 #ifdef __cplusplus
 }

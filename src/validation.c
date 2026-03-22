@@ -27,11 +27,23 @@
 bool accurate_key_pair(E2ees__KeyPair *key_pair, uint32_t pub_key_len, uint32_t priv_key_len) {
     if (key_pair != NULL) {
         if (key_pair->public_key.len != pub_key_len) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "accurate_key_pair() key_pair->public_key.len: %d != pub_key_len: %d", key_pair->public_key.len, pub_key_len);
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "accurate_key_pair() key_pair->public_key.len: %d != "
+                "pub_key_len: %d",
+                key_pair->public_key.len,
+                pub_key_len);
             return false;
         }
         if (key_pair->private_key.len != priv_key_len) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "accurate_key_pair() key_pair->private_key.len: %d != priv_key_len: %d", key_pair->private_key.len, priv_key_len);
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "accurate_key_pair() key_pair->private_key.len: %d != "
+                "priv_key_len: %d",
+                key_pair->private_key.len,
+                priv_key_len);
             return false;
         }
     } else {
@@ -47,78 +59,138 @@ bool is_valid_cipher_suite(const cipher_suite_t *cipher_suite) {
     if (cipher_suite != NULL) {
         if (cipher_suite->ds_suite != NULL) {
             if (cipher_suite->ds_suite->get_param == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->ds_suite->get_param == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->ds_suite->get_param "
+                    "== NULL");
                 return false;
             }
             if (cipher_suite->ds_suite->sign == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->ds_suite->sign == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->ds_suite->sign == "
+                    "NULL");
                 return false;
             }
             if (cipher_suite->ds_suite->ds_key_gen == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->ds_suite->ds_key_gen == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() "
+                    "cipher_suite->ds_suite->ds_key_gen == NULL");
                 return false;
             }
             if (cipher_suite->ds_suite->verify == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->ds_suite->verify == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->ds_suite->verify == "
+                    "NULL");
                 return false;
             }
         } else {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->ds_suite == NULL");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->ds_suite == NULL");
             return false;
         }
         if (cipher_suite->kem_suite != NULL) {
             if (cipher_suite->kem_suite->asym_key_gen == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->kem_suite->asym_key_gen == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() "
+                    "cipher_suite->kem_suite->asym_key_gen == NULL");
                 return false;
             }
             if (cipher_suite->kem_suite->get_param == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->kem_suite->get_param == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() "
+                    "cipher_suite->kem_suite->get_param == NULL");
                 return false;
             }
             if (cipher_suite->kem_suite->encaps == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->kem_suite->encaps == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->kem_suite->encaps "
+                    "== NULL");
                 return false;
             }
             if (cipher_suite->kem_suite->decaps == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->kem_suite->decaps == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->kem_suite->decaps "
+                    "== NULL");
                 return false;
             }
         } else {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->kem_suite == NULL");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->kem_suite == NULL");
             return false;
         }
         if (cipher_suite->se_suite != NULL) {
             if (cipher_suite->se_suite->decrypt == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->se_suite->decrypt == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->se_suite->decrypt "
+                    "== NULL");
                 return false;
             }
             if (cipher_suite->se_suite->encrypt == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->se_suite->encrypt == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->se_suite->encrypt "
+                    "== NULL");
                 return false;
             }
             if (cipher_suite->se_suite->get_param == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->se_suite->get_param == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->se_suite->get_param "
+                    "== NULL");
                 return false;
             }
         } else {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->se_suite == NULL");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->se_suite == NULL");
             return false;
         }
         if (cipher_suite->hf_suite != NULL) {
             if (cipher_suite->hf_suite->hash == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->hf_suite->hash == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->hf_suite->hash == "
+                    "NULL");
                 return false;
             }
             if (cipher_suite->hf_suite->hkdf == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->hf_suite->hkdf == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->hf_suite->hkdf == "
+                    "NULL");
                 return false;
             }
             if (cipher_suite->hf_suite->hmac == NULL) {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->hf_suite->hmac == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_cipher_suite() cipher_suite->hf_suite->hmac == "
+                    "NULL");
                 return false;
             }
         } else {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->hf_suite == NULL");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_cipher_suite() cipher_suite->hf_suite == NULL");
             return false;
         }
     } else {
@@ -218,15 +290,21 @@ bool is_valid_address(E2ees__E2eeAddress *src) {
                 //    return false;
                 // }
                 if (!is_valid_string(src->user->user_id)) {
-                    e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_address() bad user_id %d", src->user->user_id);
+                    e2ees_notify_log(
+                        NULL, DEBUG_LOG, "is_valid_address() bad user_id %d", src->user->user_id);
                     return false;
                 }
                 if (!is_valid_string(src->user->device_id)) {
-                    e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_address() bad device_id %d", src->user->device_id);
+                    e2ees_notify_log(
+                        NULL,
+                        DEBUG_LOG,
+                        "is_valid_address() bad device_id %d",
+                        src->user->device_id);
                     return false;
                 }
             } else {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_address() bad user address with user == NULL");
+                e2ees_notify_log(
+                    NULL, DEBUG_LOG, "is_valid_address() bad user address with user == NULL");
                 return false;
             }
         } else if (src->peer_case == E2EES__E2EE_ADDRESS__PEER_GROUP) {
@@ -236,15 +314,21 @@ bool is_valid_address(E2ees__E2eeAddress *src) {
                 //     return false;
                 // }
                 if (!is_valid_string(src->group->group_id)) {
-                    e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_address() bad group_id %d", src->group->group_id);
+                    e2ees_notify_log(
+                        NULL,
+                        DEBUG_LOG,
+                        "is_valid_address() bad group_id %d",
+                        src->group->group_id);
                     return false;
                 }
             } else {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_address() bad group address with group == NULL");
+                e2ees_notify_log(
+                    NULL, DEBUG_LOG, "is_valid_address() bad group address with group == NULL");
                 return false;
             }
         } else {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_address() bad peer_case %d", src->peer_case);
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_address() bad peer_case %d", src->peer_case);
             return false;
         }
     } else {
@@ -258,7 +342,8 @@ bool is_valid_address(E2ees__E2eeAddress *src) {
 bool is_valid_no_device_id_user_address(E2ees__E2eeAddress *src) {
     if (src != NULL) {
         if (!is_valid_string(src->domain)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() bad domain %d", src->domain);
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() bad domain %d", src->domain);
             return false;
         }
         if (src->peer_case == E2EES__E2EE_ADDRESS__PEER_USER) {
@@ -268,20 +353,37 @@ bool is_valid_no_device_id_user_address(E2ees__E2eeAddress *src) {
                 //    return false;
                 // }
                 if (!is_valid_string(src->user->user_id)) {
-                    e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() bad user_id %d", src->user->user_id);
+                    e2ees_notify_log(
+                        NULL,
+                        DEBUG_LOG,
+                        "is_valid_no_device_id_user_address() bad user_id %d",
+                        src->user->user_id);
                     return false;
                 }
                 // device_id is bound to null or empty string
                 if (!is_invalid_string(src->user->device_id)) {
-                    e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() bad device_id, should be null or empty");
+                    e2ees_notify_log(
+                        NULL,
+                        DEBUG_LOG,
+                        "is_valid_no_device_id_user_address() bad device_id, "
+                        "should be null or empty");
                     return false;
                 }
             } else {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() bad user address with user == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_no_device_id_user_address() bad user address "
+                    "with user == NULL");
                 return false;
             }
         } else {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_no_device_id_user_address() user address has bad peer_case %d", src->peer_case);
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_no_device_id_user_address() user address has bad "
+                "peer_case %d",
+                src->peer_case);
             return false;
         }
     } else {
@@ -432,10 +534,12 @@ bool is_valid_unregistered_account(E2ees__Account *src) {
         return false;
     }
     if (!is_valid_one_time_pre_key_list(src->one_time_pre_key_list, src->n_one_time_pre_key_list)) {
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_unregistered_account() bad one_time_pre_key_list");
+        e2ees_notify_log(
+            NULL, DEBUG_LOG, "is_valid_unregistered_account() bad one_time_pre_key_list");
         return false;
     }
-    // the address, password and auth should not be available in an unregistered account
+    // the address, password and auth should not be available in an unregistered
+    // account
     if (!is_invalid_address(src->address)) {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_unregistered_account() bad address");
         return false;
@@ -456,7 +560,7 @@ bool is_valid_registered_account(E2ees__Account *src) {
     if (src == NULL) {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_registered_account() account is null");
         return false;
-    }    
+    }
     if (src->version == NULL) {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_registered_account() bad version");
         return false;
@@ -478,7 +582,8 @@ bool is_valid_registered_account(E2ees__Account *src) {
         return false;
     }
     if (!is_valid_one_time_pre_key_list(src->one_time_pre_key_list, src->n_one_time_pre_key_list)) {
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_registered_account() bad one_time_pre_key_list");
+        e2ees_notify_log(
+            NULL, DEBUG_LOG, "is_valid_registered_account() bad one_time_pre_key_list");
         return false;
     }
     if (!is_valid_string(src->password)) {
@@ -495,7 +600,7 @@ bool is_valid_registered_account(E2ees__Account *src) {
 
 bool is_valid_msg_key(const E2ees__MsgKey *msg_key) {
     if (msg_key != NULL) {
-        if(!is_valid_protobuf(&(msg_key->derived_key))) {
+        if (!is_valid_protobuf(&(msg_key->derived_key))) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_msg_key() bad derived_key");
             return false;
         } else {
@@ -528,7 +633,8 @@ bool is_valid_sender_chain(E2ees__SenderChainNode *sender_chain) {
             return false;
         }
         if (!is_valid_protobuf(&(sender_chain->their_ratchet_public_key))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_sender_chain() bad their_ratchet_public_key");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_sender_chain() bad their_ratchet_public_key");
             return false;
         }
         return is_valid_chain_key(sender_chain->chain_key);
@@ -541,14 +647,16 @@ bool is_valid_sender_chain(E2ees__SenderChainNode *sender_chain) {
 bool is_valid_receiver_chain(E2ees__ReceiverChainNode *receiver_chain) {
     if (receiver_chain != NULL) {
         if (!is_valid_protobuf(&(receiver_chain->our_ratchet_private_key))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_receiver_chain() bad our_ratchet_private_key");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_receiver_chain() bad our_ratchet_private_key");
             return false;
         }
         if (!is_valid_protobuf(&(receiver_chain->their_ratchet_public_key))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_receiver_chain() bad their_ratchet_public_key");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_receiver_chain() bad their_ratchet_public_key");
             return false;
         }
-        if(!is_valid_chain_key(receiver_chain->chain_key)) {
+        if (!is_valid_chain_key(receiver_chain->chain_key)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_receiver_chain() bad chain_key");
             return false;
         } else {
@@ -563,7 +671,8 @@ bool is_valid_receiver_chain(E2ees__ReceiverChainNode *receiver_chain) {
 bool is_valid_skipped_msg_key_node(E2ees__SkippedMsgKeyNode *skipped_msg_key_node) {
     if (skipped_msg_key_node != NULL) {
         if (!is_valid_protobuf(&(skipped_msg_key_node->ratchet_key_public))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_skipped_msg_key_node() bad ratchet_key_public");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_skipped_msg_key_node() bad ratchet_key_public");
             return false;
         }
         if (!is_valid_msg_key(skipped_msg_key_node->msg_key)) {
@@ -573,27 +682,35 @@ bool is_valid_skipped_msg_key_node(E2ees__SkippedMsgKeyNode *skipped_msg_key_nod
             return true;
         }
     } else {
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_skipped_msg_key_node() skipped_msg_key_node == NULL");
+        e2ees_notify_log(
+            NULL, DEBUG_LOG, "is_valid_skipped_msg_key_node() skipped_msg_key_node == NULL");
         return false;
     }
 }
 
 bool is_valid_skipped_msg_key_list(
-    E2ees__SkippedMsgKeyNode **skipped_msg_key_list,
-    size_t skipped_msg_key_list_len
-) {
+    E2ees__SkippedMsgKeyNode **skipped_msg_key_list, size_t skipped_msg_key_list_len) {
     if (skipped_msg_key_list_len == 0 && skipped_msg_key_list != NULL) {
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_skipped_msg_key_list() skipped_msg_key_list_len == 0, skipped_msg_key_list != NULL");
+        e2ees_notify_log(
+            NULL,
+            DEBUG_LOG,
+            "is_valid_skipped_msg_key_list() skipped_msg_key_list_len == 0, "
+            "skipped_msg_key_list != NULL");
         return false;
     }
     if (skipped_msg_key_list_len > 0 && skipped_msg_key_list == NULL) {
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_skipped_msg_key_list() skipped_msg_key_list_len > 0, skipped_msg_key_list == NULL");
+        e2ees_notify_log(
+            NULL,
+            DEBUG_LOG,
+            "is_valid_skipped_msg_key_list() skipped_msg_key_list_len > 0, "
+            "skipped_msg_key_list == NULL");
         return false;
     }
     size_t i;
     for (i = 0; i < skipped_msg_key_list_len; i++) {
         if (!is_valid_skipped_msg_key_node(skipped_msg_key_list[i])) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_skipped_msg_key_list() bad skipped_msg_key_list[%d]", i);
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_skipped_msg_key_list() bad skipped_msg_key_list[%d]", i);
             return false;
         }
     }
@@ -620,7 +737,11 @@ bool is_valid_ratchet(const E2ees__Ratchet *ratchet) {
             // if the root sequence is equal to zero
             if (ratchet->receiver_chain != NULL) {
                 if (!is_valid_protobuf(&(ratchet->receiver_chain->our_ratchet_private_key))) {
-                    e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_ratchet() bad receiver_chain->our_ratchet_private_key");
+                    e2ees_notify_log(
+                        NULL,
+                        DEBUG_LOG,
+                        "is_valid_ratchet() bad "
+                        "receiver_chain->our_ratchet_private_key");
                     return false;
                 }
             } else {
@@ -628,7 +749,8 @@ bool is_valid_ratchet(const E2ees__Ratchet *ratchet) {
                 return false;
             }
         }
-        if (!is_valid_skipped_msg_key_list(ratchet->skipped_msg_key_list, ratchet->n_skipped_msg_key_list)) {
+        if (!is_valid_skipped_msg_key_list(
+                ratchet->skipped_msg_key_list, ratchet->n_skipped_msg_key_list)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_ratchet() bad skipped_msg_key_list");
             return false;
         }
@@ -643,15 +765,24 @@ bool is_valid_ratchet(const E2ees__Ratchet *ratchet) {
 bool is_valid_uncompleted_session(E2ees__Session *src) {
     if (src != NULL) {
         if (!is_valid_string(src->version)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad version: %s", src->version);
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad version: %s", src->version);
             return false;
         }
         if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad e2ees_pack_id: %d", src->e2ees_pack_id);
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_uncompleted_session() bad e2ees_pack_id: %d",
+                src->e2ees_pack_id);
             return false;
         }
         if (!is_valid_string(src->session_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad session_id %s", src->session_id);
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_uncompleted_session() bad session_id %s",
+                src->session_id);
             return false;
         }
         if (!is_valid_address(src->our_address)) {
@@ -663,7 +794,8 @@ bool is_valid_uncompleted_session(E2ees__Session *src) {
             return false;
         }
         if (!is_valid_protobuf(&(src->temp_shared_secret))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad temp_shared_secret");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad temp_shared_secret");
             return false;
         }
         if (!is_valid_protobuf(&(src->fingerprint))) {
@@ -675,25 +807,39 @@ bool is_valid_uncompleted_session(E2ees__Session *src) {
             return false;
         }
         if (src->n_pre_shared_input_list == 0) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() n_pre_shared_input_list is zero");
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_uncompleted_session() n_pre_shared_input_list is "
+                "zero");
             return false;
         }
         if (!is_valid_protobuf_list(src->pre_shared_input_list, src->n_pre_shared_input_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad pre_shared_input_list");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad pre_shared_input_list");
             return false;
         }
         if (src->ratchet != NULL) {
             if (src->ratchet->sender_chain != NULL) {
                 if (!is_valid_protobuf(&(src->ratchet->sender_chain->their_ratchet_public_key))) {
-                    e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad ratchet->sender_chain->their_ratchet_public_key");
+                    e2ees_notify_log(
+                        NULL,
+                        DEBUG_LOG,
+                        "is_valid_uncompleted_session() bad "
+                        "ratchet->sender_chain->their_ratchet_public_key");
                     return false;
                 }
             } else {
-                e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad ratchet->sender_chain == NULL");
+                e2ees_notify_log(
+                    NULL,
+                    DEBUG_LOG,
+                    "is_valid_uncompleted_session() bad ratchet->sender_chain "
+                    "== NULL");
                 return false;
             }
         } else {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad src->ratchet == NULL");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_uncompleted_session() bad src->ratchet == NULL");
             return false;
         }
     } else {
@@ -735,20 +881,21 @@ bool is_valid_completed_session(E2ees__Session *src) {
             return false;
         }
         // if (!is_valid_protobuf(&(src->temp_shared_secret))) {
-        //     e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad temp_shared_secret");
-        //     return false;
+        //     e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session()
+        //     bad temp_shared_secret"); return false;
         // }
         if (!is_valid_protobuf(&(src->fingerprint))) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad fingerprint");
             return false;
         }
         // if (!is_valid_key_pair(src->alice_base_key)) {
-        //     e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad alice_base_key");
-        //     return false;
+        //     e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session()
+        //     bad alice_base_key"); return false;
         // }
-        // if (!is_valid_protobuf_list(src->pre_shared_input_list, src->n_pre_shared_input_list)) {
-        //     e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() bad pre_shared_input_list");
-        //     return false;
+        // if (!is_valid_protobuf_list(src->pre_shared_input_list,
+        // src->n_pre_shared_input_list)) {
+        //     e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session()
+        //     bad pre_shared_input_list"); return false;
         // }
     } else {
         e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_completed_session() src == NULL");
@@ -878,11 +1025,13 @@ bool is_valid_pre_key_bundle(E2ees__PreKeyBundle *src) {
             return false;
         }
         if (!is_valid_signed_pre_key_public(src->signed_pre_key_public)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_pre_key_bundle() bad signed_pre_key_public");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_pre_key_bundle() bad signed_pre_key_public");
             return false;
         }
         // one_time_pre_key_public can be empty if it is out of stock
-        // if (!is_valid_one_time_pre_key_public(src->one_time_pre_key_public)) {
+        // if (!is_valid_one_time_pre_key_public(src->one_time_pre_key_public))
+        // {
         //    return false;
         // }
     } else {
@@ -943,8 +1092,7 @@ bool is_valid_group_member(E2ees__GroupMember *src) {
         if ((src->role != E2EES__GROUP_ROLE__GROUP_ROLE_MEMBER) &&
             (src->role != E2EES__GROUP_ROLE__GROUP_ROLE_MANAGER) &&
             (src->role != E2EES__GROUP_ROLE__GROUP_ROLE_PENDING_MEMBER) &&
-            (src->role != E2EES__GROUP_ROLE__GROUP_ROLE_PENDING_MANAGER)
-        ) {
+            (src->role != E2EES__GROUP_ROLE__GROUP_ROLE_PENDING_MANAGER)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_member() bad role: %d", src->role);
             return false;
         }
@@ -1046,7 +1194,8 @@ bool is_valid_group_member_info_list(const E2ees__GroupMemberInfo **src, size_t 
 bool is_valid_group_session_by_member_id(E2ees__GroupSession *src) {
     if (src != NULL) {
         if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_member_id() bad e2ees_pack_id");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_member_id() bad e2ees_pack_id");
             return false;
         }
         if (!is_valid_address(src->sender)) {
@@ -1054,15 +1203,18 @@ bool is_valid_group_session_by_member_id(E2ees__GroupSession *src) {
             return false;
         }
         if (!is_valid_address(src->session_owner)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_member_id() bad session_owner");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_member_id() bad session_owner");
             return false;
         }
         if (!is_valid_group_info(src->group_info)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_member_id() bad group_info");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_member_id() bad group_info");
             return false;
         }
         if (!is_valid_protobuf(&(src->associated_data))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_member_id() bad associated_data");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_member_id() bad associated_data");
             return false;
         }
     } else {
@@ -1076,31 +1228,38 @@ bool is_valid_group_session_by_member_id(E2ees__GroupSession *src) {
 bool is_valid_group_session_by_pre_key_bundle(E2ees__GroupSession *src) {
     if (src != NULL) {
         if (!is_valid_string(src->version)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad version");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad version");
             return false;
         }
         if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad e2ees_pack_id");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad e2ees_pack_id");
             return false;
         }
         if (!is_valid_string(src->session_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad session_id");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad session_id");
             return false;
         }
         if (!is_valid_address(src->sender)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad sender");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad sender");
             return false;
         }
         if (!is_valid_address(src->session_owner)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad session_owner");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad session_owner");
             return false;
         }
         if (!is_valid_group_info(src->group_info)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad group_info");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad group_info");
             return false;
         }
         if (!is_valid_protobuf(&(src->group_seed))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad group_seed");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_by_pre_key_bundle() bad group_seed");
             return false;
         }
     } else {
@@ -1160,11 +1319,13 @@ bool is_valid_group_session_no_chain_key(E2ees__GroupSession *src) {
             return false;
         }
         if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad e2ees_pack_id");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad e2ees_pack_id");
             return false;
         }
         if (!is_valid_string(src->session_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad session_id");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad session_id");
             return false;
         }
         if (!is_valid_address(src->sender)) {
@@ -1172,15 +1333,18 @@ bool is_valid_group_session_no_chain_key(E2ees__GroupSession *src) {
             return false;
         }
         if (!is_valid_address(src->session_owner)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad session_owner");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad session_owner");
             return false;
         }
         if (!is_valid_group_info(src->group_info)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad group_info");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad group_info");
             return false;
         }
         if (!is_valid_protobuf(&(src->associated_data))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad associated_data");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_session_no_chain_key() bad associated_data");
             return false;
         }
     } else {
@@ -1198,7 +1362,8 @@ bool is_valid_group_update_key_bundle(E2ees__GroupUpdateKeyBundle *src) {
             return false;
         }
         if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_update_key_bundle() bad e2ees_pack_id");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_update_key_bundle() bad e2ees_pack_id");
             return false;
         }
         if (!is_valid_string(src->session_id)) {
@@ -1218,14 +1383,18 @@ bool is_valid_group_update_key_bundle(E2ees__GroupUpdateKeyBundle *src) {
             return false;
         }
         if (!is_valid_protobuf(&(src->sign_public_key))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_update_key_bundle() bad sign_public_key");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_update_key_bundle() bad sign_public_key");
             return false;
         }
         if (!is_valid_group_member_info_list(
                 (const E2ees__GroupMemberInfo **)src->adding_member_info_list,
-                src->n_adding_member_info_list)
-        ) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_update_key_bundle() bad adding_member_info_list");
+                src->n_adding_member_info_list)) {
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_group_update_key_bundle() bad "
+                "adding_member_info_list");
             return false;
         }
     } else {
@@ -1313,16 +1482,28 @@ bool is_valid_register_user_response(E2ees__RegisterUserResponse *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_register_user_response() bad auth");
             return false;
         }
-        if (!is_valid_address_list(src->other_device_address_list, src->n_other_device_address_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_register_user_response() bad other_device_address_list");
+        if (!is_valid_address_list(
+                src->other_device_address_list, src->n_other_device_address_list)) {
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_register_user_response() bad "
+                "other_device_address_list");
             return false;
         }
-        if (!is_valid_no_device_id_user_address_list(src->other_user_address_list, src->n_other_user_address_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_register_user_response() bad other_user_address_list");
+        if (!is_valid_no_device_id_user_address_list(
+                src->other_user_address_list, src->n_other_user_address_list)) {
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_register_user_response() bad "
+                "other_user_address_list");
             return false;
         }
-        if (!is_valid_group_info_list((const E2ees__GroupInfo **)src->group_info_list, src->n_group_info_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_register_user_response() bad group_info_list");
+        if (!is_valid_group_info_list(
+                (const E2ees__GroupInfo **)src->group_info_list, src->n_group_info_list)) {
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_register_user_response() bad group_info_list");
             return false;
         }
     } else {
@@ -1372,11 +1553,16 @@ bool is_valid_get_pre_key_bundle_response(E2ees__GetPreKeyBundleResponse *src) {
             return false;
         }
         if (src->n_pre_key_bundles <= 0) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_get_pre_key_bundle_response() n_pre_key_bundles <= 0");
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_get_pre_key_bundle_response() n_pre_key_bundles <= "
+                "0");
             return false;
         }
         if (!is_valid_pre_key_bundle_list(src->pre_key_bundles, src->n_pre_key_bundles)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_get_pre_key_bundle_response() bad pre_key_bundles");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_get_pre_key_bundle_response() bad pre_key_bundles");
             return false;
         }
     } else {
@@ -1440,10 +1626,9 @@ bool is_valid_create_group_response(E2ees__CreateGroupResponse *src) {
             return false;
         }
         if (!is_valid_group_member_info_list(
-                (const E2ees__GroupMemberInfo **)src->member_info_list,
-                src->n_member_info_list)
-        ) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_create_group_response() bad member_info_list");
+                (const E2ees__GroupMemberInfo **)src->member_info_list, src->n_member_info_list)) {
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_create_group_response() bad member_info_list");
             return false;
         }
     } else {
@@ -1460,19 +1645,28 @@ bool is_valid_add_group_members_response(E2ees__AddGroupMembersResponse *src) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_members_response() code != OK");
             return false;
         }
-        if (!is_valid_group_member_list(src->added_group_member_list, src->n_added_group_member_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_members_response() bad added_group_member_list");
+        if (!is_valid_group_member_list(
+                src->added_group_member_list, src->n_added_group_member_list)) {
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_add_group_members_response() bad "
+                "added_group_member_list");
             return false;
         }
         if (!is_valid_group_member_list(src->group_member_list, src->n_group_member_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_members_response() bad group_member_list");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_add_group_members_response() bad group_member_list");
             return false;
         }
         if (!is_valid_group_member_info_list(
                 (const E2ees__GroupMemberInfo **)src->adding_member_info_list,
-                src->n_adding_member_info_list)
-        ) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_members_response() bad adding_member_info_list");
+                src->n_adding_member_info_list)) {
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_add_group_members_response() bad "
+                "adding_member_info_list");
             return false;
         }
     } else {
@@ -1486,19 +1680,29 @@ bool is_valid_add_group_members_response(E2ees__AddGroupMembersResponse *src) {
 bool is_valid_add_group_member_device_response(E2ees__AddGroupMemberDeviceResponse *src) {
     if (src != NULL) {
         if (src->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_member_device_response() code =! OK");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_add_group_member_device_response() code =! OK");
             return false;
         }
         if (!is_valid_group_member_list(src->group_member_list, src->n_group_member_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_member_device_response() bad group_member_list");
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_add_group_member_device_response() bad "
+                "group_member_list");
             return false;
         }
         if (!is_valid_group_member_info(src->adding_member_device_info)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_member_device_response() bad adding_member_device_info");
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_add_group_member_device_response() bad "
+                "adding_member_device_info");
             return false;
         }
     } else {
-        e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_member_device_response() src == NULL");
+        e2ees_notify_log(
+            NULL, DEBUG_LOG, "is_valid_add_group_member_device_response() src == NULL");
         return false;
     }
 
@@ -1508,22 +1712,34 @@ bool is_valid_add_group_member_device_response(E2ees__AddGroupMemberDeviceRespon
 bool is_valid_remove_group_members_response(E2ees__RemoveGroupMembersResponse *src) {
     if (src != NULL) {
         if (src->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_remove_group_members_response() code != OK");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_remove_group_members_response() code != OK");
             return false;
         }
-        if (!is_valid_group_member_list(src->removed_group_member_list, src->n_removed_group_member_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_remove_group_members_response() bad removed_group_member_list");
+        if (!is_valid_group_member_list(
+                src->removed_group_member_list, src->n_removed_group_member_list)) {
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_remove_group_members_response() bad "
+                "removed_group_member_list");
             return false;
         }
         if (!is_valid_group_member_list(src->group_member_list, src->n_group_member_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_remove_group_members_response() bad group_member_list");
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_remove_group_members_response() bad "
+                "group_member_list");
             return false;
         }
         if (!is_valid_group_member_info_list(
-                (const E2ees__GroupMemberInfo **)src->member_info_list,
-                src->n_member_info_list)
-        ) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_remove_group_members_response() bad member_info_list");
+                (const E2ees__GroupMemberInfo **)src->member_info_list, src->n_member_info_list)) {
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_remove_group_members_response() bad "
+                "member_info_list");
             return false;
         }
     } else {
@@ -1541,7 +1757,11 @@ bool is_valid_leave_group_response(E2ees__LeaveGroupResponse *src) {
             return false;
         }
         if (!is_valid_address(src->leave_group_member_address)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_leave_group_response() bad leave_group_member_address");
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_leave_group_response() bad "
+                "leave_group_member_address");
             return false;
         }
         if (!is_valid_address(src->group_address)) {
@@ -1591,7 +1811,8 @@ bool is_valid_add_user_device_msg(E2ees__AddUserDeviceMsg *src) {
             return false;
         }
         if (!is_valid_address_list(src->old_address_list, src->n_old_address_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_user_device_msg() bad old_address_list");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_add_user_device_msg() bad old_address_list");
             return false;
         }
     } else {
@@ -1721,7 +1942,8 @@ bool is_valid_e2ee_msg(E2ees__E2eeMsg *src) {
                 return false;
             }
         } else {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_e2ee_msg() bad payload_case: %d", src->payload_case);
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_e2ee_msg() bad payload_case: %d", src->payload_case);
             return false;
         }
     } else {
@@ -1747,9 +1969,7 @@ bool is_valid_create_group_msg(E2ees__CreateGroupMsg *src) {
             return false;
         }
         if (!is_valid_group_member_info_list(
-                (const E2ees__GroupMemberInfo **)src->member_info_list,
-                src->n_member_info_list)
-        ) {
+                (const E2ees__GroupMemberInfo **)src->member_info_list, src->n_member_info_list)) {
             e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_create_group_msg() bad member_info_list");
             return false;
         }
@@ -1768,7 +1988,8 @@ bool is_valid_add_group_members_msg(E2ees__AddGroupMembersMsg *src) {
             return false;
         }
         if (!is_valid_address(src->sender_address)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_members_msg() bad sender_address");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_add_group_members_msg() bad sender_address");
             return false;
         }
         if (!is_valid_group_info(src->group_info)) {
@@ -1776,14 +1997,15 @@ bool is_valid_add_group_members_msg(E2ees__AddGroupMembersMsg *src) {
             return false;
         }
         if (!is_valid_group_member_list(src->adding_member_list, src->n_adding_member_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_members_msg() bad adding_member_list");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_add_group_members_msg() bad adding_member_list");
             return false;
         }
         if (!is_valid_group_member_info_list(
                 (const E2ees__GroupMemberInfo **)src->adding_member_info_list,
-                src->n_adding_member_info_list)
-        ) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_members_msg() bad adding_member_info_list");
+                src->n_adding_member_info_list)) {
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_add_group_members_msg() bad adding_member_info_list");
             return false;
         }
     } else {
@@ -1797,19 +2019,26 @@ bool is_valid_add_group_members_msg(E2ees__AddGroupMembersMsg *src) {
 bool is_valid_add_group_member_device_msg(E2ees__AddGroupMemberDeviceMsg *src) {
     if (src != NULL) {
         if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_member_device_msg() bad e2ees_pack_id");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_add_group_member_device_msg() bad e2ees_pack_id");
             return false;
         }
         if (!is_valid_address(src->sender_address)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_member_device_msg() bad sender_address");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_add_group_member_device_msg() bad sender_address");
             return false;
         }
         if (!is_valid_group_info(src->group_info)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_member_device_msg() bad group_info");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_add_group_member_device_msg() bad group_info");
             return false;
         }
         if (!is_valid_group_member_info(src->adding_member_device)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_add_group_member_device_msg() bad adding_member_device");
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_add_group_member_device_msg() bad "
+                "adding_member_device");
             return false;
         }
     } else {
@@ -1823,11 +2052,13 @@ bool is_valid_add_group_member_device_msg(E2ees__AddGroupMemberDeviceMsg *src) {
 bool is_valid_remove_group_members_msg(E2ees__RemoveGroupMembersMsg *src) {
     if (src != NULL) {
         if (!is_valid_e2ees_pack_id(src->e2ees_pack_id)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_remove_group_members_msg() bad e2ees_pack_id");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_remove_group_members_msg() bad e2ees_pack_id");
             return false;
         }
         if (!is_valid_address(src->sender_address)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_remove_group_members_msg() bad sender_address");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_remove_group_members_msg() bad sender_address");
             return false;
         }
         if (!is_valid_group_info(src->group_info)) {
@@ -1835,14 +2066,14 @@ bool is_valid_remove_group_members_msg(E2ees__RemoveGroupMembersMsg *src) {
             return false;
         }
         if (!is_valid_group_member_list(src->removing_member_list, src->n_removing_member_list)) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_remove_group_members_msg() bad removing_member_list");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_remove_group_members_msg() bad removing_member_list");
             return false;
         }
         if (!is_valid_group_member_info_list(
-                (const E2ees__GroupMemberInfo **)src->member_info_list,
-                src->n_member_info_list)
-        ) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_group_member_info_list() bad member_info_list");
+                (const E2ees__GroupMemberInfo **)src->member_info_list, src->n_member_info_list)) {
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_group_member_info_list() bad member_info_list");
             return false;
         }
     } else {
@@ -1951,7 +2182,8 @@ bool is_valid_certificate(E2ees__Certificate *src) {
             return false;
         }
         if (!is_valid_protobuf(&(src->signing_public_key_fingerprint))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_certificate() bad signing_public_key_fingerprint");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_certificate() bad signing_public_key_fingerprint");
             return false;
         }
         if (!is_valid_protobuf(&(src->signature))) {
@@ -1973,11 +2205,16 @@ bool is_valid_server_signed_signature(E2ees__ServerSignedSignature *src) {
             return false;
         }
         if (!is_valid_protobuf(&(src->signing_public_key_fingerprint))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_server_signed_signature() bad signing_public_key_fingerprint");
+            e2ees_notify_log(
+                NULL,
+                DEBUG_LOG,
+                "is_valid_server_signed_signature() bad "
+                "signing_public_key_fingerprint");
             return false;
         }
         if (!is_valid_protobuf(&(src->msg_fingerprint))) {
-            e2ees_notify_log(NULL, DEBUG_LOG, "is_valid_server_signed_signature() bad msg_fingerprint");
+            e2ees_notify_log(
+                NULL, DEBUG_LOG, "is_valid_server_signed_signature() bad msg_fingerprint");
             return false;
         }
         if (!is_valid_protobuf(&(src->signature))) {
@@ -2007,7 +2244,8 @@ bool is_valid_server_signed_signature_list(E2ees__ServerSignedSignature **src, s
 
 bool is_valid_register_user_inputs(const register_user_params_t *params) {
     if (!is_valid_e2ees_pack_id(params->e2ees_pack_id)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "is_valid_register_user_inputs(): invalid e2ees_pack_id");
+        e2ees_notify_log(
+            NULL, BAD_E2EES_PACK, "is_valid_register_user_inputs(): invalid e2ees_pack_id");
         return false;
     }
     if (!is_valid_string(params->user_name)) {
@@ -2023,7 +2261,8 @@ bool is_valid_register_user_inputs(const register_user_params_t *params) {
         return false;
     }
     if (params->authenticator && !is_valid_string(params->authenticator)) {
-        e2ees_notify_log(NULL, BAD_AUTHENTICATOR, "is_valid_register_user_inputs(): invalid authenticator");
+        e2ees_notify_log(
+            NULL, BAD_AUTHENTICATOR, "is_valid_register_user_inputs(): invalid authenticator");
         return false;
     }
     if (!is_valid_string(params->auth_code)) {
@@ -2036,7 +2275,8 @@ bool is_valid_register_user_inputs(const register_user_params_t *params) {
 
 bool is_valid_publish_spk_inputs(const publish_spk_params_t *params) {
     if (!is_valid_e2ees_pack_id(params->e2ees_pack_id)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "is_valid_publish_spk_inputs(): invalid e2ees_pack_id");
+        e2ees_notify_log(
+            NULL, BAD_E2EES_PACK, "is_valid_publish_spk_inputs(): invalid e2ees_pack_id");
         return false;
     }
     if (!is_valid_address(params->user_address)) {
@@ -2044,7 +2284,8 @@ bool is_valid_publish_spk_inputs(const publish_spk_params_t *params) {
         return false;
     }
     if (!is_valid_signed_pre_key(params->new_spk)) {
-        e2ees_notify_log(NULL, BAD_SIGNED_PRE_KEY, "is_valid_publish_spk_inputs(): invalid new_spk");
+        e2ees_notify_log(
+            NULL, BAD_SIGNED_PRE_KEY, "is_valid_publish_spk_inputs(): invalid new_spk");
         return false;
     }
 
@@ -2053,7 +2294,8 @@ bool is_valid_publish_spk_inputs(const publish_spk_params_t *params) {
 
 bool is_valid_supply_opks_inputs(const supply_opks_params_t *params) {
     if (params->opks_num == 0) {
-        e2ees_notify_log(NULL, BAD_ONE_TIME_PRE_KEY, "is_valid_supply_opks_inputs(): opks_num is zero");
+        e2ees_notify_log(
+            NULL, BAD_ONE_TIME_PRE_KEY, "is_valid_supply_opks_inputs(): opks_num is zero");
         return false;
     }
     if (!is_valid_registered_account(params->account)) {
@@ -2074,15 +2316,18 @@ bool is_valid_get_pre_key_bundle_inputs(const get_pre_key_bundle_params_t *param
         return false;
     }
     if (!is_valid_string(params->to_user_id)) {
-        e2ees_notify_log(NULL, BAD_USER_ID, "is_valid_get_pre_key_bundle_inputs(): invalid to_user_id");
+        e2ees_notify_log(
+            NULL, BAD_USER_ID, "is_valid_get_pre_key_bundle_inputs(): invalid to_user_id");
         return false;
     }
     if (!is_valid_string(params->to_domain)) {
-        e2ees_notify_log(NULL, BAD_DOMAIN, "is_valid_get_pre_key_bundle_inputs(): invalid to_domain");
+        e2ees_notify_log(
+            NULL, BAD_DOMAIN, "is_valid_get_pre_key_bundle_inputs(): invalid to_domain");
         return false;
     }
     if (params->to_device_id && !is_valid_string(params->to_device_id)) {
-        e2ees_notify_log(NULL, BAD_DEVICE_ID, "is_valid_get_pre_key_bundle_inputs(): invalid to_device_id");
+        e2ees_notify_log(
+            NULL, BAD_DEVICE_ID, "is_valid_get_pre_key_bundle_inputs(): invalid to_device_id");
         return false;
     }
 
@@ -2111,7 +2356,8 @@ bool is_valid_accept_inputs(const accept_params_t *params) {
         return false;
     }
     if (!is_valid_protobuf(params->our_ratchet_key)) {
-        e2ees_notify_log(NULL, BAD_RATCHET_KEY, "is_valid_accept_inputs(): invalid our_ratchet_key");
+        e2ees_notify_log(
+            NULL, BAD_RATCHET_KEY, "is_valid_accept_inputs(): invalid our_ratchet_key");
         return false;
     }
 
@@ -2120,19 +2366,23 @@ bool is_valid_accept_inputs(const accept_params_t *params) {
 
 bool is_valid_create_group_inputs(const create_group_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_create_group_inputs(): invalid sender_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "is_valid_create_group_inputs(): invalid sender_address");
         return false;
     }
     if (!is_valid_string(params->group_name)) {
-        e2ees_notify_log(NULL, BAD_GROUP_NAME, "is_valid_create_group_inputs(): invalid group_name");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_NAME, "is_valid_create_group_inputs(): invalid group_name");
         return false;
     }
     if (params->group_members_num == 0) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "is_valid_create_group_inputs(): group_members_num is zero");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_MEMBERS, "is_valid_create_group_inputs(): group_members_num is zero");
         return false;
     }
     if (!is_valid_group_member_list(params->group_members, params->group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "is_valid_create_group_inputs(): invalid group member list");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_MEMBERS, "is_valid_create_group_inputs(): invalid group member list");
         return false;
     }
 
@@ -2141,19 +2391,27 @@ bool is_valid_create_group_inputs(const create_group_params_t *params) {
 
 bool is_valid_add_group_members_inputs(const add_group_members_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_add_group_members_inputs(): invalid sender_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "is_valid_add_group_members_inputs(): invalid sender_address");
         return false;
     }
     if (!is_valid_address(params->group_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_add_group_members_inputs(): invalid group_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "is_valid_add_group_members_inputs(): invalid group_address");
         return false;
     }
     if (params->adding_members_num == 0) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "is_valid_add_group_members_inputs(): adding_members_num is zero");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBERS,
+            "is_valid_add_group_members_inputs(): adding_members_num is zero");
         return false;
     }
     if (!is_valid_group_member_list(params->adding_members, params->adding_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "is_valid_add_group_members_inputs(): invalid adding member list");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBERS,
+            "is_valid_add_group_members_inputs(): invalid adding member list");
         return false;
     }
 
@@ -2162,19 +2420,29 @@ bool is_valid_add_group_members_inputs(const add_group_members_params_t *params)
 
 bool is_valid_remove_group_members_inputs(const remove_group_members_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_remove_group_members_inputs(): invalid sender_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "is_valid_remove_group_members_inputs(): invalid sender_address");
         return false;
     }
     if (!is_valid_address(params->group_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_remove_group_members_inputs(): invalid group_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "is_valid_remove_group_members_inputs(): invalid group_address");
         return false;
     }
     if (params->removing_members_num == 0) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "is_valid_remove_group_members_inputs(): removing_members_num is zero");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBERS,
+            "is_valid_remove_group_members_inputs(): removing_members_num is "
+            "zero");
         return false;
     }
     if (!is_valid_group_member_list(params->removing_members, params->removing_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "is_valid_remove_group_members_inputs(): invalid removing member list");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBERS,
+            "is_valid_remove_group_members_inputs(): invalid removing member "
+            "list");
         return false;
     }
 
@@ -2183,15 +2451,24 @@ bool is_valid_remove_group_members_inputs(const remove_group_members_params_t *p
 
 bool is_valid_add_group_member_device_inputs(const add_group_member_device_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_add_group_member_device_inputs(): invalid sender_address");
+        e2ees_notify_log(
+            NULL,
+            BAD_ADDRESS,
+            "is_valid_add_group_member_device_inputs(): invalid "
+            "sender_address");
         return false;
     }
     if (!is_valid_address(params->group_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_add_group_member_device_inputs(): invalid group_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "is_valid_add_group_member_device_inputs(): invalid group_address");
         return false;
     }
     if (!is_valid_address(params->new_device_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_add_group_member_device_inputs(): invalid new_device_address");
+        e2ees_notify_log(
+            NULL,
+            BAD_ADDRESS,
+            "is_valid_add_group_member_device_inputs(): invalid "
+            "new_device_address");
         return false;
     }
 
@@ -2200,7 +2477,8 @@ bool is_valid_add_group_member_device_inputs(const add_group_member_device_param
 
 bool is_valid_leave_group_inputs(const leave_group_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_leave_group_inputs(): invalid sender_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "is_valid_leave_group_inputs(): invalid sender_address");
         return false;
     }
     if (!is_valid_address(params->group_address)) {
@@ -2213,11 +2491,13 @@ bool is_valid_leave_group_inputs(const leave_group_params_t *params) {
 
 bool is_valid_send_group_msg_inputs(const send_group_msg_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_send_group_msg_inputs(): invalid sender_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "is_valid_send_group_msg_inputs(): invalid sender_address");
         return false;
     }
     if (!is_valid_address(params->group_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_send_group_msg_inputs(): invalid group_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "is_valid_send_group_msg_inputs(): invalid group_address");
         return false;
     }
     if (!is_valid_address_list(params->allow_list, params->allow_list_len)) {

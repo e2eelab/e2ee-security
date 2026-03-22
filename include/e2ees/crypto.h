@@ -20,11 +20,11 @@
 #ifndef CRYPTO_H_
 #define CRYPTO_H_
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,12 +56,12 @@ extern "C" {
 /** amount of random data required to create a Curve25519 keypair */
 #define CURVE25519_RANDOM_LENGTH CURVE25519_KEY_LENGTH
 
-#define AES256_FILE_AD "E2EES ---> file encryption with AES256/GCM/Nopadding algorithm"
-#define AES256_FILE_AD_LEN 64
-#define AES256_FILE_KDF_INFO "FILE"
+#define AES256_FILE_AD           "E2EES ---> file encryption with AES256/GCM/Nopadding algorithm"
+#define AES256_FILE_AD_LEN       64
+#define AES256_FILE_KDF_INFO     "FILE"
 
-#define AES256_DATA_AD "E2EES ---> data encryption with AES256/GCM/Nopadding algorithm"
-#define AES256_DATA_AD_LEN 64
+#define AES256_DATA_AD           "E2EES ---> data encryption with AES256/GCM/Nopadding algorithm"
+#define AES256_DATA_AD_LEN       64
 
 /** buffer length for file encryption/decryption */
 #define FILE_ENCRYPTION_BUFFER_LENGTH 8192
@@ -71,31 +71,29 @@ int crypto_ds_key_gen_curve25519(ProtobufCBinaryData *pub_key, ProtobufCBinaryDa
 int crypto_kem_asym_key_gen_curve25519(ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key);
 
 int crypto_ds_sign_curve25519(
-    uint8_t *signature_out, size_t *signature_out_len,
-    const uint8_t *msg, size_t msg_len,
-    const uint8_t *private_key
-);
+    uint8_t *signature_out,
+    size_t *signature_out_len,
+    const uint8_t *msg,
+    size_t msg_len,
+    const uint8_t *private_key);
 
 int crypto_ds_verify_curve25519(
-    const uint8_t *signature_in, size_t signature_in_len,
-    const uint8_t *msg, size_t msg_len,
-    const uint8_t *public_key
-);
+    const uint8_t *signature_in,
+    size_t signature_in_len,
+    const uint8_t *msg,
+    size_t msg_len,
+    const uint8_t *public_key);
 
 int crypto_kem_decaps_curve25519(
     uint8_t *shared_secret,
     const ProtobufCBinaryData *our_key,
-    const ProtobufCBinaryData *ciphertext
-);
+    const ProtobufCBinaryData *ciphertext);
 
-void crypto_sign_curve25519(uint8_t *private_key,
-    uint8_t *msg, size_t msg_len, uint8_t *signature_out
-);
+void crypto_sign_curve25519(
+    uint8_t *private_key, uint8_t *msg, size_t msg_len, uint8_t *signature_out);
 
 int crypto_verify_curve25519(
-    uint8_t *signature_in, uint8_t *public_key,
-    uint8_t *msg, size_t msg_len
-);
+    uint8_t *signature_in, uint8_t *public_key, uint8_t *msg, size_t msg_len);
 
 /**
  * @brief HMAC-based Key Derivation Function (HKDF).
@@ -112,11 +110,14 @@ int crypto_verify_curve25519(
  * @param output_len
  */
 int crypto_hf_hkdf_sha256(
-    const uint8_t *input, size_t input_len,
-    const uint8_t *salt, size_t salt_len,
-    const uint8_t *info, size_t info_len,
-    uint8_t *output, size_t output_len
-);
+    const uint8_t *input,
+    size_t input_len,
+    const uint8_t *salt,
+    size_t salt_len,
+    const uint8_t *info,
+    size_t info_len,
+    uint8_t *output,
+    size_t output_len);
 
 /**
  * @brief Keyed-Hashing for Message Authentication (HMAC).
@@ -131,10 +132,7 @@ int crypto_hf_hkdf_sha256(
  * @param output
  */
 int crypto_hf_hmac_sha256(
-    const uint8_t *key, size_t key_len,
-    const uint8_t *input, size_t input_len,
-    uint8_t *output
-);
+    const uint8_t *key, size_t key_len, const uint8_t *input, size_t input_len, uint8_t *output);
 
 /**
  * @brief Secure Hash Algorithms (SHAs)
@@ -146,10 +144,7 @@ int crypto_hf_hmac_sha256(
  * @param msg_len
  * @param hash_out
  */
-int crypto_hf_sha256(
-    const uint8_t *msg, size_t msg_len,
-    uint8_t *hash_out
-);
+int crypto_hf_sha256(const uint8_t *msg, size_t msg_len, uint8_t *hash_out);
 
 /**
  * @brief AES256 encrypt function in GCM mode.
@@ -163,11 +158,13 @@ int crypto_hf_sha256(
  * @param ciphertext_data
  */
 int crypto_aes_encrypt_gcm(
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
-    const uint8_t *aes_key, const uint8_t *iv,
-    const uint8_t *add, size_t add_len,
-    uint8_t *ciphertext_data
-);
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
+    const uint8_t *aes_key,
+    const uint8_t *iv,
+    const uint8_t *add,
+    size_t add_len,
+    uint8_t *ciphertext_data);
 
 /**
  * @brief AES256 decrypt function in GCM mode.
@@ -184,11 +181,14 @@ int crypto_aes_encrypt_gcm(
  * @return size_t plaintext data length
  */
 int crypto_aes_decrypt_gcm(
-    const uint8_t *ciphertext_data, size_t ciphertext_data_len,
-    const uint8_t *aes_key, const uint8_t *iv,
-    const uint8_t *add, size_t add_len,
-    uint8_t *plaintext_data, size_t *plaintext_data_len
-);
+    const uint8_t *ciphertext_data,
+    size_t ciphertext_data_len,
+    const uint8_t *aes_key,
+    const uint8_t *iv,
+    const uint8_t *add,
+    size_t add_len,
+    uint8_t *plaintext_data,
+    size_t *plaintext_data_len);
 
 /**
  * @brief Calculate ciphertext data len for AES GCM.
@@ -217,11 +217,11 @@ size_t crypto_aes256_gcm_plaintext_data_len(size_t ciphertext_data_len);
  * @return
  */
 size_t crypto_encrypt_aes_data_with_iv(
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
     const uint8_t aes_key[AES256_KEY_LENGTH],
     const uint8_t iv[AES256_DATA_IV_LENGTH],
-    uint8_t **ciphertext_data
-);
+    uint8_t **ciphertext_data);
 
 /**
  * @brief AES256 encrypt data in GCM mode.
@@ -234,10 +234,10 @@ size_t crypto_encrypt_aes_data_with_iv(
  * @return size_t ciphertext data length
  */
 size_t crypto_encrypt_aes_data(
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
     const uint8_t aes_key[AES256_KEY_LENGTH],
-    uint8_t **ciphertext_data
-);
+    uint8_t **ciphertext_data);
 
 /**
  *  @brief AES256 decrypt data in GCM mode.
@@ -250,11 +250,11 @@ size_t crypto_encrypt_aes_data(
  * @return
  */
 size_t crypto_decrypt_aes_data_with_iv(
-    const uint8_t *ciphertext_data, size_t ciphertext_data_len,
+    const uint8_t *ciphertext_data,
+    size_t ciphertext_data_len,
     const uint8_t aes_key[AES256_KEY_LENGTH],
     const uint8_t iv[AES256_DATA_IV_LENGTH],
-    uint8_t **plaintext_data
-);
+    uint8_t **plaintext_data);
 
 /**
  * @brief AES256 decrypt data in GCM mode.
@@ -267,10 +267,10 @@ size_t crypto_decrypt_aes_data_with_iv(
  * @return size_t plaintext data length
  */
 size_t crypto_decrypt_aes_data(
-    const uint8_t *ciphertext_data, size_t ciphertext_data_len,
+    const uint8_t *ciphertext_data,
+    size_t ciphertext_data_len,
     const uint8_t aes_key[AES256_KEY_LENGTH],
-    uint8_t **plaintext_data
-);
+    uint8_t **plaintext_data);
 
 /**
  * @brief AES256 encrypt file in GCM mode.
@@ -282,9 +282,7 @@ size_t crypto_decrypt_aes_data(
  * @return int 0 for success
  */
 int crypto_encrypt_aes_file(
-    const char *in_file_path, const char *out_file_path,
-    const uint8_t aes_key[AES256_KEY_LENGTH]
-);
+    const char *in_file_path, const char *out_file_path, const uint8_t aes_key[AES256_KEY_LENGTH]);
 
 /**
  * @brief AES256 decrypt file in GCM mode.
@@ -296,9 +294,7 @@ int crypto_encrypt_aes_file(
  * @return int 0 for success
  */
 int crypto_decrypt_aes_file(
-    const char *in_file_path, const char *out_file_path,
-    const uint8_t aes_key[AES256_KEY_LENGTH]
-);
+    const char *in_file_path, const char *out_file_path, const uint8_t aes_key[AES256_KEY_LENGTH]);
 
 /**
  * @brief AES256 encrypt file in GCM mode.
@@ -312,10 +308,10 @@ int crypto_decrypt_aes_file(
  * @return int 0 for success
  */
 int crypto_encrypt_file(
-    const char *in_file_path, const char *out_file_path,
+    const char *in_file_path,
+    const char *out_file_path,
     const uint8_t *password,
-    const size_t password_len
-);
+    const size_t password_len);
 
 /**
  * @brief AES256 decrypt file in GCM mode.
@@ -329,10 +325,10 @@ int crypto_encrypt_file(
  * @return int 0 for success
  */
 int crypto_decrypt_file(
-    const char *in_file_path, const char *out_file_path,
+    const char *in_file_path,
+    const char *out_file_path,
     const uint8_t *password,
-    const size_t password_len
-);
+    const size_t password_len);
 
 /**
  * @brief Encode to base64 string.
@@ -364,13 +360,14 @@ size_t crypto_base64_decode(uint8_t **msg_out, const unsigned char *base64_str);
  */
 int crypto_hash_by_e2ees_pack_id(
     uint32_t e2ees_pack_id_raw,
-    const uint8_t *msg, size_t msg_len,
-    uint8_t **hash_out, size_t *hash_out_len
-);
+    const uint8_t *msg,
+    size_t msg_len,
+    uint8_t **hash_out,
+    size_t *hash_out_len);
 
 /**
- * @brief Generate a random key pair that will be used to generate or verify a signature
- * with respect to the specific e2ee pack ID raw number.
+ * @brief Generate a random key pair that will be used to generate or verify a
+ * signature with respect to the specific e2ee pack ID raw number.
  *
  * @param e2ees_pack_id_raw
  * @param pub_key
@@ -378,10 +375,7 @@ int crypto_hash_by_e2ees_pack_id(
  * @return value < 0 for error
  */
 int crypto_ds_key_gen_by_e2ees_pack_id(
-    uint32_t e2ees_pack_id_raw,
-    ProtobufCBinaryData *pub_key,
-    ProtobufCBinaryData *priv_key
-);
+    uint32_t e2ees_pack_id_raw, ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key);
 
 /**
  * @brief Sign a message
@@ -398,10 +392,12 @@ int crypto_ds_key_gen_by_e2ees_pack_id(
  */
 int crypto_ds_sign_by_e2ees_pack_id(
     uint32_t e2ees_pack_id_raw,
-    uint8_t **signature_out, size_t *signature_out_len,
-    const uint8_t *msg, size_t msg_len,
-    const uint8_t *private_key, size_t private_key_len
-);
+    uint8_t **signature_out,
+    size_t *signature_out_len,
+    const uint8_t *msg,
+    size_t msg_len,
+    const uint8_t *private_key,
+    size_t private_key_len);
 
 /**
  * @brief Verify a signature with a given message
@@ -418,10 +414,12 @@ int crypto_ds_sign_by_e2ees_pack_id(
  */
 int crypto_ds_verify_by_e2ees_pack_id(
     uint32_t e2ees_pack_id_raw,
-    const uint8_t *signature_in, size_t signature_in_len,
-    const uint8_t *msg, size_t msg_len,
-    const uint8_t *public_key, size_t public_key_len
-);
+    const uint8_t *signature_in,
+    size_t signature_in_len,
+    const uint8_t *msg,
+    size_t msg_len,
+    const uint8_t *public_key,
+    size_t public_key_len);
 
 #ifdef __cplusplus
 }

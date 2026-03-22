@@ -50,8 +50,8 @@
 #include "e2ees/GroupMemberInfo.pb-c.h"
 #include "e2ees/GroupMsgPayload.pb-c.h"
 #include "e2ees/GroupPreKeyBundle.pb-c.h"
-#include "e2ees/GroupUpdateKeyBundle.pb-c.h"
 #include "e2ees/GroupSession.pb-c.h"
+#include "e2ees/GroupUpdateKeyBundle.pb-c.h"
 #include "e2ees/IdentityKey.pb-c.h"
 #include "e2ees/IdentityKeyPublic.pb-c.h"
 #include "e2ees/InviteMsg.pb-c.h"
@@ -101,79 +101,81 @@ extern "C" {
 #endif
 
 #include "e2ees/cipher.h"
-#include "e2ees/session.h"
 #include "e2ees/log_code.h"
+#include "e2ees/session.h"
 
-#define E2EES_PROTOCOL_VERSION                                "\001"
-#define E2EES_PLAINTEXT_VERSION                               "\001"
+#define E2EES_PROTOCOL_VERSION               "\001"
+#define E2EES_PLAINTEXT_VERSION              "\001"
 
-#define E2EES_RESULT_SUCC                                     0
-#define E2EES_RESULT_FAIL                                     -1
+#define E2EES_RESULT_SUCC                    0
+#define E2EES_RESULT_FAIL                    -1
 
-#define E2EES_UUID_LEN                                        16
-#define E2EES_SIGNED_PRE_KEY_EXPIRATION_MS                    604800000 // 7 days
-#define E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM                    100
-#define E2EES_ONE_TIME_PRE_KEY_PURGE_NUM                      60
-#define E2EES_INVITE_WAITING_TIME_MS                          60000     // 1 minute
+#define E2EES_UUID_LEN                       16
+#define E2EES_SIGNED_PRE_KEY_EXPIRATION_MS   604800000 // 7 days
+#define E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM   100
+#define E2EES_ONE_TIME_PRE_KEY_PURGE_NUM     60
+#define E2EES_INVITE_WAITING_TIME_MS         60000 // 1 minute
 
-#define E2EES_PACK_ALG_DS_CURVE25519                          0
-#define E2EES_PACK_ALG_DS_MLDSA44                             1
-#define E2EES_PACK_ALG_DS_MLDSA65                             9
-#define E2EES_PACK_ALG_DS_MLDSA87                             17
-#define E2EES_PACK_ALG_DS_FALCON512                           33
-#define E2EES_PACK_ALG_DS_FALCON1024                          41
-#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_128F                   65
-#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_128S                   69
-#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_192F                   73
-#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_192S                   77
-#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_256F                   81
-#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_256S                   85
-#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_128F                  89
-#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_128S                  93
-#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_192F                  97
-#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_192S                  101
-#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_256F                  105
-#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_256S                  109
+#define E2EES_PACK_ALG_DS_CURVE25519         0
+#define E2EES_PACK_ALG_DS_MLDSA44            1
+#define E2EES_PACK_ALG_DS_MLDSA65            9
+#define E2EES_PACK_ALG_DS_MLDSA87            17
+#define E2EES_PACK_ALG_DS_FALCON512          33
+#define E2EES_PACK_ALG_DS_FALCON1024         41
+#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_128F  65
+#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_128S  69
+#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_192F  73
+#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_192S  77
+#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_256F  81
+#define E2EES_PACK_ALG_DS_SPHINCS_SHA2_256S  85
+#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_128F 89
+#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_128S 93
+#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_192F 97
+#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_192S 101
+#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_256F 105
+#define E2EES_PACK_ALG_DS_SPHINCS_SHAKE_256S 109
 
-#define E2EES_PACK_ALG_KEM_CURVE25519                         0
-#define E2EES_PACK_ALG_KEM_HQC128                             1
-#define E2EES_PACK_ALG_KEM_HQC192                             9
-#define E2EES_PACK_ALG_KEM_HQC256                             17
-#define E2EES_PACK_ALG_KEM_MLKEM512                           33
-#define E2EES_PACK_ALG_KEM_MLKEM768                           41
-#define E2EES_PACK_ALG_KEM_MLKEM1024                          49
-#define E2EES_PACK_ALG_KEM_MCELIECE348864                     65
-#define E2EES_PACK_ALG_KEM_MCELIECE348864F                    69
-#define E2EES_PACK_ALG_KEM_MCELIECE460896                     73
-#define E2EES_PACK_ALG_KEM_MCELIECE460896F                    77
-#define E2EES_PACK_ALG_KEM_MCELIECE6688128                    81
-#define E2EES_PACK_ALG_KEM_MCELIECE6688128F                   85
-#define E2EES_PACK_ALG_KEM_MCELIECE6960119                    89
-#define E2EES_PACK_ALG_KEM_MCELIECE6960119F                   93
-#define E2EES_PACK_ALG_KEM_MCELIECE8192128                    97
-#define E2EES_PACK_ALG_KEM_MCELIECE8192128F                   101
+#define E2EES_PACK_ALG_KEM_CURVE25519        0
+#define E2EES_PACK_ALG_KEM_HQC128            1
+#define E2EES_PACK_ALG_KEM_HQC192            9
+#define E2EES_PACK_ALG_KEM_HQC256            17
+#define E2EES_PACK_ALG_KEM_MLKEM512          33
+#define E2EES_PACK_ALG_KEM_MLKEM768          41
+#define E2EES_PACK_ALG_KEM_MLKEM1024         49
+#define E2EES_PACK_ALG_KEM_MCELIECE348864    65
+#define E2EES_PACK_ALG_KEM_MCELIECE348864F   69
+#define E2EES_PACK_ALG_KEM_MCELIECE460896    73
+#define E2EES_PACK_ALG_KEM_MCELIECE460896F   77
+#define E2EES_PACK_ALG_KEM_MCELIECE6688128   81
+#define E2EES_PACK_ALG_KEM_MCELIECE6688128F  85
+#define E2EES_PACK_ALG_KEM_MCELIECE6960119   89
+#define E2EES_PACK_ALG_KEM_MCELIECE6960119F  93
+#define E2EES_PACK_ALG_KEM_MCELIECE8192128   97
+#define E2EES_PACK_ALG_KEM_MCELIECE8192128F  101
 
-#define E2EES_PACK_ALG_SE_AES256GCM                           0
+#define E2EES_PACK_ALG_SE_AES256GCM          0
 
-#define E2EES_PACK_ALG_HASH_SHA2_224                          0
-#define E2EES_PACK_ALG_HASH_SHA2_256                          1
-#define E2EES_PACK_ALG_HASH_SHA2_384                          2
-#define E2EES_PACK_ALG_HASH_SHA2_512                          3
-#define E2EES_PACK_ALG_HASH_SHA3_224                          8
-#define E2EES_PACK_ALG_HASH_SHA3_256                          9
-#define E2EES_PACK_ALG_HASH_SHA3_384                          10
-#define E2EES_PACK_ALG_HASH_SHA3_512                          11
-#define E2EES_PACK_ALG_HASH_SHAKE_128                         12
-#define E2EES_PACK_ALG_HASH_SHAKE_256                         13
+#define E2EES_PACK_ALG_HASH_SHA2_224         0
+#define E2EES_PACK_ALG_HASH_SHA2_256         1
+#define E2EES_PACK_ALG_HASH_SHA2_384         2
+#define E2EES_PACK_ALG_HASH_SHA2_512         3
+#define E2EES_PACK_ALG_HASH_SHA3_224         8
+#define E2EES_PACK_ALG_HASH_SHA3_256         9
+#define E2EES_PACK_ALG_HASH_SHA3_384         10
+#define E2EES_PACK_ALG_HASH_SHA3_512         11
+#define E2EES_PACK_ALG_HASH_SHAKE_128        12
+#define E2EES_PACK_ALG_HASH_SHAKE_256        13
 
-#define E2EES_PACK_ID_UNSPECIFIED                             0
-#define E2EES_PACK_ID_V_0                                     0
+#define E2EES_PACK_ID_UNSPECIFIED            0
+#define E2EES_PACK_ID_V_0                    0
 // default e2ees pack id:
-//   E2EES_PACK_ID_V_0 || E2EES_PACK_ALG_DS_MLDSA87 || E2EES_PACK_ALG_KEM_MLKEM1024 || E2EES_PACK_ALG_SE_AES256GCM || E2EES_PACK_ALG_HASH_SHA2_256
-#define E2EES_PACK_ID_DEFAULT                                 0x113101
+//   E2EES_PACK_ID_V_0 || E2EES_PACK_ALG_DS_MLDSA87 ||
+//   E2EES_PACK_ALG_KEM_MLKEM1024 || E2EES_PACK_ALG_SE_AES256GCM ||
+//   E2EES_PACK_ALG_HASH_SHA2_256
+#define E2EES_PACK_ID_DEFAULT                    0x113101
 
-#define E2EES_CIPHER_SUITE_PART_LEN_IN_BITS                   8
-#define E2EES_CIPHER_SUITE_PART_HALF_LEN_IN_BITS              4
+#define E2EES_CIPHER_SUITE_PART_LEN_IN_BITS      8
+#define E2EES_CIPHER_SUITE_PART_HALF_LEN_IN_BITS 4
 
 // forward declaration
 typedef struct crypto_ds_param_t crypto_ds_param_t;
@@ -190,11 +192,13 @@ typedef struct cipher_suite_t cipher_suite_t;
  * @brief Type definition of E2EE Security pack id.
  */
 typedef struct e2ees_pack_id_t {
-    unsigned ver:E2EES_CIPHER_SUITE_PART_LEN_IN_BITS;          // version
-    unsigned ds:E2EES_CIPHER_SUITE_PART_LEN_IN_BITS;           // digital signature algorithm
-    unsigned kem:E2EES_CIPHER_SUITE_PART_LEN_IN_BITS;          // key encapsulation mechanism algorithm
-    unsigned se:E2EES_CIPHER_SUITE_PART_HALF_LEN_IN_BITS;      // symmetric encryption algorithm
-    unsigned hash:E2EES_CIPHER_SUITE_PART_HALF_LEN_IN_BITS;    // hash function algorithm
+    unsigned ver : E2EES_CIPHER_SUITE_PART_LEN_IN_BITS;       // version
+    unsigned ds : E2EES_CIPHER_SUITE_PART_LEN_IN_BITS;        // digital signature algorithm
+    unsigned kem : E2EES_CIPHER_SUITE_PART_LEN_IN_BITS;       // key encapsulation
+                                                              // mechanism algorithm
+    unsigned se : E2EES_CIPHER_SUITE_PART_HALF_LEN_IN_BITS;   // symmetric encryption
+                                                              // algorithm
+    unsigned hash : E2EES_CIPHER_SUITE_PART_HALF_LEN_IN_BITS; // hash function algorithm
 } e2ees_pack_id_t;
 
 /**
@@ -234,35 +238,26 @@ typedef struct e2ees_db_handler_t {
      * @brief store account to db
      * @param account
      */
-    void (*store_account)(
-        E2ees__Account *account
-    );
+    void (*store_account)(E2ees__Account *account);
     /**
      * @brief load account from db by giving user address
      * @param user_address
      * @param account
      */
-    void (*load_account_by_address)(
-        E2ees__E2eeAddress *user_address,
-        E2ees__Account **account
-    );
+    void (*load_account_by_address)(E2ees__E2eeAddress *user_address, E2ees__Account **account);
     /**
      * @brief load all accounts from db
      * @param accounts
      * @return number of loaded accounts
      */
-    size_t (*load_accounts)(
-        E2ees__Account ***accounts
-    );
+    size_t (*load_accounts)(E2ees__Account ***accounts);
     /**
      * @brief update signed pre-key of account to db
      * @param user_address
      * @param signed_pre_key
      */
     bool (*update_signed_pre_key)(
-        E2ees__E2eeAddress *user_address,
-        E2ees__SignedPreKey *signed_pre_key
-    );
+        E2ees__E2eeAddress *user_address, E2ees__SignedPreKey *signed_pre_key);
     /**
      * @brief load old signed pre-key by spk_id
      * @param user_address
@@ -270,53 +265,37 @@ typedef struct e2ees_db_handler_t {
      * @param signed_pre_key
      */
     void (*load_signed_pre_key)(
-        E2ees__E2eeAddress *user_address,
-        uint32_t spk_id,
-        E2ees__SignedPreKey **signed_pre_key
-    );
+        E2ees__E2eeAddress *user_address, uint32_t spk_id, E2ees__SignedPreKey **signed_pre_key);
     /**
      * @brief remove expired signed pre-key (keep last two) of account from db
      * @param user_address
      */
-    bool (*remove_expired_signed_pre_key)(
-        E2ees__E2eeAddress *user_address
-    );
+    bool (*remove_expired_signed_pre_key)(E2ees__E2eeAddress *user_address);
     /**
      * @brief add an one time pre-key of account to db
      * @param user_address
      * @param one_time_pre_key
      */
     bool (*add_one_time_pre_key)(
-        E2ees__E2eeAddress *user_address,
-        E2ees__OneTimePreKey *one_time_pre_key
-    );
+        E2ees__E2eeAddress *user_address, E2ees__OneTimePreKey *one_time_pre_key);
     /**
      * @brief remove an one time pre-key of account to db
      * @param user_address
      * @param one_time_pre_key_id
      */
-    bool (*remove_one_time_pre_key)(
-        E2ees__E2eeAddress *user_address,
-        uint32_t one_time_pre_key_id
-    );
+    bool (*remove_one_time_pre_key)(E2ees__E2eeAddress *user_address, uint32_t one_time_pre_key_id);
     /**
      * @brief update an one time pre-key of acount from db
      * @param user_address
      * @param one_time_pre_key_id
      */
-    bool (*update_one_time_pre_key)(
-        E2ees__E2eeAddress *user_address,
-        uint32_t one_time_pre_key_id
-    );
+    bool (*update_one_time_pre_key)(E2ees__E2eeAddress *user_address, uint32_t one_time_pre_key_id);
     /**
      * @brief load auth from the account given by the user address
      * @param user_address
      * @param auth
      */
-    void (*load_auth)(
-        E2ees__E2eeAddress *user_address,
-        char **auth
-    );
+    void (*load_auth)(E2ees__E2eeAddress *user_address, char **auth);
     // session related handlers
     /**
      * @brief find inbound session
@@ -325,10 +304,7 @@ typedef struct e2ees_db_handler_t {
      * @param inbound_session
      */
     void (*load_session)(
-        char *session_id,
-        E2ees__E2eeAddress *our_address,
-        E2ees__Session **inbound_session
-    );
+        char *session_id, E2ees__E2eeAddress *our_address, E2ees__Session **inbound_session);
     /**
      * @brief find the lastest outbound session
      * @param our_address
@@ -338,11 +314,11 @@ typedef struct e2ees_db_handler_t {
     void (*load_outbound_session)(
         E2ees__E2eeAddress *our_address,
         E2ees__E2eeAddress *their_address,
-        E2ees__Session **outbound_session
-    );
+        E2ees__Session **outbound_session);
 
     /**
-     * @brief find the list of outbound sessions that are related to their_user_id and their_domain
+     * @brief find the list of outbound sessions that are related to
+     * their_user_id and their_domain
      * @param our_address
      * @param their_user_id
      * @param their_domain
@@ -352,36 +328,27 @@ typedef struct e2ees_db_handler_t {
         E2ees__E2eeAddress *our_address,
         const char *their_user_id,
         const char *their_domain,
-        E2ees__Session ***outbound_sessions
-    );
+        E2ees__Session ***outbound_sessions);
 
     /**
      * @brief store session
      * @param session
      */
-    void (*store_session)(
-        E2ees__Session *session
-    );
+    void (*store_session)(E2ees__Session *session);
     /**
      * @brief delete all sessions
      * @param our_address
      * @param their_address
      */
-    void (*unload_session)(
-        E2ees__E2eeAddress *our_address,
-        E2ees__E2eeAddress *their_address
-    );
+    void (*unload_session)(E2ees__E2eeAddress *our_address, E2ees__E2eeAddress *their_address);
     /**
-     * @brief delete old sessions that are older than 1 day after invite_t 
+     * @brief delete old sessions that are older than 1 day after invite_t
      * @param our_address
      * @param their_address
      * @param invite_t
      */
     void (*unload_old_session)(
-        E2ees__E2eeAddress *our_address,
-        E2ees__E2eeAddress *their_address,
-        int64_t invite_t
-    );
+        E2ees__E2eeAddress *our_address, E2ees__E2eeAddress *their_address, int64_t invite_t);
 
     // group session related handlers
     /**
@@ -395,8 +362,7 @@ typedef struct e2ees_db_handler_t {
         E2ees__E2eeAddress *sender_address,
         E2ees__E2eeAddress *session_owner_address,
         E2ees__E2eeAddress *group_address,
-        E2ees__GroupSession **group_session
-    );
+        E2ees__GroupSession **group_session);
     /**
      * @brief find a group session by id
      * @param sender_address
@@ -408,8 +374,7 @@ typedef struct e2ees_db_handler_t {
         E2ees__E2eeAddress *sender_address,
         E2ees__E2eeAddress *session_owner_address,
         char *group_session_id,
-        E2ees__GroupSession **group_session
-    );
+        E2ees__GroupSession **group_session);
     /**
      * @brief load group sessions
      * @param session_owner_address
@@ -419,8 +384,7 @@ typedef struct e2ees_db_handler_t {
     size_t (*load_group_sessions)(
         E2ees__E2eeAddress *session_owner_address,
         E2ees__E2eeAddress *group_address,
-        E2ees__GroupSession ***group_sessions
-    );
+        E2ees__GroupSession ***group_sessions);
     /**
      * @brief load group addresses
      * @param sender_address
@@ -430,33 +394,26 @@ typedef struct e2ees_db_handler_t {
     size_t (*load_group_addresses)(
         E2ees__E2eeAddress *sender_address,
         E2ees__E2eeAddress *session_owner_address,
-        E2ees__E2eeAddress ***group_addresses
-    );
+        E2ees__E2eeAddress ***group_addresses);
     /**
      * @brief store group session
      * @param group_session
      */
-    void (*store_group_session)(
-        E2ees__GroupSession *group_session
-    );
+    void (*store_group_session)(E2ees__GroupSession *group_session);
     /**
      * @brief delete group sessions by address
      * @param session_owner_address
      * @param group_address
      */
     void (*unload_group_session_by_address)(
-        E2ees__E2eeAddress *session_owner_address,
-        E2ees__E2eeAddress *group_address
-    );
+        E2ees__E2eeAddress *session_owner_address, E2ees__E2eeAddress *group_address);
     /**
      * @brief delete group sessions by session id
      * @param session_owner_address
      * @param group_session_id
      */
     void (*unload_group_session_by_id)(
-        E2ees__E2eeAddress *session_owner_address,
-        char *group_session_id
-    );
+        E2ees__E2eeAddress *session_owner_address, char *group_session_id);
 
     // pending plaintext related handlers
     /**
@@ -474,8 +431,7 @@ typedef struct e2ees_db_handler_t {
         char *plaintext_id,
         uint8_t *plaintext_data,
         size_t plaintext_data_len,
-        E2ees__NotifLevel notif_level
-    );
+        E2ees__NotifLevel notif_level);
     /**
      * @brief load pending plaintext data
      * @param from_address
@@ -492,8 +448,7 @@ typedef struct e2ees_db_handler_t {
         char ***plaintext_id_list,
         uint8_t ***plaintext_data_list,
         size_t **plaintext_data_len_list,
-        E2ees__NotifLevel **notif_level_list
-    );
+        E2ees__NotifLevel **notif_level_list);
     /**
      * @brief delete pending plaintext data
      * @param from_address
@@ -501,10 +456,7 @@ typedef struct e2ees_db_handler_t {
      * @param plaintext_id
      */
     void (*unload_pending_plaintext_data)(
-        E2ees__E2eeAddress *from_address,
-        E2ees__E2eeAddress *to_address,
-        char *plaintext_id
-    );
+        E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *to_address, char *plaintext_id);
     /**
      * @brief store pending request data
      * @param user_address
@@ -518,8 +470,7 @@ typedef struct e2ees_db_handler_t {
         char *request_id,
         uint8_t request_type,
         uint8_t *request_data,
-        size_t request_data_len
-    );
+        size_t request_data_len);
     /**
      * @brief load pending request data
      * @param user_address
@@ -530,21 +481,17 @@ typedef struct e2ees_db_handler_t {
      * @return number of loaded request_data list
      */
     size_t (*load_pending_request_data)(
-        E2ees__E2eeAddress * user_address,
+        E2ees__E2eeAddress *user_address,
         char ***request_id_list,
         uint8_t **request_type_list,
         uint8_t ***request_data_list,
-        size_t **request_data_len_list
-    );
+        size_t **request_data_len_list);
     /**
      * @brief delete pending request data
      * @param user_address
      * @param request_id
      */
-    void (*unload_pending_request_data)(
-        E2ees__E2eeAddress *user_address,
-        char *request_id
-    );
+    void (*unload_pending_request_data)(E2ees__E2eeAddress *user_address, char *request_id);
 } e2ees_db_handler_t;
 
 /**
@@ -556,9 +503,7 @@ typedef struct e2ees_proto_handler_t {
      * @param request
      * @return response
      */
-    E2ees__RegisterUserResponse *(*register_user)(
-        E2ees__RegisterUserRequest *request
-    );
+    E2ees__RegisterUserResponse *(*register_user)(E2ees__RegisterUserRequest *request);
     /**
      * @brief Get pre-key bundle
      * @param from
@@ -567,10 +512,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__GetPreKeyBundleResponse *(*get_pre_key_bundle)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__GetPreKeyBundleRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__GetPreKeyBundleRequest *request);
     /**
      * @brief Invite
      * @param from
@@ -579,10 +521,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__InviteResponse *(*invite)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__InviteRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__InviteRequest *request);
     /**
      * @brief Accept
      * @param from
@@ -591,10 +530,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__AcceptResponse *(*accept)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__AcceptRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__AcceptRequest *request);
     /**
      * @brief Publish signed pre-key
      * @param from
@@ -603,10 +539,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__PublishSpkResponse *(*publish_spk)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__PublishSpkRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__PublishSpkRequest *request);
     /**
      * @brief Supply onetime pre-key
      * @param from
@@ -615,10 +548,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__SupplyOpksResponse *(*supply_opks)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__SupplyOpksRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__SupplyOpksRequest *request);
     /**
      * @brief Send one2one message
      * @param from
@@ -627,10 +557,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__SendOne2oneMsgResponse *(*send_one2one_msg)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__SendOne2oneMsgRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__SendOne2oneMsgRequest *request);
     /**
      * @brief Create group
      * @param from
@@ -639,10 +566,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__CreateGroupResponse *(*create_group)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__CreateGroupRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__CreateGroupRequest *request);
     /**
      * @brief Add group members
      * @param from
@@ -651,10 +575,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__AddGroupMembersResponse *(*add_group_members)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__AddGroupMembersRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__AddGroupMembersRequest *request);
     /**
      * @brief Add group member device
      * @param from
@@ -663,10 +584,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__AddGroupMemberDeviceResponse *(*add_group_member_device)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__AddGroupMemberDeviceRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__AddGroupMemberDeviceRequest *request);
     /**
      * @brief Remove group members
      * @param from
@@ -675,10 +593,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__RemoveGroupMembersResponse *(*remove_group_members)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__RemoveGroupMembersRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__RemoveGroupMembersRequest *request);
     /**
      * @brief Leave group
      * @param from
@@ -687,10 +602,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__LeaveGroupResponse *(*leave_group)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__LeaveGroupRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__LeaveGroupRequest *request);
     /**
      * @brief Send group message
      * @param from
@@ -699,10 +611,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__SendGroupMsgResponse *(*send_group_msg)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__SendGroupMsgRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__SendGroupMsgRequest *request);
     /**
      * @brief Consume a ProtoMsg
      * @param from
@@ -711,10 +620,7 @@ typedef struct e2ees_proto_handler_t {
      * @return response
      */
     E2ees__ConsumeProtoMsgResponse *(*consume_proto_msg)(
-        E2ees__E2eeAddress *from,
-        const char *auth,
-        E2ees__ConsumeProtoMsgRequest *request
-    );
+        E2ees__E2eeAddress *from, const char *auth, E2ees__ConsumeProtoMsgRequest *request);
 } e2ees_proto_handler_t;
 
 typedef struct e2ees_event_handler_t {
@@ -724,45 +630,32 @@ typedef struct e2ees_event_handler_t {
      * @param log_code
      * @param log_msg
      */
-    void (*on_log)(
-        E2ees__E2eeAddress *user_address,
-        LogCode log_code,
-        const char *log_msg
-    );
+    void (*on_log)(E2ees__E2eeAddress *user_address, LogCode log_code, const char *log_msg);
     /**
      * @brief notify user registered event
      * @param account
      */
-    void (*on_user_registered)(
-        E2ees__Account *account
-    );
+    void (*on_user_registered)(E2ees__Account *account);
     /**
      * @brief notify inbound session invited
      * @param user_address
      * @param from
      */
-    void (*on_inbound_session_invited)(
-        E2ees__E2eeAddress *user_address,
-        E2ees__E2eeAddress *from
-    );
+    void (*on_inbound_session_invited)(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from);
     /**
      * @brief notify inbound session ready
      * @param user_address
      * @param inbound_session
      */
     void (*on_inbound_session_ready)(
-        E2ees__E2eeAddress *user_address,
-        E2ees__Session *inbound_session
-    );
+        E2ees__E2eeAddress *user_address, E2ees__Session *inbound_session);
     /**
      * @brief notify outbound session ready
      * @param user_address
      * @param outbound_session
      */
     void (*on_outbound_session_ready)(
-        E2ees__E2eeAddress *user_address,
-        E2ees__Session *outbound_session
-    );
+        E2ees__E2eeAddress *user_address, E2ees__Session *outbound_session);
     /**
      * @brief notify one2one msg received event
      * @param user_address
@@ -776,8 +669,7 @@ typedef struct e2ees_event_handler_t {
         E2ees__E2eeAddress *from_address,
         E2ees__E2eeAddress *to_address,
         uint8_t *plaintext,
-        size_t plaintext_len
-    );
+        size_t plaintext_len);
 
     /**
      * @brief notify messages from other devices received event
@@ -792,8 +684,7 @@ typedef struct e2ees_event_handler_t {
         E2ees__E2eeAddress *from_address,
         E2ees__E2eeAddress *to_address,
         uint8_t *plaintext,
-        size_t plaintext_len
-    );
+        size_t plaintext_len);
 
     /**
      * @brief notify group msg received event
@@ -808,8 +699,7 @@ typedef struct e2ees_event_handler_t {
         E2ees__E2eeAddress *from_address,
         E2ees__E2eeAddress *group_address,
         uint8_t *plaintext,
-        size_t plaintext_len
-    );
+        size_t plaintext_len);
 
     /**
      * @brief notify group created event
@@ -824,8 +714,7 @@ typedef struct e2ees_event_handler_t {
         E2ees__E2eeAddress *group_address,
         const char *group_name,
         E2ees__GroupMember **group_members,
-        size_t group_members_num
-    );
+        size_t group_members_num);
 
     /**
      * @brief notify group members added
@@ -844,8 +733,7 @@ typedef struct e2ees_event_handler_t {
         E2ees__GroupMember **group_members,
         size_t group_members_num,
         E2ees__GroupMember **added_group_members,
-        size_t added_group_members_num
-    );
+        size_t added_group_members_num);
 
     /**
      * @brief notify group members removed
@@ -864,8 +752,7 @@ typedef struct e2ees_event_handler_t {
         E2ees__GroupMember **group_members,
         size_t group_members_num,
         E2ees__GroupMember **removed_group_members,
-        size_t removed_group_members_num
-    );
+        size_t removed_group_members_num);
 } e2ees_event_handler_t;
 
 /**
@@ -917,8 +804,7 @@ hf_suite_t *get_hf_suite(unsigned hf_id);
  * @param se Symmetric encryption algorithm
  * @param hash hash function algorithm
  */
-uint32_t gen_e2ees_pack_id_raw(
-    unsigned ver, unsigned ds, unsigned kem, unsigned se, unsigned hash);
+uint32_t gen_e2ees_pack_id_raw(unsigned ver, unsigned ds, unsigned kem, unsigned se, unsigned hash);
 
 /**
  * @brief Get the E2EE Security pack by given e2ees_pack_id raw number.
@@ -954,9 +840,9 @@ e2ees_pack_id_t raw_to_e2ees_pack_id(uint32_t e2ees_pack_id_raw);
 
 /**
  * @brief A delegate function to generate random bytes
- * 
- * @param rand_data 
- * @param rand_data_len 
+ *
+ * @param rand_data
+ * @param rand_data_len
  */
 void e2ees_randombytes(uint8_t *rand_data, size_t rand_data_len);
 
@@ -979,21 +865,24 @@ void e2ees_notify_user_registered(E2ees__Account *account);
  * @param user_address
  * @param from
  */
-void e2ees_notify_inbound_session_invited(E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from);
+void e2ees_notify_inbound_session_invited(
+    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from);
 
 /**
  * @brief Event for notifying that an inbound session is ready.
  * @param user_address
  * @param inbound_session
  */
-void e2ees_notify_inbound_session_ready(E2ees__E2eeAddress *user_address, E2ees__Session *inbound_session);
+void e2ees_notify_inbound_session_ready(
+    E2ees__E2eeAddress *user_address, E2ees__Session *inbound_session);
 
 /**
  * @brief Event for notifying that an outbound session is ready.
  * @param user_address
  * @param outbound_session
  */
-void e2ees_notify_outbound_session_ready(E2ees__E2eeAddress *user_address, E2ees__Session *outbound_session);
+void e2ees_notify_outbound_session_ready(
+    E2ees__E2eeAddress *user_address, E2ees__Session *outbound_session);
 
 /**
  * @brief Event for notifying that an one2one msg is received.
@@ -1004,9 +893,11 @@ void e2ees_notify_outbound_session_ready(E2ees__E2eeAddress *user_address, E2ees
  * @param plaintext_len
  */
 void e2ees_notify_one2one_msg(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *to_address,
-    uint8_t *plaintext, size_t plaintext_len
-);
+    E2ees__E2eeAddress *user_address,
+    E2ees__E2eeAddress *from_address,
+    E2ees__E2eeAddress *to_address,
+    uint8_t *plaintext,
+    size_t plaintext_len);
 
 /**
  * @brief Event for notifying that a msg from user of other device is received.
@@ -1017,9 +908,11 @@ void e2ees_notify_one2one_msg(
  * @param plaintext_len
  */
 void e2ees_notify_other_device_msg(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *to_address,
-    uint8_t *plaintext, size_t plaintext_len
-);
+    E2ees__E2eeAddress *user_address,
+    E2ees__E2eeAddress *from_address,
+    E2ees__E2eeAddress *to_address,
+    uint8_t *plaintext,
+    size_t plaintext_len);
 
 /**
  * @brief Event for notifying that a group is received.
@@ -1030,9 +923,11 @@ void e2ees_notify_other_device_msg(
  * @param plaintext_len
  */
 void e2ees_notify_group_msg(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *from_address, E2ees__E2eeAddress *group_address,
-    uint8_t *plaintext, size_t plaintext_len
-);
+    E2ees__E2eeAddress *user_address,
+    E2ees__E2eeAddress *from_address,
+    E2ees__E2eeAddress *group_address,
+    uint8_t *plaintext,
+    size_t plaintext_len);
 
 /**
  * @brief Event for notifying that a group is created.
@@ -1043,9 +938,11 @@ void e2ees_notify_group_msg(
  * @param group_members_num
  */
 void e2ees_notify_group_created(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *group_address, const char *group_name,
-    E2ees__GroupMember **group_members, size_t group_members_num
-);
+    E2ees__E2eeAddress *user_address,
+    E2ees__E2eeAddress *group_address,
+    const char *group_name,
+    E2ees__GroupMember **group_members,
+    size_t group_members_num);
 
 /**
  * @brief Event for notifying that some group members are added.
@@ -1058,10 +955,13 @@ void e2ees_notify_group_created(
  * @param added_group_members_num
  */
 void e2ees_notify_group_members_added(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *group_address, const char *group_name,
-    E2ees__GroupMember **group_members, size_t group_members_num,
-    E2ees__GroupMember **added_group_members, size_t added_group_members_num
-);
+    E2ees__E2eeAddress *user_address,
+    E2ees__E2eeAddress *group_address,
+    const char *group_name,
+    E2ees__GroupMember **group_members,
+    size_t group_members_num,
+    E2ees__GroupMember **added_group_members,
+    size_t added_group_members_num);
 
 /**
  * @brief Event for notifying that some group members are removed.
@@ -1074,10 +974,13 @@ void e2ees_notify_group_members_added(
  * @param removed_group_members_num
  */
 void e2ees_notify_group_members_removed(
-    E2ees__E2eeAddress *user_address, E2ees__E2eeAddress *group_address, const char *group_name,
-    E2ees__GroupMember **group_members, size_t group_members_num,
-    E2ees__GroupMember **removed_group_members, size_t removed_group_members_num
-);
+    E2ees__E2eeAddress *user_address,
+    E2ees__E2eeAddress *group_address,
+    const char *group_name,
+    E2ees__GroupMember **group_members,
+    size_t group_members_num,
+    E2ees__GroupMember **removed_group_members,
+    size_t removed_group_members_num);
 
 #ifdef __cplusplus
 }

@@ -31,8 +31,8 @@ void account_begin() {
     int ret = E2EES_RESULT_SUCC;
 
     // load accounts that may be null
-    E2ees__Account **accounts = NULL;
-    size_t account_num = get_e2ees_plugin()->db_handler.load_accounts(&accounts);
+    E2ees__Account **accounts   = NULL;
+    size_t account_num          = get_e2ees_plugin()->db_handler.load_accounts(&accounts);
 
     E2ees__Account *cur_account = NULL;
     size_t i;
@@ -60,20 +60,24 @@ void account_begin() {
 void account_end() { free_account_cacheer_list(); }
 
 int create_account(E2ees__Account **account_out, uint32_t e2ees_pack_id) {
-    int ret = E2EES_RESULT_SUCC;
+    int ret                                      = E2EES_RESULT_SUCC;
 
-    E2ees__Account *account = NULL;
-    E2ees__IdentityKey *identity_key = NULL;
-    E2ees__SignedPreKey *signed_pre_key = NULL;
-    uint32_t cur_spk_id = 0;
+    E2ees__Account *account                      = NULL;
+    E2ees__IdentityKey *identity_key             = NULL;
+    E2ees__SignedPreKey *signed_pre_key          = NULL;
+    uint32_t cur_spk_id                          = 0;
     E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
-    size_t number_of_keys = E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM;
-    uint32_t cur_opk_id = 1;
+    size_t number_of_keys                        = E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM;
+    uint32_t cur_opk_id                          = 1;
 
     // get the cipher suite
     const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
     if (!is_valid_cipher_suite(cipher_suite)) {
-        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "create_account() invalid cipher suite with e2ees_pack_id = %d", e2ees_pack_id);
+        e2ees_notify_log(
+            NULL,
+            BAD_CIPHER_SUITE,
+            "create_account() invalid cipher suite with e2ees_pack_id = %d",
+            e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -84,7 +88,11 @@ int create_account(E2ees__Account **account_out, uint32_t e2ees_pack_id) {
 
     if (ret == E2EES_RESULT_SUCC) {
         // generate a signed pre-key pair
-        ret = generate_signed_pre_key(&signed_pre_key, e2ees_pack_id, cur_spk_id, identity_key->sign_key_pair->private_key.data);
+        ret = generate_signed_pre_key(
+            &signed_pre_key,
+            e2ees_pack_id,
+            cur_spk_id,
+            identity_key->sign_key_pair->private_key.data);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -97,10 +105,10 @@ int create_account(E2ees__Account **account_out, uint32_t e2ees_pack_id) {
         e2ees__account__init(account);
 
         // set the version, e2ees_pack_id
-        account->version = strdup(E2EES_PROTOCOL_VERSION);
-        account->e2ees_pack_id = e2ees_pack_id;
+        account->version        = strdup(E2EES_PROTOCOL_VERSION);
+        account->e2ees_pack_id  = e2ees_pack_id;
 
-        account->identity_key = identity_key;
+        account->identity_key   = identity_key;
         account->signed_pre_key = signed_pre_key;
         insert_opks(account, one_time_pre_key_list, number_of_keys);
 
@@ -122,7 +130,8 @@ int create_account(E2ees__Account **account_out, uint32_t e2ees_pack_id) {
                     one_time_pre_key_list[i] = NULL;
                 }
             }
-            free_mem((void **)&one_time_pre_key_list, sizeof(E2ees__OneTimePreKey *) * number_of_keys);
+            free_mem(
+                (void **)&one_time_pre_key_list, sizeof(E2ees__OneTimePreKey *) * number_of_keys);
         }
     }
 
@@ -130,32 +139,38 @@ int create_account(E2ees__Account **account_out, uint32_t e2ees_pack_id) {
 }
 
 int generate_identity_key(E2ees__IdentityKey **identity_key_out, uint32_t e2ees_pack_id) {
-    int ret = E2EES_RESULT_SUCC;
+    int ret                          = E2EES_RESULT_SUCC;
 
-    uint32_t asym_pub_key_len = 0;
-    uint32_t asym_priv_key_len = 0;
-    uint32_t sign_pub_key_len = 0;
-    uint32_t sign_priv_key_len = 0;
+    uint32_t asym_pub_key_len        = 0;
+    uint32_t asym_priv_key_len       = 0;
+    uint32_t sign_pub_key_len        = 0;
+    uint32_t sign_priv_key_len       = 0;
     E2ees__IdentityKey *identity_key = NULL;
-    E2ees__KeyPair *asym_key_pair = NULL;
-    E2ees__KeyPair *sign_key_pair = NULL;
+    E2ees__KeyPair *asym_key_pair    = NULL;
+    E2ees__KeyPair *sign_key_pair    = NULL;
 
     // get the cipher suite
     const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
     if (is_valid_cipher_suite(cipher_suite)) {
-        asym_pub_key_len = cipher_suite->kem_suite->get_param().asym_pub_key_len;
+        asym_pub_key_len  = cipher_suite->kem_suite->get_param().asym_pub_key_len;
         asym_priv_key_len = cipher_suite->kem_suite->get_param().asym_priv_key_len;
-        sign_pub_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
+        sign_pub_key_len  = cipher_suite->ds_suite->get_param().sign_pub_key_len;
         sign_priv_key_len = cipher_suite->ds_suite->get_param().sign_priv_key_len;
     } else {
-        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "generate_identity_key() invalid cipher suite with e2ees_pack_id = %d", e2ees_pack_id);
+        e2ees_notify_log(
+            NULL,
+            BAD_CIPHER_SUITE,
+            "generate_identity_key() invalid cipher suite with e2ees_pack_id = "
+            "%d",
+            e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         asym_key_pair = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
         e2ees__key_pair__init(asym_key_pair);
-        ret = cipher_suite->kem_suite->asym_key_gen(&(asym_key_pair->public_key), &(asym_key_pair->private_key));
+        ret = cipher_suite->kem_suite->asym_key_gen(
+            &(asym_key_pair->public_key), &(asym_key_pair->private_key));
 
         if (!accurate_key_pair(asym_key_pair, asym_pub_key_len, asym_priv_key_len)) {
             e2ees_notify_log(NULL, BAD_KEY_PAIR, "generate_identity_key() bad asym_key_pair");
@@ -166,7 +181,8 @@ int generate_identity_key(E2ees__IdentityKey **identity_key_out, uint32_t e2ees_
     if (ret == E2EES_RESULT_SUCC) {
         sign_key_pair = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
         e2ees__key_pair__init(sign_key_pair);
-        ret = cipher_suite->ds_suite->ds_key_gen(&(sign_key_pair->public_key), &(sign_key_pair->private_key));
+        ret = cipher_suite->ds_suite->ds_key_gen(
+            &(sign_key_pair->public_key), &(sign_key_pair->private_key));
 
         if (!accurate_key_pair(sign_key_pair, sign_pub_key_len, sign_priv_key_len)) {
             e2ees_notify_log(NULL, BAD_KEY_PAIR, "generate_identity_key() bad sign_key_pair");
@@ -181,7 +197,7 @@ int generate_identity_key(E2ees__IdentityKey **identity_key_out, uint32_t e2ees_
         identity_key->asym_key_pair = asym_key_pair;
         identity_key->sign_key_pair = sign_key_pair;
 
-        *identity_key_out = identity_key;
+        *identity_key_out           = identity_key;
     } else {
         if (asym_key_pair != NULL) {
             e2ees__key_pair__free_unpacked(asym_key_pair, NULL);
@@ -196,25 +212,34 @@ int generate_identity_key(E2ees__IdentityKey **identity_key_out, uint32_t e2ees_
     return ret;
 }
 
-int generate_signed_pre_key(E2ees__SignedPreKey **signed_pre_key_out, uint32_t e2ees_pack_id, uint32_t cur_spk_id, const uint8_t *identity_private_key) {
-    int ret = E2EES_RESULT_SUCC;
+int generate_signed_pre_key(
+    E2ees__SignedPreKey **signed_pre_key_out,
+    uint32_t e2ees_pack_id,
+    uint32_t cur_spk_id,
+    const uint8_t *identity_private_key) {
+    int ret                             = E2EES_RESULT_SUCC;
 
-    uint32_t asym_pub_key_len = 0;
-    uint32_t asym_priv_key_len = 0;
-    uint32_t sig_len = 0;
+    uint32_t asym_pub_key_len           = 0;
+    uint32_t asym_priv_key_len          = 0;
+    uint32_t sig_len                    = 0;
     E2ees__SignedPreKey *signed_pre_key = NULL;
-    E2ees__KeyPair *key_pair = NULL;
-    uint8_t *signature_data = NULL;
-    size_t signature_data_len = 0;
+    E2ees__KeyPair *key_pair            = NULL;
+    uint8_t *signature_data             = NULL;
+    size_t signature_data_len           = 0;
 
     // get the cipher suite
     const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
     if (is_valid_cipher_suite(cipher_suite)) {
-        asym_pub_key_len = cipher_suite->kem_suite->get_param().asym_pub_key_len;
+        asym_pub_key_len  = cipher_suite->kem_suite->get_param().asym_pub_key_len;
         asym_priv_key_len = cipher_suite->kem_suite->get_param().asym_priv_key_len;
-        sig_len = cipher_suite->ds_suite->get_param().sig_len;
+        sig_len           = cipher_suite->ds_suite->get_param().sig_len;
     } else {
-        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "generate_signed_pre_key() invalid cipher suite with e2ees_pack_id = %d", e2ees_pack_id);
+        e2ees_notify_log(
+            NULL,
+            BAD_CIPHER_SUITE,
+            "generate_signed_pre_key() invalid cipher suite with e2ees_pack_id "
+            "= %d",
+            e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -222,10 +247,12 @@ int generate_signed_pre_key(E2ees__SignedPreKey **signed_pre_key_out, uint32_t e
         // generate a signed pre-key pair
         key_pair = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
         e2ees__key_pair__init(key_pair);
-        ret = cipher_suite->kem_suite->asym_key_gen(&(key_pair->public_key), &(key_pair->private_key));
+        ret = cipher_suite->kem_suite->asym_key_gen(
+            &(key_pair->public_key), &(key_pair->private_key));
 
         if (!accurate_key_pair(key_pair, asym_pub_key_len, asym_priv_key_len)) {
-            e2ees_notify_log(NULL, BAD_KEY_PAIR, "generate_signed_pre_key() bad signed pre-key pair");
+            e2ees_notify_log(
+                NULL, BAD_KEY_PAIR, "generate_signed_pre_key() bad signed pre-key pair");
             ret = E2EES_RESULT_FAIL;
         }
     }
@@ -233,7 +260,12 @@ int generate_signed_pre_key(E2ees__SignedPreKey **signed_pre_key_out, uint32_t e
     if (ret == E2EES_RESULT_SUCC) {
         signature_data = (uint8_t *)malloc(sizeof(uint8_t) * sig_len);
         // generate a signature
-        ret = cipher_suite->ds_suite->sign(signature_data, &signature_data_len, key_pair->public_key.data, asym_pub_key_len, identity_private_key);
+        ret = cipher_suite->ds_suite->sign(
+            signature_data,
+            &signature_data_len,
+            key_pair->public_key.data,
+            asym_pub_key_len,
+            identity_private_key);
 
         // what if sig_len > signature_data_len?
         if (sig_len < signature_data_len) {
@@ -251,10 +283,10 @@ int generate_signed_pre_key(E2ees__SignedPreKey **signed_pre_key_out, uint32_t e
 
         signed_pre_key->spk_id = cur_spk_id + 1;
 
-        int64_t now = get_e2ees_plugin()->common_handler.gen_ts();
-        signed_pre_key->ttl = now + E2EES_SIGNED_PRE_KEY_EXPIRATION_MS;
+        int64_t now            = get_e2ees_plugin()->common_handler.gen_ts();
+        signed_pre_key->ttl    = now + E2EES_SIGNED_PRE_KEY_EXPIRATION_MS;
 
-        *signed_pre_key_out = signed_pre_key;
+        *signed_pre_key_out    = signed_pre_key;
     } else {
         if (key_pair != NULL) {
             e2ees__key_pair__free_unpacked(key_pair, NULL);
@@ -280,17 +312,18 @@ void purge_signed_pre_key(E2ees__Account *account) {
     // check if the signed pre-key expired
     int64_t now = get_e2ees_plugin()->common_handler.gen_ts();
     if (now > account->signed_pre_key->ttl) {
-        uint32_t e2ees_pack_id = account->e2ees_pack_id;
-        uint32_t cur_spk_id = account->signed_pre_key->spk_id;
+        uint32_t e2ees_pack_id              = account->e2ees_pack_id;
+        uint32_t cur_spk_id                 = account->signed_pre_key->spk_id;
         E2ees__SignedPreKey *signed_pre_key = NULL;
         uint8_t *identity_private_key = account->identity_key->sign_key_pair->private_key.data;
         // generate a new pair of signed pre-key
-        ret = generate_signed_pre_key(&signed_pre_key, e2ees_pack_id, cur_spk_id, identity_private_key);
+        ret = generate_signed_pre_key(
+            &signed_pre_key, e2ees_pack_id, cur_spk_id, identity_private_key);
 
         if (ret == E2EES_RESULT_SUCC) {
             // release the old signed pre-key
             e2ees__signed_pre_key__free_unpacked(account->signed_pre_key, NULL);
-            account->signed_pre_key = signed_pre_key;
+            account->signed_pre_key             = signed_pre_key;
 
             E2ees__PublishSpkResponse *response = NULL;
             ret = publish_spk_internal(&response, e2ees_pack_id, account->address, signed_pre_key);
@@ -308,11 +341,13 @@ void purge_signed_pre_key(E2ees__Account *account) {
     }
 }
 
-E2ees__OneTimePreKey *lookup_one_time_pre_key(E2ees__Account *account, uint32_t one_time_pre_key_id) {
+E2ees__OneTimePreKey *
+lookup_one_time_pre_key(E2ees__Account *account, uint32_t one_time_pre_key_id) {
     E2ees__OneTimePreKey **cur = account->one_time_pre_key_list;
     if (cur == NULL) {
         // there is no one-tme pre-keys in the account
-        e2ees_notify_log(account->address, BAD_ONE_TIME_PRE_KEY, "lookup_one_time_pre_key() opk not found");
+        e2ees_notify_log(
+            account->address, BAD_ONE_TIME_PRE_KEY, "lookup_one_time_pre_key() opk not found");
         return NULL;
     }
 
@@ -323,37 +358,50 @@ E2ees__OneTimePreKey *lookup_one_time_pre_key(E2ees__Account *account, uint32_t 
                 return cur[i];
             }
         } else {
-            e2ees_notify_log(account->address, BAD_ONE_TIME_PRE_KEY, "lookup_one_time_pre_key() the number of opks does not match");
+            e2ees_notify_log(
+                account->address,
+                BAD_ONE_TIME_PRE_KEY,
+                "lookup_one_time_pre_key() the number of opks does not match");
             break;
         }
     }
     return NULL;
 }
 
-int generate_opks(E2ees__OneTimePreKey ***one_time_pre_key_out, size_t number_of_keys, uint32_t e2ees_pack_id, uint32_t cur_opk_id) {
-    int ret = E2EES_RESULT_SUCC;
+int generate_opks(
+    E2ees__OneTimePreKey ***one_time_pre_key_out,
+    size_t number_of_keys,
+    uint32_t e2ees_pack_id,
+    uint32_t cur_opk_id) {
+    int ret                                      = E2EES_RESULT_SUCC;
 
-    uint32_t asym_pub_key_len = 0;
-    uint32_t asym_priv_key_len = 0;
+    uint32_t asym_pub_key_len                    = 0;
+    uint32_t asym_priv_key_len                   = 0;
     E2ees__OneTimePreKey **one_time_pre_key_list = NULL;
-    E2ees__KeyPair *key_pair = NULL;
+    E2ees__KeyPair *key_pair                     = NULL;
     size_t i;
 
     const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
     if (is_valid_cipher_suite(cipher_suite)) {
-        asym_pub_key_len = cipher_suite->kem_suite->get_param().asym_pub_key_len;
+        asym_pub_key_len  = cipher_suite->kem_suite->get_param().asym_pub_key_len;
         asym_priv_key_len = cipher_suite->kem_suite->get_param().asym_priv_key_len;
     } else {
-        e2ees_notify_log(NULL, BAD_CIPHER_SUITE, "generate_opks() invalid cipher suite with e2ees_pack_id = %d", e2ees_pack_id);
+        e2ees_notify_log(
+            NULL,
+            BAD_CIPHER_SUITE,
+            "generate_opks() invalid cipher suite with e2ees_pack_id = %d",
+            e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        one_time_pre_key_list = (E2ees__OneTimePreKey **)calloc(number_of_keys, sizeof(E2ees__OneTimePreKey *));
+        one_time_pre_key_list =
+            (E2ees__OneTimePreKey **)calloc(number_of_keys, sizeof(E2ees__OneTimePreKey *));
         for (i = 0; i < number_of_keys; i++) {
             key_pair = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
             e2ees__key_pair__init(key_pair);
-            ret = cipher_suite->kem_suite->asym_key_gen(&(key_pair->public_key), &(key_pair->private_key));
+            ret = cipher_suite->kem_suite->asym_key_gen(
+                &(key_pair->public_key), &(key_pair->private_key));
 
             if (!accurate_key_pair(key_pair, asym_pub_key_len, asym_priv_key_len)) {
                 e2ees_notify_log(NULL, BAD_KEY_PAIR, "generate_opks() bad one-time pre-key pair");
@@ -361,11 +409,12 @@ int generate_opks(E2ees__OneTimePreKey ***one_time_pre_key_out, size_t number_of
             }
 
             if (ret == E2EES_RESULT_SUCC) {
-                one_time_pre_key_list[i] = (E2ees__OneTimePreKey *)malloc(sizeof(E2ees__OneTimePreKey));
+                one_time_pre_key_list[i] =
+                    (E2ees__OneTimePreKey *)malloc(sizeof(E2ees__OneTimePreKey));
                 e2ees__one_time_pre_key__init(one_time_pre_key_list[i]);
                 copy_key_pair_from_key_pair(&(one_time_pre_key_list[i]->key_pair), key_pair);
                 one_time_pre_key_list[i]->opk_id = cur_opk_id + i;
-                one_time_pre_key_list[i]->used = false;
+                one_time_pre_key_list[i]->used   = false;
 
                 // release
                 e2ees__key_pair__free_unpacked(key_pair, NULL);
@@ -375,7 +424,8 @@ int generate_opks(E2ees__OneTimePreKey ***one_time_pre_key_out, size_t number_of
                 e2ees__key_pair__free_unpacked(key_pair, NULL);
                 key_pair = NULL;
 
-                // if there is something wrong with the newly generated key pair, then we break the procedure
+                // if there is something wrong with the newly generated key
+                // pair, then we break the procedure
                 break;
             }
         }
@@ -383,7 +433,8 @@ int generate_opks(E2ees__OneTimePreKey ***one_time_pre_key_out, size_t number_of
         if (ret == E2EES_RESULT_SUCC) {
             *one_time_pre_key_out = one_time_pre_key_list;
         } else {
-            // if ret != E2EES_RESULT_SUCC, then release the whole one_time_pre_key_list
+            // if ret != E2EES_RESULT_SUCC, then release the whole
+            // one_time_pre_key_list
             if (one_time_pre_key_list != NULL) {
                 for (i = 0; i < number_of_keys; i++) {
                     if (one_time_pre_key_list[i] != NULL) {
@@ -391,7 +442,9 @@ int generate_opks(E2ees__OneTimePreKey ***one_time_pre_key_out, size_t number_of
                         one_time_pre_key_list[i] = NULL;
                     }
                 }
-                free_mem((void **)&one_time_pre_key_list, sizeof(E2ees__OneTimePreKey *) * number_of_keys);
+                free_mem(
+                    (void **)&one_time_pre_key_list,
+                    sizeof(E2ees__OneTimePreKey *) * number_of_keys);
             }
         }
     }
@@ -403,72 +456,85 @@ int insert_opks(E2ees__Account *account, E2ees__OneTimePreKey **src, size_t src_
     int ret = E2EES_RESULT_SUCC;
 
     size_t i, j;
-    size_t old_opk_num = 0;
-    size_t new_opk_num = 0;
+    size_t old_opk_num                                = 0;
+    size_t new_opk_num                                = 0;
     E2ees__OneTimePreKey **temp_one_time_pre_key_list = NULL;
-    E2ees__OneTimePreKey **cur_one_time_pre_key_list = NULL;
-    E2ees__OneTimePreKey *cur_one_time_pre_key = NULL;
-    E2ees__KeyPair *cur_key_pair = NULL;
+    E2ees__OneTimePreKey **cur_one_time_pre_key_list  = NULL;
+    E2ees__OneTimePreKey *cur_one_time_pre_key        = NULL;
+    E2ees__KeyPair *cur_key_pair                      = NULL;
 
-    if (is_valid_one_time_pre_key_list(account->one_time_pre_key_list, account->n_one_time_pre_key_list)) {
+    if (is_valid_one_time_pre_key_list(
+            account->one_time_pre_key_list, account->n_one_time_pre_key_list)) {
         old_opk_num = account->n_one_time_pre_key_list;
         new_opk_num = old_opk_num + src_num;
     } else {
-        e2ees_notify_log(NULL, BAD_ONE_TIME_PRE_KEY, "insert_opks(): invalid one-time pre-key list");
+        e2ees_notify_log(
+            NULL, BAD_ONE_TIME_PRE_KEY, "insert_opks(): invalid one-time pre-key list");
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         if (old_opk_num == 0) {
             // there is no one-tme pre-keys in the account
-            account->one_time_pre_key_list = src;
-            account->n_one_time_pre_key_list = src_num;
+            account->one_time_pre_key_list    = src;
+            account->n_one_time_pre_key_list  = src_num;
             account->next_one_time_pre_key_id = src[src_num - 1]->opk_id + 1;
         } else {
             // there are several one-time pre-keys in the account
-            temp_one_time_pre_key_list = (E2ees__OneTimePreKey **)malloc(sizeof(E2ees__OneTimePreKey *) * new_opk_num);
+            temp_one_time_pre_key_list =
+                (E2ees__OneTimePreKey **)malloc(sizeof(E2ees__OneTimePreKey *) * new_opk_num);
 
             cur_one_time_pre_key_list = account->one_time_pre_key_list;
             for (i = 0; i < old_opk_num; i++) {
-                temp_one_time_pre_key_list[i] = (E2ees__OneTimePreKey *)malloc(sizeof(E2ees__OneTimePreKey));
+                temp_one_time_pre_key_list[i] =
+                    (E2ees__OneTimePreKey *)malloc(sizeof(E2ees__OneTimePreKey));
                 e2ees__one_time_pre_key__init(temp_one_time_pre_key_list[i]);
 
-                cur_one_time_pre_key = cur_one_time_pre_key_list[i];
+                cur_one_time_pre_key                  = cur_one_time_pre_key_list[i];
                 temp_one_time_pre_key_list[i]->opk_id = cur_one_time_pre_key->opk_id;
-                temp_one_time_pre_key_list[i]->used = cur_one_time_pre_key->used;
-                temp_one_time_pre_key_list[i]->key_pair = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
+                temp_one_time_pre_key_list[i]->used   = cur_one_time_pre_key->used;
+                temp_one_time_pre_key_list[i]->key_pair =
+                    (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
                 cur_key_pair = temp_one_time_pre_key_list[i]->key_pair;
                 e2ees__key_pair__init(cur_key_pair);
-                copy_protobuf_from_protobuf(&(cur_key_pair->private_key), &(cur_one_time_pre_key->key_pair->private_key));
-                copy_protobuf_from_protobuf(&(cur_key_pair->public_key), &(cur_one_time_pre_key->key_pair->public_key));
+                copy_protobuf_from_protobuf(
+                    &(cur_key_pair->private_key), &(cur_one_time_pre_key->key_pair->private_key));
+                copy_protobuf_from_protobuf(
+                    &(cur_key_pair->public_key), &(cur_one_time_pre_key->key_pair->public_key));
 
                 // release the old data
                 e2ees__one_time_pre_key__free_unpacked(cur_one_time_pre_key, NULL);
                 cur_one_time_pre_key = NULL;
             }
-            free_mem((void **)&(cur_one_time_pre_key_list), sizeof(E2ees__OneTimePreKey *) * old_opk_num);
+            free_mem(
+                (void **)&(cur_one_time_pre_key_list),
+                sizeof(E2ees__OneTimePreKey *) * old_opk_num);
 
             for (i = 0; i < src_num; i++) {
                 j = old_opk_num + i;
-                temp_one_time_pre_key_list[j] = (E2ees__OneTimePreKey *)malloc(sizeof(E2ees__OneTimePreKey));
+                temp_one_time_pre_key_list[j] =
+                    (E2ees__OneTimePreKey *)malloc(sizeof(E2ees__OneTimePreKey));
                 e2ees__one_time_pre_key__init(temp_one_time_pre_key_list[j]);
 
-                cur_one_time_pre_key = src[i];
+                cur_one_time_pre_key                  = src[i];
                 temp_one_time_pre_key_list[j]->opk_id = cur_one_time_pre_key->opk_id;
-                temp_one_time_pre_key_list[j]->used = cur_one_time_pre_key->used;
-                temp_one_time_pre_key_list[j]->key_pair = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
+                temp_one_time_pre_key_list[j]->used   = cur_one_time_pre_key->used;
+                temp_one_time_pre_key_list[j]->key_pair =
+                    (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
                 cur_key_pair = temp_one_time_pre_key_list[j]->key_pair;
                 e2ees__key_pair__init(cur_key_pair);
-                copy_protobuf_from_protobuf(&(cur_key_pair->private_key), &(cur_one_time_pre_key->key_pair->private_key));
-                copy_protobuf_from_protobuf(&(cur_key_pair->public_key), &(cur_one_time_pre_key->key_pair->public_key));
+                copy_protobuf_from_protobuf(
+                    &(cur_key_pair->private_key), &(cur_one_time_pre_key->key_pair->private_key));
+                copy_protobuf_from_protobuf(
+                    &(cur_key_pair->public_key), &(cur_one_time_pre_key->key_pair->public_key));
 
                 // release the old source data
                 e2ees__one_time_pre_key__free_unpacked(cur_one_time_pre_key, NULL);
             }
             free_mem((void **)&src, sizeof(E2ees__OneTimePreKey *) * src_num);
 
-            account->one_time_pre_key_list = temp_one_time_pre_key_list;
-            account->n_one_time_pre_key_list = new_opk_num;
+            account->one_time_pre_key_list    = temp_one_time_pre_key_list;
+            account->n_one_time_pre_key_list  = new_opk_num;
             account->next_one_time_pre_key_id = src[src_num - 1]->opk_id + 1;
         }
     }
@@ -480,7 +546,8 @@ int mark_opk_as_used(E2ees__Account *account, uint32_t id) {
     E2ees__OneTimePreKey **cur = account->one_time_pre_key_list;
     if (cur == NULL) {
         // there is no one-tme pre-keys in the account
-        e2ees_notify_log(account->address, BAD_ONE_TIME_PRE_KEY, "mark_opk_as_used() opk not found");
+        e2ees_notify_log(
+            account->address, BAD_ONE_TIME_PRE_KEY, "mark_opk_as_used() opk not found");
         return -1;
     }
 
@@ -492,7 +559,10 @@ int mark_opk_as_used(E2ees__Account *account, uint32_t id) {
                 return cur[i]->opk_id;
             }
         } else {
-            e2ees_notify_log(account->address, BAD_ONE_TIME_PRE_KEY, "mark_opk_as_used() the number of opks does not match");
+            e2ees_notify_log(
+                account->address,
+                BAD_ONE_TIME_PRE_KEY,
+                "mark_opk_as_used() the number of opks does not match");
             break;
         }
     }
@@ -505,12 +575,16 @@ void purge_one_time_pre_key(E2ees__Account *account) {
     size_t used_num = 0;
     size_t i, j;
     if (account->one_time_pre_key_list) {
-        // we use the one-time pre-keys from ahead, so we only need to purge the used one-time pre-keys from the beginning
-        // purge max E2EES_ONE_TIME_PRE_KEY_PURGE_NUM used one-time pre-keys
-        for (i = 0; i < account->n_one_time_pre_key_list && used_num < E2EES_ONE_TIME_PRE_KEY_PURGE_NUM; i++) {
-            if (account->one_time_pre_key_list[i]
-                && account->one_time_pre_key_list[i]->used == true) {
-                get_e2ees_plugin()->db_handler.remove_one_time_pre_key(account->address, account->one_time_pre_key_list[i]->opk_id);
+        // we use the one-time pre-keys from ahead, so we only need to purge the
+        // used one-time pre-keys from the beginning purge max
+        // E2EES_ONE_TIME_PRE_KEY_PURGE_NUM used one-time pre-keys
+        for (i = 0;
+             i < account->n_one_time_pre_key_list && used_num < E2EES_ONE_TIME_PRE_KEY_PURGE_NUM;
+             i++) {
+            if (account->one_time_pre_key_list[i] &&
+                account->one_time_pre_key_list[i]->used == true) {
+                get_e2ees_plugin()->db_handler.remove_one_time_pre_key(
+                    account->address, account->one_time_pre_key_list[i]->opk_id);
                 used_num++;
             }
         }

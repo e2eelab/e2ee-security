@@ -20,11 +20,11 @@
 #ifndef CIPHER_ECC_H_
 #define CIPHER_ECC_H_
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,7 +40,6 @@ extern "C" {
 
 /** amount of random data required to create a Curve25519 keypair */
 #define CURVE25519_RANDOM_LENGTH CURVE25519_KEY_LENGTH
-
 
 #ifdef __cplusplus
 }

@@ -27,43 +27,28 @@
 #include "e2ees/cipher.h"
 #include "e2ees/crypto.h"
 
-static const uint8_t CURVE25519_BASEPOINT[32] = {9};
+static const uint8_t CURVE25519_BASEPOINT[32]  = { 9 };
 
 static crypto_ds_param_t curve25519_sign_param = {
-    false,
-    CURVE25519_KEY_LENGTH,
-    CURVE25519_KEY_LENGTH,
-    CURVE_SIGNATURE_LENGTH
+    false, CURVE25519_KEY_LENGTH, CURVE25519_KEY_LENGTH, CURVE_SIGNATURE_LENGTH
 };
 
-static crypto_ds_param_t crypto_ds_params_curve25519() {
-    return curve25519_sign_param;
-}
+static crypto_ds_param_t crypto_ds_params_curve25519() { return curve25519_sign_param; }
 
 static crypto_kem_param_t curve25519_ECDH_param = {
-    false,
-    CURVE25519_KEY_LENGTH,
-    CURVE25519_KEY_LENGTH,
-    0,
-    CURVE25519_KEY_LENGTH
+    false, CURVE25519_KEY_LENGTH, CURVE25519_KEY_LENGTH, 0, CURVE25519_KEY_LENGTH
 };
 
-static crypto_kem_param_t crypto_kem_params_curve25519() {
-    return curve25519_ECDH_param;
-}
+static crypto_kem_param_t crypto_kem_params_curve25519() { return curve25519_ECDH_param; }
 
 // default digital signature suite with ecc
-struct ds_suite_t E2EES_DS_CURVE25519 = {
-    crypto_ds_params_curve25519,
-    crypto_ds_key_gen_curve25519,
-    crypto_ds_sign_curve25519,
-    crypto_ds_verify_curve25519
-};
+struct ds_suite_t E2EES_DS_CURVE25519 = { crypto_ds_params_curve25519,
+                                          crypto_ds_key_gen_curve25519,
+                                          crypto_ds_sign_curve25519,
+                                          crypto_ds_verify_curve25519 };
 
 // default kem suite with ecc
-struct kem_suite_t E2EES_KEM_CURVE25519_ECDH = {
-    crypto_kem_params_curve25519,
-    crypto_kem_asym_key_gen_curve25519,
-    NULL,
-    crypto_kem_decaps_curve25519
-};
+struct kem_suite_t E2EES_KEM_CURVE25519_ECDH = { crypto_kem_params_curve25519,
+                                                 crypto_kem_asym_key_gen_curve25519,
+                                                 NULL,
+                                                 crypto_kem_decaps_curve25519 };

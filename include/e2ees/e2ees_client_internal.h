@@ -106,25 +106,27 @@ typedef struct {
 
 /**
  * @brief Dispatches protocol-specific requests to their respective handlers.
- * 
+ *
  * @note **Updated Argument Ordering:**
  * The request pointer is now the second fixed argument.
- * 
+ *
  * **1. User Registration:**
  * @code
  * dispatch_proto_request(handler, request);
  * @endcode
- * 
+ *
  * **2. Standard Request:**
  * @code
  * dispatch_proto_request(handler, request, sender_address, auth);
  * @endcode
- * 
- * @param[in] handler_ptr The function pointer from the @c proto_handler structure.
- * @param[in] request     [Fixed] Pointer to the request message (ProtobufCMessage).
- * @param[in] ...         Optional: [E2ees__E2eeAddress *sender, const char *auth] 
- *                        required for standard handlers.
- * 
+ *
+ * @param[in] handler_ptr The function pointer from the @c proto_handler
+ * structure.
+ * @param[in] request     [Fixed] Pointer to the request message
+ * (ProtobufCMessage).
+ * @param[in] ...         Optional: [E2ees__E2eeAddress *sender, const char
+ * *auth] required for standard handlers.
+ *
  * @return void* Pointer to the response, or @c NULL on failure.
  */
 void *dispatch_proto_request(void *handler_ptr, const void *request, ...);
@@ -153,8 +155,7 @@ int get_pre_key_bundle_internal(
     const char *to_device_id,
     bool active,
     uint8_t *group_pre_key_plaintext_data,
-    size_t group_pre_key_plaintext_data_len
-);
+    size_t group_pre_key_plaintext_data_len);
 
 /**
  * @brief Send invite request to server.
@@ -162,10 +163,7 @@ int get_pre_key_bundle_internal(
  * @param outbound_session
  * @return 0 if success
  */
-int invite_internal(
-    E2ees__InviteResponse **response_out,
-    E2ees__Session *outbound_session
-);
+int invite_internal(E2ees__InviteResponse **response_out, E2ees__Session *outbound_session);
 
 /**
  * @brief Send accept request to server.
@@ -185,8 +183,7 @@ int accept_internal(
     E2ees__E2eeAddress *to,
     char *session_id,
     ProtobufCBinaryData *ciphertext_1,
-    ProtobufCBinaryData *our_ratchet_key
-);
+    ProtobufCBinaryData *our_ratchet_key);
 
 /**
  * @brief Send publish_spk request to server.
@@ -198,8 +195,7 @@ int publish_spk_internal(
     E2ees__PublishSpkResponse **response_out,
     uint32_t e2ees_pack_id,
     E2ees__E2eeAddress *user_address,
-    E2ees__SignedPreKey *new_spk_pair
-);
+    E2ees__SignedPreKey *new_spk_pair);
 
 /**
  * @brief Send supply_opks request to server.
@@ -209,10 +205,7 @@ int publish_spk_internal(
  * @return 0 if success
  */
 int supply_opks_internal(
-    E2ees__SupplyOpksResponse **response_out,
-    E2ees__Account *account,
-    uint32_t opks_num
-);
+    E2ees__SupplyOpksResponse **response_out, E2ees__Account *account, uint32_t opks_num);
 
 /**
  * @brief Send one2one_msg request to server.
@@ -225,8 +218,8 @@ int supply_opks_internal(
 E2ees__SendOne2oneMsgResponse *send_one2one_msg_internal(
     E2ees__Session *outbound_session,
     uint32_t notif_level,
-    const uint8_t *plaintext_data, size_t plaintext_data_len
-);
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len);
 
 /**
  * @brief Send add_group_member_device request to server.
@@ -240,8 +233,7 @@ int add_group_member_device_internal(
     E2ees__AddGroupMemberDeviceResponse **response_out,
     E2ees__E2eeAddress *sender_address,
     E2ees__E2eeAddress *group_address,
-    E2ees__E2eeAddress *new_device_address
-);
+    E2ees__E2eeAddress *new_device_address);
 
 /**
  * @brief Store pending plain text data to db.
@@ -250,14 +242,13 @@ int add_group_member_device_internal(
  * @param common_plaintext_data
  * @param common_plaintext_data_len
  * @param notif_level
-*/
+ */
 void store_pending_common_plaintext_data_internal(
     E2ees__E2eeAddress *from,
     E2ees__E2eeAddress *to,
     uint8_t *common_plaintext_data,
     size_t common_plaintext_data_len,
-    E2ees__NotifLevel notif_level
-);
+    E2ees__NotifLevel notif_level);
 
 /**
  * @brief Store pending request to db.
@@ -274,8 +265,7 @@ void store_pending_request_internal(
     uint8_t *request_data,
     size_t request_data_len,
     ProtobufCBinaryData *request_arg_list,
-    size_t request_arg_list_len
-);
+    size_t request_arg_list_len);
 
 /**
  * @brief Resume connection with a given account.

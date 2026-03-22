@@ -63,9 +63,7 @@ bool is_valid_receiver_chain(E2ees__ReceiverChainNode *receiver_chain);
 bool is_valid_skipped_msg_key_node(E2ees__SkippedMsgKeyNode *skipped_msg_key_node);
 
 bool is_valid_skipped_msg_key_list(
-    E2ees__SkippedMsgKeyNode **skipped_msg_key_list,
-    size_t skipped_msg_key_list_len
-);
+    E2ees__SkippedMsgKeyNode **skipped_msg_key_list, size_t skipped_msg_key_list_len);
 
 bool is_valid_ratchet(const E2ees__Ratchet *ratchet);
 

@@ -30,16 +30,16 @@ extern "C" {
 
 #include "e2ees/e2ees.h"
 
-#define free_string(arg) \
-    if (arg != NULL) { \
-        free(arg); \
-        arg = NULL; \
+#define free_string(arg)                                                                           \
+    if (arg != NULL) {                                                                             \
+        free(arg);                                                                                 \
+        arg = NULL;                                                                                \
     }
 
-#define free_proto(arg) \
-    if (arg != NULL) { \
-        e2ees__##arg##__free_unpacked(arg, NULL); \
-        arg = NULL; \
+#define free_proto(arg)                                                                            \
+    if (arg != NULL) {                                                                             \
+        e2ees__##arg##__free_unpacked(arg, NULL);                                                  \
+        arg = NULL;                                                                                \
     }
 
 /** Check if two buffers are equal in constant time. */
@@ -117,8 +117,7 @@ bool compare_group_member(
     E2ees__GroupMember **group_members_1,
     size_t group_member_num_1,
     E2ees__GroupMember **group_members_2,
-    size_t group_member_num_2
-);
+    size_t group_member_num_2);
 
 /**
  * @brief Initialize the ProtobufCBinaryData.
@@ -180,8 +179,7 @@ void overwrite_protobuf_from_array(ProtobufCBinaryData *dest, const uint8_t *src
  * @param protobuf_num
  */
 void copy_protobuf_list_from_protobuf_list(
-    ProtobufCBinaryData *dest, const ProtobufCBinaryData *src, size_t protobuf_num
-);
+    ProtobufCBinaryData *dest, const ProtobufCBinaryData *src, size_t protobuf_num);
 
 /**
  * @brief Copy E2ees__E2eeAddress from src to dest.
@@ -278,7 +276,8 @@ void copy_msg_key_from_msg_key(E2ees__MsgKey **dest, E2ees__MsgKey *src);
  * @param dest
  * @param src
  */
-void copy_sender_chain_from_sender_chain(E2ees__SenderChainNode **dest, E2ees__SenderChainNode *src);
+void copy_sender_chain_from_sender_chain(
+    E2ees__SenderChainNode **dest, E2ees__SenderChainNode *src);
 
 /**
  * @brief Copy E2ees__ReceiverChainNode from src to dest.
@@ -286,7 +285,8 @@ void copy_sender_chain_from_sender_chain(E2ees__SenderChainNode **dest, E2ees__S
  * @param dest
  * @param src
  */
-void copy_receiver_chain_from_receiver_chain(E2ees__ReceiverChainNode **dest, E2ees__ReceiverChainNode *src);
+void copy_receiver_chain_from_receiver_chain(
+    E2ees__ReceiverChainNode **dest, E2ees__ReceiverChainNode *src);
 
 /**
  * @brief Copy E2ees__SkippedMsgKeyNode from src to dest.
@@ -296,10 +296,7 @@ void copy_receiver_chain_from_receiver_chain(E2ees__ReceiverChainNode **dest, E2
  * @param skipped_msg_keys_num
  */
 void copy_skipped_msg_keys_from_skipped_msg_keys(
-    E2ees__SkippedMsgKeyNode ***dest,
-    E2ees__SkippedMsgKeyNode **src,
-    size_t skipped_msg_keys_num
-);
+    E2ees__SkippedMsgKeyNode ***dest, E2ees__SkippedMsgKeyNode **src, size_t skipped_msg_keys_num);
 
 /**
  * @brief Copy E2ees__Ratchet from src to dest.
@@ -331,7 +328,8 @@ void copy_ik_public_from_ik_public(E2ees__IdentityKeyPublic **dest, E2ees__Ident
  * @param dest
  * @param src
  */
-void copy_spk_public_from_spk_public(E2ees__SignedPreKeyPublic **dest, E2ees__SignedPreKeyPublic *src);
+void copy_spk_public_from_spk_public(
+    E2ees__SignedPreKeyPublic **dest, E2ees__SignedPreKeyPublic *src);
 
 /**
  * @brief Copy E2ees__OneTimePreKeyPublic from src to dest.
@@ -339,7 +337,8 @@ void copy_spk_public_from_spk_public(E2ees__SignedPreKeyPublic **dest, E2ees__Si
  * @param dest
  * @param src
  */
-void copy_opk_public_from_opk_public(E2ees__OneTimePreKeyPublic **dest, E2ees__OneTimePreKeyPublic *src);
+void copy_opk_public_from_opk_public(
+    E2ees__OneTimePreKeyPublic **dest, E2ees__OneTimePreKeyPublic *src);
 
 void copy_ik_to_public(E2ees__IdentityKeyPublic **dest, E2ees__IdentityKey *src);
 
@@ -347,7 +346,8 @@ void copy_spk_to_public(E2ees__SignedPreKeyPublic **dest, E2ees__SignedPreKey *s
 
 void copy_opk_to_public(E2ees__OneTimePreKeyPublic **dest, E2ees__OneTimePreKey *src);
 
-void copy_opk_list_to_public(E2ees__OneTimePreKeyPublic ***dest, E2ees__OneTimePreKey **src, size_t opk_num);
+void copy_opk_list_to_public(
+    E2ees__OneTimePreKeyPublic ***dest, E2ees__OneTimePreKey **src, size_t opk_num);
 
 /**
  * @brief Copy E2ees__GroupMemberInfo from src to dest.
@@ -364,7 +364,10 @@ void copy_group_member_id(E2ees__GroupMemberInfo **dest, E2ees__GroupMemberInfo 
  * @param src
  * @param to_member_addresses_total_num
  */
-void copy_group_member_ids(E2ees__GroupMemberInfo ***dest, E2ees__GroupMemberInfo **src, size_t to_member_addresses_total_num);
+void copy_group_member_ids(
+    E2ees__GroupMemberInfo ***dest,
+    E2ees__GroupMemberInfo **src,
+    size_t to_member_addresses_total_num);
 
 /**
  * @brief Copy E2ees__GroupMember from src to dest.
@@ -381,7 +384,8 @@ void copy_group_member(E2ees__GroupMember **dest, E2ees__GroupMember *src);
  * @param src
  * @param group_members_num
  */
-void copy_group_members(E2ees__GroupMember ***dest, E2ees__GroupMember **src, size_t group_members_num);
+void copy_group_members(
+    E2ees__GroupMember ***dest, E2ees__GroupMember **src, size_t group_members_num);
 
 /**
  * @brief Copy E2ees__GroupInfo from src to dest.
@@ -413,7 +417,8 @@ void copy_add_group_members_msg(E2ees__AddGroupMembersMsg **dest, E2ees__AddGrou
  * @param dest
  * @param src
  */
-void copy_add_group_member_device_msg(E2ees__AddGroupMemberDeviceMsg **dest, E2ees__AddGroupMemberDeviceMsg *src);
+void copy_add_group_member_device_msg(
+    E2ees__AddGroupMemberDeviceMsg **dest, E2ees__AddGroupMemberDeviceMsg *src);
 
 /**
  * @brief Copy E2ees__RemoveGroupMembersMsg from src to dest.
@@ -421,7 +426,8 @@ void copy_add_group_member_device_msg(E2ees__AddGroupMemberDeviceMsg **dest, E2e
  * @param dest
  * @param src
  */
-void copy_remove_group_members_msg(E2ees__RemoveGroupMembersMsg **dest, E2ees__RemoveGroupMembersMsg *src);
+void copy_remove_group_members_msg(
+    E2ees__RemoveGroupMembersMsg **dest, E2ees__RemoveGroupMembersMsg *src);
 
 /**
  * @brief Copy E2ees__LeaveGroupMsg from src to dest.
@@ -443,8 +449,7 @@ void add_group_members_to_group_info(
     E2ees__GroupInfo **dest,
     E2ees__GroupInfo *old_group_info,
     E2ees__GroupMember **adding_members,
-    size_t adding_members_num
-);
+    size_t adding_members_num);
 
 /**
  * @brief Remove some E2ees__GroupMember from old_group_info.
@@ -458,8 +463,7 @@ void remove_group_members_from_group_info(
     E2ees__GroupInfo **dest,
     E2ees__GroupInfo *old_group_info,
     E2ees__GroupMember **removing_members,
-    size_t removing_members_num
-);
+    size_t removing_members_num);
 
 /**
  * @brief Copy member info to group member.
@@ -469,7 +473,8 @@ void remove_group_members_from_group_info(
 E2ees__GroupMember *member_info_to_group_member(E2ees__GroupMemberInfo *member_info);
 
 /**
- *  * @brief Collect unique user ID from member_info_list then convert and collect it into member_list
+ *  * @brief Collect unique user ID from member_info_list then convert and
+ * collect it into member_list
  * @param dest
  * @param member_info_list
  * @param member_info_list_num
@@ -482,8 +487,7 @@ size_t member_info_to_group_members(
     E2ees__GroupMemberInfo **member_info_list,
     size_t member_info_list_num,
     E2ees__GroupMember **member_list,
-    size_t member_list_num
-);
+    size_t member_list_num);
 
 /**
  * @brief Release memory of E2ees__E2eeAddress array.

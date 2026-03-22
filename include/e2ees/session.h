@@ -41,10 +41,7 @@ typedef struct session_suite_t {
      * @return 0 if success
      */
     int (*new_outbound_session)(
-        E2ees__InviteResponse **,
-        E2ees__E2eeAddress *,
-        E2ees__PreKeyBundle *
-    );
+        E2ees__InviteResponse **, E2ees__E2eeAddress *, E2ees__PreKeyBundle *);
 
     /**
      * @brief Create a new inbound session.
@@ -54,11 +51,7 @@ typedef struct session_suite_t {
      * @param request The invite message
      * @return value < 0 for error
      */
-    int (*new_inbound_session)(
-        E2ees__Session **,
-        E2ees__Account *,
-        E2ees__InviteMsg *
-    );
+    int (*new_inbound_session)(E2ees__Session **, E2ees__Account *, E2ees__InviteMsg *);
 
     /**
      * @brief Complete an outbound session.
@@ -67,10 +60,7 @@ typedef struct session_suite_t {
      * @param msg The accept message
      * @return value < 0 for error
      */
-    int (*complete_outbound_session)(
-        E2ees__Session **,
-        E2ees__AcceptMsg *
-    );
+    int (*complete_outbound_session)(E2ees__Session **, E2ees__AcceptMsg *);
 } session_suite_t;
 
 /* common */
@@ -78,8 +68,7 @@ void initialise_session(
     E2ees__Session *session,
     uint32_t e2ees_pack_id,
     E2ees__E2eeAddress *our_address,
-    E2ees__E2eeAddress *their_address
-);
+    E2ees__E2eeAddress *their_address);
 
 /**
  * @brief Packaging a common plaintext to common_plaintext_data.
@@ -91,46 +80,34 @@ void initialise_session(
  * @param common_plaintext_data_len
  */
 void pack_common_plaintext(
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
     int plaintext_type,
-    uint8_t **common_plaintext_data, size_t *common_plaintext_data_len
-);
+    uint8_t **common_plaintext_data,
+    size_t *common_plaintext_data_len);
 
 /* ECC-related */
 E2ees__InviteResponse *crypto_curve25519_new_outbound_session(
     E2ees__Session *session,
     const E2ees__Account *local_account,
-    E2ees__PreKeyBundle *their_pre_key_bundle
-);
+    E2ees__PreKeyBundle *their_pre_key_bundle);
 
 int crypto_curve25519_new_inbound_session(
-    E2ees__Session *session,
-    E2ees__Account *local_account,
-    E2ees__InviteMsg *msg
-);
+    E2ees__Session *session, E2ees__Account *local_account, E2ees__InviteMsg *msg);
 
 int crypto_curve25519_complete_outbound_session(
-    E2ees__Session *outbound_session,
-    E2ees__AcceptMsg *msg
-);
+    E2ees__Session *outbound_session, E2ees__AcceptMsg *msg);
 
 /* PQC-related */
 int pqc_new_outbound_session_v2(
     E2ees__InviteResponse **response_out,
     E2ees__E2eeAddress *from,
-    E2ees__PreKeyBundle *their_pre_key_bundle
-);
+    E2ees__PreKeyBundle *their_pre_key_bundle);
 
 int pqc_new_inbound_session(
-    E2ees__Session **inbound_session_out,
-    E2ees__Account *local_account,
-    E2ees__InviteMsg *msg
-);
+    E2ees__Session **inbound_session_out, E2ees__Account *local_account, E2ees__InviteMsg *msg);
 
-int pqc_complete_outbound_session(
-    E2ees__Session **outbound_session_out,
-    E2ees__AcceptMsg *msg
-);
+int pqc_complete_outbound_session(E2ees__Session **outbound_session_out, E2ees__AcceptMsg *msg);
 
 #ifdef __cplusplus
 }

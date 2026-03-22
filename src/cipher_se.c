@@ -18,53 +18,60 @@
  */
 #include "e2ees/cipher_se.h"
 
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
 #include <errno.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "e2ees/cipher.h"
 #include "e2ees/crypto.h"
 #include "e2ees/mem_util.h"
 
-static crypto_se_param_t aes256_param = {
-    AES256_KEY_LENGTH,
-    AES256_IV_LENGTH,
-    AES256_GCM_TAG_LENGTH
-};
+static crypto_se_param_t aes256_param = { AES256_KEY_LENGTH,
+                                          AES256_IV_LENGTH,
+                                          AES256_GCM_TAG_LENGTH };
 
-static crypto_se_param_t crypto_se_params_aes256_gcm() {
-    return aes256_param;
-}
+static crypto_se_param_t crypto_se_params_aes256_gcm() { return aes256_param; }
 
 int crypto_se_encrypt_aes256_gcm(
-    const ProtobufCBinaryData *ad, const uint8_t *aes_key,
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
-    uint8_t **ciphertext_data, size_t *ciphertext_data_len
-) {
-    int ret = E2EES_RESULT_SUCC;
+    const ProtobufCBinaryData *ad,
+    const uint8_t *aes_key,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
+    uint8_t **ciphertext_data,
+    size_t *ciphertext_data_len) {
+    int ret              = E2EES_RESULT_SUCC;
 
-    uint8_t *iv = (uint8_t *)aes_key + AES256_KEY_LENGTH;
+    uint8_t *iv          = (uint8_t *)aes_key + AES256_KEY_LENGTH;
     *ciphertext_data_len = crypto_aes256_gcm_ciphertext_data_len(plaintext_data_len);
-    *ciphertext_data = (uint8_t *)malloc(*ciphertext_data_len);
-    ret = crypto_aes_encrypt_gcm(plaintext_data, plaintext_data_len, aes_key, iv, ad->data, ad->len, *ciphertext_data);
+    *ciphertext_data     = (uint8_t *)malloc(*ciphertext_data_len);
+    ret                  = crypto_aes_encrypt_gcm(
+        plaintext_data, plaintext_data_len, aes_key, iv, ad->data, ad->len, *ciphertext_data);
 
     return ret;
 }
 
 int crypto_se_decrypt_aes256_gcm(
-    uint8_t **decrypted_data_out, size_t *decrypted_data_len_out,
-    const ProtobufCBinaryData *ad, const uint8_t *aes_key,
-    const uint8_t *ciphertext_data, size_t ciphertext_data_len
-) {
-    int ret = E2EES_RESULT_SUCC;
+    uint8_t **decrypted_data_out,
+    size_t *decrypted_data_len_out,
+    const ProtobufCBinaryData *ad,
+    const uint8_t *aes_key,
+    const uint8_t *ciphertext_data,
+    size_t ciphertext_data_len) {
+    int ret                   = E2EES_RESULT_SUCC;
 
-    uint8_t *iv = (uint8_t *)aes_key + AES256_KEY_LENGTH;
+    uint8_t *iv               = (uint8_t *)aes_key + AES256_KEY_LENGTH;
     size_t plaintext_data_len = crypto_aes256_gcm_plaintext_data_len(ciphertext_data_len);
-    uint8_t *plaintext_data = (uint8_t *)malloc(plaintext_data_len);
-    ret = crypto_aes_decrypt_gcm(
-        ciphertext_data, ciphertext_data_len, aes_key, iv, ad->data, ad->len, plaintext_data, decrypted_data_len_out
-    );
+    uint8_t *plaintext_data   = (uint8_t *)malloc(plaintext_data_len);
+    ret                       = crypto_aes_decrypt_gcm(
+        ciphertext_data,
+        ciphertext_data_len,
+        aes_key,
+        iv,
+        ad->data,
+        ad->len,
+        plaintext_data,
+        decrypted_data_len_out);
     if (*decrypted_data_len_out > 0) {
         *decrypted_data_out = plaintext_data;
     } else {

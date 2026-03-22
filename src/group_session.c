@@ -32,40 +32,63 @@
 
 #define SEED_SECRET_LEN 32
 
-static const char ROOT_SEED[] = "ROOT";
-static const uint8_t CHAIN_KEY_SEED[1] = {0x02};
-static const char MESSAGE_KEY_SEED[] = "MessageKeys";
+static const char ROOT_SEED[]          = "ROOT";
+static const uint8_t CHAIN_KEY_SEED[1] = { 0x02 };
+static const char MESSAGE_KEY_SEED[]   = "MessageKeys";
 
 void advance_group_chain_key(const cipher_suite_t *cipher_suite, ProtobufCBinaryData *chain_key) {
     uint32_t group_shared_key_len = cipher_suite->hf_suite->get_param().hf_len;
     uint8_t shared_key[group_shared_key_len];
-    cipher_suite->hf_suite->hmac(chain_key->data, chain_key->len, CHAIN_KEY_SEED, sizeof(CHAIN_KEY_SEED), shared_key);
+    cipher_suite->hf_suite->hmac(
+        chain_key->data, chain_key->len, CHAIN_KEY_SEED, sizeof(CHAIN_KEY_SEED), shared_key);
 
     overwrite_protobuf_from_array(chain_key, shared_key);
 }
 
-void advance_group_chain_key_by_welcome(const cipher_suite_t *cipher_suite, const ProtobufCBinaryData *src_chain_key, ProtobufCBinaryData **dest_chain_key) {
-    uint32_t hf_len = cipher_suite->hf_suite->get_param().hf_len;
-    uint8_t salt[] = "welcome";
+void advance_group_chain_key_by_welcome(
+    const cipher_suite_t *cipher_suite,
+    const ProtobufCBinaryData *src_chain_key,
+    ProtobufCBinaryData **dest_chain_key) {
+    uint32_t hf_len         = cipher_suite->hf_suite->get_param().hf_len;
+    uint8_t salt[]          = "welcome";
 
-    *dest_chain_key = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
+    *dest_chain_key         = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
 
-    (*dest_chain_key)->len = hf_len;
+    (*dest_chain_key)->len  = hf_len;
     (*dest_chain_key)->data = (uint8_t *)malloc(sizeof(uint8_t) * hf_len);
 
-    cipher_suite->hf_suite->hkdf(src_chain_key->data, src_chain_key->len, salt, sizeof(salt) - 1, CHAIN_KEY_SEED, sizeof(CHAIN_KEY_SEED), (*dest_chain_key)->data, (*dest_chain_key)->len);
+    cipher_suite->hf_suite->hkdf(
+        src_chain_key->data,
+        src_chain_key->len,
+        salt,
+        sizeof(salt) - 1,
+        CHAIN_KEY_SEED,
+        sizeof(CHAIN_KEY_SEED),
+        (*dest_chain_key)->data,
+        (*dest_chain_key)->len);
 }
 
-void advance_group_chain_key_by_add(const cipher_suite_t *cipher_suite, const ProtobufCBinaryData *src_chain_key, ProtobufCBinaryData *dest_chain_key) {
-    uint32_t hf_len = cipher_suite->hf_suite->get_param().hf_len;
-    uint8_t salt[] = "add";
+void advance_group_chain_key_by_add(
+    const cipher_suite_t *cipher_suite,
+    const ProtobufCBinaryData *src_chain_key,
+    ProtobufCBinaryData *dest_chain_key) {
+    uint32_t hf_len                    = cipher_suite->hf_suite->get_param().hf_len;
+    uint8_t salt[]                     = "add";
 
     ProtobufCBinaryData *new_chain_key = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
 
-    new_chain_key->len = hf_len;
-    new_chain_key->data = (uint8_t *)malloc(sizeof(uint8_t) * hf_len);
+    new_chain_key->len                 = hf_len;
+    new_chain_key->data                = (uint8_t *)malloc(sizeof(uint8_t) * hf_len);
 
-    cipher_suite->hf_suite->hkdf(src_chain_key->data, src_chain_key->len, salt, sizeof(salt) - 1, CHAIN_KEY_SEED, sizeof(CHAIN_KEY_SEED), new_chain_key->data, new_chain_key->len);
+    cipher_suite->hf_suite->hkdf(
+        src_chain_key->data,
+        src_chain_key->len,
+        salt,
+        sizeof(salt) - 1,
+        CHAIN_KEY_SEED,
+        sizeof(CHAIN_KEY_SEED),
+        new_chain_key->data,
+        new_chain_key->len);
 
     overwrite_protobuf_from_array(dest_chain_key, new_chain_key->data);
 
@@ -74,36 +97,60 @@ void advance_group_chain_key_by_add(const cipher_suite_t *cipher_suite, const Pr
     free_mem((void **)&new_chain_key, sizeof(ProtobufCBinaryData));
 }
 
-void create_group_message_key(const cipher_suite_t *cipher_suite, const ProtobufCBinaryData *chain_key, E2ees__MsgKey *msg_key) {
-    uint32_t group_msg_key_len = cipher_suite->se_suite->get_param().aead_key_len + cipher_suite->se_suite->get_param().aead_iv_len;
+void create_group_message_key(
+    const cipher_suite_t *cipher_suite,
+    const ProtobufCBinaryData *chain_key,
+    E2ees__MsgKey *msg_key) {
+    uint32_t group_msg_key_len = cipher_suite->se_suite->get_param().aead_key_len +
+                                 cipher_suite->se_suite->get_param().aead_iv_len;
 
     free_protobuf(&(msg_key->derived_key));
     msg_key->derived_key.data = (uint8_t *)malloc(sizeof(uint8_t) * group_msg_key_len);
-    msg_key->derived_key.len = group_msg_key_len;
+    msg_key->derived_key.len  = group_msg_key_len;
 
-    uint32_t hf_len = cipher_suite->hf_suite->get_param().hf_len;
+    uint32_t hf_len           = cipher_suite->hf_suite->get_param().hf_len;
     uint8_t salt[hf_len];
     memset(salt, 0, hf_len);
-    cipher_suite->hf_suite->hkdf(chain_key->data, chain_key->len, salt, sizeof(salt), (uint8_t *)MESSAGE_KEY_SEED, sizeof(MESSAGE_KEY_SEED) - 1, msg_key->derived_key.data,
-                                 msg_key->derived_key.len);
+    cipher_suite->hf_suite->hkdf(
+        chain_key->data,
+        chain_key->len,
+        salt,
+        sizeof(salt),
+        (uint8_t *)MESSAGE_KEY_SEED,
+        sizeof(MESSAGE_KEY_SEED) - 1,
+        msg_key->derived_key.data,
+        msg_key->derived_key.len);
 }
 
-int encrypt_group_msg(E2ees__GroupMsgPayload **group_msg_payload_out, uint32_t e2ees_pack_id, const uint8_t *plaintext_data, size_t plaintext_data_len, const ProtobufCBinaryData *chain_key,
-                      const ProtobufCBinaryData *assoicated_data, uint32_t sequence, E2ees__IdentityKey *identity_key) {
-    int ret = E2EES_RESULT_SUCC;
+int encrypt_group_msg(
+    E2ees__GroupMsgPayload **group_msg_payload_out,
+    uint32_t e2ees_pack_id,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
+    const ProtobufCBinaryData *chain_key,
+    const ProtobufCBinaryData *assoicated_data,
+    uint32_t sequence,
+    E2ees__IdentityKey *identity_key) {
+    int ret                                   = E2EES_RESULT_SUCC;
 
-    E2ees__MsgKey *msg_key = NULL;
+    E2ees__MsgKey *msg_key                    = NULL;
     E2ees__GroupMsgPayload *group_msg_payload = NULL;
-    uint8_t *ciphertext_data = NULL;
-    size_t ciphertext_data_len = 0;
-    const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
+    uint8_t *ciphertext_data                  = NULL;
+    size_t ciphertext_data_len                = 0;
+    const cipher_suite_t *cipher_suite        = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
 
-    msg_key = (E2ees__MsgKey *)malloc(sizeof(E2ees__MsgKey));
+    msg_key                                   = (E2ees__MsgKey *)malloc(sizeof(E2ees__MsgKey));
     e2ees__msg_key__init(msg_key);
     create_group_message_key(cipher_suite, chain_key, msg_key);
 
     // encryption
-    ret = cipher_suite->se_suite->encrypt(assoicated_data, msg_key->derived_key.data, plaintext_data, plaintext_data_len, &ciphertext_data, &ciphertext_data_len);
+    ret = cipher_suite->se_suite->encrypt(
+        assoicated_data,
+        msg_key->derived_key.data,
+        plaintext_data,
+        plaintext_data_len,
+        &ciphertext_data,
+        &ciphertext_data_len);
 
     if (ret == E2EES_RESULT_SUCC) {
         // prepare a group_msg_payload
@@ -111,17 +158,22 @@ int encrypt_group_msg(E2ees__GroupMsgPayload **group_msg_payload_out, uint32_t e
         e2ees__group_msg_payload__init(group_msg_payload);
         group_msg_payload->sequence = sequence;
 
-        group_msg_payload->ciphertext.data = (uint8_t *)malloc(sizeof(uint8_t) * ciphertext_data_len);
+        group_msg_payload->ciphertext.data =
+            (uint8_t *)malloc(sizeof(uint8_t) * ciphertext_data_len);
         memcpy(group_msg_payload->ciphertext.data, ciphertext_data, ciphertext_data_len);
         group_msg_payload->ciphertext.len = ciphertext_data_len;
 
         // signature
-        uint32_t sig_len = cipher_suite->ds_suite->get_param().sig_len;
-        group_msg_payload->signature.len = sig_len;
+        uint32_t sig_len                  = cipher_suite->ds_suite->get_param().sig_len;
+        group_msg_payload->signature.len  = sig_len;
         group_msg_payload->signature.data = (uint8_t *)malloc(sizeof(uint8_t) * sig_len);
         size_t signature_out_len;
-        ret = cipher_suite->ds_suite->sign(group_msg_payload->signature.data, &signature_out_len, group_msg_payload->ciphertext.data, group_msg_payload->ciphertext.len,
-                                           identity_key->sign_key_pair->private_key.data);
+        ret = cipher_suite->ds_suite->sign(
+            group_msg_payload->signature.data,
+            &signature_out_len,
+            group_msg_payload->ciphertext.data,
+            group_msg_payload->ciphertext.len,
+            identity_key->sign_key_pair->private_key.data);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -140,16 +192,19 @@ int encrypt_group_msg(E2ees__GroupMsgPayload **group_msg_payload_out, uint32_t e
     return ret;
 }
 
-static void pack_group_pre_key(E2ees__GroupPreKeyBundle *group_pre_key_bundle, uint8_t **group_pre_key_plaintext_data, size_t *group_pre_key_plaintext_data_len) {
+static void pack_group_pre_key(
+    E2ees__GroupPreKeyBundle *group_pre_key_bundle,
+    uint8_t **group_pre_key_plaintext_data,
+    size_t *group_pre_key_plaintext_data_len) {
     E2ees__Plaintext *plaintext = (E2ees__Plaintext *)malloc(sizeof(E2ees__Plaintext));
     e2ees__plaintext__init(plaintext);
-    plaintext->version = strdup(E2EES_PLAINTEXT_VERSION);
-    plaintext->payload_case = E2EES__PLAINTEXT__PAYLOAD_GROUP_PRE_KEY_BUNDLE;
-    plaintext->group_pre_key_bundle = group_pre_key_bundle;
+    plaintext->version                = strdup(E2EES_PLAINTEXT_VERSION);
+    plaintext->payload_case           = E2EES__PLAINTEXT__PAYLOAD_GROUP_PRE_KEY_BUNDLE;
+    plaintext->group_pre_key_bundle   = group_pre_key_bundle;
 
-    size_t len = e2ees__plaintext__get_packed_size(plaintext);
+    size_t len                        = e2ees__plaintext__get_packed_size(plaintext);
     *group_pre_key_plaintext_data_len = len;
-    *group_pre_key_plaintext_data = (uint8_t *)malloc(sizeof(uint8_t) * len);
+    *group_pre_key_plaintext_data     = (uint8_t *)malloc(sizeof(uint8_t) * len);
     e2ees__plaintext__pack(plaintext, *group_pre_key_plaintext_data);
 
     // release
@@ -157,15 +212,19 @@ static void pack_group_pre_key(E2ees__GroupPreKeyBundle *group_pre_key_bundle, u
     e2ees__plaintext__free_unpacked(plaintext, NULL);
 }
 
-size_t pack_group_pre_key_plaintext(E2ees__GroupSession *outbound_group_session, uint8_t **group_pre_key_plaintext_data, char *old_session_id) {
-    E2ees__GroupPreKeyBundle *group_pre_key_bundle = (E2ees__GroupPreKeyBundle *)malloc(sizeof(E2ees__GroupPreKeyBundle));
+size_t pack_group_pre_key_plaintext(
+    E2ees__GroupSession *outbound_group_session,
+    uint8_t **group_pre_key_plaintext_data,
+    char *old_session_id) {
+    E2ees__GroupPreKeyBundle *group_pre_key_bundle =
+        (E2ees__GroupPreKeyBundle *)malloc(sizeof(E2ees__GroupPreKeyBundle));
     e2ees__group_pre_key_bundle__init(group_pre_key_bundle);
 
-    group_pre_key_bundle->version = strdup(outbound_group_session->version);
+    group_pre_key_bundle->version       = strdup(outbound_group_session->version);
 
     group_pre_key_bundle->e2ees_pack_id = outbound_group_session->e2ees_pack_id;
 
-    group_pre_key_bundle->session_id = strdup(outbound_group_session->session_id);
+    group_pre_key_bundle->session_id    = strdup(outbound_group_session->session_id);
 
     if (old_session_id != NULL) {
         group_pre_key_bundle->old_session_id = strdup(old_session_id);
@@ -176,11 +235,13 @@ size_t pack_group_pre_key_plaintext(E2ees__GroupSession *outbound_group_session,
     copy_group_info(&(group_pre_key_bundle->group_info), outbound_group_session->group_info);
 
     group_pre_key_bundle->sequence = outbound_group_session->sequence;
-    copy_protobuf_from_protobuf(&(group_pre_key_bundle->group_seed), &(outbound_group_session->group_seed));
+    copy_protobuf_from_protobuf(
+        &(group_pre_key_bundle->group_seed), &(outbound_group_session->group_seed));
 
     // pack the group_pre_key_bundle
     size_t group_pre_key_plaintext_data_len;
-    pack_group_pre_key(group_pre_key_bundle, group_pre_key_plaintext_data, &group_pre_key_plaintext_data_len);
+    pack_group_pre_key(
+        group_pre_key_bundle, group_pre_key_plaintext_data, &group_pre_key_plaintext_data_len);
 
     // release
     // group_pre_key_bundle is released in pack_group_pre_key()
@@ -189,16 +250,19 @@ size_t pack_group_pre_key_plaintext(E2ees__GroupSession *outbound_group_session,
     return group_pre_key_plaintext_data_len;
 }
 
-static void pack_group_ratchet_state(E2ees__GroupUpdateKeyBundle *group_update_key_bundle, uint8_t **group_ratchet_state_plaintext_data, size_t *group_ratchet_state_plaintext_data_len) {
+static void pack_group_ratchet_state(
+    E2ees__GroupUpdateKeyBundle *group_update_key_bundle,
+    uint8_t **group_ratchet_state_plaintext_data,
+    size_t *group_ratchet_state_plaintext_data_len) {
     E2ees__Plaintext *plaintext = (E2ees__Plaintext *)malloc(sizeof(E2ees__Plaintext));
     e2ees__plaintext__init(plaintext);
-    plaintext->version = strdup(E2EES_PLAINTEXT_VERSION);
-    plaintext->payload_case = E2EES__PLAINTEXT__PAYLOAD_GROUP_UPDATE_KEY_BUNDLE;
-    plaintext->group_update_key_bundle = group_update_key_bundle;
+    plaintext->version                      = strdup(E2EES_PLAINTEXT_VERSION);
+    plaintext->payload_case                 = E2EES__PLAINTEXT__PAYLOAD_GROUP_UPDATE_KEY_BUNDLE;
+    plaintext->group_update_key_bundle      = group_update_key_bundle;
 
-    size_t len = e2ees__plaintext__get_packed_size(plaintext);
+    size_t len                              = e2ees__plaintext__get_packed_size(plaintext);
     *group_ratchet_state_plaintext_data_len = len;
-    *group_ratchet_state_plaintext_data = (uint8_t *)malloc(sizeof(uint8_t) * len);
+    *group_ratchet_state_plaintext_data     = (uint8_t *)malloc(sizeof(uint8_t) * len);
     e2ees__plaintext__pack(plaintext, *group_ratchet_state_plaintext_data);
 
     // release
@@ -206,15 +270,21 @@ static void pack_group_ratchet_state(E2ees__GroupUpdateKeyBundle *group_update_k
     e2ees__plaintext__free_unpacked(plaintext, NULL);
 }
 
-size_t pack_group_ratchet_state_plaintext(E2ees__GroupSession *outbound_group_session, uint8_t **group_ratchet_state_plaintext_data, bool adding, ProtobufCBinaryData *identity_public_key,
-                                          size_t n_adding_member_info_list, E2ees__GroupMemberInfo **adding_member_info_list) {
-    E2ees__GroupUpdateKeyBundle *group_update_key_bundle = (E2ees__GroupUpdateKeyBundle *)malloc(sizeof(E2ees__GroupUpdateKeyBundle));
+size_t pack_group_ratchet_state_plaintext(
+    E2ees__GroupSession *outbound_group_session,
+    uint8_t **group_ratchet_state_plaintext_data,
+    bool adding,
+    ProtobufCBinaryData *identity_public_key,
+    size_t n_adding_member_info_list,
+    E2ees__GroupMemberInfo **adding_member_info_list) {
+    E2ees__GroupUpdateKeyBundle *group_update_key_bundle =
+        (E2ees__GroupUpdateKeyBundle *)malloc(sizeof(E2ees__GroupUpdateKeyBundle));
     e2ees__group_update_key_bundle__init(group_update_key_bundle);
 
-    group_update_key_bundle->version = strdup(outbound_group_session->version);
+    group_update_key_bundle->version       = strdup(outbound_group_session->version);
     group_update_key_bundle->e2ees_pack_id = outbound_group_session->e2ees_pack_id;
 
-    group_update_key_bundle->session_id = strdup(outbound_group_session->session_id);
+    group_update_key_bundle->session_id    = strdup(outbound_group_session->session_id);
 
     copy_address_from_address(&(group_update_key_bundle->sender), outbound_group_session->sender);
 
@@ -224,16 +294,23 @@ size_t pack_group_ratchet_state_plaintext(E2ees__GroupSession *outbound_group_se
 
     group_update_key_bundle->sequence = outbound_group_session->sequence;
 
-    copy_protobuf_from_protobuf(&(group_update_key_bundle->chain_key), &(outbound_group_session->chain_key));
+    copy_protobuf_from_protobuf(
+        &(group_update_key_bundle->chain_key), &(outbound_group_session->chain_key));
 
     copy_protobuf_from_protobuf(&(group_update_key_bundle->sign_public_key), identity_public_key);
 
     group_update_key_bundle->n_adding_member_info_list = n_adding_member_info_list;
-    copy_group_member_ids(&(group_update_key_bundle->adding_member_info_list), adding_member_info_list, n_adding_member_info_list);
+    copy_group_member_ids(
+        &(group_update_key_bundle->adding_member_info_list),
+        adding_member_info_list,
+        n_adding_member_info_list);
 
     // pack
     size_t group_ratchet_state_plaintext_data_len;
-    pack_group_ratchet_state(group_update_key_bundle, group_ratchet_state_plaintext_data, &group_ratchet_state_plaintext_data_len);
+    pack_group_ratchet_state(
+        group_update_key_bundle,
+        group_ratchet_state_plaintext_data,
+        &group_ratchet_state_plaintext_data_len);
 
     // release
     // group_update_key_bundle is released in pack_group_ratchet_state()
@@ -242,13 +319,20 @@ size_t pack_group_ratchet_state_plaintext(E2ees__GroupSession *outbound_group_se
     return group_ratchet_state_plaintext_data_len;
 }
 
-static void insert_outbound_group_session_data(E2ees__GroupSession *outbound_group_session, uint32_t e2ees_pack_id, E2ees__E2eeAddress *user_address, const char *group_name,
-                                               E2ees__E2eeAddress *group_address, const char *session_id, E2ees__GroupMember **group_member_list, size_t group_members_num,
-                                               const uint8_t *identity_public_key) {
-    const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
-    uint32_t sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
+static void insert_outbound_group_session_data(
+    E2ees__GroupSession *outbound_group_session,
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    const char *group_name,
+    E2ees__E2eeAddress *group_address,
+    const char *session_id,
+    E2ees__GroupMember **group_member_list,
+    size_t group_members_num,
+    const uint8_t *identity_public_key) {
+    const cipher_suite_t *cipher_suite    = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
+    uint32_t sign_key_len                 = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
-    outbound_group_session->version = strdup(E2EES_PROTOCOL_VERSION);
+    outbound_group_session->version       = strdup(E2EES_PROTOCOL_VERSION);
     outbound_group_session->e2ees_pack_id = e2ees_pack_id;
 
     copy_address_from_address(&(outbound_group_session->sender), user_address);
@@ -259,7 +343,7 @@ static void insert_outbound_group_session_data(E2ees__GroupSession *outbound_gro
         outbound_group_session->session_id = strdup(session_id);
 
     outbound_group_session->group_info = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
-    E2ees__GroupInfo *group_info = outbound_group_session->group_info;
+    E2ees__GroupInfo *group_info       = outbound_group_session->group_info;
     e2ees__group_info__init(group_info);
     group_info->group_name = strdup(group_name);
     copy_address_from_address(&(group_info->group_address), group_address);
@@ -270,7 +354,7 @@ static void insert_outbound_group_session_data(E2ees__GroupSession *outbound_gro
 
     // combine seed secret and ID
     size_t secret_len = SEED_SECRET_LEN + sign_key_len;
-    uint8_t *secret = (uint8_t *)malloc(sizeof(uint8_t) * secret_len);
+    uint8_t *secret   = (uint8_t *)malloc(sizeof(uint8_t) * secret_len);
     memcpy(secret, outbound_group_session->group_seed.data, SEED_SECRET_LEN);
     memcpy(secret + SEED_SECRET_LEN, identity_public_key, sign_key_len);
 
@@ -279,25 +363,40 @@ static void insert_outbound_group_session_data(E2ees__GroupSession *outbound_gro
     uint8_t salt[hf_len];
     memset(salt, 0, hf_len);
     outbound_group_session->chain_key.len = hf_len;
-    outbound_group_session->chain_key.data = (uint8_t *)malloc(sizeof(uint8_t) * outbound_group_session->chain_key.len);
-    cipher_suite->hf_suite->hkdf(secret, secret_len, salt, sizeof(salt), (uint8_t *)ROOT_SEED, sizeof(ROOT_SEED) - 1, outbound_group_session->chain_key.data,
-                                 outbound_group_session->chain_key.len);
+    outbound_group_session->chain_key.data =
+        (uint8_t *)malloc(sizeof(uint8_t) * outbound_group_session->chain_key.len);
+    cipher_suite->hf_suite->hkdf(
+        secret,
+        secret_len,
+        salt,
+        sizeof(salt),
+        (uint8_t *)ROOT_SEED,
+        sizeof(ROOT_SEED) - 1,
+        outbound_group_session->chain_key.data,
+        outbound_group_session->chain_key.len);
 
-    size_t ad_len = 2 * sign_key_len;
-    outbound_group_session->associated_data.len = ad_len;
+    size_t ad_len                                = 2 * sign_key_len;
+    outbound_group_session->associated_data.len  = ad_len;
     outbound_group_session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * ad_len);
     memcpy(outbound_group_session->associated_data.data, identity_public_key, sign_key_len);
-    memcpy((outbound_group_session->associated_data.data) + sign_key_len, identity_public_key, sign_key_len);
+    memcpy(
+        (outbound_group_session->associated_data.data) + sign_key_len,
+        identity_public_key,
+        sign_key_len);
 
     // release
     free_mem((void **)&secret, sizeof(uint8_t) * secret_len);
 }
 
-static void insert_inbound_group_session_data(E2ees__GroupMemberInfo *group_member_id, E2ees__GroupSession *other_group_session, E2ees__GroupSession *inbound_group_session) {
+static void insert_inbound_group_session_data(
+    E2ees__GroupMemberInfo *group_member_id,
+    E2ees__GroupSession *other_group_session,
+    E2ees__GroupSession *inbound_group_session) {
     inbound_group_session->e2ees_pack_id = other_group_session->e2ees_pack_id;
-    copy_address_from_address(&(inbound_group_session->session_owner), other_group_session->session_owner);
+    copy_address_from_address(
+        &(inbound_group_session->session_owner), other_group_session->session_owner);
 
-    inbound_group_session->version = strdup(other_group_session->version);
+    inbound_group_session->version    = strdup(other_group_session->version);
     inbound_group_session->session_id = strdup(other_group_session->session_id);
 
     copy_address_from_address(&(inbound_group_session->sender), group_member_id->member_address);
@@ -305,33 +404,47 @@ static void insert_inbound_group_session_data(E2ees__GroupMemberInfo *group_memb
     copy_group_info(&(inbound_group_session->group_info), other_group_session->group_info);
 }
 
-int new_outbound_group_session_by_sender(size_t n_member_info_list, E2ees__GroupMemberInfo **member_info_list, uint32_t e2ees_pack_id, E2ees__E2eeAddress *user_address, const char *group_name,
-                                         E2ees__E2eeAddress *group_address, E2ees__GroupMember **group_member_list, size_t group_members_num, char *old_session_id) {
-    int ret = E2EES_RESULT_SUCC;
+int new_outbound_group_session_by_sender(
+    size_t n_member_info_list,
+    E2ees__GroupMemberInfo **member_info_list,
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    const char *group_name,
+    E2ees__E2eeAddress *group_address,
+    E2ees__GroupMember **group_member_list,
+    size_t group_members_num,
+    char *old_session_id) {
+    int ret                                     = E2EES_RESULT_SUCC;
 
-    E2ees__Account *account = NULL;
-    char *auth = NULL;
-    E2ees__IdentityKey *identity_key = NULL;
-    uint8_t *identity_public_key = NULL;
+    E2ees__Account *account                     = NULL;
+    char *auth                                  = NULL;
+    E2ees__IdentityKey *identity_key            = NULL;
+    uint8_t *identity_public_key                = NULL;
     E2ees__GroupSession *outbound_group_session = NULL;
-    E2ees__GroupInfo *group_info = NULL;
-    uint8_t *group_pre_key_plaintext_data = NULL;
-    size_t group_pre_key_plaintext_data_len = 0;
+    E2ees__GroupInfo *group_info                = NULL;
+    uint8_t *group_pre_key_plaintext_data       = NULL;
+    size_t group_pre_key_plaintext_data_len     = 0;
     char *cur_user_id = NULL, *cur_user_domain = NULL;
-    E2ees__Session **outbound_sessions = NULL;
-    size_t outbound_sessions_num = 0;
-    E2ees__Session *outbound_session = NULL;
-    E2ees__SendOne2oneMsgResponse *response = NULL;
+    E2ees__Session **outbound_sessions           = NULL;
+    size_t outbound_sessions_num                 = 0;
+    E2ees__Session *outbound_session             = NULL;
+    E2ees__SendOne2oneMsgResponse *response      = NULL;
     E2ees__InviteResponse **invite_response_list = NULL;
-    size_t invite_response_num = 0;
+    size_t invite_response_num                   = 0;
     size_t i, j;
 
     if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "new_outbound_group_session_by_sender() invalid e2ees pack id with e2ees_pack_id = %d", e2ees_pack_id);
+        e2ees_notify_log(
+            NULL,
+            BAD_E2EES_PACK,
+            "new_outbound_group_session_by_sender() invalid e2ees pack id with "
+            "e2ees_pack_id = %d",
+            e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "new_outbound_group_session_by_sender(): no user_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "new_outbound_group_session_by_sender(): no user_address");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, user_address);
@@ -339,12 +452,19 @@ int new_outbound_group_session_by_sender(size_t n_member_info_list, E2ees__Group
         if (identity_key == NULL) {
             get_e2ees_plugin()->db_handler.load_account_by_address(user_address, &account);
             if (account == NULL) {
-                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender(): no account");
+                e2ees_notify_log(
+                    user_address,
+                    BAD_ACCOUNT,
+                    "new_outbound_group_session_by_sender(): no account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_uint8_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender(): no identity_public_key");
+                    e2ees_notify_log(
+                        user_address,
+                        BAD_ACCOUNT,
+                        "new_outbound_group_session_by_sender(): no "
+                        "identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 } else {
                     auth = strdup(account->auth);
@@ -353,7 +473,8 @@ int new_outbound_group_session_by_sender(size_t n_member_info_list, E2ees__Group
         } else {
             get_e2ees_plugin()->db_handler.load_auth(user_address, &auth);
             if (!is_valid_string(auth)) {
-                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender(): no auth");
+                e2ees_notify_log(
+                    user_address, BAD_ACCOUNT, "new_outbound_group_session_by_sender(): no auth");
                 free_string(auth);
                 ret = E2EES_RESULT_FAIL;
             } else {
@@ -362,24 +483,40 @@ int new_outbound_group_session_by_sender(size_t n_member_info_list, E2ees__Group
         }
     }
 
-    if (!is_valid_group_member_info_list((const E2ees__GroupMemberInfo **)member_info_list, n_member_info_list)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_outbound_group_session_by_sender(): invalid group member info list");
+    if (!is_valid_group_member_info_list(
+            (const E2ees__GroupMemberInfo **)member_info_list, n_member_info_list)) {
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBER_INFO,
+            "new_outbound_group_session_by_sender(): invalid group member info "
+            "list");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(group_name)) {
-        e2ees_notify_log(NULL, BAD_GROUP_NAME, "new_outbound_group_session_by_sender(): no group_name");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_NAME, "new_outbound_group_session_by_sender(): no group_name");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(group_address)) {
-        e2ees_notify_log(NULL, BAD_GROUP_ADDRESS, "new_outbound_group_session_by_sender(): no group_address");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_ADDRESS, "new_outbound_group_session_by_sender(): no group_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(group_member_list, group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "new_outbound_group_session_by_sender(): invalid group member list");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBERS,
+            "new_outbound_group_session_by_sender(): invalid group member "
+            "list");
         ret = E2EES_RESULT_FAIL;
     }
-    if ((group_members_num == 0) || (n_member_info_list == 0) || (group_members_num > n_member_info_list)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "new_outbound_group_session_by_sender(): invalid n_member_info_list");
+    if ((group_members_num == 0) || (n_member_info_list == 0) ||
+        (group_members_num > n_member_info_list)) {
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBERS,
+            "new_outbound_group_session_by_sender(): invalid "
+            "n_member_info_list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -389,36 +526,63 @@ int new_outbound_group_session_by_sender(size_t n_member_info_list, E2ees__Group
 
         // the sender needs to generate a random seed secret
         outbound_group_session->group_seed.len = SEED_SECRET_LEN;
-        outbound_group_session->group_seed.data = (uint8_t *)malloc(sizeof(uint8_t) * outbound_group_session->group_seed.len);
-        e2ees_randombytes(outbound_group_session->group_seed.data, outbound_group_session->group_seed.len);
+        outbound_group_session->group_seed.data =
+            (uint8_t *)malloc(sizeof(uint8_t) * outbound_group_session->group_seed.len);
+        e2ees_randombytes(
+            outbound_group_session->group_seed.data, outbound_group_session->group_seed.len);
 
-        insert_outbound_group_session_data(outbound_group_session, e2ees_pack_id, user_address, group_name, group_address, NULL, group_member_list, group_members_num, identity_public_key);
+        insert_outbound_group_session_data(
+            outbound_group_session,
+            e2ees_pack_id,
+            user_address,
+            group_name,
+            group_address,
+            NULL,
+            group_member_list,
+            group_members_num,
+            identity_public_key);
 
-        // only the group creator needs to send the group pre-key bundle to others
-        group_pre_key_plaintext_data_len = pack_group_pre_key_plaintext(outbound_group_session, &group_pre_key_plaintext_data, old_session_id);
+        // only the group creator needs to send the group pre-key bundle to
+        // others
+        group_pre_key_plaintext_data_len = pack_group_pre_key_plaintext(
+            outbound_group_session, &group_pre_key_plaintext_data, old_session_id);
 
         group_info = outbound_group_session->group_info;
         // send the group pre-key message to the members in the group
         for (i = 0; i < group_info->n_group_member_list; i++) {
             // the ith group member
-            cur_user_id = group_info->group_member_list[i]->user_id;
-            cur_user_domain = group_info->group_member_list[i]->domain;
-            outbound_sessions_num = get_e2ees_plugin()->db_handler.load_outbound_sessions(outbound_group_session->session_owner, cur_user_id, cur_user_domain, &outbound_sessions);
+            cur_user_id           = group_info->group_member_list[i]->user_id;
+            cur_user_domain       = group_info->group_member_list[i]->domain;
+            outbound_sessions_num = get_e2ees_plugin()->db_handler.load_outbound_sessions(
+                outbound_group_session->session_owner,
+                cur_user_id,
+                cur_user_domain,
+                &outbound_sessions);
 
             if (outbound_sessions_num > 0 && outbound_sessions != NULL) {
                 for (j = 0; j < outbound_sessions_num; j++) {
                     outbound_session = outbound_sessions[j];
-                    if (compare_address(outbound_session->their_address, outbound_group_session->session_owner))
+                    if (compare_address(
+                            outbound_session->their_address, outbound_group_session->session_owner))
                         continue;
                     if (outbound_session->responded) {
-                        response = send_one2one_msg_internal(outbound_session, E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION, group_pre_key_plaintext_data, group_pre_key_plaintext_data_len);
+                        response = send_one2one_msg_internal(
+                            outbound_session,
+                            E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION,
+                            group_pre_key_plaintext_data,
+                            group_pre_key_plaintext_data_len);
                         e2ees__send_one2one_msg_response__free_unpacked(response, NULL);
                     } else {
-                        /** Since the other has not responded, we store the group pre-key first so that
-                         *  we can send it right after receiving the other's accept message.
+                        /** Since the other has not responded, we store the
+                         * group pre-key first so that we can send it right
+                         * after receiving the other's accept message.
                          */
-                        store_pending_common_plaintext_data_internal(outbound_session->our_address, outbound_session->their_address, group_pre_key_plaintext_data, group_pre_key_plaintext_data_len,
-                                                                     E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION);
+                        store_pending_common_plaintext_data_internal(
+                            outbound_session->our_address,
+                            outbound_session->their_address,
+                            group_pre_key_plaintext_data,
+                            group_pre_key_plaintext_data_len,
+                            E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION);
                     }
                 }
                 // release outbound_sessions
@@ -426,15 +590,26 @@ int new_outbound_group_session_by_sender(size_t n_member_info_list, E2ees__Group
                     e2ees__session__free_unpacked(outbound_sessions[j], NULL);
                     outbound_sessions[j] = NULL;
                 }
-                free_mem((void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
+                free_mem(
+                    (void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
             } else {
                 if (outbound_sessions != NULL) {
                     free(outbound_sessions);
                     outbound_sessions = NULL;
                 }
-                /** Since we haven't created any session, we need to create a session before sending the group pre-key. */
-                int invite_response_ret = get_pre_key_bundle_internal(&invite_response_list, &invite_response_num, outbound_group_session->session_owner, auth, cur_user_id, cur_user_domain, NULL,
-                                                                      true, group_pre_key_plaintext_data, group_pre_key_plaintext_data_len);
+                /** Since we haven't created any session, we need to create a
+                 * session before sending the group pre-key. */
+                int invite_response_ret = get_pre_key_bundle_internal(
+                    &invite_response_list,
+                    &invite_response_num,
+                    outbound_group_session->session_owner,
+                    auth,
+                    cur_user_id,
+                    cur_user_domain,
+                    NULL,
+                    true,
+                    group_pre_key_plaintext_data,
+                    group_pre_key_plaintext_data_len);
                 // release
                 free_invite_response_list(&invite_response_list, invite_response_num);
             }
@@ -458,26 +633,41 @@ int new_outbound_group_session_by_sender(size_t n_member_info_list, E2ees__Group
     free_string(auth);
     free_proto(identity_key);
     e2ees__group_session__free_unpacked(outbound_group_session, NULL);
-    free_mem((void **)&group_pre_key_plaintext_data, sizeof(uint8_t) * group_pre_key_plaintext_data_len);
+    free_mem(
+        (void **)&group_pre_key_plaintext_data, sizeof(uint8_t) * group_pre_key_plaintext_data_len);
 
     return ret;
 }
 
-int new_outbound_group_session_by_receiver(const ProtobufCBinaryData *group_seed, uint32_t e2ees_pack_id, E2ees__E2eeAddress *user_address, const char *group_name,
-                                           E2ees__E2eeAddress *group_address, const char *session_id, E2ees__GroupMember **group_member_list, size_t group_members_num) {
-    int ret = E2EES_RESULT_SUCC;
+int new_outbound_group_session_by_receiver(
+    const ProtobufCBinaryData *group_seed,
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    const char *group_name,
+    E2ees__E2eeAddress *group_address,
+    const char *session_id,
+    E2ees__GroupMember **group_member_list,
+    size_t group_members_num) {
+    int ret                                     = E2EES_RESULT_SUCC;
 
-    E2ees__Account *account = NULL;
-    E2ees__IdentityKey *identity_key = NULL;
-    uint8_t *identity_public_key = NULL;
+    E2ees__Account *account                     = NULL;
+    E2ees__IdentityKey *identity_key            = NULL;
+    uint8_t *identity_public_key                = NULL;
     E2ees__GroupSession *outbound_group_session = NULL;
 
     if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "new_outbound_group_session_by_receiver() invalid e2ees pack id with e2ees_pack_id = %d", e2ees_pack_id);
+        e2ees_notify_log(
+            NULL,
+            BAD_E2EES_PACK,
+            "new_outbound_group_session_by_receiver() invalid e2ees pack id "
+            "with e2ees_pack_id = "
+            "%d",
+            e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_outbound_group_session_by_receiver(): no user_address");
+        e2ees_notify_log(
+            NULL, BAD_ACCOUNT, "new_outbound_group_session_by_receiver(): no user_address");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, user_address);
@@ -485,12 +675,19 @@ int new_outbound_group_session_by_receiver(const ProtobufCBinaryData *group_seed
         if (identity_key == NULL) {
             get_e2ees_plugin()->db_handler.load_account_by_address(user_address, &account);
             if (account == NULL) {
-                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_receiver(): no account");
+                e2ees_notify_log(
+                    user_address,
+                    BAD_ACCOUNT,
+                    "new_outbound_group_session_by_receiver(): no account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_uint8_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_by_receiver(): no identity_public_key");
+                    e2ees_notify_log(
+                        user_address,
+                        BAD_ACCOUNT,
+                        "new_outbound_group_session_by_receiver(): no "
+                        "identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 }
             }
@@ -500,23 +697,31 @@ int new_outbound_group_session_by_receiver(const ProtobufCBinaryData *group_seed
     }
 
     if (!is_valid_protobuf(group_seed)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SEED, "new_outbound_group_session_by_receiver(): no group_seed");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_SEED, "new_outbound_group_session_by_receiver(): no group_seed");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(group_name)) {
-        e2ees_notify_log(NULL, BAD_GROUP_NAME, "new_outbound_group_session_by_receiver(): no group_name");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_NAME, "new_outbound_group_session_by_receiver(): no group_name");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(group_address)) {
-        e2ees_notify_log(NULL, BAD_GROUP_ADDRESS, "new_outbound_group_session_by_receiver(): no group_address");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_ADDRESS, "new_outbound_group_session_by_receiver(): no group_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_string(session_id)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION_ID, "new_outbound_group_session_by_receiver(): no session_id");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_SESSION_ID, "new_outbound_group_session_by_receiver(): no session_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(group_member_list, group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "new_outbound_group_session_by_receiver(): invalid group member list");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBERS,
+            "new_outbound_group_session_by_receiver(): invalid group member "
+            "list");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -526,10 +731,20 @@ int new_outbound_group_session_by_receiver(const ProtobufCBinaryData *group_seed
 
         // the receiver gets the seed secret from the sender
         outbound_group_session->group_seed.len = group_seed->len;
-        outbound_group_session->group_seed.data = (uint8_t *)malloc(sizeof(uint8_t) * outbound_group_session->group_seed.len);
+        outbound_group_session->group_seed.data =
+            (uint8_t *)malloc(sizeof(uint8_t) * outbound_group_session->group_seed.len);
         memcpy(outbound_group_session->group_seed.data, group_seed->data, group_seed->len);
 
-        insert_outbound_group_session_data(outbound_group_session, e2ees_pack_id, user_address, group_name, group_address, session_id, group_member_list, group_members_num, identity_public_key);
+        insert_outbound_group_session_data(
+            outbound_group_session,
+            e2ees_pack_id,
+            user_address,
+            group_name,
+            group_address,
+            session_id,
+            group_member_list,
+            group_members_num,
+            identity_public_key);
 
         // we do not store the seed secret in the session
         free_protobuf(&(outbound_group_session->group_seed));
@@ -549,22 +764,24 @@ int new_outbound_group_session_by_receiver(const ProtobufCBinaryData *group_seed
     return ret;
 }
 
-int new_outbound_group_session_invited(E2ees__GroupUpdateKeyBundle *group_update_key_bundle, E2ees__E2eeAddress *user_address) {
-    int ret = E2EES_RESULT_SUCC;
+int new_outbound_group_session_invited(
+    E2ees__GroupUpdateKeyBundle *group_update_key_bundle, E2ees__E2eeAddress *user_address) {
+    int ret                                        = E2EES_RESULT_SUCC;
 
-    E2ees__Account *account = NULL;
-    E2ees__IdentityKey *identity_key = NULL;
-    uint8_t *identity_public_key = NULL;
-    E2ees__GroupSession *outbound_group_session = NULL;
-    uint32_t sign_key_len = 0;
-    uint32_t ad_len = 0;
-    size_t n_adding_member_info_list = 0;
-    ProtobufCBinaryData *sender_chain_key = NULL;
+    E2ees__Account *account                        = NULL;
+    E2ees__IdentityKey *identity_key               = NULL;
+    uint8_t *identity_public_key                   = NULL;
+    E2ees__GroupSession *outbound_group_session    = NULL;
+    uint32_t sign_key_len                          = 0;
+    uint32_t ad_len                                = 0;
+    size_t n_adding_member_info_list               = 0;
+    ProtobufCBinaryData *sender_chain_key          = NULL;
     ProtobufCBinaryData **adding_members_chain_key = NULL;
     size_t i;
 
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_outbound_group_session_invited(): no user_address");
+        e2ees_notify_log(
+            NULL, BAD_ACCOUNT, "new_outbound_group_session_invited(): no user_address");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, user_address);
@@ -572,12 +789,17 @@ int new_outbound_group_session_invited(E2ees__GroupUpdateKeyBundle *group_update
         if (identity_key == NULL) {
             get_e2ees_plugin()->db_handler.load_account_by_address(user_address, &account);
             if (account == NULL) {
-                e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_invited(): no account");
+                e2ees_notify_log(
+                    user_address, BAD_ACCOUNT, "new_outbound_group_session_invited(): no account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_uint8_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(user_address, BAD_ACCOUNT, "new_outbound_group_session_invited(): no identity_public_key");
+                    e2ees_notify_log(
+                        user_address,
+                        BAD_ACCOUNT,
+                        "new_outbound_group_session_invited(): no "
+                        "identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 }
             }
@@ -587,23 +809,28 @@ int new_outbound_group_session_invited(E2ees__GroupUpdateKeyBundle *group_update
     }
     if (is_valid_group_update_key_bundle(group_update_key_bundle)) {
         n_adding_member_info_list = group_update_key_bundle->n_adding_member_info_list;
-        sender_chain_key = &(group_update_key_bundle->chain_key);
+        sender_chain_key          = &(group_update_key_bundle->chain_key);
         if (n_adding_member_info_list == 0 || sender_chain_key == NULL) {
             ret = E2EES_RESULT_FAIL;
         }
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_UPDATE_KEY_BUNDLE, "new_outbound_group_session_invited(): invalid group_update_key_bundle");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_UPDATE_KEY_BUNDLE,
+            "new_outbound_group_session_invited(): invalid "
+            "group_update_key_bundle");
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(group_update_key_bundle->e2ees_pack_id)->cipher_suite;
-        sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
+        const cipher_suite_t *cipher_suite =
+            get_e2ees_pack(group_update_key_bundle->e2ees_pack_id)->cipher_suite;
+        sign_key_len           = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
         outbound_group_session = (E2ees__GroupSession *)malloc(sizeof(E2ees__GroupSession));
         e2ees__group_session__init(outbound_group_session);
 
-        outbound_group_session->version = strdup(group_update_key_bundle->version);
+        outbound_group_session->version       = strdup(group_update_key_bundle->version);
         outbound_group_session->e2ees_pack_id = group_update_key_bundle->e2ees_pack_id;
 
         copy_address_from_address(&(outbound_group_session->sender), user_address);
@@ -612,25 +839,38 @@ int new_outbound_group_session_invited(E2ees__GroupUpdateKeyBundle *group_update
 
         copy_group_info(&(outbound_group_session->group_info), group_update_key_bundle->group_info);
 
-        ad_len = 2 * sign_key_len;
-        outbound_group_session->associated_data.len = ad_len;
+        ad_len                                       = 2 * sign_key_len;
+        outbound_group_session->associated_data.len  = ad_len;
         outbound_group_session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * ad_len);
         memcpy(outbound_group_session->associated_data.data, identity_public_key, sign_key_len);
-        memcpy((outbound_group_session->associated_data.data) + sign_key_len, identity_public_key, sign_key_len);
+        memcpy(
+            (outbound_group_session->associated_data.data) + sign_key_len,
+            identity_public_key,
+            sign_key_len);
 
-        adding_members_chain_key = (ProtobufCBinaryData **)malloc(sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
+        adding_members_chain_key = (ProtobufCBinaryData **)malloc(
+            sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
         for (i = 0; i < n_adding_member_info_list; i++) {
             // generate the chain keys, including the sender's and new members'
-            advance_group_chain_key_by_welcome(cipher_suite, sender_chain_key, &(adding_members_chain_key[i]));
-            advance_group_chain_key_by_add(cipher_suite, adding_members_chain_key[i], sender_chain_key);
+            advance_group_chain_key_by_welcome(
+                cipher_suite, sender_chain_key, &(adding_members_chain_key[i]));
+            advance_group_chain_key_by_add(
+                cipher_suite, adding_members_chain_key[i], sender_chain_key);
 
-            if (compare_address(group_update_key_bundle->adding_member_info_list[i]->member_address, user_address)) {
+            if (compare_address(
+                    group_update_key_bundle->adding_member_info_list[i]->member_address,
+                    user_address)) {
                 // insert the chain key
-                copy_protobuf_from_protobuf(&(outbound_group_session->chain_key), adding_members_chain_key[i]);
+                copy_protobuf_from_protobuf(
+                    &(outbound_group_session->chain_key), adding_members_chain_key[i]);
                 outbound_group_session->sequence = 0;
             } else {
-                // create an inbound group session corresponding to other new members
-                new_and_complete_inbound_group_session_with_chain_key(group_update_key_bundle->adding_member_info_list[i], outbound_group_session, adding_members_chain_key[i]);
+                // create an inbound group session corresponding to other new
+                // members
+                new_and_complete_inbound_group_session_with_chain_key(
+                    group_update_key_bundle->adding_member_info_list[i],
+                    outbound_group_session,
+                    adding_members_chain_key[i]);
             }
         }
 
@@ -650,30 +890,46 @@ int new_outbound_group_session_invited(E2ees__GroupUpdateKeyBundle *group_update
             free_protobuf(adding_members_chain_key[i]);
             free_mem((void **)&adding_members_chain_key[i], sizeof(ProtobufCBinaryData));
         }
-        free_mem((void **)&adding_members_chain_key, sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
+        free_mem(
+            (void **)&adding_members_chain_key,
+            sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
     }
 
     return ret;
 }
 
-int new_inbound_group_session_by_pre_key_bundle(uint32_t e2ees_pack_id, E2ees__E2eeAddress *user_address, E2ees__GroupPreKeyBundle *group_pre_key_bundle) {
-    int ret = E2EES_RESULT_SUCC;
+int new_inbound_group_session_by_pre_key_bundle(
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    E2ees__GroupPreKeyBundle *group_pre_key_bundle) {
+    int ret                                    = E2EES_RESULT_SUCC;
 
     E2ees__GroupSession *inbound_group_session = NULL;
-    ProtobufCBinaryData *group_seed = NULL;
+    ProtobufCBinaryData *group_seed            = NULL;
 
     if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "new_inbound_group_session_by_pre_key_bundle() invalid e2ees pack id with e2ees_pack_id = %d", e2ees_pack_id);
+        e2ees_notify_log(
+            NULL,
+            BAD_E2EES_PACK,
+            "new_inbound_group_session_by_pre_key_bundle() invalid e2ees pack "
+            "id with "
+            "e2ees_pack_id = %d",
+            e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_inbound_group_session_by_pre_key_bundle(): no user_address");
+        e2ees_notify_log(
+            NULL, BAD_ACCOUNT, "new_inbound_group_session_by_pre_key_bundle(): no user_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_group_pre_key_bundle(group_pre_key_bundle)) {
         group_seed = &(group_pre_key_bundle->group_seed);
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_PRE_KEY_BUNDLE, "new_inbound_group_session_by_pre_key_bundle(): invalid group_pre_key_bundle");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_PRE_KEY_BUNDLE,
+            "new_inbound_group_session_by_pre_key_bundle(): invalid "
+            "group_pre_key_bundle");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -684,17 +940,18 @@ int new_inbound_group_session_by_pre_key_bundle(uint32_t e2ees_pack_id, E2ees__E
         inbound_group_session->e2ees_pack_id = e2ees_pack_id;
         copy_address_from_address(&(inbound_group_session->session_owner), user_address);
 
-        inbound_group_session->version = strdup(group_pre_key_bundle->version);
+        inbound_group_session->version    = strdup(group_pre_key_bundle->version);
         inbound_group_session->session_id = strdup(group_pre_key_bundle->session_id);
 
         copy_address_from_address(&(inbound_group_session->sender), group_pre_key_bundle->sender);
 
         copy_group_info(&(inbound_group_session->group_info), group_pre_key_bundle->group_info);
 
-        inbound_group_session->sequence = group_pre_key_bundle->sequence;
+        inbound_group_session->sequence       = group_pre_key_bundle->sequence;
 
         inbound_group_session->group_seed.len = group_seed->len;
-        inbound_group_session->group_seed.data = (uint8_t *)malloc(sizeof(uint8_t) * inbound_group_session->group_seed.len);
+        inbound_group_session->group_seed.data =
+            (uint8_t *)malloc(sizeof(uint8_t) * inbound_group_session->group_seed.len);
         memcpy(inbound_group_session->group_seed.data, group_seed->data, group_seed->len);
 
         get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
@@ -709,33 +966,48 @@ int new_inbound_group_session_by_pre_key_bundle(uint32_t e2ees_pack_id, E2ees__E
     return ret;
 }
 
-int new_inbound_group_session_by_member_id(uint32_t e2ees_pack_id, E2ees__E2eeAddress *user_address, E2ees__GroupMemberInfo *group_member_id, E2ees__GroupInfo *group_info) {
-    int ret = E2EES_RESULT_SUCC;
+int new_inbound_group_session_by_member_id(
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *user_address,
+    E2ees__GroupMemberInfo *group_member_id,
+    E2ees__GroupInfo *group_info) {
+    int ret                                    = E2EES_RESULT_SUCC;
 
     E2ees__GroupSession *inbound_group_session = NULL;
-    uint32_t sign_key_len = 0;
-    uint32_t ad_len = 0;
+    uint32_t sign_key_len                      = 0;
+    uint32_t ad_len                            = 0;
 
     if (!is_valid_e2ees_pack_id(e2ees_pack_id)) {
-        e2ees_notify_log(NULL, BAD_E2EES_PACK, "new_inbound_group_session_by_member_id() invalid e2ees pack id with e2ees_pack_id = %d", e2ees_pack_id);
+        e2ees_notify_log(
+            NULL,
+            BAD_E2EES_PACK,
+            "new_inbound_group_session_by_member_id() invalid e2ees pack id "
+            "with e2ees_pack_id = "
+            "%d",
+            e2ees_pack_id);
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "new_inbound_group_session_by_member_id(): no user_address");
+        e2ees_notify_log(
+            NULL, BAD_ACCOUNT, "new_inbound_group_session_by_member_id(): no user_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_info(group_member_id)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_inbound_group_session_by_member_id(): no group_member_id");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBER_INFO,
+            "new_inbound_group_session_by_member_id(): no group_member_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_info(group_info)) {
-        e2ees_notify_log(NULL, BAD_GROUP_INFO, "new_inbound_group_session_by_member_id(): no group_info");
+        e2ees_notify_log(
+            NULL, BAD_GROUP_INFO, "new_inbound_group_session_by_member_id(): no group_info");
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         const cipher_suite_t *cipher_suite = get_e2ees_pack(e2ees_pack_id)->cipher_suite;
-        sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
+        sign_key_len                       = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
         inbound_group_session = (E2ees__GroupSession *)malloc(sizeof(E2ees__GroupSession));
         e2ees__group_session__init(inbound_group_session);
@@ -743,14 +1015,21 @@ int new_inbound_group_session_by_member_id(uint32_t e2ees_pack_id, E2ees__E2eeAd
         inbound_group_session->e2ees_pack_id = e2ees_pack_id;
         copy_address_from_address(&(inbound_group_session->session_owner), user_address);
 
-        copy_address_from_address(&(inbound_group_session->sender), group_member_id->member_address);
+        copy_address_from_address(
+            &(inbound_group_session->sender), group_member_id->member_address);
         copy_group_info(&(inbound_group_session->group_info), group_info);
 
-        ad_len = 2 * sign_key_len;
-        inbound_group_session->associated_data.len = ad_len;
+        ad_len                                      = 2 * sign_key_len;
+        inbound_group_session->associated_data.len  = ad_len;
         inbound_group_session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * ad_len);
-        memcpy(inbound_group_session->associated_data.data, group_member_id->sign_public_key.data, sign_key_len);
-        memcpy((inbound_group_session->associated_data.data) + sign_key_len, group_member_id->sign_public_key.data, sign_key_len);
+        memcpy(
+            inbound_group_session->associated_data.data,
+            group_member_id->sign_public_key.data,
+            sign_key_len);
+        memcpy(
+            (inbound_group_session->associated_data.data) + sign_key_len,
+            group_member_id->sign_public_key.data,
+            sign_key_len);
 
         get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
     }
@@ -764,45 +1043,59 @@ int new_inbound_group_session_by_member_id(uint32_t e2ees_pack_id, E2ees__E2eeAd
     return ret;
 }
 
-int complete_inbound_group_session_by_pre_key_bundle(E2ees__GroupSession *inbound_group_session, E2ees__GroupPreKeyBundle *group_pre_key_bundle) {
-    int ret = E2EES_RESULT_SUCC;
+int complete_inbound_group_session_by_pre_key_bundle(
+    E2ees__GroupSession *inbound_group_session, E2ees__GroupPreKeyBundle *group_pre_key_bundle) {
+    int ret               = E2EES_RESULT_SUCC;
 
-    uint8_t *secret = NULL;
+    uint8_t *secret       = NULL;
     uint32_t sign_key_len = 0;
-    size_t secret_len = 0;
-    uint32_t hf_len = 0;
+    size_t secret_len     = 0;
+    uint32_t hf_len       = 0;
 
     if (!is_valid_group_session_by_member_id(inbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "complete_inbound_group_session_by_pre_key_bundle(): no inbound_group_session");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_SESSION,
+            "complete_inbound_group_session_by_pre_key_bundle(): no "
+            "inbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_pre_key_bundle(group_pre_key_bundle)) {
-        e2ees_notify_log(NULL, BAD_GROUP_PRE_KEY_BUNDLE, "complete_inbound_group_session_by_pre_key_bundle(): no group_pre_key_bundle");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_PRE_KEY_BUNDLE,
+            "complete_inbound_group_session_by_pre_key_bundle(): no "
+            "group_pre_key_bundle");
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(inbound_group_session->e2ees_pack_id)->cipher_suite;
+        const cipher_suite_t *cipher_suite =
+            get_e2ees_pack(inbound_group_session->e2ees_pack_id)->cipher_suite;
         sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
-        secret_len = SEED_SECRET_LEN + sign_key_len;
-        secret = (uint8_t *)malloc(sizeof(uint8_t) * secret_len);
+        secret_len   = SEED_SECRET_LEN + sign_key_len;
+        secret       = (uint8_t *)malloc(sizeof(uint8_t) * secret_len);
 
         if (inbound_group_session->version != NULL && inbound_group_session->version[0] != '\0') {
             free(inbound_group_session->version);
         }
         inbound_group_session->version = strdup(group_pre_key_bundle->version);
 
-        if (inbound_group_session->session_id != NULL && inbound_group_session->session_id[0] != '\0') {
+        if (inbound_group_session->session_id != NULL &&
+            inbound_group_session->session_id[0] != '\0') {
             free(inbound_group_session->session_id);
         }
         inbound_group_session->session_id = strdup(group_pre_key_bundle->session_id);
 
-        inbound_group_session->sequence = group_pre_key_bundle->sequence;
+        inbound_group_session->sequence   = group_pre_key_bundle->sequence;
 
         // combine seed secret and ID
         memcpy(secret, group_pre_key_bundle->group_seed.data, SEED_SECRET_LEN);
-        memcpy(secret + SEED_SECRET_LEN, inbound_group_session->associated_data.data, sign_key_len); // only copy the first half
+        memcpy(
+            secret + SEED_SECRET_LEN,
+            inbound_group_session->associated_data.data,
+            sign_key_len); // only copy the first half
 
         // generate a chain key
         hf_len = cipher_suite->hf_suite->get_param().hf_len;
@@ -810,9 +1103,17 @@ int complete_inbound_group_session_by_pre_key_bundle(E2ees__GroupSession *inboun
         memset(salt, 0, hf_len);
         free_protobuf(&(inbound_group_session->chain_key));
         inbound_group_session->chain_key.len = hf_len;
-        inbound_group_session->chain_key.data = (uint8_t *)malloc(sizeof(uint8_t) * inbound_group_session->chain_key.len);
-        cipher_suite->hf_suite->hkdf(secret, secret_len, salt, sizeof(salt), (uint8_t *)ROOT_SEED, sizeof(ROOT_SEED) - 1, inbound_group_session->chain_key.data,
-                                     inbound_group_session->chain_key.len);
+        inbound_group_session->chain_key.data =
+            (uint8_t *)malloc(sizeof(uint8_t) * inbound_group_session->chain_key.len);
+        cipher_suite->hf_suite->hkdf(
+            secret,
+            secret_len,
+            salt,
+            sizeof(salt),
+            (uint8_t *)ROOT_SEED,
+            sizeof(ROOT_SEED) - 1,
+            inbound_group_session->chain_key.data,
+            inbound_group_session->chain_key.len);
 
         get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
     }
@@ -823,37 +1124,53 @@ int complete_inbound_group_session_by_pre_key_bundle(E2ees__GroupSession *inboun
     return ret;
 }
 
-int complete_inbound_group_session_by_member_id(E2ees__GroupSession *inbound_group_session, E2ees__GroupMemberInfo *group_member_id) {
-    int ret = E2EES_RESULT_SUCC;
+int complete_inbound_group_session_by_member_id(
+    E2ees__GroupSession *inbound_group_session, E2ees__GroupMemberInfo *group_member_id) {
+    int ret               = E2EES_RESULT_SUCC;
 
-    uint8_t *secret = NULL;
+    uint8_t *secret       = NULL;
     uint32_t sign_key_len = 0;
-    uint32_t ad_len = 0;
-    size_t secret_len = 0;
-    uint32_t hf_len = 0;
+    uint32_t ad_len       = 0;
+    size_t secret_len     = 0;
+    uint32_t hf_len       = 0;
 
     if (!is_valid_group_session_by_pre_key_bundle(inbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "complete_inbound_group_session_by_member_id(): no inbound_group_session");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_SESSION,
+            "complete_inbound_group_session_by_member_id(): no "
+            "inbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_info(group_member_id)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "complete_inbound_group_session_by_member_id(): no group_member_id");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBER_INFO,
+            "complete_inbound_group_session_by_member_id(): no "
+            "group_member_id");
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(inbound_group_session->e2ees_pack_id)->cipher_suite;
+        const cipher_suite_t *cipher_suite =
+            get_e2ees_pack(inbound_group_session->e2ees_pack_id)->cipher_suite;
         sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
-        secret_len = SEED_SECRET_LEN + sign_key_len;
-        secret = (uint8_t *)malloc(sizeof(uint8_t) * secret_len);
+        secret_len   = SEED_SECRET_LEN + sign_key_len;
+        secret       = (uint8_t *)malloc(sizeof(uint8_t) * secret_len);
 
-        ad_len = 2 * sign_key_len;
+        ad_len       = 2 * sign_key_len;
         free_protobuf(&(inbound_group_session->associated_data));
-        inbound_group_session->associated_data.len = ad_len;
+        inbound_group_session->associated_data.len  = ad_len;
         inbound_group_session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * ad_len);
-        memcpy(inbound_group_session->associated_data.data, group_member_id->sign_public_key.data, sign_key_len);
-        memcpy((inbound_group_session->associated_data.data) + sign_key_len, group_member_id->sign_public_key.data, sign_key_len);
+        memcpy(
+            inbound_group_session->associated_data.data,
+            group_member_id->sign_public_key.data,
+            sign_key_len);
+        memcpy(
+            (inbound_group_session->associated_data.data) + sign_key_len,
+            group_member_id->sign_public_key.data,
+            sign_key_len);
 
         // combine seed secret and ID
         memcpy(secret, inbound_group_session->group_seed.data, SEED_SECRET_LEN);
@@ -868,9 +1185,17 @@ int complete_inbound_group_session_by_member_id(E2ees__GroupSession *inbound_gro
         memset(salt, 0, hf_len);
         free_protobuf(&(inbound_group_session->chain_key));
         inbound_group_session->chain_key.len = hf_len;
-        inbound_group_session->chain_key.data = (uint8_t *)malloc(sizeof(uint8_t) * inbound_group_session->chain_key.len);
-        cipher_suite->hf_suite->hkdf(secret, secret_len, salt, sizeof(salt), (uint8_t *)ROOT_SEED, sizeof(ROOT_SEED) - 1, inbound_group_session->chain_key.data,
-                                     inbound_group_session->chain_key.len);
+        inbound_group_session->chain_key.data =
+            (uint8_t *)malloc(sizeof(uint8_t) * inbound_group_session->chain_key.len);
+        cipher_suite->hf_suite->hkdf(
+            secret,
+            secret_len,
+            salt,
+            sizeof(salt),
+            (uint8_t *)ROOT_SEED,
+            sizeof(ROOT_SEED) - 1,
+            inbound_group_session->chain_key.data,
+            inbound_group_session->chain_key.len);
 
         get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
     }
@@ -881,28 +1206,35 @@ int complete_inbound_group_session_by_member_id(E2ees__GroupSession *inbound_gro
     return ret;
 }
 
-int new_and_complete_inbound_group_session(E2ees__GroupMemberInfo *group_member_id, E2ees__GroupSession *other_group_session) {
-    int ret = E2EES_RESULT_SUCC;
+int new_and_complete_inbound_group_session(
+    E2ees__GroupMemberInfo *group_member_id, E2ees__GroupSession *other_group_session) {
+    int ret                                    = E2EES_RESULT_SUCC;
 
     E2ees__GroupSession *inbound_group_session = NULL;
-    uint8_t *secret = NULL;
-    uint8_t *identity_public_key = NULL;
-    ProtobufCBinaryData *group_seed = NULL;
-    uint32_t sign_key_len = 0;
-    uint32_t ad_len = 0;
-    size_t secret_len = 0;
-    uint32_t hf_len = 0;
+    uint8_t *secret                            = NULL;
+    uint8_t *identity_public_key               = NULL;
+    ProtobufCBinaryData *group_seed            = NULL;
+    uint32_t sign_key_len                      = 0;
+    uint32_t ad_len                            = 0;
+    size_t secret_len                          = 0;
+    uint32_t hf_len                            = 0;
 
     if (is_valid_group_member_info(group_member_id)) {
         identity_public_key = group_member_id->sign_public_key.data;
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_and_complete_inbound_group_session(): no group_member_id");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBER_INFO,
+            "new_and_complete_inbound_group_session(): no group_member_id");
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_group_session_by_pre_key_bundle(other_group_session)) {
         group_seed = &(other_group_session->group_seed);
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "new_and_complete_inbound_group_session(): no other_group_session");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_SESSION,
+            "new_and_complete_inbound_group_session(): no other_group_session");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -910,13 +1242,15 @@ int new_and_complete_inbound_group_session(E2ees__GroupMemberInfo *group_member_
         inbound_group_session = (E2ees__GroupSession *)malloc(sizeof(E2ees__GroupSession));
         e2ees__group_session__init(inbound_group_session);
 
-        insert_inbound_group_session_data(group_member_id, other_group_session, inbound_group_session);
+        insert_inbound_group_session_data(
+            group_member_id, other_group_session, inbound_group_session);
 
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(other_group_session->e2ees_pack_id)->cipher_suite;
+        const cipher_suite_t *cipher_suite =
+            get_e2ees_pack(other_group_session->e2ees_pack_id)->cipher_suite;
         sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
-        secret_len = SEED_SECRET_LEN + sign_key_len;
-        secret = (uint8_t *)malloc(sizeof(uint8_t) * secret_len);
+        secret_len   = SEED_SECRET_LEN + sign_key_len;
+        secret       = (uint8_t *)malloc(sizeof(uint8_t) * secret_len);
 
         // combine seed secret and ID
         memcpy(secret, group_seed->data, SEED_SECRET_LEN);
@@ -927,16 +1261,27 @@ int new_and_complete_inbound_group_session(E2ees__GroupMemberInfo *group_member_
         uint8_t salt[hf_len];
         memset(salt, 0, hf_len);
         inbound_group_session->chain_key.len = hf_len;
-        inbound_group_session->chain_key.data = (uint8_t *)malloc(sizeof(uint8_t) * inbound_group_session->chain_key.len);
-        cipher_suite->hf_suite->hkdf(secret, secret_len, salt, sizeof(salt), (uint8_t *)ROOT_SEED, sizeof(ROOT_SEED) - 1, inbound_group_session->chain_key.data,
-                                     inbound_group_session->chain_key.len);
-        inbound_group_session->sequence = 0;
+        inbound_group_session->chain_key.data =
+            (uint8_t *)malloc(sizeof(uint8_t) * inbound_group_session->chain_key.len);
+        cipher_suite->hf_suite->hkdf(
+            secret,
+            secret_len,
+            salt,
+            sizeof(salt),
+            (uint8_t *)ROOT_SEED,
+            sizeof(ROOT_SEED) - 1,
+            inbound_group_session->chain_key.data,
+            inbound_group_session->chain_key.len);
+        inbound_group_session->sequence             = 0;
 
-        ad_len = 2 * sign_key_len;
-        inbound_group_session->associated_data.len = ad_len;
+        ad_len                                      = 2 * sign_key_len;
+        inbound_group_session->associated_data.len  = ad_len;
         inbound_group_session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * ad_len);
         memcpy(inbound_group_session->associated_data.data, identity_public_key, sign_key_len);
-        memcpy((inbound_group_session->associated_data.data) + sign_key_len, identity_public_key, sign_key_len);
+        memcpy(
+            (inbound_group_session->associated_data.data) + sign_key_len,
+            identity_public_key,
+            sign_key_len);
 
         get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
     }
@@ -951,26 +1296,41 @@ int new_and_complete_inbound_group_session(E2ees__GroupMemberInfo *group_member_
     return ret;
 }
 
-int new_and_complete_inbound_group_session_with_chain_key(E2ees__GroupMemberInfo *group_member_info, E2ees__GroupSession *other_group_session, ProtobufCBinaryData *their_chain_key) {
-    int ret = E2EES_RESULT_SUCC;
+int new_and_complete_inbound_group_session_with_chain_key(
+    E2ees__GroupMemberInfo *group_member_info,
+    E2ees__GroupSession *other_group_session,
+    ProtobufCBinaryData *their_chain_key) {
+    int ret                                    = E2EES_RESULT_SUCC;
 
     E2ees__GroupSession *inbound_group_session = NULL;
-    uint8_t *identity_public_key = NULL;
-    uint32_t sign_key_len = 0;
-    uint32_t ad_len = 0;
+    uint8_t *identity_public_key               = NULL;
+    uint32_t sign_key_len                      = 0;
+    uint32_t ad_len                            = 0;
 
     if (is_valid_group_member_info(group_member_info)) {
         identity_public_key = group_member_info->sign_public_key.data;
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "new_and_complete_inbound_group_session_with_chain_key(): no group_member_info");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBER_INFO,
+            "new_and_complete_inbound_group_session_with_chain_key(): no "
+            "group_member_info");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_session_no_chain_key(other_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "new_and_complete_inbound_group_session_with_chain_key(): no other_group_session");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_SESSION,
+            "new_and_complete_inbound_group_session_with_chain_key(): no "
+            "other_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (their_chain_key == NULL) {
-        e2ees_notify_log(NULL, BAD_GROUP_CHAIN_KEY, "new_and_complete_inbound_group_session_with_chain_key(): no their_chain_key");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_CHAIN_KEY,
+            "new_and_complete_inbound_group_session_with_chain_key(): no "
+            "their_chain_key");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -978,20 +1338,25 @@ int new_and_complete_inbound_group_session_with_chain_key(E2ees__GroupMemberInfo
         inbound_group_session = (E2ees__GroupSession *)malloc(sizeof(E2ees__GroupSession));
         e2ees__group_session__init(inbound_group_session);
 
-        insert_inbound_group_session_data(group_member_info, other_group_session, inbound_group_session);
+        insert_inbound_group_session_data(
+            group_member_info, other_group_session, inbound_group_session);
 
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(other_group_session->e2ees_pack_id)->cipher_suite;
+        const cipher_suite_t *cipher_suite =
+            get_e2ees_pack(other_group_session->e2ees_pack_id)->cipher_suite;
         sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
         copy_protobuf_from_protobuf(&(inbound_group_session->chain_key), their_chain_key);
-        inbound_group_session->sequence = 0;
+        inbound_group_session->sequence             = 0;
 
-        ad_len = 2 * sign_key_len;
-        inbound_group_session->associated_data.len = ad_len;
+        ad_len                                      = 2 * sign_key_len;
+        inbound_group_session->associated_data.len  = ad_len;
         inbound_group_session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * ad_len);
 
         memcpy(inbound_group_session->associated_data.data, identity_public_key, sign_key_len);
-        memcpy((inbound_group_session->associated_data.data) + sign_key_len, identity_public_key, sign_key_len);
+        memcpy(
+            (inbound_group_session->associated_data.data) + sign_key_len,
+            identity_public_key,
+            sign_key_len);
 
         get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
     }
@@ -1005,22 +1370,31 @@ int new_and_complete_inbound_group_session_with_chain_key(E2ees__GroupMemberInfo
     return ret;
 }
 
-int new_and_complete_inbound_group_session_with_ratchet_state(E2ees__GroupUpdateKeyBundle *group_update_key_bundle, E2ees__E2eeAddress *user_address) {
-    int ret = E2EES_RESULT_SUCC;
+int new_and_complete_inbound_group_session_with_ratchet_state(
+    E2ees__GroupUpdateKeyBundle *group_update_key_bundle, E2ees__E2eeAddress *user_address) {
+    int ret                                    = E2EES_RESULT_SUCC;
 
     E2ees__GroupSession *inbound_group_session = NULL;
-    uint8_t *identity_public_key = NULL;
-    uint32_t sign_key_len = 0;
-    uint32_t ad_len = 0;
+    uint8_t *identity_public_key               = NULL;
+    uint32_t sign_key_len                      = 0;
+    uint32_t ad_len                            = 0;
 
     if (!is_valid_address(user_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "new_and_complete_inbound_group_session_with_ratchet_state(): no user_address");
+        e2ees_notify_log(
+            NULL,
+            BAD_ADDRESS,
+            "new_and_complete_inbound_group_session_with_ratchet_state(): no "
+            "user_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_group_update_key_bundle(group_update_key_bundle)) {
         identity_public_key = group_update_key_bundle->sign_public_key.data;
     } else {
-        e2ees_notify_log(NULL, BAD_GROUP_UPDATE_KEY_BUNDLE, "new_and_complete_inbound_group_session_with_ratchet_state(): no group_update_key_bundle");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_UPDATE_KEY_BUNDLE,
+            "new_and_complete_inbound_group_session_with_ratchet_state(): no "
+            "group_update_key_bundle");
         ret = E2EES_RESULT_FAIL;
     }
 
@@ -1028,34 +1402,44 @@ int new_and_complete_inbound_group_session_with_ratchet_state(E2ees__GroupUpdate
         inbound_group_session = (E2ees__GroupSession *)malloc(sizeof(E2ees__GroupSession));
         e2ees__group_session__init(inbound_group_session);
 
-        inbound_group_session->version = strdup(group_update_key_bundle->version);
+        inbound_group_session->version       = strdup(group_update_key_bundle->version);
         inbound_group_session->e2ees_pack_id = group_update_key_bundle->e2ees_pack_id;
-        inbound_group_session->session_id = strdup(group_update_key_bundle->session_id);
+        inbound_group_session->session_id    = strdup(group_update_key_bundle->session_id);
 
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(group_update_key_bundle->e2ees_pack_id)->cipher_suite;
+        const cipher_suite_t *cipher_suite =
+            get_e2ees_pack(group_update_key_bundle->e2ees_pack_id)->cipher_suite;
 
-        copy_address_from_address(&(inbound_group_session->sender), group_update_key_bundle->sender);
+        copy_address_from_address(
+            &(inbound_group_session->sender), group_update_key_bundle->sender);
 
         copy_address_from_address(&(inbound_group_session->session_owner), user_address);
 
         copy_group_info(&(inbound_group_session->group_info), group_update_key_bundle->group_info);
 
-        /** We have generated the sender's chain key in new_outbound_group_session_invited(),
-         *  so we just need to generate others' chain key.
+        /** We have generated the sender's chain key in
+         * new_outbound_group_session_invited(), so we just need to generate
+         * others' chain key.
          */
         if (group_update_key_bundle->adding == false) {
-            advance_group_chain_key_by_add(cipher_suite, &(group_update_key_bundle->chain_key), &(group_update_key_bundle->chain_key));
+            advance_group_chain_key_by_add(
+                cipher_suite,
+                &(group_update_key_bundle->chain_key),
+                &(group_update_key_bundle->chain_key));
         }
-        copy_protobuf_from_protobuf(&(inbound_group_session->chain_key), &(group_update_key_bundle->chain_key));
+        copy_protobuf_from_protobuf(
+            &(inbound_group_session->chain_key), &(group_update_key_bundle->chain_key));
         inbound_group_session->sequence = 0;
 
-        sign_key_len = cipher_suite->ds_suite->get_param().sign_pub_key_len;
+        sign_key_len                    = cipher_suite->ds_suite->get_param().sign_pub_key_len;
 
-        ad_len = 2 * sign_key_len;
-        inbound_group_session->associated_data.len = ad_len;
+        ad_len                          = 2 * sign_key_len;
+        inbound_group_session->associated_data.len  = ad_len;
         inbound_group_session->associated_data.data = (uint8_t *)malloc(sizeof(uint8_t) * ad_len);
         memcpy(inbound_group_session->associated_data.data, identity_public_key, sign_key_len);
-        memcpy((inbound_group_session->associated_data.data) + sign_key_len, identity_public_key, sign_key_len);
+        memcpy(
+            (inbound_group_session->associated_data.data) + sign_key_len,
+            identity_public_key,
+            sign_key_len);
 
         get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
     }
@@ -1069,49 +1453,71 @@ int new_and_complete_inbound_group_session_with_ratchet_state(E2ees__GroupUpdate
     return ret;
 }
 
-int renew_outbound_group_session_by_welcome_and_add(E2ees__GroupSession *outbound_group_session, ProtobufCBinaryData *sender_chain_key, E2ees__E2eeAddress *sender_address,
-                                                    size_t n_adding_member_info_list, E2ees__GroupMemberInfo **adding_member_info_list, size_t adding_group_members_num,
-                                                    E2ees__GroupMember **adding_group_members) {
+int renew_outbound_group_session_by_welcome_and_add(
+    E2ees__GroupSession *outbound_group_session,
+    ProtobufCBinaryData *sender_chain_key,
+    E2ees__E2eeAddress *sender_address,
+    size_t n_adding_member_info_list,
+    E2ees__GroupMemberInfo **adding_member_info_list,
+    size_t adding_group_members_num,
+    E2ees__GroupMember **adding_group_members) {
     // n_adding_member_info_list must > 0
     if (n_adding_member_info_list <= 0) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_outbound_group_session_by_welcome_and_add(): no n_adding_member_info_list");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_SESSION,
+            "renew_outbound_group_session_by_welcome_and_add(): no "
+            "n_adding_member_info_list");
         return E2EES_RESULT_FAIL;
     }
 
-    int ret = E2EES_RESULT_SUCC;
+    int ret                                  = E2EES_RESULT_SUCC;
 
-    E2ees__Account *account = NULL;
-    char *auth = NULL;
-    E2ees__IdentityKey *identity_key = NULL;
+    E2ees__Account *account                  = NULL;
+    char *auth                               = NULL;
+    E2ees__IdentityKey *identity_key         = NULL;
     ProtobufCBinaryData *identity_public_key = NULL;
-    E2ees__GroupInfo *old_group_info = NULL;
+    E2ees__GroupInfo *old_group_info         = NULL;
     char *cur_user_id = NULL, *cur_user_domain = NULL;
-    uint8_t *group_ratchet_state_plaintext_data = NULL;
+    uint8_t *group_ratchet_state_plaintext_data   = NULL;
     size_t group_ratchet_state_plaintext_data_len = 0;
-    E2ees__Session **outbound_sessions = NULL;
-    size_t outbound_sessions_num = 0;
-    E2ees__Session *outbound_session = NULL;
-    E2ees__SendOne2oneMsgResponse *response = NULL;
-    ProtobufCBinaryData **their_chain_keys = NULL;
-    E2ees__GroupSession **inbound_group_sessions = NULL;
-    size_t inbound_group_sessions_num = 0;
+    E2ees__Session **outbound_sessions            = NULL;
+    size_t outbound_sessions_num                  = 0;
+    E2ees__Session *outbound_session              = NULL;
+    E2ees__SendOne2oneMsgResponse *response       = NULL;
+    ProtobufCBinaryData **their_chain_keys        = NULL;
+    E2ees__GroupSession **inbound_group_sessions  = NULL;
+    size_t inbound_group_sessions_num             = 0;
     size_t i, j;
 
     if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_outbound_group_session_by_welcome_and_add(): no outbound_group_session");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_SESSION,
+            "renew_outbound_group_session_by_welcome_and_add(): no "
+            "outbound_group_session");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, outbound_group_session->session_owner);
 
         if (identity_key == NULL) {
-            get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
+            get_e2ees_plugin()->db_handler.load_account_by_address(
+                outbound_group_session->session_owner, &account);
             if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add(): no account");
+                e2ees_notify_log(
+                    outbound_group_session->session_owner,
+                    BAD_ACCOUNT,
+                    "renew_outbound_group_session_by_welcome_and_add(): no "
+                    "account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_bytes_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add(): no identity_public_key");
+                    e2ees_notify_log(
+                        outbound_group_session->session_owner,
+                        BAD_ACCOUNT,
+                        "renew_outbound_group_session_by_welcome_and_add(): no "
+                        "identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 } else {
                     auth = strdup(account->auth);
@@ -1120,7 +1526,11 @@ int renew_outbound_group_session_by_welcome_and_add(E2ees__GroupSession *outboun
         } else {
             get_e2ees_plugin()->db_handler.load_auth(outbound_group_session->session_owner, &auth);
             if (!is_valid_string(auth)) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_outbound_group_session_by_welcome_and_add(): no auth");
+                e2ees_notify_log(
+                    outbound_group_session->session_owner,
+                    BAD_ACCOUNT,
+                    "renew_outbound_group_session_by_welcome_and_add(): no "
+                    "auth");
                 free_string(auth);
                 ret = E2EES_RESULT_FAIL;
             } else {
@@ -1129,53 +1539,90 @@ int renew_outbound_group_session_by_welcome_and_add(E2ees__GroupSession *outboun
         }
     }
     if (!is_valid_address(sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "renew_outbound_group_session_by_welcome_and_add(): no sender_address");
+        e2ees_notify_log(
+            NULL,
+            BAD_ADDRESS,
+            "renew_outbound_group_session_by_welcome_and_add(): no "
+            "sender_address");
         ret = E2EES_RESULT_FAIL;
     }
-    if (!is_valid_group_member_info_list((const E2ees__GroupMemberInfo **)adding_member_info_list, n_adding_member_info_list)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "renew_outbound_group_session_by_welcome_and_add(): invalid group member info list");
+    if (!is_valid_group_member_info_list(
+            (const E2ees__GroupMemberInfo **)adding_member_info_list, n_adding_member_info_list)) {
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBER_INFO,
+            "renew_outbound_group_session_by_welcome_and_add(): invalid group "
+            "member info list");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_list(adding_group_members, adding_group_members_num)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBERS, "renew_outbound_group_session_by_welcome_and_add(): invalid adding group member list");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBERS,
+            "renew_outbound_group_session_by_welcome_and_add(): invalid adding "
+            "group member list");
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(outbound_group_session->e2ees_pack_id)->cipher_suite;
+        const cipher_suite_t *cipher_suite =
+            get_e2ees_pack(outbound_group_session->e2ees_pack_id)->cipher_suite;
 
         // renew the group members
         copy_group_info(&old_group_info, outbound_group_session->group_info);
         e2ees__group_info__free_unpacked(outbound_group_session->group_info, NULL);
 
-        add_group_members_to_group_info(&(outbound_group_session->group_info), old_group_info, adding_group_members, adding_group_members_num);
+        add_group_members_to_group_info(
+            &(outbound_group_session->group_info),
+            old_group_info,
+            adding_group_members,
+            adding_group_members_num);
 
         // pack the group ratchet state
-        group_ratchet_state_plaintext_data_len = pack_group_ratchet_state_plaintext(outbound_group_session, &group_ratchet_state_plaintext_data, sender_chain_key == NULL, identity_public_key,
-                                                                                    n_adding_member_info_list, adding_member_info_list);
+        group_ratchet_state_plaintext_data_len = pack_group_ratchet_state_plaintext(
+            outbound_group_session,
+            &group_ratchet_state_plaintext_data,
+            sender_chain_key == NULL,
+            identity_public_key,
+            n_adding_member_info_list,
+            adding_member_info_list);
 
         // send the current ratchet state to the new group members
         for (i = 0; i < adding_group_members_num; i++) {
-            cur_user_id = adding_group_members[i]->user_id;
-            cur_user_domain = adding_group_members[i]->domain;
+            cur_user_id           = adding_group_members[i]->user_id;
+            cur_user_domain       = adding_group_members[i]->domain;
 
-            outbound_sessions_num = get_e2ees_plugin()->db_handler.load_outbound_sessions(outbound_group_session->session_owner, cur_user_id, cur_user_domain, &outbound_sessions);
+            outbound_sessions_num = get_e2ees_plugin()->db_handler.load_outbound_sessions(
+                outbound_group_session->session_owner,
+                cur_user_id,
+                cur_user_domain,
+                &outbound_sessions);
 
             if (outbound_sessions_num > 0 && outbound_sessions != NULL) {
                 for (j = 0; j < outbound_sessions_num; j++) {
                     outbound_session = outbound_sessions[j];
-                    if (compare_address(outbound_session->their_address, outbound_group_session->session_owner))
+                    if (compare_address(
+                            outbound_session->their_address, outbound_group_session->session_owner))
                         continue;
                     if (outbound_session->responded) {
-                        response = send_one2one_msg_internal(outbound_session, E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION, group_ratchet_state_plaintext_data, group_ratchet_state_plaintext_data_len);
+                        response = send_one2one_msg_internal(
+                            outbound_session,
+                            E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION,
+                            group_ratchet_state_plaintext_data,
+                            group_ratchet_state_plaintext_data_len);
                         e2ees__send_one2one_msg_response__free_unpacked(response, NULL);
                         response = NULL;
                     } else {
-                        /** Since the other has not responded, we store the group pre-key first so that
-                         *  we can send it right after receiving the other's accept message.
+                        /** Since the other has not responded, we store the
+                         * group pre-key first so that we can send it right
+                         * after receiving the other's accept message.
                          */
-                        store_pending_common_plaintext_data_internal(outbound_session->our_address, outbound_session->their_address, group_ratchet_state_plaintext_data,
-                                                                     group_ratchet_state_plaintext_data_len, E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION);
+                        store_pending_common_plaintext_data_internal(
+                            outbound_session->our_address,
+                            outbound_session->their_address,
+                            group_ratchet_state_plaintext_data,
+                            group_ratchet_state_plaintext_data_len,
+                            E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION);
                     }
                 }
                 // release outbound_sessions
@@ -1183,37 +1630,55 @@ int renew_outbound_group_session_by_welcome_and_add(E2ees__GroupSession *outboun
                     e2ees__session__free_unpacked(outbound_sessions[j], NULL);
                     outbound_sessions[j] = NULL;
                 }
-                free_mem((void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
+                free_mem(
+                    (void **)&outbound_sessions, sizeof(E2ees__Session *) * outbound_sessions_num);
             } else {
                 if (outbound_sessions != NULL) {
                     free(outbound_sessions);
                     outbound_sessions = NULL;
                 }
-                /** Since we haven't created any session, we need to create a session before sending the group pre-key. */
+                /** Since we haven't created any session, we need to create a
+                 * session before sending the group pre-key. */
                 E2ees__InviteResponse **invite_response_list = NULL;
-                size_t invite_response_num = 0;
-                int invite_response_ret = get_pre_key_bundle_internal(&invite_response_list, &invite_response_num, outbound_group_session->session_owner, auth, cur_user_id, cur_user_domain, NULL,
-                                                                      true, group_ratchet_state_plaintext_data, group_ratchet_state_plaintext_data_len);
+                size_t invite_response_num                   = 0;
+                int invite_response_ret                      = get_pre_key_bundle_internal(
+                    &invite_response_list,
+                    &invite_response_num,
+                    outbound_group_session->session_owner,
+                    auth,
+                    cur_user_id,
+                    cur_user_domain,
+                    NULL,
+                    true,
+                    group_ratchet_state_plaintext_data,
+                    group_ratchet_state_plaintext_data_len);
                 // release
                 free_invite_response_list(&invite_response_list, invite_response_num);
             }
         }
 
-        their_chain_keys = (ProtobufCBinaryData **)malloc(sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
+        their_chain_keys = (ProtobufCBinaryData **)malloc(
+            sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
         // advance the chain key
         if (sender_chain_key == NULL) {
             // the sender
             for (i = 0; i < n_adding_member_info_list; i++) {
-                advance_group_chain_key_by_welcome(cipher_suite, &(outbound_group_session->chain_key), &their_chain_keys[i]);
-                advance_group_chain_key_by_add(cipher_suite, their_chain_keys[i], &(outbound_group_session->chain_key));
+                advance_group_chain_key_by_welcome(
+                    cipher_suite, &(outbound_group_session->chain_key), &their_chain_keys[i]);
+                advance_group_chain_key_by_add(
+                    cipher_suite, their_chain_keys[i], &(outbound_group_session->chain_key));
             }
         } else {
             // the receiver
             for (i = 0; i < n_adding_member_info_list; i++) {
-                advance_group_chain_key_by_welcome(cipher_suite, sender_chain_key, &their_chain_keys[i]);
+                advance_group_chain_key_by_welcome(
+                    cipher_suite, sender_chain_key, &their_chain_keys[i]);
                 advance_group_chain_key_by_add(cipher_suite, their_chain_keys[i], sender_chain_key);
             }
-            advance_group_chain_key_by_add(cipher_suite, &(outbound_group_session->chain_key), &(outbound_group_session->chain_key));
+            advance_group_chain_key_by_add(
+                cipher_suite,
+                &(outbound_group_session->chain_key),
+                &(outbound_group_session->chain_key));
         }
 
         // reset the sequence
@@ -1223,33 +1688,55 @@ int renew_outbound_group_session_by_welcome_and_add(E2ees__GroupSession *outboun
         get_e2ees_plugin()->db_handler.store_group_session(outbound_group_session);
 
         // renew existed inbound group sessions
-        inbound_group_sessions_num =
-            get_e2ees_plugin()->db_handler.load_group_sessions(outbound_group_session->session_owner, outbound_group_session->group_info->group_address, &inbound_group_sessions);
+        inbound_group_sessions_num = get_e2ees_plugin()->db_handler.load_group_sessions(
+            outbound_group_session->session_owner,
+            outbound_group_session->group_info->group_address,
+            &inbound_group_sessions);
 
         if (inbound_group_sessions_num > 0 && inbound_group_sessions != NULL) {
             for (i = 0; i < inbound_group_sessions_num; i++) {
-                // there is one outbound group session in inbound_group_sessions, so we need to ignore it
-                if (!compare_address(outbound_group_session->session_owner, inbound_group_sessions[i]->sender)) {
+                // there is one outbound group session in
+                // inbound_group_sessions, so we need to ignore it
+                if (!compare_address(
+                        outbound_group_session->session_owner, inbound_group_sessions[i]->sender)) {
                     if (compare_address(sender_address, inbound_group_sessions[i]->sender)) {
-                        renew_inbound_group_session_by_welcome_and_add(sender_chain_key, inbound_group_sessions[i], outbound_group_session->group_info);
+                        renew_inbound_group_session_by_welcome_and_add(
+                            sender_chain_key,
+                            inbound_group_sessions[i],
+                            outbound_group_session->group_info);
                     } else {
-                        renew_inbound_group_session_by_welcome_and_add(NULL, inbound_group_sessions[i], outbound_group_session->group_info);
+                        renew_inbound_group_session_by_welcome_and_add(
+                            NULL, inbound_group_sessions[i], outbound_group_session->group_info);
                     }
                     e2ees_notify_log(
-                        outbound_group_session->session_owner, DEBUG_LOG,
-                        "renew_outbound_group_session_by_welcome_and_add() renew the inbound group sessions: sender_address:[%s:%s], inbound_group_sessions[%zu of %zu]->sender:[%s:%s]",
-                        sender_address->user->user_id, sender_address->user->device_id, i + 1, inbound_group_sessions_num, inbound_group_sessions[i]->sender->user->user_id,
+                        outbound_group_session->session_owner,
+                        DEBUG_LOG,
+                        "renew_outbound_group_session_by_welcome_and_add() "
+                        "renew the inbound group "
+                        "sessions: sender_address:[%s:%s], "
+                        "inbound_group_sessions[%zu of "
+                        "%zu]->sender:[%s:%s]",
+                        sender_address->user->user_id,
+                        sender_address->user->device_id,
+                        i + 1,
+                        inbound_group_sessions_num,
+                        inbound_group_sessions[i]->sender->user->user_id,
                         inbound_group_sessions[i]->sender->user->device_id);
                 }
             }
         } else {
-            e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG,
-                             "renew_outbound_group_session_by_welcome_and_add(), no existed inbound group sessions, renew the inbound group sessions skipped");
+            e2ees_notify_log(
+                outbound_group_session->session_owner,
+                DEBUG_LOG,
+                "renew_outbound_group_session_by_welcome_and_add(), no existed "
+                "inbound group "
+                "sessions, renew the inbound group sessions skipped");
         }
 
         // create new inbound group sessions to the adding members
         for (i = 0; i < n_adding_member_info_list; i++) {
-            new_and_complete_inbound_group_session_with_chain_key(adding_member_info_list[i], outbound_group_session, their_chain_keys[i]);
+            new_and_complete_inbound_group_session_with_chain_key(
+                adding_member_info_list[i], outbound_group_session, their_chain_keys[i]);
         }
     }
 
@@ -1261,50 +1748,76 @@ int renew_outbound_group_session_by_welcome_and_add(E2ees__GroupSession *outboun
         e2ees__group_info__free_unpacked(old_group_info, NULL);
         old_group_info = NULL;
     }
-    free_mem((void **)&group_ratchet_state_plaintext_data, sizeof(uint8_t) * group_ratchet_state_plaintext_data_len);
+    free_mem(
+        (void **)&group_ratchet_state_plaintext_data,
+        sizeof(uint8_t) * group_ratchet_state_plaintext_data_len);
     if (their_chain_keys != NULL) {
         for (i = 0; i < n_adding_member_info_list; i++) {
             free_protobuf(their_chain_keys[i]);
             free_mem((void **)&(their_chain_keys[i]), sizeof(ProtobufCBinaryData));
         }
-        free_mem((void **)&their_chain_keys, sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
+        free_mem(
+            (void **)&their_chain_keys, sizeof(ProtobufCBinaryData *) * n_adding_member_info_list);
     }
     for (i = 0; i < inbound_group_sessions_num; i++) {
         e2ees__group_session__free_unpacked(inbound_group_sessions[i], NULL);
         inbound_group_sessions[i] = NULL;
     }
-    free_mem((void **)&inbound_group_sessions, sizeof(E2ees__GroupSession *) * inbound_group_sessions_num);
+    free_mem(
+        (void **)&inbound_group_sessions,
+        sizeof(E2ees__GroupSession *) * inbound_group_sessions_num);
 
     return ret;
 }
 
-int renew_inbound_group_session_by_welcome_and_add(ProtobufCBinaryData *sender_chain_key, E2ees__GroupSession *inbound_group_session, E2ees__GroupInfo *new_group_info) {
+int renew_inbound_group_session_by_welcome_and_add(
+    ProtobufCBinaryData *sender_chain_key,
+    E2ees__GroupSession *inbound_group_session,
+    E2ees__GroupInfo *new_group_info) {
     int ret = E2EES_RESULT_SUCC;
 
     if (!is_valid_group_session(inbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_inbound_group_session_by_welcome_and_add(): no inbound_group_session");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_SESSION,
+            "renew_inbound_group_session_by_welcome_and_add(): no "
+            "inbound_group_session");
         ret = E2EES_RESULT_FAIL;
     }
     if (new_group_info == NULL) {
-        e2ees_notify_log(NULL, BAD_GROUP_INFO, "renew_inbound_group_session_by_welcome_and_add(): no new_group_info");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_INFO,
+            "renew_inbound_group_session_by_welcome_and_add(): no "
+            "new_group_info");
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        e2ees_notify_log(inbound_group_session->session_owner, DEBUG_LOG, "renew_inbound_group_session_by_welcome_and_add() sender_chain_key is null: %s",
-                         sender_chain_key == NULL ? "true" : "false");
+        e2ees_notify_log(
+            inbound_group_session->session_owner,
+            DEBUG_LOG,
+            "renew_inbound_group_session_by_welcome_and_add() sender_chain_key "
+            "is null: %s",
+            sender_chain_key == NULL ? "true" : "false");
 
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(inbound_group_session->e2ees_pack_id)->cipher_suite;
+        const cipher_suite_t *cipher_suite =
+            get_e2ees_pack(inbound_group_session->e2ees_pack_id)->cipher_suite;
 
         e2ees__group_info__free_unpacked(inbound_group_session->group_info, NULL);
         copy_group_info(&(inbound_group_session->group_info), new_group_info);
 
         if (sender_chain_key != NULL) {
-            free_mem((void **)&(inbound_group_session->chain_key.data), inbound_group_session->chain_key.len);
+            free_mem(
+                (void **)&(inbound_group_session->chain_key.data),
+                inbound_group_session->chain_key.len);
 
             copy_protobuf_from_protobuf(&(inbound_group_session->chain_key), sender_chain_key);
         } else {
-            advance_group_chain_key_by_add(cipher_suite, &(inbound_group_session->chain_key), &(inbound_group_session->chain_key));
+            advance_group_chain_key_by_add(
+                cipher_suite,
+                &(inbound_group_session->chain_key),
+                &(inbound_group_session->chain_key));
         }
 
         inbound_group_session->sequence = 0;
@@ -1316,40 +1829,56 @@ int renew_inbound_group_session_by_welcome_and_add(ProtobufCBinaryData *sender_c
     return ret;
 }
 
-int renew_group_sessions_with_new_device(E2ees__GroupSession *outbound_group_session, ProtobufCBinaryData *sender_chain_key, E2ees__E2eeAddress *sender_address,
-                                         E2ees__E2eeAddress *new_device_address, E2ees__GroupMemberInfo *adding_member_device_info) {
-    int ret = E2EES_RESULT_SUCC;
+int renew_group_sessions_with_new_device(
+    E2ees__GroupSession *outbound_group_session,
+    ProtobufCBinaryData *sender_chain_key,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *new_device_address,
+    E2ees__GroupMemberInfo *adding_member_device_info) {
+    int ret                                  = E2EES_RESULT_SUCC;
 
-    E2ees__Account *account = NULL;
-    char *auth = NULL;
-    E2ees__IdentityKey *identity_key = NULL;
+    E2ees__Account *account                  = NULL;
+    char *auth                               = NULL;
+    E2ees__IdentityKey *identity_key         = NULL;
     ProtobufCBinaryData *identity_public_key = NULL;
     char *cur_user_id = NULL, *cur_user_domain = NULL;
-    char *cur_user_device_id = NULL;
-    uint8_t *group_ratchet_state_plaintext_data = NULL;
+    char *cur_user_device_id                      = NULL;
+    uint8_t *group_ratchet_state_plaintext_data   = NULL;
     size_t group_ratchet_state_plaintext_data_len = 0;
-    E2ees__Session *outbound_session = NULL;
-    E2ees__SendOne2oneMsgResponse *response = NULL;
-    ProtobufCBinaryData *their_chain_keys = NULL;
-    E2ees__GroupSession **inbound_group_sessions = NULL;
-    size_t inbound_group_sessions_num = 0;
+    E2ees__Session *outbound_session              = NULL;
+    E2ees__SendOne2oneMsgResponse *response       = NULL;
+    ProtobufCBinaryData *their_chain_keys         = NULL;
+    E2ees__GroupSession **inbound_group_sessions  = NULL;
+    size_t inbound_group_sessions_num             = 0;
     size_t i, j;
 
     if (!is_valid_group_session(outbound_group_session)) {
-        e2ees_notify_log(NULL, BAD_GROUP_SESSION, "renew_group_sessions_with_new_device(): no outbound_group_session");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_SESSION,
+            "renew_group_sessions_with_new_device(): no "
+            "outbound_group_session");
         ret = E2EES_RESULT_FAIL;
     } else {
         load_identity_key_from_cache(&identity_key, outbound_group_session->session_owner);
 
         if (identity_key == NULL) {
-            get_e2ees_plugin()->db_handler.load_account_by_address(outbound_group_session->session_owner, &account);
+            get_e2ees_plugin()->db_handler.load_account_by_address(
+                outbound_group_session->session_owner, &account);
             if (account == NULL) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device(): no account");
+                e2ees_notify_log(
+                    outbound_group_session->session_owner,
+                    BAD_ACCOUNT,
+                    "renew_group_sessions_with_new_device(): no account");
                 ret = E2EES_RESULT_FAIL;
             } else {
                 identity_public_key = get_identity_public_key_ds_bytes_from_account(account);
                 if (identity_public_key == NULL) {
-                    e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device(): no identity_public_key");
+                    e2ees_notify_log(
+                        outbound_group_session->session_owner,
+                        BAD_ACCOUNT,
+                        "renew_group_sessions_with_new_device(): no "
+                        "identity_public_key");
                     ret = E2EES_RESULT_FAIL;
                 } else {
                     auth = strdup(account->auth);
@@ -1358,7 +1887,10 @@ int renew_group_sessions_with_new_device(E2ees__GroupSession *outbound_group_ses
         } else {
             get_e2ees_plugin()->db_handler.load_auth(outbound_group_session->session_owner, &auth);
             if (!is_valid_string(auth)) {
-                e2ees_notify_log(outbound_group_session->session_owner, BAD_ACCOUNT, "renew_group_sessions_with_new_device(): no auth");
+                e2ees_notify_log(
+                    outbound_group_session->session_owner,
+                    BAD_ACCOUNT,
+                    "renew_group_sessions_with_new_device(): no auth");
                 free_string(auth);
                 ret = E2EES_RESULT_FAIL;
             } else {
@@ -1367,53 +1899,103 @@ int renew_group_sessions_with_new_device(E2ees__GroupSession *outbound_group_ses
         }
     }
     if (!is_valid_address(sender_address)) {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "renew_group_sessions_with_new_device(): no sender_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "renew_group_sessions_with_new_device(): no sender_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (is_valid_address(new_device_address)) {
-        cur_user_id = new_device_address->user->user_id;
-        cur_user_domain = new_device_address->domain;
+        cur_user_id        = new_device_address->user->user_id;
+        cur_user_domain    = new_device_address->domain;
         cur_user_device_id = new_device_address->user->device_id;
     } else {
-        e2ees_notify_log(NULL, BAD_ADDRESS, "renew_group_sessions_with_new_device(): no new_device_address");
+        e2ees_notify_log(
+            NULL, BAD_ADDRESS, "renew_group_sessions_with_new_device(): no new_device_address");
         ret = E2EES_RESULT_FAIL;
     }
     if (!is_valid_group_member_info(adding_member_device_info)) {
-        e2ees_notify_log(NULL, BAD_GROUP_MEMBER_INFO, "renew_group_sessions_with_new_device(): no adding_member_device_info");
+        e2ees_notify_log(
+            NULL,
+            BAD_GROUP_MEMBER_INFO,
+            "renew_group_sessions_with_new_device(): no "
+            "adding_member_device_info");
         ret = E2EES_RESULT_FAIL;
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG, "renew_group_sessions_with_new_device() owner address: [%s:%s] sender address: [%s:%s] member address: [%s:%s]",
-                         outbound_group_session->session_owner->user->user_id, outbound_group_session->session_owner->user->device_id, sender_address->user->user_id,
-                         sender_address->user->device_id, adding_member_device_info->member_address->user->user_id, adding_member_device_info->member_address->user->device_id);
+        e2ees_notify_log(
+            outbound_group_session->session_owner,
+            DEBUG_LOG,
+            "renew_group_sessions_with_new_device() owner address: [%s:%s] "
+            "sender address: [%s:%s] "
+            "member address: [%s:%s]",
+            outbound_group_session->session_owner->user->user_id,
+            outbound_group_session->session_owner->user->device_id,
+            sender_address->user->user_id,
+            sender_address->user->device_id,
+            adding_member_device_info->member_address->user->user_id,
+            adding_member_device_info->member_address->user->device_id);
 
         // renew outbound group session
-        const cipher_suite_t *cipher_suite = get_e2ees_pack(outbound_group_session->e2ees_pack_id)->cipher_suite;
+        const cipher_suite_t *cipher_suite =
+            get_e2ees_pack(outbound_group_session->e2ees_pack_id)->cipher_suite;
 
-        group_ratchet_state_plaintext_data_len =
-            pack_group_ratchet_state_plaintext(outbound_group_session, &group_ratchet_state_plaintext_data, sender_chain_key == NULL, identity_public_key, 1, &adding_member_device_info);
+        group_ratchet_state_plaintext_data_len = pack_group_ratchet_state_plaintext(
+            outbound_group_session,
+            &group_ratchet_state_plaintext_data,
+            sender_chain_key == NULL,
+            identity_public_key,
+            1,
+            &adding_member_device_info);
 
-        get_e2ees_plugin()->db_handler.load_outbound_session(outbound_group_session->session_owner, new_device_address, &outbound_session);
+        get_e2ees_plugin()->db_handler.load_outbound_session(
+            outbound_group_session->session_owner, new_device_address, &outbound_session);
 
         if (outbound_session != NULL) {
             if (outbound_session->responded) {
-                response = send_one2one_msg_internal(outbound_session, E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION, group_ratchet_state_plaintext_data, group_ratchet_state_plaintext_data_len);
+                response = send_one2one_msg_internal(
+                    outbound_session,
+                    E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION,
+                    group_ratchet_state_plaintext_data,
+                    group_ratchet_state_plaintext_data_len);
             } else {
-                e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG, "renew_group_sessions_with_new_device() outbound_session found and is not responded");
-                /** Since the other has not responded, we store the group pre-key first so that
-                 *  we can send it right after receiving the other's accept message.
+                e2ees_notify_log(
+                    outbound_group_session->session_owner,
+                    DEBUG_LOG,
+                    "renew_group_sessions_with_new_device() outbound_session "
+                    "found and is not "
+                    "responded");
+                /** Since the other has not responded, we store the group
+                 * pre-key first so that we can send it right after receiving
+                 * the other's accept message.
                  */
-                store_pending_common_plaintext_data_internal(outbound_session->our_address, outbound_session->their_address, group_ratchet_state_plaintext_data,
-                                                             group_ratchet_state_plaintext_data_len, E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION);
+                store_pending_common_plaintext_data_internal(
+                    outbound_session->our_address,
+                    outbound_session->their_address,
+                    group_ratchet_state_plaintext_data,
+                    group_ratchet_state_plaintext_data_len,
+                    E2EES__NOTIF_LEVEL__NOTIF_LEVEL_SESSION);
             }
         } else {
-            e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG, "renew_group_sessions_with_new_device() outbound_session not found");
-            /** Since we haven't created any session, we need to create a session before sending the group pre-key. */
+            e2ees_notify_log(
+                outbound_group_session->session_owner,
+                DEBUG_LOG,
+                "renew_group_sessions_with_new_device() outbound_session not "
+                "found");
+            /** Since we haven't created any session, we need to create a
+             * session before sending the group pre-key. */
             E2ees__InviteResponse **invite_response_list = NULL;
-            size_t invite_response_num = 0;
-            int invite_response_ret = get_pre_key_bundle_internal(&invite_response_list, &invite_response_num, outbound_group_session->session_owner, auth, cur_user_id, cur_user_domain,
-                                                                  cur_user_device_id, false, group_ratchet_state_plaintext_data, group_ratchet_state_plaintext_data_len);
+            size_t invite_response_num                   = 0;
+            int invite_response_ret                      = get_pre_key_bundle_internal(
+                &invite_response_list,
+                &invite_response_num,
+                outbound_group_session->session_owner,
+                auth,
+                cur_user_id,
+                cur_user_domain,
+                cur_user_device_id,
+                false,
+                group_ratchet_state_plaintext_data,
+                group_ratchet_state_plaintext_data_len);
             // release
             free_invite_response_list(&invite_response_list, invite_response_num);
         }
@@ -1421,15 +2003,30 @@ int renew_group_sessions_with_new_device(E2ees__GroupSession *outbound_group_ses
         // advance the chain key
         if (sender_chain_key == NULL) {
             // the sender
-            advance_group_chain_key_by_welcome(cipher_suite, &(outbound_group_session->chain_key), &their_chain_keys);
-            advance_group_chain_key_by_add(cipher_suite, their_chain_keys, &(outbound_group_session->chain_key));
-            e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG, "renew_group_sessions_with_new_device() sender_chain_key is the case of null, create their_chain_keys");
+            advance_group_chain_key_by_welcome(
+                cipher_suite, &(outbound_group_session->chain_key), &their_chain_keys);
+            advance_group_chain_key_by_add(
+                cipher_suite, their_chain_keys, &(outbound_group_session->chain_key));
+            e2ees_notify_log(
+                outbound_group_session->session_owner,
+                DEBUG_LOG,
+                "renew_group_sessions_with_new_device() sender_chain_key is "
+                "the case of null, "
+                "create their_chain_keys");
         } else {
             // the receiver
             advance_group_chain_key_by_welcome(cipher_suite, sender_chain_key, &their_chain_keys);
             advance_group_chain_key_by_add(cipher_suite, their_chain_keys, sender_chain_key);
-            advance_group_chain_key_by_add(cipher_suite, &(outbound_group_session->chain_key), &(outbound_group_session->chain_key));
-            e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG, "renew_group_sessions_with_new_device() sender_chain_key is the case of not null, create their_chain_keys");
+            advance_group_chain_key_by_add(
+                cipher_suite,
+                &(outbound_group_session->chain_key),
+                &(outbound_group_session->chain_key));
+            e2ees_notify_log(
+                outbound_group_session->session_owner,
+                DEBUG_LOG,
+                "renew_group_sessions_with_new_device() sender_chain_key is "
+                "the case of not null, "
+                "create their_chain_keys");
         }
 
         // reset the sequence
@@ -1439,28 +2036,51 @@ int renew_group_sessions_with_new_device(E2ees__GroupSession *outbound_group_ses
         get_e2ees_plugin()->db_handler.store_group_session(outbound_group_session);
 
         // renew the inbound group sessions
-        inbound_group_sessions_num =
-            get_e2ees_plugin()->db_handler.load_group_sessions(outbound_group_session->session_owner, outbound_group_session->group_info->group_address, &inbound_group_sessions);
+        inbound_group_sessions_num = get_e2ees_plugin()->db_handler.load_group_sessions(
+            outbound_group_session->session_owner,
+            outbound_group_session->group_info->group_address,
+            &inbound_group_sessions);
         if (inbound_group_sessions_num > 0 && inbound_group_sessions != NULL) {
             for (i = 0; i < inbound_group_sessions_num; i++) {
-                // there is one outbound group session in inbound_group_sessions, so we need to ignore it
-                if (!compare_address(outbound_group_session->session_owner, inbound_group_sessions[i]->sender)) {
+                // there is one outbound group session in
+                // inbound_group_sessions, so we need to ignore it
+                if (!compare_address(
+                        outbound_group_session->session_owner, inbound_group_sessions[i]->sender)) {
                     if (compare_address(sender_address, inbound_group_sessions[i]->sender)) {
-                        renew_inbound_group_session_by_welcome_and_add(sender_chain_key, inbound_group_sessions[i], outbound_group_session->group_info);
+                        renew_inbound_group_session_by_welcome_and_add(
+                            sender_chain_key,
+                            inbound_group_sessions[i],
+                            outbound_group_session->group_info);
                     } else {
-                        renew_inbound_group_session_by_welcome_and_add(NULL, inbound_group_sessions[i], outbound_group_session->group_info);
+                        renew_inbound_group_session_by_welcome_and_add(
+                            NULL, inbound_group_sessions[i], outbound_group_session->group_info);
                     }
-                    e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG,
-                                     "renew_group_sessions_with_new_device() renew the inbound group sessions: sender_address:[%s:%s], inbound_group_sessions[%zu of %zu]->sender:[%s:%s]",
-                                     sender_address->user->user_id, sender_address->user->device_id, i + 1, inbound_group_sessions_num, inbound_group_sessions[i]->sender->user->user_id,
-                                     inbound_group_sessions[i]->sender->user->device_id);
+                    e2ees_notify_log(
+                        outbound_group_session->session_owner,
+                        DEBUG_LOG,
+                        "renew_group_sessions_with_new_device() renew the "
+                        "inbound group sessions: "
+                        "sender_address:[%s:%s], inbound_group_sessions[%zu of "
+                        "%zu]->sender:[%s:%s]",
+                        sender_address->user->user_id,
+                        sender_address->user->device_id,
+                        i + 1,
+                        inbound_group_sessions_num,
+                        inbound_group_sessions[i]->sender->user->user_id,
+                        inbound_group_sessions[i]->sender->user->device_id);
                 }
             }
 
             // create the inbound group session for new device
-            new_and_complete_inbound_group_session_with_chain_key(adding_member_device_info, outbound_group_session, their_chain_keys);
+            new_and_complete_inbound_group_session_with_chain_key(
+                adding_member_device_info, outbound_group_session, their_chain_keys);
         } else {
-            e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG, "renew_group_sessions_with_new_device(), no inbound group sessions, renew the inbound group sessions skipped");
+            e2ees_notify_log(
+                outbound_group_session->session_owner,
+                DEBUG_LOG,
+                "renew_group_sessions_with_new_device(), no inbound group "
+                "sessions, renew the "
+                "inbound group sessions skipped");
         }
     }
 
@@ -1468,7 +2088,9 @@ int renew_group_sessions_with_new_device(E2ees__GroupSession *outbound_group_ses
     free_proto(account);
     free_string(auth);
     free_proto(identity_key);
-    free_mem((void **)&group_ratchet_state_plaintext_data, sizeof(uint8_t) * group_ratchet_state_plaintext_data_len);
+    free_mem(
+        (void **)&group_ratchet_state_plaintext_data,
+        sizeof(uint8_t) * group_ratchet_state_plaintext_data_len);
     if (outbound_session != NULL) {
         e2ees__session__free_unpacked(outbound_session, NULL);
         outbound_session = NULL;
@@ -1485,7 +2107,9 @@ int renew_group_sessions_with_new_device(E2ees__GroupSession *outbound_group_ses
         e2ees__group_session__free_unpacked(inbound_group_sessions[i], NULL);
         inbound_group_sessions[i] = NULL;
     }
-    free_mem((void **)&inbound_group_sessions, sizeof(E2ees__GroupSession *) * inbound_group_sessions_num);
+    free_mem(
+        (void **)&inbound_group_sessions,
+        sizeof(E2ees__GroupSession *) * inbound_group_sessions_num);
 
     return ret;
 }

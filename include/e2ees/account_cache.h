@@ -44,9 +44,11 @@ void load_version_from_cache(char **version_out, E2ees__E2eeAddress *address);
 
 void load_e2ees_pack_id_from_cache(uint32_t *e2ees_pack_id_out, E2ees__E2eeAddress *address);
 
-void load_identity_key_from_cache(E2ees__IdentityKey **identity_key_out, E2ees__E2eeAddress *address);
+void load_identity_key_from_cache(
+    E2ees__IdentityKey **identity_key_out, E2ees__E2eeAddress *address);
 
-void load_server_public_key_from_cache(ProtobufCBinaryData *server_public_key, E2ees__E2eeAddress *address);
+void load_server_public_key_from_cache(
+    ProtobufCBinaryData *server_public_key, E2ees__E2eeAddress *address);
 
 void free_account_cacheer_list();
 

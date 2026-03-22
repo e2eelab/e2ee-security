@@ -39,15 +39,16 @@ static account_cacheer *find_account_in_cache(E2ees__E2eeAddress *address) {
 }
 
 static void insert_account_cacheer(account_cacheer *dest, E2ees__Account *account) {
-    dest->version = strdup(account->version);
+    dest->version       = strdup(account->version);
     dest->e2ees_pack_id = account->e2ees_pack_id;
     copy_address_from_address(&(dest->address), account->address);
     copy_ik_from_ik(&(dest->identity_key), account->identity_key);
 
     if (account->server_cert != NULL && account->server_cert->cert != NULL) {
-        copy_protobuf_from_protobuf(&(dest->server_public_key), &(account->server_cert->cert->public_key));
+        copy_protobuf_from_protobuf(
+            &(dest->server_public_key), &(account->server_cert->cert->public_key));
     } else {
-        dest->server_public_key.len = 0;
+        dest->server_public_key.len  = 0;
         dest->server_public_key.data = NULL;
     }
 
@@ -100,7 +101,8 @@ void load_e2ees_pack_id_from_cache(uint32_t *e2ees_pack_id_out, E2ees__E2eeAddre
     *e2ees_pack_id_out = E2EES_PACK_ID_UNSPECIFIED;
 }
 
-void load_identity_key_from_cache(E2ees__IdentityKey **identity_key_out, E2ees__E2eeAddress *address) {
+void load_identity_key_from_cache(
+    E2ees__IdentityKey **identity_key_out, E2ees__E2eeAddress *address) {
     account_cacheer *cur = account_cacheer_list;
     while (cur != NULL) {
         if (compare_address(cur->address, address)) {
@@ -112,11 +114,12 @@ void load_identity_key_from_cache(E2ees__IdentityKey **identity_key_out, E2ees__
     *identity_key_out = NULL;
 }
 
-void load_server_public_key_from_cache(ProtobufCBinaryData *server_public_key, E2ees__E2eeAddress *address) {
-    server_public_key->len = 0;
+void load_server_public_key_from_cache(
+    ProtobufCBinaryData *server_public_key, E2ees__E2eeAddress *address) {
+    server_public_key->len  = 0;
     server_public_key->data = NULL;
 
-    account_cacheer *cur = account_cacheer_list;
+    account_cacheer *cur    = account_cacheer_list;
     while (cur != NULL) {
         if (compare_address(cur->address, address)) {
             copy_protobuf_from_protobuf(server_public_key, &(cur->server_public_key));
@@ -149,7 +152,7 @@ void free_account_cacheer_list() {
     account_cacheer *temp;
     while (cur != NULL) {
         temp = cur;
-        cur = cur->next;
+        cur  = cur->next;
         free_account_cacheer(temp);
     }
     account_cacheer_list = NULL;

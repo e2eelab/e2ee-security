@@ -32,9 +32,10 @@
 #define CURVE25519_SHARED_SECRET_LENGTH 32
 
 void initialise_session(
-    E2ees__Session *session, uint32_t e2ees_pack_id,
-    E2ees__E2eeAddress *our_address, E2ees__E2eeAddress *their_address
-) {
+    E2ees__Session *session,
+    uint32_t e2ees_pack_id,
+    E2ees__E2eeAddress *our_address,
+    E2ees__E2eeAddress *their_address) {
     e2ees__session__init(session);
     session->e2ees_pack_id = e2ees_pack_id;
     copy_address_from_address(&(session->our_address), our_address);
@@ -42,33 +43,34 @@ void initialise_session(
 }
 
 void pack_common_plaintext(
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
     int plaintext_type,
-    uint8_t **common_plaintext_data, size_t *common_plaintext_data_len
-) {
+    uint8_t **common_plaintext_data,
+    size_t *common_plaintext_data_len) {
     E2ees__Plaintext *plaintext = (E2ees__Plaintext *)malloc(sizeof(E2ees__Plaintext));
     e2ees__plaintext__init(plaintext);
-    plaintext->version = strdup(E2EES_PLAINTEXT_VERSION);
+    plaintext->version      = strdup(E2EES_PLAINTEXT_VERSION);
     plaintext->payload_case = plaintext_type;
-    switch(plaintext_type) {
-        case E2EES__PLAINTEXT__PAYLOAD_COMMON_MSG:
-            plaintext->common_msg.len = plaintext_data_len;
-            plaintext->common_msg.data = (uint8_t *)malloc(sizeof(uint8_t) * plaintext_data_len);
-            memcpy(plaintext->common_msg.data, plaintext_data, plaintext_data_len);
-            break;
-        case E2EES__PLAINTEXT__PAYLOAD_COMMON_SYNC_MSG:
-            plaintext->common_sync_msg.len = plaintext_data_len;
-            plaintext->common_sync_msg.data = (uint8_t *)malloc(sizeof(uint8_t) * plaintext_data_len);
-            memcpy(plaintext->common_sync_msg.data, plaintext_data, plaintext_data_len);
-            break;
-        default:
-            // error
-            break;
+    switch (plaintext_type) {
+    case E2EES__PLAINTEXT__PAYLOAD_COMMON_MSG:
+        plaintext->common_msg.len  = plaintext_data_len;
+        plaintext->common_msg.data = (uint8_t *)malloc(sizeof(uint8_t) * plaintext_data_len);
+        memcpy(plaintext->common_msg.data, plaintext_data, plaintext_data_len);
+        break;
+    case E2EES__PLAINTEXT__PAYLOAD_COMMON_SYNC_MSG:
+        plaintext->common_sync_msg.len  = plaintext_data_len;
+        plaintext->common_sync_msg.data = (uint8_t *)malloc(sizeof(uint8_t) * plaintext_data_len);
+        memcpy(plaintext->common_sync_msg.data, plaintext_data, plaintext_data_len);
+        break;
+    default:
+        // error
+        break;
     };
 
-    size_t len = e2ees__plaintext__get_packed_size(plaintext);
+    size_t len                 = e2ees__plaintext__get_packed_size(plaintext);
     *common_plaintext_data_len = len;
-    *common_plaintext_data = (uint8_t *)malloc(sizeof(uint8_t) * len);
+    *common_plaintext_data     = (uint8_t *)malloc(sizeof(uint8_t) * len);
     e2ees__plaintext__pack(plaintext, *common_plaintext_data);
 
     // release

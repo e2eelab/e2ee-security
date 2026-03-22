@@ -20,9 +20,9 @@
 #ifndef CIPHER_H_
 #define CIPHER_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -78,16 +78,14 @@ typedef struct ds_suite_t {
     struct crypto_ds_param_t (*get_param)(void);
 
     /**
-     * @brief Generate a random key pair that will be used to generate or verify a signature.
+     * @brief Generate a random key pair that will be used to generate or verify
+     * a signature.
      *
      * @param pub_key
      * @param priv_key
      * @return value < 0 for error
      */
-    int (*ds_key_gen)(
-        ProtobufCBinaryData *pub_key,
-        ProtobufCBinaryData *priv_key
-    );
+    int (*ds_key_gen)(ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key);
 
     /**
      * @brief Sign a message.
@@ -100,10 +98,11 @@ typedef struct ds_suite_t {
      * @return value < 0 for error
      */
     int (*sign)(
-        uint8_t *signature_out, size_t *signature_out_len,
-        const uint8_t *msg, size_t msg_len,
-        const uint8_t *private_key
-    );
+        uint8_t *signature_out,
+        size_t *signature_out_len,
+        const uint8_t *msg,
+        size_t msg_len,
+        const uint8_t *private_key);
 
     /**
      * @brief Verify a signature with a given message.
@@ -116,10 +115,11 @@ typedef struct ds_suite_t {
      * @return value < 0 for error
      */
     int (*verify)(
-        const uint8_t *signature_in, size_t signature_in_len,
-        const uint8_t *msg, size_t msg_len,
-        const uint8_t *public_key
-    );
+        const uint8_t *signature_in,
+        size_t signature_in_len,
+        const uint8_t *msg,
+        size_t msg_len,
+        const uint8_t *public_key);
 } ds_suite_t;
 
 /**
@@ -133,43 +133,39 @@ typedef struct kem_suite_t {
     struct crypto_kem_param_t (*get_param)(void);
 
     /**
-     * @brief Generate a random key pair that will be used to calculate shared secret keys.
+     * @brief Generate a random key pair that will be used to calculate shared
+     * secret keys.
      *
      * @param pub_key
      * @param priv_key
      */
-    int (*asym_key_gen)(
-        ProtobufCBinaryData *pub_key,
-        ProtobufCBinaryData *priv_key
-    );
+    int (*asym_key_gen)(ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key);
 
     /**
-    * @brief Encapsulation.
-    *
-    * @param shared_secret
-    * @param ciphertext
-    * @param their_key
-    * @return value < 0 for error.
-    */
+     * @brief Encapsulation.
+     *
+     * @param shared_secret
+     * @param ciphertext
+     * @param their_key
+     * @return value < 0 for error.
+     */
     int (*encaps)(
         uint8_t *shared_secret,
         ProtobufCBinaryData *ciphertext,
-        const ProtobufCBinaryData *their_key
-    );
+        const ProtobufCBinaryData *their_key);
 
     /**
-    * @brief Decapsulation.
-    *
-    * @param shared_secret
-    * @param our_key
-    * @param ciphertext
-    * @return value < 0 for error.
-    */
+     * @brief Decapsulation.
+     *
+     * @param shared_secret
+     * @param our_key
+     * @param ciphertext
+     * @return value < 0 for error.
+     */
     int (*decaps)(
         uint8_t *shared_secret,
         const ProtobufCBinaryData *our_key,
-        const ProtobufCBinaryData *ciphertext
-    );
+        const ProtobufCBinaryData *ciphertext);
 } kem_suite_t;
 
 /**
@@ -196,9 +192,10 @@ typedef struct se_suite_t {
     int (*encrypt)(
         const ProtobufCBinaryData *,
         const uint8_t *,
-        const uint8_t *, size_t,
-        uint8_t **, size_t *
-    );
+        const uint8_t *,
+        size_t,
+        uint8_t **,
+        size_t *);
 
     /**
      * @brief Decrypt a given ciphertext.
@@ -212,11 +209,12 @@ typedef struct se_suite_t {
      * @return 0 if success or -1 for decryption error
      */
     int (*decrypt)(
-        uint8_t **, size_t *,
+        uint8_t **,
+        size_t *,
         const ProtobufCBinaryData *,
         const uint8_t *,
-        const uint8_t *, size_t
-    );
+        const uint8_t *,
+        size_t);
 } se_suite_t;
 
 /**
@@ -243,11 +241,14 @@ typedef struct hf_suite_t {
      * @return 0 if success
      */
     int (*hkdf)(
-        const uint8_t *input, size_t input_len,
-        const uint8_t *salt, size_t salt_len,
-        const uint8_t *info, size_t info_len,
-        uint8_t *output, size_t output_len
-    );
+        const uint8_t *input,
+        size_t input_len,
+        const uint8_t *salt,
+        size_t salt_len,
+        const uint8_t *info,
+        size_t info_len,
+        uint8_t *output,
+        size_t output_len);
 
     /**
      * @brief Keyed-Hashing for message authentication.
@@ -260,10 +261,11 @@ typedef struct hf_suite_t {
      * @return 0 if success
      */
     int (*hmac)(
-        const uint8_t *key, size_t key_len,
-        const uint8_t *input, size_t input_len,
-        uint8_t *output
-    );
+        const uint8_t *key,
+        size_t key_len,
+        const uint8_t *input,
+        size_t input_len,
+        uint8_t *output);
 
     /**
      * @brief Hash function.
@@ -273,11 +275,7 @@ typedef struct hf_suite_t {
      * @param hash_out
      * @return 0 if success
      */
-    int (*hash)(
-        const uint8_t *msg,
-        size_t msg_len,
-        uint8_t *hash_out
-    );
+    int (*hash)(const uint8_t *msg, size_t msg_len, uint8_t *hash_out);
 } hf_suite_t;
 
 /**

@@ -22,7 +22,6 @@
 
 #include "e2ees/e2ees.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -34,7 +33,8 @@ extern "C" {
  * @param user_name The user name that is creating the new account.
  * @param user_id The unique user id that will be binded to the new account.
  * @param device_id The device id that will be binded to the new account.
- * @param authenticator The authenticator (email and etc.) is used to receive an register auth code.
+ * @param authenticator The authenticator (email and etc.) is used to receive an
+ * register auth code.
  * @param auth_code The auth code that is received by the authenticator.
  * @return 0 if success
  */
@@ -45,11 +45,11 @@ int register_user(
     const char *user_id,
     const char *device_id,
     const char *authenticator,
-    const char *auth_code
-);
+    const char *auth_code);
 
 /**
- * @brief Send invite request again if the outbound session has not been responded.
+ * @brief Send invite request again if the outbound session has not been
+ * responded.
  * @param outbound_session The outbound session
  * @return  E2ees__InviteResponse *
  */
@@ -64,11 +64,8 @@ E2ees__InviteResponse *reinvite(E2ees__Session *outbound_session);
  * @param to_domain The receiver's domain
  * @return  E2ees__InviteResponse *
  */
-E2ees__InviteResponse *invite(
-    E2ees__E2eeAddress *from,
-    const char *to_user_id,
-    const char *to_domain
-);
+E2ees__InviteResponse *
+invite(E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain);
 
 /**
  * @brief Send invite request to create a new outbound session
@@ -78,11 +75,8 @@ E2ees__InviteResponse *invite(
  * @param to_domain The receiver's domain
  * @return  E2ees__InviteResponse *
  */
-E2ees__InviteResponse *new_invite(
-    E2ees__E2eeAddress *from,
-    const char *to_user_id,
-    const char *to_domain
-);
+E2ees__InviteResponse *
+new_invite(E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain);
 
 /**
  * @brief Send one2one msg.
@@ -97,31 +91,36 @@ E2ees__InviteResponse *new_invite(
  */
 int send_one2one_msg(
     E2ees__SendOne2oneMsgResponse **response_out,
-    E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain,
+    E2ees__E2eeAddress *from,
+    const char *to_user_id,
+    const char *to_domain,
     uint32_t notif_level,
-    const uint8_t *plaintext_data, size_t plaintext_data_len
-);
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len);
 
 /**
  * @brief Send sync msg to other devices.
  * @param from
- * @param plaintext_data 
- * @param plaintext_data_len 
+ * @param plaintext_data
+ * @param plaintext_data_len
  */
-void send_sync_msg(E2ees__E2eeAddress *from, const uint8_t *plaintext_data, size_t plaintext_data_len);
+void send_sync_msg(
+    E2ees__E2eeAddress *from, const uint8_t *plaintext_data, size_t plaintext_data_len);
 
 /**
  * @brief Send sync invite msg to other devices.
  * @param from
- * @param to_user_id 
+ * @param to_user_id
  * @param to_domain
  * @param to_device_id_list
  * @param to_device_num
  */
 void send_sync_invite_msg(
-    E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain,
-    char **to_device_id_list, size_t to_device_num
-);
+    E2ees__E2eeAddress *from,
+    const char *to_user_id,
+    const char *to_domain,
+    char **to_device_id_list,
+    size_t to_device_num);
 
 /**
  * @brief Create a group.
@@ -137,8 +136,7 @@ int create_group(
     E2ees__E2eeAddress *sender_address,
     const char *group_name,
     E2ees__GroupMember **group_members,
-    size_t group_members_num
-);
+    size_t group_members_num);
 
 /**
  * @brief Add group members.
@@ -154,8 +152,7 @@ int add_group_members(
     E2ees__E2eeAddress *sender_address,
     E2ees__E2eeAddress *group_address,
     E2ees__GroupMember **adding_members,
-    size_t adding_members_num
-);
+    size_t adding_members_num);
 
 /**
  * @brief Remove group members.
@@ -171,8 +168,7 @@ int remove_group_members(
     E2ees__E2eeAddress *sender_address,
     E2ees__E2eeAddress *group_address,
     E2ees__GroupMember **removing_members,
-    size_t removing_members_num
-);
+    size_t removing_members_num);
 
 /**
  * @brief Leave group.
@@ -184,8 +180,7 @@ int remove_group_members(
 int leave_group(
     E2ees__LeaveGroupResponse **response_out,
     E2ees__E2eeAddress *sender_address,
-    E2ees__E2eeAddress *group_address
-);
+    E2ees__E2eeAddress *group_address);
 
 /**
  * @brief Send group msg.
@@ -203,8 +198,7 @@ int send_group_msg(
     E2ees__E2eeAddress *group_address,
     uint32_t notif_level,
     const uint8_t *plaintext_data,
-    size_t plaintext_data_len
-);
+    size_t plaintext_data_len);
 
 /**
  * @brief Send group msg with filter.
@@ -222,14 +216,15 @@ int send_group_msg(
  */
 int send_group_msg_with_filter(
     E2ees__SendGroupMsgResponse **response_out,
-    E2ees__E2eeAddress *sender_address, E2ees__E2eeAddress *group_address,
+    E2ees__E2eeAddress *sender_address,
+    E2ees__E2eeAddress *group_address,
     uint32_t notif_level,
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
     E2ees__E2eeAddress **allow_list,
     size_t allow_list_len,
     E2ees__E2eeAddress **deny_list,
-    size_t deny_list_len
-);
+    size_t deny_list_len);
 
 /**
  * @brief Send consume_proto_msg request to server.
@@ -237,7 +232,8 @@ int send_group_msg_with_filter(
  * @param proto_msg_id
  * @return E2ees__ConsumeProtoMsgResponse *
  */
-E2ees__ConsumeProtoMsgResponse *consume_proto_msg(E2ees__E2eeAddress *sender_address, const char *proto_msg_id);
+E2ees__ConsumeProtoMsgResponse *
+consume_proto_msg(E2ees__E2eeAddress *sender_address, const char *proto_msg_id);
 
 /**
  * @brief Process incoming protocol messages.
@@ -245,7 +241,8 @@ E2ees__ConsumeProtoMsgResponse *consume_proto_msg(E2ees__E2eeAddress *sender_add
  * @param proto_msg_data_len
  * @return E2ees__ConsumeProtoMsgResponse *
  */
-E2ees__ConsumeProtoMsgResponse *process_proto_msg(uint8_t *proto_msg_data, size_t proto_msg_data_len);
+E2ees__ConsumeProtoMsgResponse *
+process_proto_msg(uint8_t *proto_msg_data, size_t proto_msg_data_len);
 
 void resume_connection();
 

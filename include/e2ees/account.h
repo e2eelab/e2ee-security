@@ -44,10 +44,7 @@ void account_end();
  */
 int create_account(E2ees__Account **account_out, uint32_t e2ees_pack_id);
 
-int generate_identity_key(
-    E2ees__IdentityKey **identity_key_out,
-    uint32_t e2ees_pack_id
-);
+int generate_identity_key(E2ees__IdentityKey **identity_key_out, uint32_t e2ees_pack_id);
 
 /**
  * @brief Generate a new signed pre-key pair and a new signature.
@@ -60,9 +57,9 @@ int generate_identity_key(
  */
 int generate_signed_pre_key(
     E2ees__SignedPreKey **signed_pre_key_out,
-    uint32_t e2ees_pack_id, uint32_t cur_spk_id,
-    const uint8_t *identity_private_key
-);
+    uint32_t e2ees_pack_id,
+    uint32_t cur_spk_id,
+    const uint8_t *identity_private_key);
 
 /**
  * Purge and renew signed pre-key pair if it is expired.
@@ -77,10 +74,8 @@ void purge_signed_pre_key(E2ees__Account *account);
  * @param one_time_pre_key_id The one-time pre-key id to be matched
  * @return const E2ees__OneTimePreKey* The matched one-time pre-key.
  */
-E2ees__OneTimePreKey *lookup_one_time_pre_key(
-    E2ees__Account *account,
-    uint32_t one_time_pre_key_id
-);
+E2ees__OneTimePreKey *
+lookup_one_time_pre_key(E2ees__Account *account, uint32_t one_time_pre_key_id);
 
 /**
  * @brief Generates a number of new one-time pre-keys
@@ -92,9 +87,10 @@ E2ees__OneTimePreKey *lookup_one_time_pre_key(
  * @return 0 if success
  */
 int generate_opks(
-    E2ees__OneTimePreKey ***one_time_pre_key_out, size_t number_of_keys,
-    uint32_t e2ees_pack_id, uint32_t cur_opk_id
-);
+    E2ees__OneTimePreKey ***one_time_pre_key_out,
+    size_t number_of_keys,
+    uint32_t e2ees_pack_id,
+    uint32_t cur_opk_id);
 
 int insert_opks(E2ees__Account *account, E2ees__OneTimePreKey **src, size_t src_num);
 
@@ -105,10 +101,7 @@ int insert_opks(E2ees__Account *account, E2ees__OneTimePreKey **src, size_t src_
  * @param id The id of one-time pre-key that will be marked as used.
  * @return value < 0 for error
  */
-int mark_opk_as_used(
-    E2ees__Account *account,
-    uint32_t id
-);
+int mark_opk_as_used(E2ees__Account *account, uint32_t id);
 
 /**
  * @brief Purge used one-time pre-keys

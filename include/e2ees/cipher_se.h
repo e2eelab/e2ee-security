@@ -42,10 +42,12 @@ extern "C" {
  * @return 0 if success
  */
 int crypto_se_encrypt_aes256_gcm(
-    const ProtobufCBinaryData *ad, const uint8_t *aes_key,
-    const uint8_t *plaintext_data, size_t plaintext_data_len,
-    uint8_t **ciphertext_data, size_t *ciphertext_data_len
-);
+    const ProtobufCBinaryData *ad,
+    const uint8_t *aes_key,
+    const uint8_t *plaintext_data,
+    size_t plaintext_data_len,
+    uint8_t **ciphertext_data,
+    size_t *ciphertext_data_len);
 
 /**
  * @brief Decrypt a ciphertext with AES GCM.
@@ -59,10 +61,12 @@ int crypto_se_encrypt_aes256_gcm(
  * @return 0 if success or -1 for decryption error
  */
 int crypto_se_decrypt_aes256_gcm(
-    uint8_t **decrypted_data_out, size_t *decrypted_data_len_out,
-    const ProtobufCBinaryData *ad, const uint8_t *aes_key,
-    const uint8_t *ciphertext_data, size_t ciphertext_data_len
-);
+    uint8_t **decrypted_data_out,
+    size_t *decrypted_data_len_out,
+    const ProtobufCBinaryData *ad,
+    const uint8_t *aes_key,
+    const uint8_t *ciphertext_data,
+    size_t ciphertext_data_len);
 
 #ifdef __cplusplus
 }

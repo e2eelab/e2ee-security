@@ -37,9 +37,7 @@ extern "C" {
  * @return 0 if success
  */
 int produce_get_pre_key_bundle_request(
-    E2ees__GetPreKeyBundleRequest **request_out,
-    get_pre_key_bundle_params_t *params
-);
+    E2ees__GetPreKeyBundleRequest **request_out, get_pre_key_bundle_params_t *params);
 
 /**
  * @brief Process an incoming get_pre_key_bundle_response_payload.
@@ -58,8 +56,7 @@ int consume_get_pre_key_bundle_response(
     E2ees__E2eeAddress *from,
     uint8_t *group_pre_key_plaintext_data,
     size_t group_pre_key_plaintext_data_len,
-    E2ees__GetPreKeyBundleResponse *get_pre_key_bundle_response
-);
+    E2ees__GetPreKeyBundleResponse *get_pre_key_bundle_response);
 
 /**
  * @brief Create a send_one2one_msg_request to be sent to messaging server.
@@ -74,11 +71,11 @@ int produce_send_one2one_msg_request(
     E2ees__SendOne2oneMsgRequest **request_out,
     E2ees__Session *outbound_session,
     uint32_t notif_level,
-    E2ees__One2oneMsgPayload *payload
-);
+    E2ees__One2oneMsgPayload *payload);
 
 /**
- * @brief Process an send_one2one_msg_response with corresponding inbound session.
+ * @brief Process an send_one2one_msg_response with corresponding inbound
+ * session.
  *
  * @param outbound_session
  * @param response
@@ -86,9 +83,7 @@ int produce_send_one2one_msg_request(
  * @return false
  */
 bool consume_send_one2one_msg_response(
-    E2ees__Session *outbound_session,
-    E2ees__SendOne2oneMsgResponse *response
-);
+    E2ees__Session *outbound_session, E2ees__SendOne2oneMsgResponse *response);
 
 /**
  * @brief Process a received E2ees__E2eeMsg message from server.
@@ -98,10 +93,7 @@ bool consume_send_one2one_msg_response(
  * @return true
  * @return false
  */
-bool consume_one2one_msg(
-    E2ees__E2eeAddress *receiver_address,
-    E2ees__E2eeMsg *e2ee_msg
-);
+bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2ee_msg);
 
 /**
  * @brief Process an incoming AddUserDeviceMsg message.
@@ -112,9 +104,7 @@ bool consume_one2one_msg(
  * @return false
  */
 bool consume_add_user_device_msg(
-    E2ees__E2eeAddress *receiver_address,
-    E2ees__AddUserDeviceMsg *msg
-);
+    E2ees__E2eeAddress *receiver_address, E2ees__AddUserDeviceMsg *msg);
 
 /**
  * @brief Process an incoming E2ees__RemoveUserDeviceMsg message.
@@ -125,9 +115,7 @@ bool consume_add_user_device_msg(
  * @return false
  */
 bool consume_remove_user_device_msg(
-    E2ees__E2eeAddress *receiver_address,
-    E2ees__RemoveUserDeviceMsg *msg
-);
+    E2ees__E2eeAddress *receiver_address, E2ees__RemoveUserDeviceMsg *msg);
 
 /**
  * @brief Create a E2ees__InviteRequest message to be sent to server.
@@ -136,10 +124,7 @@ bool consume_remove_user_device_msg(
  * @param outbound_session
  * @return 0 if success
  */
-int produce_invite_request(
-    E2ees__InviteRequest **request_out,
-    E2ees__Session *outbound_session
-);
+int produce_invite_request(E2ees__InviteRequest **request_out, E2ees__Session *outbound_session);
 
 /**
  * @brief Process an incoming InviteResponse message.
@@ -149,10 +134,7 @@ int produce_invite_request(
  * @return true
  * @return false
  */
-int consume_invite_response(
-    E2ees__E2eeAddress *user_address,
-    E2ees__InviteResponse *response
-);
+int consume_invite_response(E2ees__E2eeAddress *user_address, E2ees__InviteResponse *response);
 
 /**
  * @brief Process an incoming E2ees__InviteMsg message.
@@ -162,10 +144,7 @@ int consume_invite_response(
  * @return true
  * @return false
  */
-bool consume_invite_msg(
-    E2ees__E2eeAddress *receiver_address,
-    E2ees__InviteMsg *invite_msg
-);
+bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *invite_msg);
 
 /**
  * @brief Create a E2ees__AcceptRequest message to be sent to server.
@@ -174,10 +153,7 @@ bool consume_invite_msg(
  * @param params
  * @return 0 if success
  */
-int produce_accept_request(
-    E2ees__AcceptRequest **request_out,
-    accept_params_t *params
-);
+int produce_accept_request(E2ees__AcceptRequest **request_out, accept_params_t *params);
 
 /**
  * @brief Process an incoming AcceptResponse message.
@@ -197,10 +173,7 @@ int consume_accept_response(E2ees__E2eeAddress *user_address, E2ees__AcceptRespo
  * @return true
  * @return false
  */
-bool consume_accept_msg(
-    E2ees__E2eeAddress *receiver_address,
-    E2ees__AcceptMsg *accept_msg
-);
+bool consume_accept_msg(E2ees__E2eeAddress *receiver_address, E2ees__AcceptMsg *accept_msg);
 
 #ifdef __cplusplus
 }
