@@ -371,7 +371,10 @@ int crypto_encrypt_aes_file(
     if (ret == E2EES_RESULT_SUCC) {
         int i;
         for (i = 0; i < times; i++) {
-            fread(in_buffer, sizeof(char), max_plaintext_size, infile);
+            size_t bytes_read = fread(in_buffer, sizeof(char), max_plaintext_size, infile);
+            if (bytes_read != max_plaintext_size && ferror(infile)) {
+                e2ees_notify_log(NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from infile.\n");
+            }
             if ((ret = mbedtls_gcm_update(&ctx, max_plaintext_size, in_buffer, out_buffer)) != 0)
                 break;
             fwrite(out_buffer, sizeof(char), max_plaintext_size, outfile);
@@ -379,7 +382,10 @@ int crypto_encrypt_aes_file(
     }
     if (ret == E2EES_RESULT_SUCC) {
         if (rest > 0) {
-            fread(in_buffer, sizeof(char), rest, infile);
+            size_t bytes_read = fread(in_buffer, sizeof(char), rest, infile);
+            if (bytes_read != rest && ferror(infile)) {
+                e2ees_notify_log(NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from infile.\n");
+            }
             if ((ret = mbedtls_gcm_update(&ctx, rest, in_buffer, out_buffer)) == 0) {
                 fwrite(out_buffer, sizeof(char), rest, outfile);
             }
@@ -453,7 +459,10 @@ int crypto_decrypt_aes_file(
 
     if (ret == E2EES_RESULT_SUCC) {
         for (i = 0; i < times; i++) {
-            fread(in_buffer, sizeof(char), max_ciphertext_size, infile);
+            size_t bytes_read = fread(in_buffer, sizeof(char), max_ciphertext_size, infile);
+            if (bytes_read != max_ciphertext_size && ferror(infile)) {
+                e2ees_notify_log(NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from infile.\n");
+            }
             if ((ret = mbedtls_gcm_update(&ctx, max_ciphertext_size, in_buffer, out_buffer)) != 0)
                 break;
             fwrite(out_buffer, sizeof(char), max_ciphertext_size, outfile);
@@ -461,7 +470,10 @@ int crypto_decrypt_aes_file(
     }
     if (ret == E2EES_RESULT_SUCC) {
         if (rest > 0) {
-            fread(in_buffer, sizeof(char), rest, infile);
+            size_t bytes_read = fread(in_buffer, sizeof(char), rest, infile);
+            if (bytes_read != rest && ferror(infile)) {
+                e2ees_notify_log(NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from infile.\n");
+            }
             if ((ret = mbedtls_gcm_update(&ctx, rest, in_buffer, out_buffer)) == 0) {
                 fwrite(out_buffer, sizeof(char), rest, outfile);
             }
@@ -474,7 +486,10 @@ int crypto_decrypt_aes_file(
             // fwrite(tag, sizeof(char), AES256_GCM_TAG_LENGTH, outfile);
             // verify tag
             uint8_t input_tag[AES256_GCM_TAG_LENGTH];
-            fread(input_tag, sizeof(uint8_t), AES256_GCM_TAG_LENGTH, infile);
+            size_t bytes_read = fread(input_tag, sizeof(uint8_t), AES256_GCM_TAG_LENGTH, infile);
+            if (bytes_read != AES256_GCM_TAG_LENGTH && ferror(infile)) {
+                e2ees_notify_log(NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from infile.\n");
+            }
 
             // verify tag in "constant-time"
             int diff = 0;

@@ -47,7 +47,6 @@ static int64_t gen_ts() {
 }
 
 static void gen_rand(uint8_t *rand_out, size_t rand_out_len) {
-    srand((unsigned int)time(NULL));
     size_t i;
     for (i = 0; i < rand_out_len; i++) {
         rand_out[i] = random() % UCHAR_MAX;
@@ -165,6 +164,7 @@ struct e2ees_plugin_t mock_plugin = {
 // test case interface
 
 void tear_up() {
+    srand((unsigned int)time(NULL));
     mock_db_begin();
     mock_server_begin();
     e2ees_begin(&mock_plugin);

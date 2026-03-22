@@ -787,7 +787,8 @@ void free_invite_response_list(E2ees__InviteResponse ***dest, size_t invite_resp
                 temp = NULL;
             }
         }
-        free_mem((void **)&(*dest), sizeof(E2ees__InviteResponse *) * invite_response_num);
+        free(*dest);
+        *dest = NULL;
     }
 }
 

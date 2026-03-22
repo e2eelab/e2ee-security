@@ -52,7 +52,10 @@ static void test_file(){
             plaintext_len = ftell(fptr);
             fseek(fptr, 0, SEEK_SET);
             plaintext = (uint8_t *)malloc(sizeof(uint8_t) * plaintext_len);
-            fread(plaintext, 1, plaintext_len, fptr);
+            size_t bytes_read = fread(plaintext, 1, plaintext_len, fptr);
+            if (bytes_read != plaintext_len && ferror(fptr)) {
+                e2ees_notify_log(NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from fptr.\n");
+            }
             fclose(fptr);
         }
 
@@ -73,7 +76,10 @@ static void test_file(){
             decrypted_plaintext_len = ftell(fptr);
             fseek(fptr, 0, SEEK_SET);
             decrypted_plaintext = (uint8_t *)malloc(sizeof(uint8_t) * decrypted_plaintext_len);
-            fread(decrypted_plaintext, 1, decrypted_plaintext_len, fptr);
+            size_t bytes_read = fread(decrypted_plaintext, 1, decrypted_plaintext_len, fptr);
+            if (bytes_read != decrypted_plaintext_len && ferror(fptr)) {
+                e2ees_notify_log(NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from fptr.\n");
+            }
             fclose(fptr);
         }
 

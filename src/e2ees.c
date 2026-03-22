@@ -263,7 +263,7 @@ void e2ees_notify_log(E2ees__E2eeAddress *user_address, LogCode log_code, const 
         char stack_trace[512] = {0};
         get_stack_trace(stack_trace, sizeof(stack_trace));
 
-        char log_msg[4096 + 512] = {0};
+        char log_msg[4096 + 512 + 128] = {0};
         snprintf(log_msg, sizeof(log_msg), "<%s> %s\nStack trace:\n%s", logcode_str, msg, stack_trace);
         e2ees_plugin->event_handler.on_log(user_address, log_code, log_msg);
     }

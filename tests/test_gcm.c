@@ -51,7 +51,10 @@ static void test_file(){
             plaintext_len = ftell(fptr);
             fseek(fptr, 0, SEEK_SET);
             plaintext = (uint8_t *)malloc(sizeof(uint8_t) * plaintext_len);
-            fread(plaintext, 1, plaintext_len, fptr);
+            size_t bytes_read = fread(plaintext, 1, plaintext_len, fptr);
+            if (bytes_read != plaintext_len && ferror(fptr)) {
+                e2ees_notify_log(NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from fptr.\n");
+            }
             fclose(fptr);
         }
         ciphertext_len = plaintext_len + AES256_GCM_TAG_LENGTH;

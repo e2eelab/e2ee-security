@@ -637,6 +637,10 @@ static const char *ONETIME_PRE_KEY_UPDATE_USED = "UPDATE ONETIME_PRE_KEY "
                                                  "WHERE ID is (?);";
 
 void mock_db_begin() {
+    if (db != NULL) {
+        mock_db_end();
+    }
+
     sqlite3_initialize();
 
     // connect
@@ -697,7 +701,10 @@ void mock_db_begin() {
 
 void mock_db_end() {
     if (db != NULL) {
-        sqlite3_close(db);
+        int rc = sqlite3_close_v2(db); 
+        if (rc != SQLITE_OK) {
+            printf("[Warning] SQLite closed with code: %d (probably unfinalized statements)\n", rc);
+        }
         db = NULL;
     }
     sqlite3_shutdown();

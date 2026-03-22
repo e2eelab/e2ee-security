@@ -282,6 +282,27 @@ void mock_certificate() {
     uint8_t *decoded_data = NULL;
     size_t decoded_data_len = 0;
 
+    if (central_key_pair != NULL) {
+        if (central_key_pair->private_key.data) free_mem((void **)&(central_key_pair->private_key.data), central_key_pair->private_key.len);
+        if (central_key_pair->public_key.data) free_mem((void **)&(central_key_pair->public_key.data), central_key_pair->public_key.len);
+        free(central_key_pair);
+        central_key_pair = NULL;
+    }
+    if (server_key_pair != NULL) {
+        if (server_key_pair->private_key.data) free_mem((void **)&(server_key_pair->private_key.data), server_key_pair->private_key.len);
+        if (server_key_pair->public_key.data) free_mem((void **)&(server_key_pair->public_key.data), server_key_pair->public_key.len);
+        free(server_key_pair);
+        server_key_pair = NULL;
+    }
+    if (central_certificate != NULL) {
+        e2ees__certificate__free_unpacked(central_certificate, NULL);
+        central_certificate = NULL;
+    }
+    if (server_certificate != NULL) {
+        e2ees__certificate__free_unpacked(server_certificate, NULL);
+        server_certificate = NULL;
+    }
+
     // central private key
     char *file_path = get_path("/cert/central_private.txt");
     if ((fptr = fopen(file_path, "r")) == NULL){
@@ -294,7 +315,10 @@ void mock_certificate() {
         data_len = ftell(fptr);
         fseek(fptr, 0, SEEK_SET);
         data = (uint8_t *)malloc(sizeof(uint8_t) * (data_len + 1));
-        fread(data, 1, data_len, fptr);
+        size_t bytes_read = fread(data, 1, data_len, fptr);
+        if (bytes_read != data_len) {
+            printf("[Warning] mock_server: fread did not read the expected amount of data.\n");
+        }
         fclose(fptr);
 
         data[data_len] = '\0';
@@ -322,7 +346,10 @@ void mock_certificate() {
         data_len = ftell(fptr);
         fseek(fptr, 0, SEEK_SET);
         data = (uint8_t *)malloc(sizeof(uint8_t) * (data_len + 1));
-        fread(data, 1, data_len, fptr);
+        size_t bytes_read = fread(data, 1, data_len, fptr);
+        if (bytes_read != data_len) {
+            printf("[Warning] mock_server: fread did not read the expected amount of data.\n");
+        }
         fclose(fptr);
 
         data[data_len] = '\0';
@@ -348,7 +375,10 @@ void mock_certificate() {
         data_len = ftell(fptr);
         fseek(fptr, 0, SEEK_SET);
         data = (uint8_t *)malloc(sizeof(uint8_t) * (data_len + 1));
-        fread(data, 1, data_len, fptr);
+        size_t bytes_read = fread(data, 1, data_len, fptr);
+        if (bytes_read != data_len) {
+            printf("[Warning] mock_server: fread did not read the expected amount of data.\n");
+        }
         fclose(fptr);
 
         data[data_len] = '\0';
@@ -376,7 +406,10 @@ void mock_certificate() {
         data_len = ftell(fptr);
         fseek(fptr, 0, SEEK_SET);
         data = (uint8_t *)malloc(sizeof(uint8_t) * (data_len + 1));
-        fread(data, 1, data_len, fptr);
+        size_t bytes_read = fread(data, 1, data_len, fptr);
+        if (bytes_read != data_len) {
+            printf("[Warning] mock_server: fread did not read the expected amount of data.\n");
+        }
         fclose(fptr);
 
         data[data_len] = '\0';
@@ -457,7 +490,9 @@ void mock_server_end() {
                 cur_opk = NULL;
             }
         }
-        free_mem((void **)&(user_data_set[i].one_time_pre_key_list), sizeof(E2ees__OneTimePreKeyPublic *) * user_data_set[i].n_one_time_pre_key_list);
+        if (user_data_set[i].one_time_pre_key_list != NULL) {
+            free(user_data_set[i].one_time_pre_key_list);
+        }
         user_data_set[i].identity_key_public = NULL;
         user_data_set[i].signed_pre_key_public = NULL;
         user_data_set[i].one_time_pre_key_list = NULL;
@@ -489,11 +524,23 @@ void mock_server_end() {
         server_certificate = NULL;
     }
     if (central_key_pair != NULL) {
-        e2ees__key_pair__free_unpacked(central_key_pair, NULL);
+        if (central_key_pair->private_key.data != NULL) {
+            free_mem((void **)&(central_key_pair->private_key.data), central_key_pair->private_key.len);
+        }
+        if (central_key_pair->public_key.data != NULL) {
+            free_mem((void **)&(central_key_pair->public_key.data), central_key_pair->public_key.len);
+        }
+        free(central_key_pair);
         central_key_pair = NULL;
     }
     if (server_key_pair != NULL) {
-        e2ees__key_pair__free_unpacked(server_key_pair, NULL);
+        if (server_key_pair->private_key.data != NULL) {
+            free_mem((void **)&(server_key_pair->private_key.data), server_key_pair->private_key.len);
+        }
+        if (server_key_pair->public_key.data != NULL) {
+            free_mem((void **)&(server_key_pair->public_key.data), server_key_pair->public_key.len);
+        }
+        free(server_key_pair);
         server_key_pair = NULL;
     }
 }

@@ -49,11 +49,9 @@ int produce_register_request(E2ees__RegisterUserRequest **request_out, register_
     request->auth_code = strdup(params->auth_code);
 
     // copy identity public key
-    request->identity_key_public = (E2ees__IdentityKeyPublic *)malloc(sizeof(E2ees__IdentityKeyPublic));
     copy_ik_to_public(&(request->identity_key_public), account->identity_key);
 
     // copy signed pre-key
-    request->signed_pre_key_public = (E2ees__SignedPreKeyPublic *)malloc(sizeof(E2ees__SignedPreKeyPublic));
     copy_spk_to_public(&(request->signed_pre_key_public), account->signed_pre_key);
 
     // copy one-time pre-key

@@ -398,6 +398,7 @@ static void test_initialise_as_alice() {
     assert(ret == E2EES_RESULT_SUCC);
 
     // release
+    e2ees__ratchet__free_unpacked(alice_ratchet, NULL);
     free_protobuf(&(alice_ratchet_key.public_key));
     free_protobuf(&(alice_ratchet_key.private_key));
     free_protobuf(&(bob_spk.public_key));
@@ -445,6 +446,7 @@ static void test_initialise_as_bob() {
     assert(ret == E2EES_RESULT_SUCC);
 
     // release
+    e2ees__ratchet__free_unpacked(bob_ratchet, NULL);
     free_protobuf(&(alice_ratchet_key.public_key));
     free_protobuf(&(alice_ratchet_key.private_key));
     free_protobuf(&(bob_spk.public_key));
@@ -750,6 +752,7 @@ static void test_continual_message() {
         free_mem((void **)&output[i], output_len[i]);
         e2ees__one2one_msg_payload__free_unpacked(message[i], NULL);
     }
+    free_mem((void **)&message, sizeof(E2ees__One2oneMsgPayload *) * message_num);
     free_mem((void **)&plaintext, sizeof(uint8_t *) * message_num);
     free_mem((void **)&plaintext_len, sizeof(size_t) * message_num);
     free_mem((void **)&output, sizeof(uint8_t *) * message_num);
@@ -938,6 +941,7 @@ static void test_out_of_order_v2() {
         free_mem((void **)&output[i], output_len[i]);
         e2ees__one2one_msg_payload__free_unpacked(message[i], NULL);
     }
+    free_mem((void **)&message, sizeof(E2ees__One2oneMsgPayload *) * msg_num);
     free_mem((void **)&plaintext, sizeof(uint8_t *) * msg_num);
     free_mem((void **)&plaintext_len, sizeof(size_t) * msg_num);
     free_mem((void **)&output, sizeof(uint8_t *) * msg_num);

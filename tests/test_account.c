@@ -517,6 +517,7 @@ static void test_supply_opks() {
         account_new = NULL;
     }
     free_proto(proto_msg);
+    free_proto(consume_proto_msg_response);
 
     // test stop
     tear_down();

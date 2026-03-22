@@ -30,6 +30,7 @@
 pthread_mutex_t lock;
 bool running;
 pthread_t thread;
+static bool thread_created = false;
 
 E2ees__ProtoMsg *proto_msg_queue[QUEUE_SIZE];
 int proto_msg_queue_insert_head = 0;
@@ -100,13 +101,14 @@ void start_mock_server_sending() {
     }
     running = true;
     pthread_create(&thread, NULL, (void *)process_outgoing_queue, "process outgoing queue");
+    thread_created = true;
 }
 
 void stop_mock_server_sending() {
     running = false;
-    if (thread != NULL) {
+    if (thread_created) {
         pthread_join(thread, 0);
-        thread = NULL;
+        thread_created = false;
     }
     pthread_mutex_destroy(&lock);
 }
