@@ -25,7 +25,7 @@
 
 static account_cacheer *account_cacheer_list = NULL;
 
-static account_cacheer* find_account_in_cache(E2ees__E2eeAddress *address) {
+static account_cacheer *find_account_in_cache(E2ees__E2eeAddress *address) {
     account_cacheer *cur = account_cacheer_list;
     while (cur) {
         if (compare_address(cur->address, address)) {
@@ -38,31 +38,29 @@ static account_cacheer* find_account_in_cache(E2ees__E2eeAddress *address) {
     return NULL;
 }
 
-static void insert_account_cacheer(
-    account_cacheer *dest, E2ees__Account *account
-) {
+static void insert_account_cacheer(account_cacheer *dest, E2ees__Account *account) {
     dest->version = strdup(account->version);
     dest->e2ees_pack_id = account->e2ees_pack_id;
     copy_address_from_address(&(dest->address), account->address);
     copy_ik_from_ik(&(dest->identity_key), account->identity_key);
 
-    if (account->server_cert != NULL 
-        && account->server_cert->cert != NULL
-    ) {
+    if (account->server_cert != NULL && account->server_cert->cert != NULL) {
         copy_protobuf_from_protobuf(&(dest->server_public_key), &(account->server_cert->cert->public_key));
     } else {
         dest->server_public_key.len = 0;
         dest->server_public_key.data = NULL;
     }
-    
+
     dest->next = NULL;
 }
 
 void store_account_into_cache(E2ees__Account *account) {
-    if (!account || !account->address) return;
+    if (!account || !account->address)
+        return;
 
     // check if the address is in the cache already
-    if (find_account_in_cache(account->address)) return;
+    if (find_account_in_cache(account->address))
+        return;
 
     // double pointer
     account_cacheer **pp = &account_cacheer_list;
@@ -71,8 +69,9 @@ void store_account_into_cache(E2ees__Account *account) {
     }
 
     // allocate the memory
-    *pp = (account_cacheer *)malloc(sizeof(account_cacheer));
-    if (*pp == NULL) return; // malloc error
+    *pp = (account_cacheer *)calloc(1, sizeof(account_cacheer));
+    if (*pp == NULL)
+        return; // malloc error
 
     insert_account_cacheer(*pp, account);
 }

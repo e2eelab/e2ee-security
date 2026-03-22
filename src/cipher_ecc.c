@@ -26,7 +26,6 @@
 
 #include "e2ees/cipher.h"
 #include "e2ees/crypto.h"
-#include "e2ees/mem_util.h"
 
 static const uint8_t CURVE25519_BASEPOINT[32] = {9};
 

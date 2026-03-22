@@ -10,6 +10,7 @@ extern "C" {
 #endif
 
 #include "e2ees/e2ees.h"
+#include "e2ees/e2ees_client_internal.h"
 
 bool accurate_key_pair(E2ees__KeyPair *key_pair, uint32_t pub_key_len, uint32_t priv_key_len);
 
@@ -172,27 +173,27 @@ bool is_valid_server_signed_signature(E2ees__ServerSignedSignature *src);
 
 bool is_valid_server_signed_signature_list(E2ees__ServerSignedSignature **src, size_t len);
 
-bool is_valid_register_user_inputs(const register_user_params *params);
+bool is_valid_register_user_inputs(const register_user_params_t *params);
 
-bool is_valid_publish_spk_inputs(const publish_spk_params *params);
+bool is_valid_publish_spk_inputs(const publish_spk_params_t *params);
 
-bool is_valid_supply_opks_inputs(const supply_opks_params *params);
+bool is_valid_supply_opks_inputs(const supply_opks_params_t *params);
 
-bool is_valid_get_pre_key_bundle_inputs(const get_pre_key_bundle_params *params);
+bool is_valid_get_pre_key_bundle_inputs(const get_pre_key_bundle_params_t *params);
 
-bool is_valid_accept_inputs(const accept_params *params);
+bool is_valid_accept_inputs(const accept_params_t *params);
 
-bool is_valid_create_group_inputs(const create_group_params *params);
+bool is_valid_create_group_inputs(const create_group_params_t *params);
 
-bool is_valid_add_group_members_inputs(const add_group_members_params *params);
+bool is_valid_add_group_members_inputs(const add_group_members_params_t *params);
 
-bool is_valid_remove_group_members_inputs(const remove_group_members_params *params);
+bool is_valid_remove_group_members_inputs(const remove_group_members_params_t *params);
 
-bool is_valid_add_group_member_device_inputs(const add_group_member_device_params *params);
+bool is_valid_add_group_member_device_inputs(const add_group_member_device_params_t *params);
 
-bool is_valid_leave_group_inputs(const leave_group_params *params);
+bool is_valid_leave_group_inputs(const leave_group_params_t *params);
 
-bool is_valid_send_group_msg_inputs(const send_group_msg_params *params);
+bool is_valid_send_group_msg_inputs(const send_group_msg_params_t *params);
 
 #ifdef __cplusplus
 }

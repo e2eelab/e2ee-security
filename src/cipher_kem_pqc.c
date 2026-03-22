@@ -37,7 +37,6 @@
 #include <PQClean/src/crypto_kem/mceliece8192128f/clean/api.h>
 
 #include "e2ees/cipher.h"
-#include "e2ees/mem_util.h"
 
 static crypto_kem_param_t hqc128_param = {
     true,

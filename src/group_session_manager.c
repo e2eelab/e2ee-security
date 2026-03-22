@@ -26,14 +26,10 @@
 #include "e2ees/e2ees_client_internal.h"
 #include "e2ees/group_session.h"
 #include "e2ees/mem_util.h"
-#include "e2ees/validation.h"
 #include "e2ees/session.h"
+#include "e2ees/validation.h"
 
-int produce_create_group_request(
-    E2ees__CreateGroupRequest **request_out,
-    create_group_params *params,
-    uint32_t e2ees_pack_id
-) {
+int produce_create_group_request(E2ees__CreateGroupRequest **request_out, create_group_params_t *params, uint32_t e2ees_pack_id) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__CreateGroupRequest *request = NULL;
@@ -65,14 +61,8 @@ int produce_create_group_request(
     return ret;
 }
 
-int consume_create_group_response(
-    uint32_t e2ees_pack_id,
-    E2ees__E2eeAddress *sender_address,
-    const char *group_name,
-    E2ees__GroupMember **group_member_list,
-    size_t group_members_num,
-    E2ees__CreateGroupResponse *response
-) {
+int consume_create_group_response(uint32_t e2ees_pack_id, E2ees__E2eeAddress *sender_address, const char *group_name, E2ees__GroupMember **group_member_list, size_t group_members_num,
+                                  E2ees__CreateGroupResponse *response) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__E2eeAddress *group_address = NULL;
@@ -96,10 +86,8 @@ int consume_create_group_response(
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        ret = new_outbound_group_session_by_sender(
-            response->n_member_info_list, response->member_info_list,
-            e2ees_pack_id, sender_address, group_name, group_address, group_member_list, group_members_num, NULL
-        );
+        ret = new_outbound_group_session_by_sender(response->n_member_info_list, response->member_info_list, e2ees_pack_id, sender_address, group_name, group_address, group_member_list,
+                                                   group_members_num, NULL);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -168,13 +156,8 @@ bool consume_create_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__Creat
                 if (!compare_address(cur_group_member_info->member_address, receiver_address)) {
                     ret = new_inbound_group_session_by_member_id(e2ees_pack_id, receiver_address, cur_group_member_info, group_info);
                     if (ret == E2EES_RESULT_FAIL) {
-                        e2ees_notify_log(
-                            receiver_address,
-                            BAD_GROUP_SESSION,
-                            "consume_create_group_msg() new_inbound_group_session_by_member_id failed with member_address: [%s:%s]",
-                            cur_group_member_info->member_address->user->user_id,
-                            cur_group_member_info->member_address->user->device_id
-                        );
+                        e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_create_group_msg() new_inbound_group_session_by_member_id failed with member_address: [%s:%s]",
+                                         cur_group_member_info->member_address->user->user_id, cur_group_member_info->member_address->user->device_id);
                     }
                 }
             }
@@ -186,49 +169,26 @@ bool consume_create_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__Creat
                         // the senders in the inbound group sessions are the members in the group, except for the one who creates the group
                         ret = new_and_complete_inbound_group_session(cur_group_member_info, inbound_group_session);
                         if (ret == E2EES_RESULT_FAIL) {
-                            e2ees_notify_log(
-                                receiver_address,
-                                DEBUG_LOG,
-                                "consume_create_group_msg() new_and_complete_inbound_group_session failed with member_address: [%s:%s]",
-                                cur_group_member_info->member_address->user->user_id,
-                                cur_group_member_info->member_address->user->device_id
-                            );
+                            e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_create_group_msg() new_and_complete_inbound_group_session failed with member_address: [%s:%s]",
+                                             cur_group_member_info->member_address->user->user_id, cur_group_member_info->member_address->user->device_id);
                         }
                     }
                 } else {
                     // the sender in this inbound group session is the one who creates the group
                     ret = complete_inbound_group_session_by_member_id(inbound_group_session, cur_group_member_info);
                     if (ret == E2EES_RESULT_FAIL) {
-                        e2ees_notify_log(
-                            receiver_address,
-                            DEBUG_LOG,
-                            "consume_create_group_msg() complete_inbound_group_session_by_member_id failed with member_address: [%s:%s]",
-                            cur_group_member_info->member_address->user->user_id,
-                            cur_group_member_info->member_address->user->device_id
-                        );
+                        e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_create_group_msg() complete_inbound_group_session_by_member_id failed with member_address: [%s:%s]",
+                                         cur_group_member_info->member_address->user->user_id, cur_group_member_info->member_address->user->device_id);
                     }
                 }
             }
 
             // create a new outbound group session
-            ret = new_outbound_group_session_by_receiver(
-                &(inbound_group_session->group_seed),
-                e2ees_pack_id,
-                receiver_address,
-                group_name,
-                group_address,
-                inbound_group_session->session_id,
-                group_member_list,
-                group_members_num
-            );
+            ret = new_outbound_group_session_by_receiver(&(inbound_group_session->group_seed), e2ees_pack_id, receiver_address, group_name, group_address, inbound_group_session->session_id,
+                                                         group_member_list, group_members_num);
             if (ret == E2EES_RESULT_FAIL) {
-                e2ees_notify_log(
-                    receiver_address,
-                    DEBUG_LOG,
-                    "consume_create_group_msg() new_outbound_group_session_by_receiver failed with session_owner and sender_address: [%s:%s]",
-                    receiver_address->user->user_id,
-                    receiver_address->user->device_id
-                );
+                e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_create_group_msg() new_outbound_group_session_by_receiver failed with session_owner and sender_address: [%s:%s]",
+                                 receiver_address->user->user_id, receiver_address->user->device_id);
             }
         }
     }
@@ -263,11 +223,7 @@ bool consume_get_group_response(E2ees__GetGroupResponse *response) {
     }
 }
 
-int produce_add_group_members_request(
-    E2ees__AddGroupMembersRequest **request_out,
-    add_group_members_params *params,
-    E2ees__GroupSession *outbound_group_session
-) {
+int produce_add_group_members_request(E2ees__AddGroupMembersRequest **request_out, add_group_members_params_t *params, E2ees__GroupSession *outbound_group_session) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__AddGroupMembersRequest *request = NULL;
@@ -298,12 +254,7 @@ int produce_add_group_members_request(
     return ret;
 }
 
-int consume_add_group_members_response(
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__AddGroupMembersResponse *response,
-    E2ees__GroupMember **added_members,
-    size_t added_members_num
-) {
+int consume_add_group_members_response(E2ees__GroupSession *outbound_group_session, E2ees__AddGroupMembersResponse *response, E2ees__GroupMember **added_members, size_t added_members_num) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__GroupMember **new_group_members = NULL;
@@ -329,11 +280,8 @@ int consume_add_group_members_response(
 
     if (ret == E2EES_RESULT_SUCC) {
         // renew the outbound group session
-        ret = renew_outbound_group_session_by_welcome_and_add(
-            outbound_group_session, NULL, session_owner,
-            response->n_adding_member_info_list, response->adding_member_info_list,
-            added_members_num, added_members
-        );
+        ret = renew_outbound_group_session_by_welcome_and_add(outbound_group_session, NULL, session_owner, response->n_adding_member_info_list, response->adding_member_info_list,
+                                                              added_members_num, added_members);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -342,15 +290,7 @@ int consume_add_group_members_response(
         group_address = outbound_group_session->group_info->group_address;
 
         // notify
-        e2ees_notify_group_members_added(
-            session_owner,
-            group_address,
-            group_name,
-            new_group_members,
-            new_group_members_num,
-            added_members,
-            added_members_num
-        );
+        e2ees_notify_group_members_added(session_owner, group_address, group_name, new_group_members, new_group_members_num, added_members, added_members_num);
     } else {
         e2ees_notify_log(session_owner, DEBUG_LOG, "group members adding failed");
     }
@@ -390,13 +330,9 @@ bool consume_add_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ees__
      *  On the other hand, the new group members need to create the outbound group session.
      */
     if (ret == E2EES_RESULT_SUCC) {
-        get_e2ees_plugin()->db_handler.load_group_session_by_address(
-            receiver_address, receiver_address, group_address, &outbound_group_session
-        );
+        get_e2ees_plugin()->db_handler.load_group_session_by_address(receiver_address, receiver_address, group_address, &outbound_group_session);
         if (is_valid_group_session(outbound_group_session)) {
-            get_e2ees_plugin()->db_handler.load_group_session_by_id(
-                msg->sender_address, receiver_address, outbound_group_session->session_id, &inbound_group_session
-            );
+            get_e2ees_plugin()->db_handler.load_group_session_by_id(msg->sender_address, receiver_address, outbound_group_session->session_id, &inbound_group_session);
             if (!is_valid_group_session(inbound_group_session)) {
                 e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_add_group_members_msg() invalid inbound_group_session");
                 ret = E2EES_RESULT_FAIL;
@@ -417,24 +353,13 @@ bool consume_add_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ees__
         }
 
         // renew the outbound group session
-        ret = renew_outbound_group_session_by_welcome_and_add(
-            outbound_group_session, &(inbound_group_session->chain_key), msg->sender_address,
-            msg->n_adding_member_info_list, msg->adding_member_info_list,
-            msg->n_adding_member_list, msg->adding_member_list
-        );
+        ret = renew_outbound_group_session_by_welcome_and_add(outbound_group_session, &(inbound_group_session->chain_key), msg->sender_address, msg->n_adding_member_info_list,
+                                                              msg->adding_member_info_list, msg->n_adding_member_list, msg->adding_member_list);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
         // notify
-        e2ees_notify_group_members_added(
-            receiver_address,
-            group_address,
-            group_name,
-            new_group_members,
-            new_group_members_num,
-            msg->adding_member_list,
-            msg->n_adding_member_list
-        );
+        e2ees_notify_group_members_added(receiver_address, group_address, group_name, new_group_members, new_group_members_num, msg->adding_member_list, msg->n_adding_member_list);
     } else {
         e2ees_notify_log(NULL, DEBUG_LOG, "failed to consume add group members msg");
     }
@@ -453,11 +378,7 @@ bool consume_add_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ees__
     return true;
 }
 
-int produce_add_group_member_device_request(
-    E2ees__AddGroupMemberDeviceRequest **request_out,
-    add_group_member_device_params *params,
-    E2ees__GroupSession *outbound_group_session
-) {
+int produce_add_group_member_device_request(E2ees__AddGroupMemberDeviceRequest **request_out, add_group_member_device_params_t *params, E2ees__GroupSession *outbound_group_session) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__AddGroupMemberDeviceRequest *request = NULL;
@@ -490,10 +411,7 @@ int produce_add_group_member_device_request(
     return ret;
 }
 
-int consume_add_group_member_device_response(
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__AddGroupMemberDeviceResponse *response
-) {
+int consume_add_group_member_device_response(E2ees__GroupSession *outbound_group_session, E2ees__AddGroupMemberDeviceResponse *response) {
     int ret = E2EES_RESULT_SUCC;
 
     char *group_name = NULL;
@@ -522,21 +440,12 @@ int consume_add_group_member_device_response(
 
     if (ret == E2EES_RESULT_SUCC) {
         // renew the outbound group session
-        ret = renew_group_sessions_with_new_device(
-            outbound_group_session, NULL, session_owner, new_device_address, adding_member_device_info
-        );
+        ret = renew_group_sessions_with_new_device(outbound_group_session, NULL, session_owner, new_device_address, adding_member_device_info);
     }
 
     if (ret == E2EES_RESULT_SUCC) {
-        e2ees_notify_log(
-            outbound_group_session->session_owner,
-            DEBUG_LOG,
-            "consume_add_group_member_device_response() success, new_device_address: [%s:%s], group_address:[%s@%s]",
-            new_device_address->user->user_id,
-            new_device_address->user->device_id,
-            group_address->group->group_id,
-            group_address->domain
-        );
+        e2ees_notify_log(outbound_group_session->session_owner, DEBUG_LOG, "consume_add_group_member_device_response() success, new_device_address: [%s:%s], group_address:[%s@%s]",
+                         new_device_address->user->user_id, new_device_address->user->device_id, group_address->group->group_id, group_address->domain);
     } else {
         e2ees_notify_log(session_owner, DEBUG_LOG, "consume_add_group_member_device_response() failed");
     }
@@ -544,10 +453,7 @@ int consume_add_group_member_device_response(
     return ret;
 }
 
-bool consume_add_group_member_device_msg(
-    E2ees__E2eeAddress *receiver_address,
-    E2ees__AddGroupMemberDeviceMsg *msg
-) {
+bool consume_add_group_member_device_msg(E2ees__E2eeAddress *receiver_address, E2ees__AddGroupMemberDeviceMsg *msg) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__E2eeAddress *group_address = NULL;
@@ -579,14 +485,10 @@ bool consume_add_group_member_device_msg(
      *  On the other hand, the new group members need to create the outbound group session.
      */
     if (ret == E2EES_RESULT_SUCC) {
-        get_e2ees_plugin()->db_handler.load_group_session_by_address(
-            receiver_address, receiver_address, group_address, &outbound_group_session
-        );
+        get_e2ees_plugin()->db_handler.load_group_session_by_address(receiver_address, receiver_address, group_address, &outbound_group_session);
         if (is_valid_group_session(outbound_group_session)) {
             // load the inbound group session to get the chain key
-            get_e2ees_plugin()->db_handler.load_group_session_by_id(
-                msg->sender_address, receiver_address, outbound_group_session->session_id, &inbound_group_session
-            );
+            get_e2ees_plugin()->db_handler.load_group_session_by_id(msg->sender_address, receiver_address, outbound_group_session->session_id, &inbound_group_session);
             if (!is_valid_group_session(inbound_group_session)) {
                 e2ees_notify_log(receiver_address, BAD_GROUP_SESSION, "consume_add_group_member_device_msg()");
                 ret = E2EES_RESULT_FAIL;
@@ -607,10 +509,8 @@ bool consume_add_group_member_device_msg(
         }
 
         // renew the outbound group session
-        ret = renew_group_sessions_with_new_device(
-            outbound_group_session, &(inbound_group_session->chain_key),
-            msg->sender_address, msg->adding_member_device->member_address, msg->adding_member_device
-        );
+        ret = renew_group_sessions_with_new_device(outbound_group_session, &(inbound_group_session->chain_key), msg->sender_address, msg->adding_member_device->member_address,
+                                                   msg->adding_member_device);
     }
 
     // release
@@ -627,11 +527,7 @@ bool consume_add_group_member_device_msg(
     return true;
 }
 
-int produce_remove_group_members_request(
-    E2ees__RemoveGroupMembersRequest **request_out,
-    remove_group_members_params *params,
-    E2ees__GroupSession *outbound_group_session
-) {
+int produce_remove_group_members_request(E2ees__RemoveGroupMembersRequest **request_out, remove_group_members_params_t *params, E2ees__GroupSession *outbound_group_session) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__RemoveGroupMembersRequest *request = NULL;
@@ -647,9 +543,7 @@ int produce_remove_group_members_request(
 
     copy_address_from_address(&(msg->sender_address), params->sender_address);
 
-    remove_group_members_from_group_info(
-        &(msg->group_info), outbound_group_session->group_info, params->removing_members, params->removing_members_num
-    );
+    remove_group_members_from_group_info(&(msg->group_info), outbound_group_session->group_info, params->removing_members, params->removing_members_num);
 
     msg->n_removing_member_list = params->removing_members_num;
     copy_group_members(&(msg->removing_member_list), params->removing_members, params->removing_members_num);
@@ -666,21 +560,15 @@ int produce_remove_group_members_request(
 static bool user_in_group(E2ees__E2eeAddress *user_address, E2ees__GroupMember **group_member_list, size_t group_members_num) {
     size_t i;
     for (i = 0; i < group_members_num; i++) {
-        if (safe_strcmp(group_member_list[i]->user_id, user_address->user->user_id)
-            && safe_strcmp(group_member_list[i]->domain, user_address->domain)
-        ) {
+        if (safe_strcmp(group_member_list[i]->user_id, user_address->user->user_id) && safe_strcmp(group_member_list[i]->domain, user_address->domain)) {
             return true;
         }
     }
     return false;
 }
 
-int consume_remove_group_members_response(
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__RemoveGroupMembersResponse *response,
-    E2ees__GroupMember **removed_members,
-    size_t removed_members_num
-) {
+int consume_remove_group_members_response(E2ees__GroupSession *outbound_group_session, E2ees__RemoveGroupMembersResponse *response, E2ees__GroupMember **removed_members,
+                                          size_t removed_members_num) {
     int ret = E2EES_RESULT_SUCC;
 
     uint32_t e2ees_pack_id;
@@ -713,10 +601,8 @@ int consume_remove_group_members_response(
 
         if (group_members_num > 0 && user_in_group(sender_address, group_member_list, group_members_num)) {
             // generate a new outbound group session
-            ret = new_outbound_group_session_by_sender(
-                response->n_member_info_list, response->member_info_list,
-                e2ees_pack_id, sender_address, group_name, group_address, group_member_list, group_members_num, old_session_id
-            );
+            ret = new_outbound_group_session_by_sender(response->n_member_info_list, response->member_info_list, e2ees_pack_id, sender_address, group_name, group_address, group_member_list,
+                                                       group_members_num, old_session_id);
         } else {
             // user is removed from group
             e2ees_notify_log(sender_address, DEBUG_LOG, "consume_remove_group_members_response() skip renew outbound group session since user is not in group");
@@ -725,15 +611,7 @@ int consume_remove_group_members_response(
 
     if (ret == E2EES_RESULT_SUCC) {
         // notify
-        e2ees_notify_group_members_removed(
-            sender_address,
-            group_address,
-            group_name,
-            group_member_list,
-            group_members_num,
-            removed_members,
-            removed_members_num
-        );
+        e2ees_notify_group_members_removed(sender_address, group_address, group_name, group_member_list, group_members_num, removed_members, removed_members_num);
     } else {
         e2ees_notify_log(sender_address, DEBUG_LOG, "group members removing failed");
     }
@@ -777,22 +655,12 @@ bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ee
     if (ret == E2EES_RESULT_SUCC) {
         // if the receiver is the one who is going to be removed, the receiver should unload his or her own group session
         for (i = 0; i < msg->n_removing_member_list; i++) {
-            if (safe_strcmp(receiver_address->user->user_id, msg->removing_member_list[i]->user_id)
-                && safe_strcmp(receiver_address->domain, msg->removing_member_list[i]->domain)
-            ) {
+            if (safe_strcmp(receiver_address->user->user_id, msg->removing_member_list[i]->user_id) && safe_strcmp(receiver_address->domain, msg->removing_member_list[i]->domain)) {
                 // unload all outbound and inbound group sessions
                 get_e2ees_plugin()->db_handler.unload_group_session_by_address(receiver_address, group_address);
 
                 // notify
-                e2ees_notify_group_members_removed(
-                    receiver_address,
-                    group_address,
-                    group_name,
-                    new_group_members,
-                    new_group_members_num,
-                    msg->removing_member_list,
-                    msg->n_removing_member_list
-                );
+                e2ees_notify_group_members_removed(receiver_address, group_address, group_name, new_group_members, new_group_members_num, msg->removing_member_list, msg->n_removing_member_list);
 
                 // done
                 // no need to renew outbound group session
@@ -807,10 +675,7 @@ bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ee
         get_e2ees_plugin()->db_handler.load_group_session_by_address(sender_address, receiver_address, group_address, &inbound_group_session);
 
         if (is_valid_group_session(inbound_group_session)) {
-            if (!compare_group_member(
-                inbound_group_session->group_info->group_member_list, inbound_group_session->group_info->n_group_member_list,
-                new_group_members, new_group_members_num)
-            ) {
+            if (!compare_group_member(inbound_group_session->group_info->group_member_list, inbound_group_session->group_info->n_group_member_list, new_group_members, new_group_members_num)) {
                 new_group_session = false;
                 // unload the old group sessions
                 get_e2ees_plugin()->db_handler.unload_group_session_by_id(receiver_address, inbound_group_session->session_id);
@@ -827,13 +692,8 @@ bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ee
                 if (!compare_address(cur_group_member_id->member_address, receiver_address)) {
                     ret = new_inbound_group_session_by_member_id(e2ees_pack_id, receiver_address, cur_group_member_id, group_info);
                     if (ret == E2EES_RESULT_FAIL) {
-                        e2ees_notify_log(
-                            receiver_address,
-                            DEBUG_LOG,
-                            "consume_remove_group_members_msg() new_inbound_group_session_by_member_id failed with member_address: [%s:%s]",
-                            cur_group_member_id->member_address->user->user_id,
-                            cur_group_member_id->member_address->user->device_id
-                        );
+                        e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_remove_group_members_msg() new_inbound_group_session_by_member_id failed with member_address: [%s:%s]",
+                                         cur_group_member_id->member_address->user->user_id, cur_group_member_id->member_address->user->device_id);
                     }
                 }
             }
@@ -844,60 +704,30 @@ bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ee
                     if (!compare_address(cur_group_member_id->member_address, receiver_address)) {
                         ret = new_and_complete_inbound_group_session(cur_group_member_id, inbound_group_session);
                         if (ret == E2EES_RESULT_FAIL) {
-                            e2ees_notify_log(
-                                receiver_address,
-                                DEBUG_LOG,
-                                "consume_remove_group_members_msg() new_and_complete_inbound_group_session failed with member_address: [%s:%s]",
-                                cur_group_member_id->member_address->user->user_id,
-                                cur_group_member_id->member_address->user->device_id
-                            );
+                            e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_remove_group_members_msg() new_and_complete_inbound_group_session failed with member_address: [%s:%s]",
+                                             cur_group_member_id->member_address->user->user_id, cur_group_member_id->member_address->user->device_id);
                         }
                     }
                 } else {
                     ret = complete_inbound_group_session_by_member_id(inbound_group_session, cur_group_member_id);
                     if (ret == E2EES_RESULT_FAIL) {
-                        e2ees_notify_log(
-                            receiver_address,
-                            DEBUG_LOG,
-                            "consume_remove_group_members_msg() complete_inbound_group_session_by_member_id failed with member_address: [%s:%s]",
-                            cur_group_member_id->member_address->user->user_id,
-                            cur_group_member_id->member_address->user->device_id
-                        );
+                        e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_remove_group_members_msg() complete_inbound_group_session_by_member_id failed with member_address: [%s:%s]",
+                                         cur_group_member_id->member_address->user->user_id, cur_group_member_id->member_address->user->device_id);
                     }
                 }
             }
 
             // create a new outbound group session
-            ret = new_outbound_group_session_by_receiver(
-                &(inbound_group_session->group_seed),
-                e2ees_pack_id,
-                receiver_address,
-                group_name,
-                group_address,
-                inbound_group_session->session_id,
-                new_group_members,
-                new_group_members_num
-            );
+            ret = new_outbound_group_session_by_receiver(&(inbound_group_session->group_seed), e2ees_pack_id, receiver_address, group_name, group_address, inbound_group_session->session_id,
+                                                         new_group_members, new_group_members_num);
             if (ret == E2EES_RESULT_FAIL) {
-                e2ees_notify_log(
-                    receiver_address,
-                    DEBUG_LOG,
-                    "consume_remove_group_members_msg() new_outbound_group_session_by_receiver failed"
-                );
+                e2ees_notify_log(receiver_address, DEBUG_LOG, "consume_remove_group_members_msg() new_outbound_group_session_by_receiver failed");
             }
         }
 
         if (ret == E2EES_RESULT_SUCC) {
             // notify
-            e2ees_notify_group_members_removed(
-                receiver_address,
-                group_address,
-                group_name,
-                new_group_members,
-                new_group_members_num,
-                msg->removing_member_list,
-                msg->n_removing_member_list
-            );
+            e2ees_notify_group_members_removed(receiver_address, group_address, group_name, new_group_members, new_group_members_num, msg->removing_member_list, msg->n_removing_member_list);
         }
     }
 
@@ -910,10 +740,7 @@ bool consume_remove_group_members_msg(E2ees__E2eeAddress *receiver_address, E2ee
     return true;
 }
 
-int produce_leave_group_request(
-    E2ees__LeaveGroupRequest **request_out,
-    leave_group_params *params
-) {
+int produce_leave_group_request(E2ees__LeaveGroupRequest **request_out, leave_group_params_t *params) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__LeaveGroupRequest *request = NULL;
@@ -938,10 +765,7 @@ int produce_leave_group_request(
     return ret;
 }
 
-int consume_leave_group_response(
-    E2ees__E2eeAddress *user_address,
-    E2ees__LeaveGroupResponse *response
-) {
+int consume_leave_group_response(E2ees__E2eeAddress *user_address, E2ees__LeaveGroupResponse *response) {
     int ret = E2EES_RESULT_SUCC;
 
     if (!is_valid_address(user_address)) {
@@ -993,9 +817,7 @@ bool consume_leave_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__LeaveG
         removing_group_members[0]->role = E2EES__GROUP_ROLE__GROUP_ROLE_MEMBER;
         size_t removing_group_member_num = 1;
 
-        ret = remove_group_members(
-            &remove_group_members_response, receiver_address, group_address, removing_group_members, removing_group_member_num
-        );
+        ret = remove_group_members(&remove_group_members_response, receiver_address, group_address, removing_group_members, removing_group_member_num);
     }
 
     if (is_valid_remove_group_members_response(remove_group_members_response)) {
@@ -1014,13 +836,8 @@ bool consume_leave_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__LeaveG
     return true;
 }
 
-int produce_send_group_msg_request(
-    E2ees__SendGroupMsgRequest **request_out,
-    send_group_msg_params *params,
-    uint32_t notif_level,
-    E2ees__GroupSession *outbound_group_session,
-    E2ees__GroupMsgPayload *group_msg_payload
-) {
+int produce_send_group_msg_request(E2ees__SendGroupMsgRequest **request_out, send_group_msg_params_t *params, uint32_t notif_level, E2ees__GroupSession *outbound_group_session,
+                                   E2ees__GroupMsgPayload *group_msg_payload) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__SendGroupMsgRequest *request = NULL;
@@ -1136,11 +953,8 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
         memcpy(identity_public_key, inbound_group_session->associated_data.data, sign_key_len);
 
         // verify the signature
-        ret = cipher_suite->ds_suite->verify(
-            group_msg_payload->signature.data, group_msg_payload->signature.len,
-            group_msg_payload->ciphertext.data, group_msg_payload->ciphertext.len,
-            identity_public_key
-        );
+        ret = cipher_suite->ds_suite->verify(group_msg_payload->signature.data, group_msg_payload->signature.len, group_msg_payload->ciphertext.data, group_msg_payload->ciphertext.len,
+                                             identity_public_key);
         if (ret == E2EES_RESULT_SUCC) {
             // advance the chain key
             while (inbound_group_session->sequence < group_msg_payload->sequence) {
@@ -1154,13 +968,8 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
             create_group_message_key(cipher_suite, &(inbound_group_session->chain_key), msg_key);
 
             // decryption
-            ret = cipher_suite->se_suite->decrypt(
-                &plaintext_data,
-                &plaintext_data_len,
-                &(inbound_group_session->associated_data),
-                msg_key->derived_key.data,
-                group_msg_payload->ciphertext.data, group_msg_payload->ciphertext.len
-            );
+            ret = cipher_suite->se_suite->decrypt(&plaintext_data, &plaintext_data_len, &(inbound_group_session->associated_data), msg_key->derived_key.data, group_msg_payload->ciphertext.data,
+                                                  group_msg_payload->ciphertext.len);
 
             if (ret == E2EES_RESULT_SUCC) {
                 e2ees_notify_group_msg(inbound_group_session->session_owner, e2ee_msg->from, inbound_group_session->group_info->group_address, plaintext_data, plaintext_data_len);

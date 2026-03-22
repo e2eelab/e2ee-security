@@ -101,7 +101,6 @@ extern "C" {
 #endif
 
 #include "e2ees/cipher.h"
-#include "e2ees/e2ees_client_internal.h"
 #include "e2ees/session.h"
 #include "e2ees/log_code.h"
 
@@ -114,6 +113,7 @@ extern "C" {
 #define E2EES_UUID_LEN                                        16
 #define E2EES_SIGNED_PRE_KEY_EXPIRATION_MS                    604800000 // 7 days
 #define E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM                    100
+#define E2EES_ONE_TIME_PRE_KEY_PURGE_NUM                      60
 #define E2EES_INVITE_WAITING_TIME_MS                          60000     // 1 minute
 
 #define E2EES_PACK_ALG_DS_CURVE25519                          0

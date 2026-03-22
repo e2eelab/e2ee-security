@@ -26,6 +26,7 @@ extern "C" {
 #endif
 
 #include "e2ees/e2ees.h"
+#include "e2ees/e2ees_client_internal.h"
 
 /**
  * @brief Create a RegisterUserRequest message to be sent to server.
@@ -35,11 +36,7 @@ extern "C" {
  * @param account
  * @return 0 if success
  */
-int produce_register_request(
-    E2ees__RegisterUserRequest **request_out,
-    register_user_params *params,
-    E2ees__Account *account
-);
+int produce_register_request(E2ees__RegisterUserRequest **request_out, register_user_params_t *params, E2ees__Account *account);
 
 /**
  * @brief Process an incoming RegisterUserResponse message.
@@ -58,10 +55,7 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
  * @param params
  * @return 0 if success
  */
-int produce_publish_spk_request(
-    E2ees__PublishSpkRequest **request_out,
-    publish_spk_params *params
-);
+int produce_publish_spk_request(E2ees__PublishSpkRequest **request_out, publish_spk_params_t *params);
 
 /**
  * @brief Process an incoming PublishSpkResponse message.
@@ -70,11 +64,7 @@ int produce_publish_spk_request(
  * @param response
  * @return 0 if success
  */
-int consume_publish_spk_response(
-    E2ees__E2eeAddress *user_address,
-    E2ees__SignedPreKey *signed_pre_key,
-    E2ees__PublishSpkResponse *response
-);
+int consume_publish_spk_response(E2ees__E2eeAddress *user_address, E2ees__SignedPreKey *signed_pre_key, E2ees__PublishSpkResponse *response);
 
 /**
  * @brief Create a SupplyOpksRequest message to be sent to server.
@@ -84,22 +74,18 @@ int consume_publish_spk_response(
  * @param one_time_pre_key_list
  * @return 0 if success
  */
-int produce_supply_opks_request(
-    E2ees__SupplyOpksRequest **request_out,
-    supply_opks_params *params,
-    E2ees__OneTimePreKey **one_time_pre_key_list
-);
+int produce_supply_opks_request(E2ees__SupplyOpksRequest **request_out, supply_opks_params_t *params, E2ees__OneTimePreKey **one_time_pre_key_list);
 
 /**
  * @brief Process an incoming SupplyOpksResponse message.
  *
- * @param account
+ * @param sender_address
  * @param one_time_pre_key_list
  * @param opks_num
  * @param response
  * @return 0 if success
  */
-int consume_supply_opks_response(E2ees__Account *account, E2ees__OneTimePreKey **one_time_pre_key_list, uint32_t opks_num, E2ees__SupplyOpksResponse *response);
+int consume_supply_opks_response(E2ees__E2eeAddress *sender_address, E2ees__OneTimePreKey **one_time_pre_key_list, uint32_t opks_num, E2ees__SupplyOpksResponse *response);
 
 /**
  * @brief Process an incoming SupplyOpksMsg message.

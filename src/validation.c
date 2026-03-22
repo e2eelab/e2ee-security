@@ -2005,7 +2005,7 @@ bool is_valid_server_signed_signature_list(E2ees__ServerSignedSignature **src, s
 
 ///-----------------valid parameters-----------------///
 
-bool is_valid_register_user_inputs(const register_user_params *params) {
+bool is_valid_register_user_inputs(const register_user_params_t *params) {
     if (!is_valid_e2ees_pack_id(params->e2ees_pack_id)) {
         e2ees_notify_log(NULL, BAD_E2EES_PACK, "is_valid_register_user_inputs(): invalid e2ees_pack_id");
         return false;
@@ -2034,7 +2034,7 @@ bool is_valid_register_user_inputs(const register_user_params *params) {
     return true;
 }
 
-bool is_valid_publish_spk_inputs(const publish_spk_params *params) {
+bool is_valid_publish_spk_inputs(const publish_spk_params_t *params) {
     if (!is_valid_e2ees_pack_id(params->e2ees_pack_id)) {
         e2ees_notify_log(NULL, BAD_E2EES_PACK, "is_valid_publish_spk_inputs(): invalid e2ees_pack_id");
         return false;
@@ -2051,7 +2051,7 @@ bool is_valid_publish_spk_inputs(const publish_spk_params *params) {
     return true;
 }
 
-bool is_valid_supply_opks_inputs(const supply_opks_params *params) {
+bool is_valid_supply_opks_inputs(const supply_opks_params_t *params) {
     if (params->opks_num == 0) {
         e2ees_notify_log(NULL, BAD_ONE_TIME_PRE_KEY, "is_valid_supply_opks_inputs(): opks_num is zero");
         return false;
@@ -2064,7 +2064,7 @@ bool is_valid_supply_opks_inputs(const supply_opks_params *params) {
     return true;
 }
 
-bool is_valid_get_pre_key_bundle_inputs(const get_pre_key_bundle_params *params) {
+bool is_valid_get_pre_key_bundle_inputs(const get_pre_key_bundle_params_t *params) {
     if (!is_valid_address(params->from)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_get_pre_key_bundle_inputs(): invalid from");
         return false;
@@ -2089,7 +2089,7 @@ bool is_valid_get_pre_key_bundle_inputs(const get_pre_key_bundle_params *params)
     return true;
 }
 
-bool is_valid_accept_inputs(const accept_params *params) {
+bool is_valid_accept_inputs(const accept_params_t *params) {
     if (!is_valid_e2ees_pack_id(params->e2ees_pack_id)) {
         e2ees_notify_log(NULL, BAD_E2EES_PACK, "is_valid_accept_inputs(): invalid e2ees_pack_id");
         return false;
@@ -2118,7 +2118,7 @@ bool is_valid_accept_inputs(const accept_params *params) {
     return true;
 }
 
-bool is_valid_create_group_inputs(const create_group_params *params) {
+bool is_valid_create_group_inputs(const create_group_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_create_group_inputs(): invalid sender_address");
         return false;
@@ -2139,7 +2139,7 @@ bool is_valid_create_group_inputs(const create_group_params *params) {
     return true;
 }
 
-bool is_valid_add_group_members_inputs(const add_group_members_params *params) {
+bool is_valid_add_group_members_inputs(const add_group_members_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_add_group_members_inputs(): invalid sender_address");
         return false;
@@ -2160,7 +2160,7 @@ bool is_valid_add_group_members_inputs(const add_group_members_params *params) {
     return true;
 }
 
-bool is_valid_remove_group_members_inputs(const remove_group_members_params *params) {
+bool is_valid_remove_group_members_inputs(const remove_group_members_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_remove_group_members_inputs(): invalid sender_address");
         return false;
@@ -2181,7 +2181,7 @@ bool is_valid_remove_group_members_inputs(const remove_group_members_params *par
     return true;
 }
 
-bool is_valid_add_group_member_device_inputs(const add_group_member_device_params *params) {
+bool is_valid_add_group_member_device_inputs(const add_group_member_device_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_add_group_member_device_inputs(): invalid sender_address");
         return false;
@@ -2198,7 +2198,7 @@ bool is_valid_add_group_member_device_inputs(const add_group_member_device_param
     return true;
 }
 
-bool is_valid_leave_group_inputs(const leave_group_params *params) {
+bool is_valid_leave_group_inputs(const leave_group_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_leave_group_inputs(): invalid sender_address");
         return false;
@@ -2211,7 +2211,7 @@ bool is_valid_leave_group_inputs(const leave_group_params *params) {
     return true;
 }
 
-bool is_valid_send_group_msg_inputs(const send_group_msg_params *params) {
+bool is_valid_send_group_msg_inputs(const send_group_msg_params_t *params) {
     if (!is_valid_address(params->sender_address)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "is_valid_send_group_msg_inputs(): invalid sender_address");
         return false;

@@ -553,14 +553,14 @@ static void test_free_opks() {
     for (i = 0; i < used_opks; i++) {
         account->one_time_pre_key_list[i]->used = true;
     }
+    // purge max: E2EES_ONE_TIME_PRE_KEY_PURGE_NUM
     purge_one_time_pre_key(account);
-    // store
-    get_e2ees_plugin()->db_handler.store_account(account);
+    size_t purged_opks = used_opks >= E2EES_ONE_TIME_PRE_KEY_PURGE_NUM ? E2EES_ONE_TIME_PRE_KEY_PURGE_NUM : used_opks;
 
     // load account
     E2ees__Account *account_new = NULL;
     get_e2ees_plugin()->db_handler.load_account_by_address(register_user_response->address, &account_new);
-    size_t unused_opks = E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM - used_opks;
+    size_t unused_opks = E2EES_ONE_TIME_PRE_KEY_INITIAL_NUM - purged_opks;
     assert(account_new->n_one_time_pre_key_list == unused_opks);
     for (i = 0; i < unused_opks; i++) {
         assert(account_new->one_time_pre_key_list[i]->used == false);

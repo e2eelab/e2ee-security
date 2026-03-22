@@ -24,7 +24,6 @@
 #include "e2ees/account.h"
 #include "e2ees/cipher.h"
 #include "e2ees/e2ees_client_internal.h"
-#include "e2ees/group_session.h"
 #include "e2ees/mem_util.h"
 #include "e2ees/ratchet.h"
 
@@ -154,7 +153,7 @@ int crypto_curve25519_new_inbound_session(E2ees__Session *inbound_session, E2ees
     }
 
     uint8_t x3dh_epoch = 3;
-    inbound_session->n_pre_shared_input_list = msg->n_pre_shared_input_list;
+    inbound_session->n_pre_shared_input_list = 1; // msg->n_pre_shared_input_list;
     inbound_session->pre_shared_input_list = (ProtobufCBinaryData *)malloc(sizeof(ProtobufCBinaryData));
     copy_protobuf_from_protobuf(&(inbound_session->pre_shared_input_list[0]), &(msg->pre_shared_input_list[0]));
     inbound_session->bob_signed_pre_key_id = msg->bob_signed_pre_key_id;
@@ -176,7 +175,11 @@ int crypto_curve25519_new_inbound_session(E2ees__Session *inbound_session, E2ees
 
         if (!our_one_time_pre_key) {
             e2ees_notify_log(inbound_session->our_address, BAD_ONE_TIME_PRE_KEY, "crypto_curve25519_new_inbound_session()");
-            return -1;
+            free_protobuf(&(inbound_session->pre_shared_input_list[0]));
+            free_mem((void **)&(inbound_session->pre_shared_input_list), sizeof(ProtobufCBinaryData));
+            inbound_session->n_pre_shared_input_list = 0;
+            free_mem((void **)&(inbound_session->associated_data.data), inbound_session->associated_data.len);
+            return E2EES_RESULT_FAIL;
         } else {
             mark_opk_as_used(local_account, our_one_time_pre_key->opk_id);
             get_e2ees_plugin()->db_handler.update_one_time_pre_key(local_account->address, our_one_time_pre_key->opk_id);

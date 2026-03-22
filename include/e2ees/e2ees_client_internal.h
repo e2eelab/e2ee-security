@@ -33,18 +33,18 @@ typedef struct {
     const char *device_id;
     const char *authenticator;
     const char *auth_code;
-} register_user_params;
+} register_user_params_t;
 
 typedef struct {
     uint32_t e2ees_pack_id;
     E2ees__E2eeAddress *user_address;
     E2ees__SignedPreKey *new_spk;
-} publish_spk_params;
+} publish_spk_params_t;
 
 typedef struct {
     E2ees__Account *account;
     uint32_t opks_num;
-} supply_opks_params;
+} supply_opks_params_t;
 
 typedef struct {
     E2ees__E2eeAddress *from;
@@ -52,7 +52,7 @@ typedef struct {
     const char *to_user_id;
     const char *to_domain;
     const char *to_device_id;
-} get_pre_key_bundle_params;
+} get_pre_key_bundle_params_t;
 
 typedef struct {
     uint32_t e2ees_pack_id;
@@ -61,39 +61,39 @@ typedef struct {
     char *session_id;
     ProtobufCBinaryData *ciphertext_1;
     ProtobufCBinaryData *our_ratchet_key;
-} accept_params;
+} accept_params_t;
 
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     const char *group_name;
     E2ees__GroupMember **group_members;
     size_t group_members_num;
-} create_group_params;
+} create_group_params_t;
 
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     E2ees__E2eeAddress *group_address;
     E2ees__GroupMember **adding_members;
     size_t adding_members_num;
-} add_group_members_params;
+} add_group_members_params_t;
 
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     E2ees__E2eeAddress *group_address;
     E2ees__GroupMember **removing_members;
     size_t removing_members_num;
-} remove_group_members_params;
+} remove_group_members_params_t;
 
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     E2ees__E2eeAddress *group_address;
     E2ees__E2eeAddress *new_device_address;
-} add_group_member_device_params;
+} add_group_member_device_params_t;
 
 typedef struct {
     E2ees__E2eeAddress *sender_address;
     E2ees__E2eeAddress *group_address;
-} leave_group_params;
+} leave_group_params_t;
 
 typedef struct {
     E2ees__E2eeAddress *sender_address;
@@ -102,7 +102,7 @@ typedef struct {
     size_t allow_list_len;
     E2ees__E2eeAddress **deny_list;
     size_t deny_list_len;
-} send_group_msg_params;
+} send_group_msg_params_t;
 
 /**
  * @brief Dispatches protocol-specific requests to their respective handlers.

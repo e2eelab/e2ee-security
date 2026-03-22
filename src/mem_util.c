@@ -96,9 +96,9 @@ bool compare_address(E2ees__E2eeAddress *address_1, E2ees__E2eeAddress *address_
         return false;
 
     return safe_strcmp(address_1->domain, address_2->domain) && (address_1->peer_case == address_2->peer_case) &&
-        (((address_1->peer_case == E2EES__E2EE_ADDRESS__PEER_USER) &&
-        (safe_strcmp(address_1->user->user_id, address_2->user->user_id) && safe_strcmp(address_1->user->device_id, address_2->user->device_id))) ||
-        ((address_1->peer_case == E2EES__E2EE_ADDRESS__PEER_GROUP) && (safe_strcmp(address_1->group->group_id, address_2->group->group_id))));
+           (((address_1->peer_case == E2EES__E2EE_ADDRESS__PEER_USER) &&
+             (safe_strcmp(address_1->user->user_id, address_2->user->user_id) && safe_strcmp(address_1->user->device_id, address_2->user->device_id))) ||
+            ((address_1->peer_case == E2EES__E2EE_ADDRESS__PEER_GROUP) && (safe_strcmp(address_1->group->group_id, address_2->group->group_id))));
 }
 
 bool compare_group_member(E2ees__GroupMember **group_members_1, size_t group_member_num_1, E2ees__GroupMember **group_members_2, size_t group_member_num_2) {
@@ -193,9 +193,7 @@ void copy_protobuf_from_array(ProtobufCBinaryData *dest, const uint8_t *src, siz
 
 void overwrite_protobuf_from_array(ProtobufCBinaryData *dest, const uint8_t *src) { memcpy(dest->data, src, dest->len); }
 
-void copy_protobuf_list_from_protobuf_list(
-    ProtobufCBinaryData *dest, const ProtobufCBinaryData *src, size_t protobuf_num
-) {
+void copy_protobuf_list_from_protobuf_list(ProtobufCBinaryData *dest, const ProtobufCBinaryData *src, size_t protobuf_num) {
     size_t i;
     for (i = 0; i < protobuf_num; i++) {
         copy_protobuf_from_protobuf(&dest[i], &src[i]);
@@ -289,7 +287,7 @@ void copy_subject_from_subject(E2ees__Subject **dest, E2ees__Subject *src) {
     } else {
         (*dest)->o = NULL;
     }
-    if(src->n_ou >= 0) {
+    if (src->n_ou >= 0) {
         size_t n_ou = src->n_ou;
         (*dest)->n_ou = n_ou;
         (*dest)->ou = (char **)malloc(sizeof(char *) * n_ou);
@@ -624,12 +622,7 @@ void copy_leave_group_msg(E2ees__LeaveGroupMsg **dest, E2ees__LeaveGroupMsg *src
 
 ///-----------------add or remove group members-----------------///
 
-void add_group_members_to_group_info(
-    E2ees__GroupInfo **dest,
-    E2ees__GroupInfo *old_group_info,
-    E2ees__GroupMember **adding_member_list,
-    size_t adding_members_num
-) {
+void add_group_members_to_group_info(E2ees__GroupInfo **dest, E2ees__GroupInfo *old_group_info, E2ees__GroupMember **adding_member_list, size_t adding_members_num) {
     size_t old_group_members_num = old_group_info->n_group_member_list;
     size_t new_group_members_num = old_group_members_num + adding_members_num;
     *dest = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
@@ -649,12 +642,7 @@ void add_group_members_to_group_info(
     }
 }
 
-void remove_group_members_from_group_info(
-    E2ees__GroupInfo **dest,
-    E2ees__GroupInfo *old_group_info,
-    E2ees__GroupMember **removing_member_list,
-    size_t removing_members_num
-) {
+void remove_group_members_from_group_info(E2ees__GroupInfo **dest, E2ees__GroupInfo *old_group_info, E2ees__GroupMember **removing_member_list, size_t removing_members_num) {
     size_t old_group_members_num = old_group_info->n_group_member_list;
     size_t new_group_members_num = old_group_members_num - removing_members_num;
     *dest = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
@@ -696,11 +684,7 @@ E2ees__GroupMember *member_info_to_group_member(E2ees__GroupMemberInfo *member_i
     return group_member;
 }
 
-size_t member_info_to_group_members(
-    E2ees__GroupMember ***dest,
-    E2ees__GroupMemberInfo **member_info_list, size_t member_info_list_num,
-    E2ees__GroupMember **member_list, size_t member_list_num
-) {
+size_t member_info_to_group_members(E2ees__GroupMember ***dest, E2ees__GroupMemberInfo **member_info_list, size_t member_info_list_num, E2ees__GroupMember **member_list, size_t member_list_num) {
     size_t dest_num = 0;
     size_t i, j, k, l;
     if (member_info_list_num > 0) {
@@ -710,12 +694,7 @@ size_t member_info_to_group_members(
             bool exist = false;
             for (j = 0; j < member_info_list_num && j != i; j++) {
                 E2ees__GroupMemberInfo *scan_member_info = member_info_list[j];
-                if (compare_user_id(
-                        member_info->member_address,
-                        scan_member_info->member_address->user->user_id,
-                        scan_member_info->member_address->domain
-                    )
-                ) {
+                if (compare_user_id(member_info->member_address, scan_member_info->member_address->user->user_id, scan_member_info->member_address->domain)) {
                     exist = true;
                     break;
                 }
@@ -741,7 +720,7 @@ size_t member_info_to_group_members(
         if (!exist) {
             E2ees__GroupMember *group_member = member_info_to_group_member(member_info);
             bool role_set = false;
-            for(l = 0; l < member_list_num; l++) {
+            for (l = 0; l < member_list_num; l++) {
                 E2ees__GroupMember *scan_member = member_list[l];
                 if (compare_user_id(member_info->member_address, scan_member->user_id, scan_member->domain)) {
                     group_member->role = scan_member->role;
@@ -865,7 +844,8 @@ void unset(void volatile *buffer, size_t buffer_len) {
 }
 
 void secure_unset(void *buffer, size_t len) {
-    if (!buffer || len == 0) return;
+    if (!buffer || len == 0)
+        return;
 
     volatile unsigned char *p = (volatile unsigned char *)buffer;
     while (len--) {

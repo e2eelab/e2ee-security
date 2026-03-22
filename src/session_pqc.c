@@ -32,11 +32,7 @@
 
 static const char FINGERPRINT_SEED[] = "Fingerprint";
 
-int pqc_new_outbound_session_v2(
-    E2ees__InviteResponse **response_out,
-    E2ees__E2eeAddress *from,
-    E2ees__PreKeyBundle *their_pre_key_bundle
-) {
+int pqc_new_outbound_session_v2(E2ees__InviteResponse **response_out, E2ees__E2eeAddress *from, E2ees__PreKeyBundle *their_pre_key_bundle) {
     int ret = E2EES_RESULT_SUCC;
 
     uint32_t e2ees_pack_id;
@@ -108,13 +104,9 @@ int pqc_new_outbound_session_v2(
 
     if (ret == E2EES_RESULT_SUCC) {
         // verify the signature
-        ret = cipher_suite->ds_suite->verify(
-            their_spk->signature.data, their_spk->signature.len,
-            their_spk->public_key.data, asym_pub_key_len,
-            their_ik->sign_public_key.data
-        );
+        ret = cipher_suite->ds_suite->verify(their_spk->signature.data, their_spk->signature.len, their_spk->public_key.data, asym_pub_key_len, their_ik->sign_public_key.data);
 
-        if (ret != 0) {
+        if (ret != E2EES_RESULT_SUCC) {
             e2ees_notify_log(from, BAD_SIGNATURE, "pqc_new_outbound_session()");
         }
     }
@@ -167,12 +159,7 @@ int pqc_new_outbound_session_v2(
         int hf_len = cipher_suite->hf_suite->get_param().hf_len;
         uint8_t salt[hf_len];
         memset(salt, 0, hf_len);
-        cipher_suite->hf_suite->hkdf(
-            hash_input, hash_input_len,
-            salt, sizeof(salt),
-            (uint8_t *)FINGERPRINT_SEED, sizeof(FINGERPRINT_SEED) - 1,
-            derived_secrets, sizeof(derived_secrets)
-        );
+        cipher_suite->hf_suite->hkdf(hash_input, hash_input_len, salt, sizeof(salt), (uint8_t *)FINGERPRINT_SEED, sizeof(FINGERPRINT_SEED) - 1, derived_secrets, sizeof(derived_secrets));
 
         copy_protobuf_from_array(&(outbound_session->fingerprint), derived_secrets, sizeof(derived_secrets));
 
@@ -188,7 +175,7 @@ int pqc_new_outbound_session_v2(
         if (x3dh_epoch == 3) {
             pos += shared_secret_len;
             cipher_suite->kem_suite->encaps(pos, &ciphertext_4, &(their_opk->public_key));
-        } else{
+        } else {
             ciphertext_4.len = 0;
             ciphertext_4.data = NULL;
         }
@@ -219,16 +206,9 @@ int pqc_new_outbound_session_v2(
         cipher_suite->kem_suite->asym_key_gen(&outbound_session->alice_base_key->public_key, &outbound_session->alice_base_key->private_key);
 
         // store sesson state before send invite
-        e2ees_notify_log(
-            outbound_session->our_address,
-            DEBUG_LOG,
-            "pqc_new_outbound_session() store sesson state before send invite session_id=%s, from [%s:%s], to [%s:%s]",
-            outbound_session->session_id,
-            outbound_session->our_address->user->user_id,
-            outbound_session->our_address->user->device_id,
-            outbound_session->their_address->user->user_id,
-            outbound_session->their_address->user->device_id
-        );
+        e2ees_notify_log(outbound_session->our_address, DEBUG_LOG, "pqc_new_outbound_session() store sesson state before send invite session_id=%s, from [%s:%s], to [%s:%s]",
+                         outbound_session->session_id, outbound_session->our_address->user->user_id, outbound_session->our_address->user->device_id, outbound_session->their_address->user->user_id,
+                         outbound_session->their_address->user->device_id);
         outbound_session->invite_t = get_e2ees_plugin()->common_handler.gen_ts();
         get_e2ees_plugin()->db_handler.store_session(outbound_session);
 
@@ -245,7 +225,7 @@ int pqc_new_outbound_session_v2(
         free_protobuf(&ciphertext_4);
         e2ees__session__free_unpacked(outbound_session, NULL);
         outbound_session = NULL;
-        
+
         // output invite response
         *response_out = response;
     }
@@ -259,11 +239,7 @@ int pqc_new_outbound_session_v2(
     return ret;
 }
 
-int pqc_new_inbound_session(
-    E2ees__Session **inbound_session_out,
-    E2ees__Account *local_account,
-    E2ees__InviteMsg *msg
-) {
+int pqc_new_inbound_session(E2ees__Session **inbound_session_out, E2ees__Account *local_account, E2ees__InviteMsg *msg) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__Session *session = NULL;
@@ -386,12 +362,7 @@ int pqc_new_inbound_session(
         uint8_t derived_secrets[2 * shared_key_len];
         uint8_t salt[hf_len];
         memset(salt, 0, hf_len);
-        cipher_suite->hf_suite->hkdf(
-            hash_input, hash_input_len,
-            salt, sizeof(salt),
-            (uint8_t *)FINGERPRINT_SEED, sizeof(FINGERPRINT_SEED) - 1,
-            derived_secrets, sizeof(derived_secrets)
-        );
+        cipher_suite->hf_suite->hkdf(hash_input, hash_input_len, salt, sizeof(salt), (uint8_t *)FINGERPRINT_SEED, sizeof(FINGERPRINT_SEED) - 1, derived_secrets, sizeof(derived_secrets));
         copy_protobuf_from_array(&(session->fingerprint), derived_secrets, sizeof(derived_secrets));
 
         // calculate the shared secret S via KEM
@@ -426,15 +397,8 @@ int pqc_new_inbound_session(
     if (ret == E2EES_RESULT_SUCC) {
         /** The one who sends the acception message will be the one who received the invitation message.
          *  Thus, the "from" and "to" of acception message will be different from those in the session. */
-        ret = accept_internal(
-            &accept_response,
-            session->e2ees_pack_id,
-            session->our_address,
-            session->their_address,
-            session->session_id,
-            &ciphertext_1,
-            &(session->ratchet->sender_chain->our_ratchet_public_key)
-        );
+        ret = accept_internal(&accept_response, session->e2ees_pack_id, session->our_address, session->their_address, session->session_id, &ciphertext_1,
+                              &(session->ratchet->sender_chain->our_ratchet_public_key));
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -502,18 +466,11 @@ int pqc_complete_outbound_session(E2ees__Session **outbound_session_out, E2ees__
         session->responded = true;
 
         // complete the shared secret of the X3DH
-        cipher_suite->kem_suite->decaps(
-            session->temp_shared_secret.data,
-            &(identity_key->asym_key_pair->private_key),
-            &(msg->encaps_ciphertext)
-        );
+        cipher_suite->kem_suite->decaps(session->temp_shared_secret.data, &(identity_key->asym_key_pair->private_key), &(msg->encaps_ciphertext));
 
         // create the root key and chain keys
-        ret = initialise_as_alice(
-            &(session->ratchet), cipher_suite,
-            session->temp_shared_secret.data, session->temp_shared_secret.len,
-            session->alice_base_key, &their_ratchet_key, &(msg->ratchet_key)
-        );
+        ret = initialise_as_alice(&(session->ratchet), cipher_suite, session->temp_shared_secret.data, session->temp_shared_secret.len, session->alice_base_key, &their_ratchet_key,
+                                  &(msg->ratchet_key));
     }
 
     if (ret == E2EES_RESULT_SUCC) {
@@ -534,8 +491,4 @@ int pqc_complete_outbound_session(E2ees__Session **outbound_session_out, E2ees__
     return ret;
 }
 
-session_suite_t E2EES_SESSION_PQC = {
-    pqc_new_outbound_session_v2,
-    pqc_new_inbound_session,
-    pqc_complete_outbound_session
-};
+session_suite_t E2EES_SESSION_PQC = {pqc_new_outbound_session_v2, pqc_new_inbound_session, pqc_complete_outbound_session};

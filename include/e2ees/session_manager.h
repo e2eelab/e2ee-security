@@ -27,6 +27,7 @@ extern "C" {
 #endif
 
 #include "e2ees/e2ees.h"
+#include "e2ees/e2ees_client_internal.h"
 
 /**
  * @brief Create a get_pre_key_bundle_request to be sent to messaging server.
@@ -37,7 +38,7 @@ extern "C" {
  */
 int produce_get_pre_key_bundle_request(
     E2ees__GetPreKeyBundleRequest **request_out,
-    get_pre_key_bundle_params *params
+    get_pre_key_bundle_params_t *params
 );
 
 /**
@@ -175,7 +176,7 @@ bool consume_invite_msg(
  */
 int produce_accept_request(
     E2ees__AcceptRequest **request_out,
-    accept_params *params
+    accept_params_t *params
 );
 
 /**

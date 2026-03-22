@@ -71,7 +71,7 @@ static void send_pending_plaintext_data(E2ees__Session *outbound_session) {
     }
 }
 
-int produce_get_pre_key_bundle_request(E2ees__GetPreKeyBundleRequest **request_out, get_pre_key_bundle_params *params) {
+int produce_get_pre_key_bundle_request(E2ees__GetPreKeyBundleRequest **request_out, get_pre_key_bundle_params_t *params) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__GetPreKeyBundleRequest *request = NULL;
@@ -346,7 +346,7 @@ bool consume_one2one_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e
                 E2ees__GroupPreKeyBundle *group_pre_key_bundle = plaintext->group_pre_key_bundle;
 
                 // unload the old outbound and inbound group sessions
-                if ((group_pre_key_bundle->old_session_id)[0] != '\0') {
+                if (group_pre_key_bundle->old_session_id != NULL && group_pre_key_bundle->old_session_id[0] != '\0') {
                     get_e2ees_plugin()->db_handler.unload_group_session_by_id(receiver_address, group_pre_key_bundle->old_session_id);
                     e2ees_notify_log(receiver_address, DEBUG_LOG, "unload the old outbound and inbound group sessions session_id: %s, session_owner: [%s:%s]", group_pre_key_bundle->old_session_id,
                                      receiver_address->user->user_id, receiver_address->user->device_id);
@@ -615,6 +615,12 @@ int consume_invite_response(E2ees__E2eeAddress *user_address, E2ees__InviteRespo
             e2ees_notify_log(NULL, BAD_SESSION, "consume_invite_response(): invalid inbound_session");
             ret = E2EES_RESULT_FAIL;
         }
+
+        // release
+        if (inbound_session != NULL) {
+            e2ees__session__free_unpacked(inbound_session, NULL);
+            inbound_session = NULL;
+        }
     }
 
     return ret;
@@ -696,7 +702,7 @@ bool consume_invite_msg(E2ees__E2eeAddress *receiver_address, E2ees__InviteMsg *
     return true;
 }
 
-int produce_accept_request(E2ees__AcceptRequest **request_out, accept_params *params) {
+int produce_accept_request(E2ees__AcceptRequest **request_out, accept_params_t *params) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__AcceptRequest *request = NULL;

@@ -28,15 +28,8 @@
 #include "e2ees/mem_util.h"
 #include "e2ees/validation.h"
 
-int produce_register_request(E2ees__RegisterUserRequest **request_out, register_user_params *params, E2ees__Account *account) {
+int produce_register_request(E2ees__RegisterUserRequest **request_out, register_user_params_t *params, E2ees__Account *account) {
     int ret = E2EES_RESULT_SUCC;
-
-    E2ees__IdentityKey *identity_key = NULL;
-    E2ees__KeyPair *identity_key_pair_asym = NULL;
-    E2ees__KeyPair *identity_key_pair_sign = NULL;
-    E2ees__SignedPreKey *signed_pre_key = NULL;
-    E2ees__KeyPair *signed_pre_key_pair = NULL;
-    E2ees__OneTimePreKey *one_time_pre_key = NULL;
 
     E2ees__RegisterUserRequest *request = (E2ees__RegisterUserRequest *)malloc(sizeof(E2ees__RegisterUserRequest));
     e2ees__register_user_request__init(request);
@@ -106,24 +99,11 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
         if (response->n_other_device_address_list > 0) {
             for (i = 0; i < response->n_other_device_address_list; i++) {
                 other_device_address = (response->other_device_address_list)[i];
-                e2ees_notify_log(
-                    address, DEBUG_LOG, "consume_register_response() other_device_address_list %zu of %zu: address [%s:%s]",
-                    i + 1, response->n_other_device_address_list,
-                    other_device_address->user->user_id,
-                    other_device_address->user->device_id
-                );
-                ret = get_pre_key_bundle_internal(
-                    &invite_response_list,
-                    &invite_response_num,
-                    address,
-                    auth,
-                    other_device_address->user->user_id,
-                    other_device_address->domain,
-                    other_device_address->user->device_id,
-                    false,
-                    NULL, 0
-                );
-                
+                e2ees_notify_log(address, DEBUG_LOG, "consume_register_response() other_device_address_list %zu of %zu: address [%s:%s]", i + 1, response->n_other_device_address_list,
+                                 other_device_address->user->user_id, other_device_address->user->device_id);
+                ret = get_pre_key_bundle_internal(&invite_response_list, &invite_response_num, address, auth, other_device_address->user->user_id, other_device_address->domain,
+                                                  other_device_address->user->device_id, false, NULL, 0);
+
                 // release
                 free_invite_response_list(&invite_response_list, invite_response_num);
             }
@@ -133,34 +113,16 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
         if (response->n_other_user_address_list > 0) {
             for (i = 0; i < response->n_other_user_address_list; i++) {
                 to_address = (response->other_user_address_list)[i];
-                e2ees_notify_log(
-                    address, DEBUG_LOG, "consume_register_response() other_user_address_list %zu of %zu: address [%s@%s]",
-                    i + 1, response->n_other_user_address_list,
-                    to_address->user->user_id,
-                    to_address->domain
-                );
+                e2ees_notify_log(address, DEBUG_LOG, "consume_register_response() other_user_address_list %zu of %zu: address [%s@%s]", i + 1, response->n_other_user_address_list,
+                                 to_address->user->user_id, to_address->domain);
                 // skip the same user device
                 if (compare_address(address, to_address)) {
-                    e2ees_notify_log(
-                        address,
-                        DEBUG_LOG,
-                        "consume_register_response(): skip invite the same user device: %s",
-                        to_address->user->device_id
-                    );
+                    e2ees_notify_log(address, DEBUG_LOG, "consume_register_response(): skip invite the same user device: %s", to_address->user->device_id);
                     continue;
                 }
 
-                ret = get_pre_key_bundle_internal(
-                    &invite_response_list,
-                    &invite_response_num,
-                    address,
-                    auth,
-                    to_address->user->user_id,
-                    to_address->domain,
-                    to_address->user->device_id,
-                    false,
-                    NULL, 0
-                );
+                ret = get_pre_key_bundle_internal(&invite_response_list, &invite_response_num, address, auth, to_address->user->user_id, to_address->domain, to_address->user->device_id, false,
+                                                  NULL, 0);
                 // release
                 free_invite_response_list(&invite_response_list, invite_response_num);
             }
@@ -171,14 +133,8 @@ bool consume_register_response(E2ees__Account *account, E2ees__RegisterUserRespo
     }
 }
 
-int produce_publish_spk_request(
-    E2ees__PublishSpkRequest **request_out,
-    publish_spk_params *params
-) {
+int produce_publish_spk_request(E2ees__PublishSpkRequest **request_out, publish_spk_params_t *params) {
     int ret = E2EES_RESULT_SUCC;
-
-    E2ees__SignedPreKey *signed_pre_key = NULL;
-    E2ees__KeyPair *signed_pre_key_pair = NULL;
 
     E2ees__PublishSpkRequest *request = (E2ees__PublishSpkRequest *)malloc(sizeof(E2ees__PublishSpkRequest));
     e2ees__publish_spk_request__init(request);
@@ -192,11 +148,7 @@ int produce_publish_spk_request(
     return ret;
 }
 
-int consume_publish_spk_response(
-    E2ees__E2eeAddress *user_address,
-    E2ees__SignedPreKey *signed_pre_key,
-    E2ees__PublishSpkResponse *response
-) {
+int consume_publish_spk_response(E2ees__E2eeAddress *user_address, E2ees__SignedPreKey *signed_pre_key, E2ees__PublishSpkResponse *response) {
     int ret = E2EES_RESULT_SUCC;
 
     if (!is_valid_publish_spk_response(response)) {
@@ -212,11 +164,7 @@ int consume_publish_spk_response(
     return ret;
 }
 
-int produce_supply_opks_request(
-    E2ees__SupplyOpksRequest **request_out,
-    supply_opks_params *params,
-    E2ees__OneTimePreKey **one_time_pre_key_list
-) {
+int produce_supply_opks_request(E2ees__SupplyOpksRequest **request_out, supply_opks_params_t *params, E2ees__OneTimePreKey **one_time_pre_key_list) {
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__SupplyOpksRequest *request = NULL;
@@ -235,13 +183,9 @@ int produce_supply_opks_request(
     return ret;
 }
 
-int consume_supply_opks_response(E2ees__Account *account, E2ees__OneTimePreKey **one_time_pre_key_list, uint32_t opks_num, E2ees__SupplyOpksResponse *response) {
+int consume_supply_opks_response(E2ees__E2eeAddress *sender_address, E2ees__OneTimePreKey **one_time_pre_key_list, uint32_t opks_num, E2ees__SupplyOpksResponse *response) {
     int ret = E2EES_RESULT_SUCC;
 
-    if (!is_valid_registered_account(account)) {
-        e2ees_notify_log(NULL, BAD_ACCOUNT, "consume_supply_opks_response(): invalid account");
-        ret = E2EES_RESULT_FAIL;
-    }
     if (!is_valid_supply_opks_response(response)) {
         e2ees_notify_log(NULL, BAD_SUPPLY_OPKS_RESPONSE, "consume_supply_opks_response(): invalid supply_opks_response");
         ret = E2EES_RESULT_FAIL;
@@ -251,7 +195,7 @@ int consume_supply_opks_response(E2ees__Account *account, E2ees__OneTimePreKey *
         // save to db
         size_t i;
         for (i = 0; i < opks_num; i++) {
-            get_e2ees_plugin()->db_handler.add_one_time_pre_key(account->address, one_time_pre_key_list[i]);
+            get_e2ees_plugin()->db_handler.add_one_time_pre_key(sender_address, one_time_pre_key_list[i]);
         }
         // skip saving one_time_pre_key_list to account
     }
@@ -261,18 +205,20 @@ int consume_supply_opks_response(E2ees__Account *account, E2ees__OneTimePreKey *
 
 bool consume_supply_opks_msg(E2ees__E2eeAddress *receiver_address, E2ees__SupplyOpksMsg *msg) {
     int ret;
-    /** The server notifies us to generate some new one-time pre-keys 
+    /** The server notifies us to generate some new one-time pre-keys
         since our published one-time pre-keys are going to used up. */
 
     if (!is_valid_address(receiver_address)) {
         e2ees_notify_log(NULL, BAD_ADDRESS, "consume_supply_opks_msg(): invalid receiver_address");
         return true;
     }
-    if (is_valid_supply_opks_msg(msg)) {
-        if (!compare_address(receiver_address, msg->user_address)) {
-            e2ees_notify_log(receiver_address, BAD_SUPPLY_OPKS_MSG, "consume_supply_opks_msg(): invalid supply_opks_msg");
-            return true;
-        }
+    if (!is_valid_supply_opks_msg(msg)) {
+        e2ees_notify_log(receiver_address, BAD_SUPPLY_OPKS_MSG, "consume_supply_opks_msg(): invalid supply_opks_msg");
+        return true;
+    }
+    if (!compare_address(receiver_address, msg->user_address)) {
+        e2ees_notify_log(receiver_address, BAD_SUPPLY_OPKS_MSG, "consume_supply_opks_msg(): mismatched user_address");
+        return true;
     }
 
     uint32_t opks_num = msg->opks_num;

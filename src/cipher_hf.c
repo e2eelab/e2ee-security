@@ -23,7 +23,6 @@
 
 #include "e2ees/cipher.h"
 #include "e2ees/crypto.h"
-#include "e2ees/mem_util.h"
 
 static crypto_hf_param_t sha256_param = {
     SHA256_OUTPUT_LENGTH,

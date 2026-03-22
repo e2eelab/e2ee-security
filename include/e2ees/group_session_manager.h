@@ -28,6 +28,8 @@ extern "C" {
 #endif
 
 #include "e2ees/e2ees.h"
+#include "e2ees/e2ees_client_internal.h"
+
 
 /**
  * @brief Create a CreateGroupRequest message to be sent to server.
@@ -38,7 +40,7 @@ extern "C" {
  */
 int produce_create_group_request(
     E2ees__CreateGroupRequest **request_out,
-    create_group_params *params,
+    create_group_params_t *params,
     uint32_t e2ees_pack_id
 );
 
@@ -88,7 +90,7 @@ bool consume_get_group_response(E2ees__GetGroupResponse *response);
  */
 int produce_add_group_members_request(
     E2ees__AddGroupMembersRequest **request_out,
-    add_group_members_params *params,
+    add_group_members_params_t *params,
     E2ees__GroupSession *outbound_group_session
 );
 
@@ -127,7 +129,7 @@ bool consume_add_group_members_msg(
  */
 int produce_add_group_member_device_request(
     E2ees__AddGroupMemberDeviceRequest **request_out,
-    add_group_member_device_params *params,
+    add_group_member_device_params_t *params,
     E2ees__GroupSession *outbound_group_session
 );
 
@@ -162,7 +164,7 @@ bool consume_add_group_member_device_msg(
  */
 int produce_remove_group_members_request(
     E2ees__RemoveGroupMembersRequest **request_out,
-    remove_group_members_params *params,
+    remove_group_members_params_t *params,
     E2ees__GroupSession *outbound_group_session
 );
 
@@ -200,7 +202,7 @@ bool consume_remove_group_members_msg(
  */
 int produce_leave_group_request(
     E2ees__LeaveGroupRequest **request_out,
-    leave_group_params *params
+    leave_group_params_t *params
 );
 
 /**
@@ -236,7 +238,7 @@ bool consume_leave_group_msg(
  */
 int produce_send_group_msg_request(
     E2ees__SendGroupMsgRequest **request_out,
-    send_group_msg_params *params,
+    send_group_msg_params_t *params,
     uint32_t notif_level,
     E2ees__GroupSession *outbound_group_session,
     E2ees__GroupMsgPayload *group_msg_payload
