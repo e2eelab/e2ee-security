@@ -271,7 +271,7 @@ int produce_renew_group_request(
     msg->group_info = (E2ees__GroupInfo *)malloc(sizeof(E2ees__GroupInfo));
     E2ees__GroupInfo *group_info = msg->group_info;
     e2ees__group_info__init(group_info);
-    
+
     // 複製舊群組的資訊 (名稱、群組地址、成員名單)
     group_info->group_name = strdup(outbound_group_session->group_info->group_name);
     copy_address_from_address(&(group_info->group_address), outbound_group_session->group_info->group_address);
@@ -319,10 +319,10 @@ int consume_renew_group_response(
     char *old_session_id = outbound_group_session->session_id;
 
     if (ret == E2EES_RESULT_SUCC) {
-        // 🌟 關鍵 1：卸載舊的 Outbound Session
+        // unload the old group session
         get_e2ees_plugin()->db_handler.unload_group_session_by_id(sender_address, old_session_id);
 
-        // 🌟 關鍵 2：使用 Server 給的新 member_info_list 與 old_session_id 重建
+        // new outbound group session
         ret = new_outbound_group_session_by_sender(
             response->n_member_info_list, response->member_info_list,
             e2ees_pack_id, sender_address, group_name, group_address, 
@@ -1258,7 +1258,6 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
     E2ees__MsgKey *msg_key = NULL;
     uint8_t *plaintext_data = NULL;
     size_t plaintext_data_len = 0;
-    E2ees__RenewGroupResponse *response = NULL;
 
     if (is_valid_address(receiver_address)) {
         if (is_valid_e2ee_msg(e2ee_msg)) {
@@ -1326,11 +1325,11 @@ bool consume_group_msg(E2ees__E2eeAddress *receiver_address, E2ees__E2eeMsg *e2e
                 get_e2ees_plugin()->db_handler.store_group_session(inbound_group_session);
             } else {
                 e2ees_notify_log(inbound_group_session->session_owner, BAD_MESSAGE_DECRYPTION, "consume_group_msg(): decryption failed");
-                // renew_group_internal(&response, inbound_group_session->session_owner, inbound_group_session->group_info->group_address);
+                renew_group_internal(NULL, inbound_group_session->session_owner, inbound_group_session->group_info->group_address);
             }
         } else {
             e2ees_notify_log(inbound_group_session->session_owner, BAD_SIGNATURE, "consume_group_msg(): verification failed");
-            // renew_group_internal(&response, inbound_group_session->session_owner, inbound_group_session->group_info->group_address);
+            renew_group_internal(NULL, inbound_group_session->session_owner, inbound_group_session->group_info->group_address);
         }
     }
 

@@ -491,16 +491,15 @@ int renew_group_internal(
     int ret = E2EES_RESULT_SUCC;
 
     E2ees__RenewGroupRequest *renew_group_request = NULL;
-    E2ees__RenewGroupResponse *response = NULL;
+    E2ees__RenewGroupResponse *renew_group_response = NULL;
     E2ees__Account *account = NULL;
     E2ees__GroupSession *outbound_group_session = NULL;
 
-    // 1. 驗證基本輸入參數
+    // validate
     if (sender_address == NULL || group_address == NULL) {
         ret = E2EES_RESULT_FAIL;
     }
 
-    // 2. 載入帳號資訊與權限驗證
     if (ret == E2EES_RESULT_SUCC) {
         get_e2ees_plugin()->db_handler.load_account_by_address(sender_address, &account);
         if (!account || !is_valid_e2ees_pack_id(account->e2ees_pack_id) || !is_valid_string(account->auth)) {
@@ -509,7 +508,7 @@ int renew_group_internal(
         }
     }
 
-    // 3. 撈出本地端「現有」的群組 Outbound Session
+    // load outbound_group_session
     if (ret == E2EES_RESULT_SUCC) {
         get_e2ees_plugin()->db_handler.load_group_session_by_address(sender_address, sender_address, group_address, &outbound_group_session);
         if (outbound_group_session == NULL) {
@@ -518,42 +517,43 @@ int renew_group_internal(
         }
     }
 
-    // 4. 打包請求 (使用昨天寫好的 produce 函數)
+    // produce
     if (ret == E2EES_RESULT_SUCC) {
         ret = produce_renew_group_request(&renew_group_request, outbound_group_session);
     }
 
-    // 5. 傳送請求給 Server 並接收回應
+    // send to server
     if (ret == E2EES_RESULT_SUCC) {
-        // 呼叫 proto_handler 對應的 renew_group 介面
-        response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.renew_group, renew_group_request, sender_address, account->auth);
+        renew_group_response = dispatch_proto_request(get_e2ees_plugin()->proto_handler.renew_group, renew_group_request, sender_address, account->auth);
 
-        // 簡單驗證 response 是否合法且 code 為 OK
-        if (response == NULL || response->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
+        // validate response
+        if (renew_group_response == NULL || renew_group_response->code != E2EES__RESPONSE_CODE__RESPONSE_CODE_OK) {
             e2ees_notify_log(sender_address, BAD_CREATE_GROUP_RESPONSE, "renew_group(): invalid renew_group_response");
             ret = E2EES_RESULT_FAIL;
-            // 聽你的，這裡完全不實作 Pending 邏輯，有錯直接放推！
-        }
-
-        // 輸出 response 給外層
-        if (response_out != NULL) {
-            *response_out = response;
         }
     }
 
-    // 6. 消化 Server 回應，重建本地群組狀態 (使用昨天寫好的 consume 函數)
+    // consume response
     if (ret == E2EES_RESULT_SUCC) {
-        ret = consume_renew_group_response(outbound_group_session, response);
+        ret = consume_renew_group_response(outbound_group_session, renew_group_response);
         if (ret != E2EES_RESULT_SUCC) {
             e2ees_notify_log(sender_address, BAD_CONSUME, "Server renewed group but local consume response failed");
         }
     }
 
-    // 7. 釋放資源 (Release)
+    // release
     free_proto(account);
     free_proto(renew_group_request);
     if (outbound_group_session != NULL) {
         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
+    }
+
+    if (renew_group_response != NULL) {
+        if (response_out != NULL) {
+            *response_out = renew_group_response;
+        } else {
+            free_proto(renew_group_response);
+        }
     }
 
     // done

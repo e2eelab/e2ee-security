@@ -28,7 +28,8 @@
 // global variable
 // db in memory
 // static const char *db_name = (char *)"file:test.db?mode=memory&cache=shared";
-static const char *db_name = (char *)":memory:"; // test.db";
+static const char *db_name = (char *)":memory:";
+// static const char *db_name = (char *)"test.db";
 static sqlite3 *db;
 
 // util function
@@ -641,6 +642,8 @@ void mock_db_begin() {
 
     // connect
     sqlite_connect(db_name);
+
+    sqlite3_busy_timeout(db, 5000);
 
     // session
     sqlite_execute(SESSION_DROP_TABLE);

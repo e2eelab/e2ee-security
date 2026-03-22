@@ -837,24 +837,34 @@ int send_group_msg_with_filter(
         }
     }
 
-    // // proactive rotation
-    // if (ret == E2EES_RESULT_SUCC) {
-    //     if (outbound_group_session->sequence >= 100) {
-    //         e2ees_notify_log(sender_address, DEBUG_LOG, "Sequence limit reached, renewing group...");
+    // proactive rotation
+    if (ret == E2EES_RESULT_SUCC) {
+        // if the sequence reach the limit, renew the group
+        if (outbound_group_session->sequence >= 100) {
+            e2ees_notify_log(sender_address, DEBUG_LOG, "Sequence limit reached, renewing group...");
 
-    //         // renew group
-    //         renew_group_internal(sender_address, group_address);
+            // renew_group
+            ret = renew_group_internal(NULL, sender_address, group_address);
 
-    //         // release
-    //         e2ees__group_session__free_unpacked(outbound_group_session, NULL);
-    //         outbound_group_session = NULL;
+            // unload the old group session, whether renewing group success or not
+            e2ees__group_session__free_unpacked(outbound_group_session, NULL);
+            outbound_group_session = NULL;
 
-    //         // load the outbound_group_session created just now(in renew_group_internal)
-    //         get_e2ees_plugin()->db_handler.load_group_session_by_address(
-    //             sender_address, sender_address, group_address, &outbound_group_session
-    //         );
-    //     }
-    // }
+            // load the group session if success
+            if (ret == E2EES_RESULT_SUCC) {
+                get_e2ees_plugin()->db_handler.load_group_session_by_address(
+                    sender_address, sender_address, group_address, &outbound_group_session
+                );
+
+                // validate
+                if (!is_valid_group_session(outbound_group_session)) {
+                    ret = E2EES_RESULT_FAIL;
+                }
+            } else {
+                e2ees_notify_log(sender_address, BAD_RENEW_GROUP_RESPONSE, "Proactive rotation failed, cannot send message");
+            }
+        }
+    }
 
     if (ret == E2EES_RESULT_SUCC) {
         ret = encrypt_group_msg(

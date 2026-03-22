@@ -787,6 +787,11 @@ void proto_msg_hash(
             payload_data = (uint8_t *)malloc(sizeof(uint8_t) * payload_data_len);
             e2ees__leave_group_msg__pack(payload, payload_data);
             break;
+        case E2EES__PROTO_MSG__PAYLOAD_RENEW_GROUP_MSG:
+            payload_data_len = e2ees__renew_group_msg__get_packed_size(payload);
+            payload_data = (uint8_t *)malloc(sizeof(uint8_t) * payload_data_len);
+            e2ees__renew_group_msg__pack(payload, payload_data);
+            break;
         case E2EES__PROTO_MSG__PAYLOAD_E2EE_MSG:
             payload_data_len = e2ees__e2ee_msg__get_packed_size(payload);
             payload_data = (uint8_t *)malloc(sizeof(uint8_t) * payload_data_len);

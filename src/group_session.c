@@ -548,6 +548,8 @@ int new_outbound_group_session_by_sender(
                 );
                 // release
                 free_invite_response_list(&invite_response_list, invite_response_num);
+                invite_response_list = NULL;
+                invite_response_num = 0;
             }
         }
 

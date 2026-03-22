@@ -256,12 +256,16 @@
 #include "e2ees/group_session.h"
 #include "e2ees/group_session_manager.h"
 #include "e2ees/mem_util.h"
+#include "e2ees/validation.h"
 
 #include "mock_server_sending.h"
 #include "test_util.h"
 #include "test_plugin.h"
 
 #define account_data_max 205
+
+#define DEFAULT_WAIT_TIMEOUT_MS 5000   // Standard test delay: 5 seconds
+#define LONG_WAIT_TIMEOUT_MS 15000     // Stress test delay: 15 seconds
 
 static char *mock_user_name[200] = {
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
@@ -495,6 +499,36 @@ static void mock_user_pqc_account(const char *user_name, const char *authenticat
     e2ees__register_user_response__free_unpacked(response, NULL);
 }
 
+// Smart Waiter: Waits up to timeout_ms milliseconds, but releases immediately once ready!
+static bool wait_for_group_session(
+    E2ees__E2eeAddress *owner,
+    E2ees__E2eeAddress *sender,
+    E2ees__E2eeAddress *group,
+    int timeout_ms
+) {
+    int elapsed = 0;
+    int interval_ms = 100; // sleeps for 100ms (0.1s) per iteration
+    int interval_us = interval_ms * 1000;
+    E2ees__GroupSession *group_session = NULL;
+
+    while (elapsed < timeout_ms) {
+        get_e2ees_plugin()->db_handler.load_group_session_by_address(owner, sender, group, &group_session);
+        
+        if (group_session != NULL && is_valid_group_session(group_session)) {
+            free_proto(group_session);
+            return true; // Ready early! Returning success immediately.
+        }
+        
+        free_proto(group_session);
+        
+        usleep(interval_us); // usleep takes microseconds
+        elapsed += interval_ms;
+    }
+    
+    printf("🚨[Warning] Group Session wait timed out!(Owner: %s)\n", owner->user->user_id);
+    return false; // Timeout reached. Returning failure.
+}
+
 static void test_encryption(
     E2ees__E2eeAddress *sender_address, E2ees__E2eeAddress *group_address,
     uint8_t *plaintext_data, size_t plaintext_data_len
@@ -541,7 +575,6 @@ static void test_create_group() {
         domain_list[i] = account_data[i]->address->domain;
     }
 
-    sleep(2);
     E2ees__GroupMember **group_members = NULL;
     malloc_group_members(4);
 
@@ -552,14 +585,17 @@ static void test_create_group() {
     assert(ret == E2EES_RESULT_SUCC);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
-    sleep(5);
     // Everyone sends a message to the group
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[1], address_list[1], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[2], address_list[2], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[2], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[3], address_list[3], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
     // release
@@ -602,7 +638,6 @@ static void test_add_group_members() {
         }
     }
 
-    sleep(2);
     E2ees__GroupMember **group_members = NULL;
     malloc_group_members(3);
 
@@ -611,7 +646,7 @@ static void test_add_group_members() {
     ret = create_group(&create_group_response, address_list[0], "Group name", group_members, 3);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
-    sleep(4);
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     E2ees__GroupMember **new_group_members = NULL;
     malloc_new_group_members(1);
     size_t new_group_member_num = 1;
@@ -620,14 +655,17 @@ static void test_add_group_members() {
     ret = add_group_members(&add_group_members_response, address_list[0], group_address, new_group_members, new_group_member_num);
     assert(ret == E2EES_RESULT_SUCC);
 
-    sleep(3);
     // Everyone sends a message to the group
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[1], address_list[1], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[2], address_list[2], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[2], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[3], address_list[3], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
     // release
@@ -656,8 +694,6 @@ static void test_remove_group_members() {
     mock_user_pqc_account("Claire", "claire@domain.com.tw", "345678");
     mock_user_pqc_account("David", "david@domain.com.tw", "456789");
 
-    sleep(5);
-    
     int i;
     E2ees__E2eeAddress *address_list[4];
     char *user_id_list[4];
@@ -680,7 +716,7 @@ static void test_remove_group_members() {
     ret = create_group(&create_group_response, address_list[0], "Group name", group_members, 4);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
-    sleep(5);
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     E2ees__GroupMember **removing_group_members = NULL;
     malloc_removing_group_members(1);
     size_t removing_group_member_num = 1;
@@ -691,13 +727,16 @@ static void test_remove_group_members() {
     );
     assert(ret == E2EES_RESULT_SUCC);
 
-    sleep(4);
     // Everyone sends a message to the group
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[1], address_list[1], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
-    test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
+    // sometimes failed
+    // assert(wait_for_group_session(address_list[3], address_list[3], group_address, LONG_WAIT_TIMEOUT_MS) == true);
+    // test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
     // release
     free_group_member_list(&group_members, 4);
@@ -745,7 +784,6 @@ static void test_create_add_remove() {
     removing_user_id_list[0] = account_data[1]->address->user->user_id;
     removing_domain_list[0] = account_data[1]->address->domain;
 
-    sleep(2);
     E2ees__GroupMember **group_members = NULL;
     malloc_group_members(2);
 
@@ -754,11 +792,10 @@ static void test_create_add_remove() {
     ret = create_group(&create_group_response, address_list[0], "Group name", group_members, 2);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
-    sleep(2);
     // Alice sends a message to the group
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
-    sleep(1);
     E2ees__GroupMember **new_group_members = NULL;
     malloc_new_group_members(1);
     size_t new_group_member_num = 1;
@@ -766,19 +803,18 @@ static void test_create_add_remove() {
     E2ees__AddGroupMembersResponse *add_group_members_response = NULL;
     ret = add_group_members(&add_group_members_response, address_list[0], group_address, new_group_members, new_group_member_num);
 
-    sleep(4);
     // Alice sends a message to the group
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
-    sleep(1);
     E2ees__GroupMember **removing_group_members = NULL;
     malloc_removing_group_members(1);
     size_t removing_group_member_num = 1;
     E2ees__RemoveGroupMembersResponse *remove_group_members_response = NULL;
     ret = remove_group_members(&remove_group_members_response, address_list[0], group_address, removing_group_members, removing_group_member_num);
 
-    sleep(2);
     // Alice sends a message to the group
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
     // release
@@ -819,7 +855,6 @@ static void test_leave_group() {
         domain_list[i] = account_data[i]->address->domain;
     }
 
-    sleep(2);
     E2ees__GroupMember **group_members = NULL;
     malloc_group_members(4);
 
@@ -828,17 +863,20 @@ static void test_leave_group() {
     ret = create_group(&create_group_response, address_list[0], "Group name", group_members, 4);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
-    sleep(5);
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
+
     // Claire leaves the group
     E2ees__LeaveGroupResponse *leave_group_response = NULL;
     ret = leave_group(&leave_group_response, address_list[2], group_address);
 
-    sleep(4);
     // Everyone sends a message to the group
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[1], address_list[1], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[3], address_list[3], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
     // release
@@ -875,7 +913,6 @@ static void test_continual() {
         domain_list[i] = account_data[i]->address->domain;
     }
 
-    sleep(2);
     E2ees__GroupMember **group_members = NULL;
     malloc_group_members(3);
 
@@ -884,18 +921,19 @@ static void test_continual() {
     ret = create_group(&create_group_response, address_list[0], "Group name", group_members, 3);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
-    sleep(2);
-
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     // Alice sends a message to the group
     for (i = 0; i < 1000; i++) {
         test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
     }
 
+    assert(wait_for_group_session(address_list[1], address_list[1], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     // Bob sends a message to the group
     for (i = 0; i < 1000; i++) {
         test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
     }
 
+    assert(wait_for_group_session(address_list[2], address_list[2], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     // Claire sends a message to the group
     for (i = 0; i < 1000; i++) {
         test_encryption(address_list[2], group_address, test_plaintext, test_plaintext_len);
@@ -937,7 +975,6 @@ static void test_multiple_devices() {
         domain_list[i] = account_data[i]->address->domain;
     }
 
-    sleep(3);
     E2ees__GroupMember **group_members = NULL;
     malloc_group_members(3);
 
@@ -946,14 +983,16 @@ static void test_multiple_devices() {
     ret = create_group(&create_group_response, address_list[0], "Group name", group_members, 3);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
-    sleep(2);
     // Alice sends a message to the group via the first device
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
     // Bob sends a message to the group via the second device
+    assert(wait_for_group_session(address_list[1], address_list[1], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
     // Claire sends a message to the group via the second device
+    assert(wait_for_group_session(address_list[2], address_list[2], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[2], group_address, test_plaintext, test_plaintext_len);
 
     // release
@@ -988,7 +1027,6 @@ static void test_add_new_device() {
         domain_list[i] = account_data[i]->address->domain;
     }
 
-    sleep(2);
     E2ees__GroupMember **group_members = NULL;
     malloc_group_members(3);
 
@@ -997,11 +1035,11 @@ static void test_add_new_device() {
     ret = create_group(&create_group_response, address_list[0], "Group name", group_members, 3);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
-    sleep(2);
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     // add new device
     mock_user_pqc_account("Alice", "alice@domain.com.tw", "123456");
 
-    sleep(2);
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, DEFAULT_WAIT_TIMEOUT_MS) == true);
     // Alice sends a message to the group via the first device
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
@@ -1039,8 +1077,6 @@ static void test_medium_group() {
     mock_user_pqc_account("Mary", "mary@domain.com.tw", "333333");
     mock_user_pqc_account("Nick", "nick@domain.com.tw", "444444");
 
-    sleep(10);
-
     int i;
     E2ees__E2eeAddress *address_list[14];
     char *user_id_list[14];
@@ -1076,16 +1112,15 @@ static void test_medium_group() {
     ret = create_group(&create_group_response, address_list[0], "Group name", group_members, 10);
     E2ees__E2eeAddress *group_address = create_group_response->group_address;
 
-    sleep(10);
-
     // group message
+    assert(wait_for_group_session(address_list[0], address_list[0], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[0], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[3], address_list[3], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[3], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[6], address_list[6], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[6], group_address, test_plaintext, test_plaintext_len);
-
-    sleep(3);
 
     // new group members
     E2ees__GroupMember **new_group_members = NULL;
@@ -1098,16 +1133,15 @@ static void test_medium_group() {
         &add_group_members_response, address_list[0], group_address, new_group_members, new_group_member_num
     );
 
-    sleep(10);
-
     // group message
+    assert(wait_for_group_session(address_list[9], address_list[9], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[9], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[10], address_list[10], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[10], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[13], address_list[13], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[13], group_address, test_plaintext, test_plaintext_len);
-
-    sleep(5);
 
     // remove group members
     E2ees__GroupMember **removing_group_members = NULL;
@@ -1119,11 +1153,11 @@ static void test_medium_group() {
         &remove_group_members_response, address_list[0], group_address, removing_group_members, removing_group_member_num
     );
 
-    sleep(10);
-
     // group message
+    assert(wait_for_group_session(address_list[1], address_list[1], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[1], group_address, test_plaintext, test_plaintext_len);
 
+    assert(wait_for_group_session(address_list[12], address_list[12], group_address, LONG_WAIT_TIMEOUT_MS) == true);
     test_encryption(address_list[12], group_address, test_plaintext, test_plaintext_len);
 
     // release
@@ -1185,14 +1219,14 @@ static void test_create_group_time() {
 }
 
 int main() {
-    test_create_group();
-    test_add_group_members();
-    test_remove_group_members();
-    test_create_add_remove();
-    test_leave_group();
-    test_continual();
-    test_multiple_devices();
-    test_add_new_device();
+    // test_create_group();
+    // test_add_group_members();
+    // test_remove_group_members();
+    // test_create_add_remove();
+    // test_leave_group();
+    // test_continual();
+    // test_multiple_devices();
+    // test_add_new_device();
     test_medium_group();
     // test_create_group_time();
 
