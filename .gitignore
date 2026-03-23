@@ -71,3 +71,5 @@ Module.symvers
 Mkfile.old
 dkms.conf
 .cache
+moc_server.txt
+origin.txt

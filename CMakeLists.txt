@@ -130,6 +130,15 @@ endforeach(proto)
 add_library(e2ees_static STATIC ${e2ees_src} ${src_headers}
                                   ${proto_gen_src} ${proto_gen_header})
 
+# ASan
+option(ENABLE_ASAN "Enable AddressSanitizer for memory leak detection" OFF)
+
+if(ENABLE_ASAN)
+  message(STATUS "🛡️ AddressSanitizer is ENABLED")
+  target_compile_options(e2ees_static PUBLIC -fsanitize=address -g -fno-omit-frame-pointer)
+  target_link_options(e2ees_static PUBLIC -fsanitize=address)
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_definitions(e2ees_static PRIVATE ENABLE_TRACE)
 endif()
