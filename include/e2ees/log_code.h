@@ -27,7 +27,7 @@
 extern "C" {
 #endif
 
-#include "e2ees/e2ees.h"
+#include "e2ees/E2eeAddress.pb-c.h"
 
 enum LogCode {
     DEBUG_LOG   = 0,
