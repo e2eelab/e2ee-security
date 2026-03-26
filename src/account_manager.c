@@ -43,7 +43,7 @@ int produce_register_request(
     request->user_id       = strdup(params->user_id);
     request->device_id     = strdup(params->device_id);
     request->authenticator =
-        params->authenticator ? strdup(params->authenticator) : NULL; // authenticator may be NULL
+        params->authenticator ? strdup(params->authenticator) : NULL;
     request->auth_code = strdup(params->auth_code);
 
     // copy identity public key

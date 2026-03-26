@@ -2260,11 +2260,12 @@ bool is_valid_register_user_inputs(const register_user_params_t *params) {
         e2ees_notify_log(NULL, BAD_DEVICE_ID, "is_valid_register_user_inputs(): invalid device_id");
         return false;
     }
-    if (params->authenticator && !is_valid_string(params->authenticator)) {
-        e2ees_notify_log(
-            NULL, BAD_AUTHENTICATOR, "is_valid_register_user_inputs(): invalid authenticator");
-        return false;
-    }
+    // authenticator can be NULL, or empty string
+    // if (params->authenticator && !is_valid_string(params->authenticator)) {
+    //    e2ees_notify_log(
+    //        NULL, BAD_AUTHENTICATOR, "is_valid_register_user_inputs(): invalid authenticator");
+    //    return false;
+    // }
     if (!is_valid_string(params->auth_code)) {
         e2ees_notify_log(NULL, BAD_AUTH, "is_valid_register_user_inputs(): invalid auth_code");
         return false;
