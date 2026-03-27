@@ -256,6 +256,15 @@ bool is_valid_string(const char *src) {
     return true;
 }
 
+// for optional fields: allows NULL or empty strings (e.g., device_id, authenticator).
+bool is_valid_optional_string(const char *src) {
+    if (src == NULL || src[0] == '\0') {
+        return true; // empty is considered valid!
+    }
+    // optional: add length checks here if the string is not empty (e.g., strlen(src) < MAX_LEN)
+    return true; 
+}
+
 bool is_invalid_string(const char *src) {
     if (src != NULL) {
         if (src[0] != '\0') {
@@ -2260,12 +2269,11 @@ bool is_valid_register_user_inputs(const register_user_params_t *params) {
         e2ees_notify_log(NULL, BAD_DEVICE_ID, "is_valid_register_user_inputs(): invalid device_id");
         return false;
     }
-    // authenticator can be NULL, or empty string
-    // if (params->authenticator && !is_valid_string(params->authenticator)) {
-    //    e2ees_notify_log(
-    //        NULL, BAD_AUTHENTICATOR, "is_valid_register_user_inputs(): invalid authenticator");
-    //    return false;
-    // }
+    // authenticator can be NULL or empty string
+    if (!is_valid_optional_string(params->authenticator)) {
+        e2ees_notify_log(NULL, BAD_AUTHENTICATOR, "is_valid_register_user_inputs(): invalid authenticator");
+        return false;
+    }
     if (!is_valid_string(params->auth_code)) {
         e2ees_notify_log(NULL, BAD_AUTH, "is_valid_register_user_inputs(): invalid auth_code");
         return false;
@@ -2326,9 +2334,8 @@ bool is_valid_get_pre_key_bundle_inputs(const get_pre_key_bundle_params_t *param
             NULL, BAD_DOMAIN, "is_valid_get_pre_key_bundle_inputs(): invalid to_domain");
         return false;
     }
-    if (params->to_device_id && !is_valid_string(params->to_device_id)) {
-        e2ees_notify_log(
-            NULL, BAD_DEVICE_ID, "is_valid_get_pre_key_bundle_inputs(): invalid to_device_id");
+    if (!is_valid_optional_string(params->to_device_id)) {
+        e2ees_notify_log(NULL, BAD_DEVICE_ID, "is_valid_get_pre_key_bundle_inputs(): invalid to_device_id");
         return false;
     }
 
