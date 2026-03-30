@@ -27,7 +27,7 @@
 
 static const char MESSAGE_KEY_SEED[]              = "MessageKeys";
 static const uint8_t CHAIN_KEY_SEED[1]            = { 0x02 };
-static const size_t MAX_SKIPPED_MESSAGE_KEY_NODES = 512;
+static const size_t MAX_SKIPPED_MESSAGE_KEY_NODES = 1024;
 
 static void free_skipped_message_key(E2ees__SkippedMsgKeyNode ***src, size_t num) {
     size_t i;
@@ -1021,20 +1021,20 @@ int decrypt_ratchet(
                  * We can discard our previous empheral ratchet key.
                  * We will generate a new key when we send the next message. */
 
-                if (payload->sending_message_sequence - ratchet->received_message_sequence >
-                    payload->sequence + 1) {
+                uint64_t expected_total_received = ratchet->received_message_sequence + (payload->sequence + 1);
+                if ((uint64_t)payload->sending_message_sequence > expected_total_received) {
                     // we skipped some messages in the previous ratchet
-                    size_t skipped_num = payload->sending_message_sequence -
-                                         ratchet->received_message_sequence -
-                                         (payload->sequence + 1);
+                    uint64_t skipped_num = (uint64_t)payload->sending_message_sequence - expected_total_received;
                     // check the limit
-                    if (ratchet->n_skipped_msg_key_list + skipped_num >
-                        MAX_SKIPPED_MESSAGE_KEY_NODES) {
+                    // method 0: 
+                    //   if (ratchet->n_skipped_msg_key_list + skipped_num >
+                    //      MAX_SKIPPED_MESSAGE_KEY_NODES) {
+                    // method 1:
+                    if (skipped_num > MAX_SKIPPED_MESSAGE_KEY_NODES) {
                         e2ees_notify_log(
                             NULL,
                             DEBUG_LOG,
-                            "decrypt_ratchet(): Too many skipped keys in "
-                            "previous chain! Bomb defused.");
+                            "decrypt_ratchet(): Too many skipped keys in previous chain.");
                         ret = E2EES_RESULT_FAIL;
                     } else {
                         if (ratchet->skipped_msg_key_list == NULL) {
@@ -1202,7 +1202,11 @@ int decrypt_ratchet(
                 size_t skipped_num =
                     payload->sequence - corresponding_receiver_chain->chain_key->index;
                 // check the limit
-                if (ratchet->n_skipped_msg_key_list + skipped_num > MAX_SKIPPED_MESSAGE_KEY_NODES) {
+                // method 0: 
+                //   if (ratchet->n_skipped_msg_key_list + skipped_num >
+                //      MAX_SKIPPED_MESSAGE_KEY_NODES) {
+                // method 1:
+                if (skipped_num > MAX_SKIPPED_MESSAGE_KEY_NODES) {
                     e2ees_notify_log(
                         NULL,
                         DEBUG_LOG,
@@ -1278,18 +1282,17 @@ int decrypt_ratchet(
                      * key, we will not need to advance the chain key. */
                     advance_chain_key(cipher_suite, corresponding_receiver_chain->chain_key);
                 }
-
-                // update received_message_sequence
-                if (payload->sending_message_sequence > ratchet->received_message_sequence) {
-                    ratchet->received_message_sequence = payload->sending_message_sequence;
-                }
             }
         }
     }
 
-    if (ratchet != NULL) {
-        prune_bloated_skipped_keys(ratchet);
+    // update received_message_sequence
+    if (payload->sending_message_sequence > ratchet->received_message_sequence) {
+        ratchet->received_message_sequence = payload->sending_message_sequence;
     }
+
+    // keep reasonable skipped keys num
+    prune_bloated_skipped_keys(ratchet);
 
     // Clean up successfully decrypted data if the ratchet state update failed
     // eventually
