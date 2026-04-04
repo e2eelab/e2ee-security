@@ -41,16 +41,14 @@ char *generate_uuid_str() {
 size_t to_hex_str(const uint8_t *buffer, size_t buffer_len, char **hex_str) {
     size_t hex_str_len = buffer_len * 2 + 1;
     *hex_str           = (char *)malloc(hex_str_len * sizeof(char));
-    char *p            = &(*hex_str[0]);
-    int i, n;
-    size_t output_len = 0;
-    for (i = 0; (i < buffer_len) && (output_len <= hex_str_len); i++) {
-        n = sprintf(p, "%02X", buffer[i]);
-        p += n;
-        output_len += n;
+    if (!*hex_str) {
+        return 0;
     }
-    *p = '\0';
-
+    char *p = *hex_str;
+    for (size_t i = 0; i < buffer_len; i++) {
+        snprintf(p, 3, "%02X", buffer[i]);
+        p += 2;
+    }
     return hex_str_len;
 }
 

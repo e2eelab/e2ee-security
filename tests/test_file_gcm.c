@@ -42,7 +42,7 @@ static void test_file(){
     int i;
     for (i = 0; i < tot_test; i++){
         char in_file_path[20], out_file_path[cur_path_len + 50];
-        sprintf(in_file_path, "./data/%d", i);
+        snprintf(in_file_path, sizeof(in_file_path), "./data/%d", i);
         if ((fptr = fopen(in_file_path, "r")) == NULL){
             printf("Error! Opening file in the data folder failed!\n");
             // Program exits if the file pointer returns NULL.
@@ -59,11 +59,11 @@ static void test_file(){
             fclose(fptr);
         }
 
-        sprintf(out_file_path, "%s/encrypted_file_%d", cur_path, i);
+        snprintf(out_file_path, sizeof(out_file_path), "%s/encrypted_file_%d", cur_path, i);
         crypto_encrypt_aes_file(in_file_path, out_file_path, key);
 
         char decrypted_file[cur_path_len + 50];
-        sprintf(decrypted_file, "%s/decrypted_file_%d", cur_path, i);
+        snprintf(decrypted_file, sizeof(decrypted_file), "%s/decrypted_file_%d", cur_path, i);
         if (crypto_decrypt_aes_file(out_file_path, decrypted_file, key) == -1) {
             printf("Fail decryption!!!\n");
         }

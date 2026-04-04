@@ -40,8 +40,8 @@ static void test_file(){
     FILE *fptr;
     int i;
     for (i = 0; i < tot_test; i++){
-        char str[20];
-        sprintf(str, "./data/%d", i);
+        char str[25];
+        snprintf(str, sizeof(str), "./data/%d", i);
         if ((fptr = fopen(str, "r")) == NULL){
             printf("Error! opening file");
             // Program exits if the file pointer returns NULL.
