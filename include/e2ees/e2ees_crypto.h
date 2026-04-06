@@ -102,7 +102,7 @@ size_t e2ees_decrypt_data(
  * @param out_file_path The path to the output (encrypted) file.
  * @return true on success, false on failure.
  */
-bool e2ees_encryptFile(
+bool e2ees_encrypt_file(
     const uint8_t *password, const size_t password_len,
     const char *in_file_path, const char *out_file_path
 );
@@ -115,7 +115,7 @@ bool e2ees_encryptFile(
  * @param out_file_path The path to the output (decrypted) file.
  * @return true on success, false on failure.
  */
-bool e2ees_decryptFile(
+bool e2ees_decrypt_file(
     const uint8_t *password, const size_t password_len,
     const char *in_file_path, const char *out_file_path
 );

@@ -68,17 +68,6 @@ E2ees__InviteResponse *
 invite(E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain);
 
 /**
- * @brief Send invite request to create a new outbound session
- * and delete the old outbound session.
- * @param from From address
- * @param to_user_id The receiver's user_id
- * @param to_domain The receiver's domain
- * @return  E2ees__InviteResponse *
- */
-E2ees__InviteResponse *
-new_invite(E2ees__E2eeAddress *from, const char *to_user_id, const char *to_domain);
-
-/**
  * @brief Send one2one msg.
  * @param response_out
  * @param from
@@ -106,21 +95,6 @@ int send_one2one_msg(
  */
 void send_sync_msg(
     E2ees__E2eeAddress *from, const uint8_t *plaintext_data, size_t plaintext_data_len);
-
-/**
- * @brief Send sync invite msg to other devices.
- * @param from
- * @param to_user_id
- * @param to_domain
- * @param to_device_id_list
- * @param to_device_num
- */
-void send_sync_invite_msg(
-    E2ees__E2eeAddress *from,
-    const char *to_user_id,
-    const char *to_domain,
-    char **to_device_id_list,
-    size_t to_device_num);
 
 /**
  * @brief Create a group.
