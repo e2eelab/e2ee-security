@@ -27,7 +27,9 @@
 #include "e2ees/e2ees_client.h"
 #include "e2ees/mem_util.h"
 #include "e2ees/session_manager.h"
+#include "e2ees/e2ees_crypto.h"
 
+#include "mock_db.h"
 #include "mock_server_sending.h"
 #include "test_plugin.h"
 #include "test_util.h"
@@ -146,6 +148,8 @@ static e2ees_event_handler_t test_event_handler = {
 };
 
 static void test_begin(){
+    mock_db_begin();
+
     int i;
     for (i = 0; i < account_data_max; i++) {
         account_data[i] = NULL;
@@ -307,6 +311,58 @@ static void test_one_to_one_session_selected() {
 
     printf("====================================\n");
 }
+        
+static void test_kem_by_pack_id() {
+    printf("test_kem_by_pack_id begin!!!\n");
+    tear_up();
+    test_begin();
+
+    size_t kem_data_all_len = sizeof(kem_data_all) / sizeof(kem_data_all[0]);
+
+    size_t i;
+    for (i = 0; i < kem_data_all_len; i++) {
+        unsigned kem_choice = kem_data_all[i];
+        printf("Testing KEM suite: %u\n", kem_choice);
+
+        uint32_t pack_id = mock_e2ees_pack_id(E2EES_PACK_ALG_DS_MLDSA87, kem_choice);
+
+        uint8_t *kp_data = NULL;
+        size_t kp_len    = e2ees_kem_gen_key_pair(pack_id, &kp_data);
+        assert(kp_len > 0);
+
+        E2ees__KeyPair *kp = e2ees__key_pair__unpack(NULL, kp_len, kp_data);
+        assert(kp != NULL);
+
+        uint8_t *ss_encaps = NULL;
+        uint8_t *ct        = NULL;
+        size_t ct_len      = e2ees_kem_encaps(
+            pack_id, &ss_encaps, &ct, kp->public_key.data, kp->public_key.len);
+        assert(ct_len > 0);
+        assert(ss_encaps != NULL);
+        assert(ct != NULL);
+
+        uint8_t *ss_decaps = NULL;
+        size_t ss_len      = e2ees_kem_decaps(
+            pack_id, &ss_decaps, ct, ct_len, kp->private_key.data, kp->private_key.len);
+        assert(ss_len > 0);
+        assert(ss_decaps != NULL);
+
+        assert(memcmp(ss_encaps, ss_decaps, ss_len) == 0);
+        printf("  Shared secret check ok (len: %zu)\n", ss_len);
+
+        // release
+        free(kp_data);
+        e2ees__key_pair__free_unpacked(kp, NULL);
+        free(ss_encaps);
+        free(ss_decaps);
+        free(ct);
+    }
+
+    printf("test_kem_by_pack_id ok!!!\n");
+    printf("====================================\n");
+    test_end();
+    tear_down();
+}
 
 static void test_one_to_one_session_all() {
     // test start
@@ -363,6 +419,7 @@ static void test_one_to_one_session_all() {
 
 int main() {
     test_e2ees_pack_id();
+    test_kem_by_pack_id();
     test_one_to_one_session_selected();
     // test_one_to_one_session_all();
 

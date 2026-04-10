@@ -150,7 +150,7 @@ kem_suite_t *get_kem_suite(unsigned kem_id) {
         return &E2EES_KEM_MCELIECE348864F;
     } else if (kem_id == E2EES_PACK_ALG_KEM_MCELIECE460896) {
         return &E2EES_KEM_MCELIECE460896;
-    } else if (kem_id == E2EES_PACK_ALG_KEM_MCELIECE460896) {
+    } else if (kem_id == E2EES_PACK_ALG_KEM_MCELIECE460896F) {
         return &E2EES_KEM_MCELIECE460896F;
     } else if (kem_id == E2EES_PACK_ALG_KEM_MCELIECE6688128) {
         return &E2EES_KEM_MCELIECE6688128;

@@ -399,6 +399,19 @@ int pqc_new_inbound_session(
             bob_one_time_pre_key = NULL;
         }
 
+        // validation: ensure all local keys have the correct length for the chosen KEM
+        int asym_priv_key_len = cipher_suite->kem_suite->get_param().asym_priv_key_len;
+        if (bob_identity_key->private_key.len != (size_t)asym_priv_key_len ||
+            bob_signed_pre_key->private_key.len != (size_t)asym_priv_key_len ||
+            (bob_one_time_pre_key != NULL &&
+             bob_one_time_pre_key->private_key.len != (size_t)asym_priv_key_len)) {
+            e2ees_notify_log(NULL, BAD_KEY_PAIR, "pqc_new_inbound_session() key length mismatch");
+            ret = E2EES_RESULT_FAIL;
+        }
+    }
+
+    if (ret == E2EES_RESULT_SUCC) {
+
         // establish the associated data
         ad_len                        = 2 * asym_pub_key_len;
         session->associated_data.len  = ad_len;

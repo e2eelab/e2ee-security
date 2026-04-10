@@ -171,6 +171,44 @@ int e2ees_ds_verify(
     const uint8_t *msg, size_t msg_len, const uint8_t *public_key, size_t public_key_len
 );
 
+/**
+ * @brief Generates a KEM key pair.
+ * @param e2ees_pack_id The e2ee package id to determine the algorithm.
+ * @param keypair_out The output buffer for the serialized key pair. The caller must free this buffer.
+ * @return The length of the serialized key pair, or 0 on failure.
+ */
+size_t e2ees_kem_gen_key_pair(uint32_t e2ees_pack_id, uint8_t **keypair_out);
+
+/**
+ * @brief Encapsulates a shared secret.
+ * @param e2ees_pack_id The e2ee package id to determine the algorithm.
+ * @param shared_secret_out The output buffer for the shared secret. The caller must free this buffer.
+ * @param ciphertext_out The output buffer for the ciphertext. The caller must free this buffer.
+ * @param public_key The public key for encapsulation.
+ * @param public_key_len The length of the public key.
+ * @return The length of the ciphertext, or 0 on failure.
+ */
+size_t e2ees_kem_encaps(
+    uint32_t e2ees_pack_id, uint8_t **shared_secret_out, uint8_t **ciphertext_out,
+    const uint8_t *public_key, size_t public_key_len
+);
+
+/**
+ * @brief Decapsulates a shared secret.
+ * @param e2ees_pack_id The e2ee package id to determine the algorithm.
+ * @param shared_secret_out The output buffer for the shared secret. The caller must free this buffer.
+ * @param ciphertext The ciphertext to decapsulate.
+ * @param ciphertext_len The length of the ciphertext.
+ * @param private_key The private key for decapsulation.
+ * @param private_key_len The length of the private key.
+ * @return The length of the shared secret, or 0 on failure.
+ */
+size_t e2ees_kem_decaps(
+    uint32_t e2ees_pack_id, uint8_t **shared_secret_out,
+    const uint8_t *ciphertext, size_t ciphertext_len,
+    const uint8_t *private_key, size_t private_key_len
+);
+
 #ifdef __cplusplus
 }
 #endif

@@ -421,6 +421,56 @@ int crypto_ds_verify_by_e2ees_pack_id(
     const uint8_t *public_key,
     size_t public_key_len);
 
+/**
+ * @brief Generate a random key pair that will be used to calculate shared
+ * secret keys with respect to the specific e2ee pack ID raw number.
+ *
+ * @param e2ees_pack_id_raw
+ * @param pub_key
+ * @param priv_key
+ * @return value < 0 for error
+ */
+int crypto_kem_key_gen_by_e2ees_pack_id(
+    uint32_t e2ees_pack_id_raw, ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key);
+
+/**
+ * @brief Encapsulation with respect to the specific e2ee pack ID raw number.
+ *
+ * @param e2ees_pack_id_raw
+ * @param shared_secret
+ * @param ciphertext
+ * @param ciphertext_len
+ * @param their_key
+ * @param their_key_len
+ * @return value < 0 for error
+ */
+int crypto_kem_encaps_by_e2ees_pack_id(
+    uint32_t e2ees_pack_id_raw,
+    uint8_t **shared_secret,
+    uint8_t **ciphertext,
+    size_t *ciphertext_len,
+    const uint8_t *their_key,
+    size_t their_key_len);
+
+/**
+ * @brief Decapsulation with respect to the specific e2ee pack ID raw number.
+ *
+ * @param e2ees_pack_id_raw
+ * @param shared_secret
+ * @param our_key
+ * @param our_key_len
+ * @param ciphertext
+ * @param ciphertext_len
+ * @return value < 0 for error
+ */
+int crypto_kem_decaps_by_e2ees_pack_id(
+    uint32_t e2ees_pack_id_raw,
+    uint8_t **shared_secret,
+    const uint8_t *our_key,
+    size_t our_key_len,
+    const uint8_t *ciphertext,
+    size_t ciphertext_len);
+
 #ifdef __cplusplus
 }
 #endif

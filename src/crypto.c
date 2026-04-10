@@ -848,3 +848,114 @@ int crypto_ds_verify_by_e2ees_pack_id(
         return E2EES_RESULT_SUCC;
     }
 }
+
+int crypto_kem_key_gen_by_e2ees_pack_id(
+    uint32_t e2ees_pack_id_raw, ProtobufCBinaryData *pub_key, ProtobufCBinaryData *priv_key) {
+    e2ees_pack_id_t e2ees_pack_id = raw_to_e2ees_pack_id(e2ees_pack_id_raw);
+    kem_suite_t *kem_suite        = get_kem_suite(e2ees_pack_id.kem);
+    if (kem_suite == NULL) {
+        e2ees_notify_log(
+            NULL,
+            BAD_E2EES_PACK,
+            "crypto_kem_key_gen_by_e2ees_pack_id() kem_suite not found: %d.",
+            e2ees_pack_id_raw);
+        return E2EES_RESULT_FAIL;
+    }
+
+    int result = kem_suite->asym_key_gen(pub_key, priv_key);
+    if (result < 0) {
+        e2ees_notify_log(
+            NULL, BAD_KEY_PAIR, "crypto_kem_key_gen_by_e2ees_pack_id() gen key failed.");
+        free_protobuf(pub_key);
+        free_protobuf(priv_key);
+        return E2EES_RESULT_FAIL;
+    } else {
+        return E2EES_RESULT_SUCC;
+    }
+}
+
+int crypto_kem_encaps_by_e2ees_pack_id(
+    uint32_t e2ees_pack_id_raw,
+    uint8_t **shared_secret,
+    uint8_t **ciphertext,
+    size_t *ciphertext_len,
+    const uint8_t *their_key,
+    size_t their_key_len) {
+    e2ees_pack_id_t e2ees_pack_id = raw_to_e2ees_pack_id(e2ees_pack_id_raw);
+    kem_suite_t *kem_suite        = get_kem_suite(e2ees_pack_id.kem);
+    if (kem_suite == NULL) {
+        e2ees_notify_log(
+            NULL,
+            BAD_E2EES_PACK,
+            "crypto_kem_encaps_by_e2ees_pack_id() kem_suite not found: %d.",
+            e2ees_pack_id_raw);
+        return E2EES_RESULT_FAIL;
+    }
+    if (their_key == NULL || their_key_len != kem_suite->get_param().asym_pub_key_len) {
+        e2ees_notify_log(
+            NULL, BAD_PUBLIC_KEY, "crypto_kem_encaps_by_e2ees_pack_id() their_key wrong.");
+        return E2EES_RESULT_FAIL;
+    }
+
+    uint32_t ss_len = kem_suite->get_param().shared_secret_len;
+    *shared_secret  = (uint8_t *)malloc(sizeof(uint8_t) * ss_len);
+
+    ProtobufCBinaryData ct_proto = { .data = NULL, .len = 0 };
+    ProtobufCBinaryData tk_proto = { .data = (uint8_t *)their_key, .len = their_key_len };
+
+    int result = kem_suite->encaps(*shared_secret, &ct_proto, &tk_proto);
+    if (result < 0) {
+        e2ees_notify_log(NULL, BAD_MESSAGE_ENCRYPTION, "crypto_kem_encaps_by_e2ees_pack_id() encaps failed.");
+        free_mem((void **)shared_secret, ss_len);
+        free_protobuf(&ct_proto);
+        return E2EES_RESULT_FAIL;
+    } else {
+        *ciphertext     = ct_proto.data;
+        *ciphertext_len = ct_proto.len;
+        return E2EES_RESULT_SUCC;
+    }
+}
+
+int crypto_kem_decaps_by_e2ees_pack_id(
+    uint32_t e2ees_pack_id_raw,
+    uint8_t **shared_secret,
+    const uint8_t *our_key,
+    size_t our_key_len,
+    const uint8_t *ciphertext,
+    size_t ciphertext_len) {
+    e2ees_pack_id_t e2ees_pack_id = raw_to_e2ees_pack_id(e2ees_pack_id_raw);
+    kem_suite_t *kem_suite        = get_kem_suite(e2ees_pack_id.kem);
+    if (kem_suite == NULL) {
+        e2ees_notify_log(
+            NULL,
+            BAD_E2EES_PACK,
+            "crypto_kem_decaps_by_e2ees_pack_id() kem_suite not found: %d.",
+            e2ees_pack_id_raw);
+        return E2EES_RESULT_FAIL;
+    }
+    if (our_key == NULL || our_key_len != kem_suite->get_param().asym_priv_key_len) {
+        e2ees_notify_log(
+            NULL, BAD_PRIVATE_KEY, "crypto_kem_decaps_by_e2ees_pack_id() our_key wrong.");
+        return E2EES_RESULT_FAIL;
+    }
+    if (ciphertext == NULL || ciphertext_len != kem_suite->get_param().kem_ciphertext_len) {
+        e2ees_notify_log(
+            NULL, BAD_MESSAGE_DECRYPTION, "crypto_kem_decaps_by_e2ees_pack_id() ciphertext wrong.");
+        return E2EES_RESULT_FAIL;
+    }
+
+    uint32_t ss_len = kem_suite->get_param().shared_secret_len;
+    *shared_secret  = (uint8_t *)malloc(sizeof(uint8_t) * ss_len);
+
+    ProtobufCBinaryData ok_proto = { .data = (uint8_t *)our_key, .len = our_key_len };
+    ProtobufCBinaryData ct_proto = { .data = (uint8_t *)ciphertext, .len = ciphertext_len };
+
+    int result = kem_suite->decaps(*shared_secret, &ok_proto, &ct_proto);
+    if (result < 0) {
+        e2ees_notify_log(NULL, BAD_MESSAGE_DECRYPTION, "crypto_kem_decaps_by_e2ees_pack_id() decaps failed.");
+        free_mem((void **)shared_secret, ss_len);
+        return E2EES_RESULT_FAIL;
+    } else {
+        return E2EES_RESULT_SUCC;
+    }
+}

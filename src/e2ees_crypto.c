@@ -119,24 +119,24 @@ size_t e2ees_hash(uint32_t e2ees_pack_id, const uint8_t *msg, size_t msg_len, ui
 
 size_t e2ees_ds_gen_key_pair(uint32_t e2ees_pack_id, uint8_t **keypair_out) {
     *keypair_out = NULL;
-    E2ees__KeyPair *key_pair = (E2ees__KeyPair *)malloc(sizeof(E2ees__KeyPair));
-    e2ees__key_pair__init(key_pair);
+    E2ees__KeyPair key_pair = E2EES__KEY_PAIR__INIT;
     int result = crypto_ds_key_gen_by_e2ees_pack_id(
         e2ees_pack_id,
-        &(key_pair->public_key), &(key_pair->private_key)
+        &(key_pair.public_key), &(key_pair.private_key)
     );
     if (result >= 0) {
         // pack key_pair to keypair_out
-        size_t keypair_out_len = e2ees__key_pair__get_packed_size(key_pair);
-        *keypair_out = (uint8_t *)malloc(sizeof(uint8_t)*keypair_out_len);
-        e2ees__key_pair__pack(key_pair, *keypair_out);
+        size_t keypair_out_len = e2ees__key_pair__get_packed_size(&key_pair);
+        *keypair_out = (uint8_t *)malloc(sizeof(uint8_t) * keypair_out_len);
+        e2ees__key_pair__pack(&key_pair, *keypair_out);
         // release
-        e2ees__key_pair__free_unpacked(key_pair, NULL);
+        free_protobuf(&(key_pair.public_key));
+        free_protobuf(&(key_pair.private_key));
         return keypair_out_len;
     } else {
         // release
-        e2ees__key_pair__free_unpacked(key_pair, NULL);
-
+        free_protobuf(&(key_pair.public_key));
+        free_protobuf(&(key_pair.private_key));
         return 0;
     }
 }
@@ -166,6 +166,73 @@ int e2ees_ds_verify(uint32_t e2ees_pack_id, const uint8_t *signature_in, size_t 
     );
     return result;
 }
+
+size_t e2ees_kem_gen_key_pair(uint32_t e2ees_pack_id, uint8_t **keypair_out) {
+    *keypair_out = NULL;
+    E2ees__KeyPair key_pair = E2EES__KEY_PAIR__INIT;
+    int result = crypto_kem_key_gen_by_e2ees_pack_id(
+        e2ees_pack_id,
+        &(key_pair.public_key), &(key_pair.private_key)
+    );
+    if (result >= 0) {
+        // pack key_pair to keypair_out
+        size_t keypair_out_len = e2ees__key_pair__get_packed_size(&key_pair);
+        *keypair_out = (uint8_t *)malloc(sizeof(uint8_t) * keypair_out_len);
+        e2ees__key_pair__pack(&key_pair, *keypair_out);
+        // release
+        free_protobuf(&(key_pair.public_key));
+        free_protobuf(&(key_pair.private_key));
+        return keypair_out_len;
+    } else {
+        // release
+        free_protobuf(&(key_pair.public_key));
+        free_protobuf(&(key_pair.private_key));
+        return 0;
+    }
+}
+
+size_t e2ees_kem_encaps(
+    uint32_t e2ees_pack_id, uint8_t **shared_secret_out, uint8_t **ciphertext_out,
+    const uint8_t *public_key, size_t public_key_len
+) {
+    size_t ciphertext_len;
+    int result = crypto_kem_encaps_by_e2ees_pack_id(
+        e2ees_pack_id,
+        shared_secret_out, ciphertext_out, &ciphertext_len,
+        public_key, public_key_len
+    );
+    if (result >= 0) {
+        return ciphertext_len;
+    } else {
+        return 0;
+    }
+}
+
+size_t e2ees_kem_decaps(
+    uint32_t e2ees_pack_id, uint8_t **shared_secret_out,
+    const uint8_t *ciphertext, size_t ciphertext_len,
+    const uint8_t *private_key, size_t private_key_len
+) {
+    e2ees_pack_id_t e2ees_pack_id_st = raw_to_e2ees_pack_id(e2ees_pack_id);
+    kem_suite_t *kem_suite            = get_kem_suite(e2ees_pack_id_st.kem);
+    if (kem_suite == NULL) {
+        return 0;
+    }
+
+    int result = crypto_kem_decaps_by_e2ees_pack_id(
+        e2ees_pack_id,
+        shared_secret_out,
+        private_key, private_key_len,
+        ciphertext, ciphertext_len
+    );
+    if (result >= 0) {
+        return kem_suite->get_param().shared_secret_len;
+    } else {
+        return 0;
+    }
+}
+
+
 
 #ifdef __cplusplus
 }
