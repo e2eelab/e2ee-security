@@ -359,7 +359,7 @@ size_t crypto_decrypt_aes_data(
 int crypto_encrypt_aes_file(
     const char *in_file_path, const char *out_file_path, const uint8_t aes_key[AES256_KEY_LENGTH]) {
     FILE *infile, *outfile;
-    infile = fopen(in_file_path, "r");
+    infile = fopen(in_file_path, "rb");
     if (infile == NULL) {
         e2ees_notify_log(
             NULL,
@@ -370,7 +370,7 @@ int crypto_encrypt_aes_file(
         return E2EES_RESULT_FAIL;
     }
 
-    outfile = fopen(out_file_path, "w");
+    outfile = fopen(out_file_path, "wb");
     if (outfile == NULL) {
         e2ees_notify_log(
             NULL,
@@ -386,6 +386,15 @@ int crypto_encrypt_aes_file(
     fseek(infile, 0, SEEK_END);
     long size = ftell(infile);
     fseek(infile, 0, SEEK_SET);
+
+    if (size < 0) {
+        e2ees_notify_log(
+            NULL, BAD_FILE_ENCRYPTION, "crypto_encrypt_aes_file() invalid file size.");
+        fclose(outfile);
+        fclose(infile);
+        remove(out_file_path);
+        return E2EES_RESULT_FAIL;
+    }
 
     int max_plaintext_size = FILE_ENCRYPTION_BUFFER_LENGTH;
     unsigned char in_buffer[max_plaintext_size];
@@ -412,7 +421,7 @@ int crypto_encrypt_aes_file(
         int i;
         for (i = 0; i < times; i++) {
             size_t bytes_read = fread(in_buffer, sizeof(char), max_plaintext_size, infile);
-            if (bytes_read != max_plaintext_size && ferror(infile)) {
+            if (bytes_read != max_plaintext_size) {
                 e2ees_notify_log(
                     NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from infile.\n");
                 ret = -1;
@@ -420,18 +429,30 @@ int crypto_encrypt_aes_file(
             }
             if ((ret = mbedtls_gcm_update(&ctx, max_plaintext_size, in_buffer, out_buffer)) != 0)
                 break;
-            fwrite(out_buffer, sizeof(char), max_plaintext_size, outfile);
+            size_t bytes_written = fwrite(out_buffer, sizeof(char), max_plaintext_size, outfile);
+            if (bytes_written != max_plaintext_size) {
+                e2ees_notify_log(
+                    NULL, DEBUG_LOG, "[Error] Failed to write expected bytes to outfile.\n");
+                ret = -1;
+                break;
+            }
         }
     }
     if (ret == 0) {
         if (rest > 0) {
             size_t bytes_read = fread(in_buffer, sizeof(char), rest, infile);
-            if (bytes_read != rest && ferror(infile)) {
+            if (bytes_read != rest) {
                 e2ees_notify_log(
                     NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from infile.\n");
+                ret = -1;
             } else {
                 if ((ret = mbedtls_gcm_update(&ctx, rest, in_buffer, out_buffer)) == 0) {
-                    fwrite(out_buffer, sizeof(char), rest, outfile);
+                    size_t bytes_written = fwrite(out_buffer, sizeof(char), rest, outfile);
+                    if (bytes_written != rest) {
+                        e2ees_notify_log(
+                            NULL, DEBUG_LOG, "[Error] Failed to write expected bytes to outfile.\n");
+                        ret = -1;
+                    }
                 }
             }
         }
@@ -440,7 +461,12 @@ int crypto_encrypt_aes_file(
     if (ret == 0) {
         uint8_t tag[AES256_GCM_TAG_LENGTH];
         if ((ret = mbedtls_gcm_finish(&ctx, tag, AES256_GCM_TAG_LENGTH)) == 0) {
-            fwrite(tag, sizeof(char), AES256_GCM_TAG_LENGTH, outfile);
+            size_t bytes_written = fwrite(tag, sizeof(char), AES256_GCM_TAG_LENGTH, outfile);
+            if (bytes_written != AES256_GCM_TAG_LENGTH) {
+                e2ees_notify_log(
+                    NULL, DEBUG_LOG, "[Error] Failed to write tag to outfile.\n");
+                ret = -1;
+            }
         }
     }
 
@@ -449,13 +475,17 @@ int crypto_encrypt_aes_file(
     fclose(outfile);
     fclose(infile);
 
+    if (ret != 0) {
+        remove(out_file_path);
+    }
+
     return ret == 0 ? E2EES_RESULT_SUCC : E2EES_RESULT_FAIL;
 }
 
 int crypto_decrypt_aes_file(
     const char *in_file_path, const char *out_file_path, const uint8_t aes_key[AES256_KEY_LENGTH]) {
     FILE *infile, *outfile;
-    infile = fopen(in_file_path, "r+");
+    infile = fopen(in_file_path, "rb");
     if (infile == NULL) {
         e2ees_notify_log(
             NULL,
@@ -466,7 +496,7 @@ int crypto_decrypt_aes_file(
         return E2EES_RESULT_FAIL;
     }
 
-    outfile = fopen(out_file_path, "w");
+    outfile = fopen(out_file_path, "wb");
     if (outfile == NULL) {
         e2ees_notify_log(
             NULL,
@@ -486,7 +516,7 @@ int crypto_decrypt_aes_file(
     long size = ftell(infile);
     fseek(infile, 0, SEEK_SET);
 
-    if (size < AES256_GCM_TAG_LENGTH) {
+    if (size < (long)AES256_GCM_TAG_LENGTH) {
         e2ees_notify_log(NULL, BAD_FILE_DECRYPTION, "crypto_decrypt_aes_file() file too small.");
         fclose(outfile);
         fclose(infile);
@@ -516,28 +546,40 @@ int crypto_decrypt_aes_file(
     if (ret == 0) {
         for (i = 0; i < times; i++) {
             size_t bytes_read = fread(in_buffer, sizeof(char), max_ciphertext_size, infile);
-            if (bytes_read != max_ciphertext_size && ferror(infile)) {
+            if (bytes_read != max_ciphertext_size) {
                 e2ees_notify_log(
                     NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from infile.\n");
                 ret = -1;
+                break;
             } else {
                 if ((ret = mbedtls_gcm_update(&ctx, max_ciphertext_size, in_buffer, out_buffer)) !=
                     0)
                     break;
-                fwrite(out_buffer, sizeof(char), max_ciphertext_size, outfile);
+                size_t bytes_written = fwrite(out_buffer, sizeof(char), max_ciphertext_size, outfile);
+                if (bytes_written != max_ciphertext_size) {
+                    e2ees_notify_log(
+                        NULL, DEBUG_LOG, "[Error] Failed to write expected bytes to outfile.\n");
+                    ret = -1;
+                    break;
+                }
             }
         }
     }
     if (ret == 0) {
         if (rest > 0) {
             size_t bytes_read = fread(in_buffer, sizeof(char), rest, infile);
-            if (bytes_read != rest && ferror(infile)) {
+            if (bytes_read != rest) {
                 e2ees_notify_log(
                     NULL, DEBUG_LOG, "[Error] Failed to read expected bytes from infile.\n");
                 ret = -1;
             } else {
                 if ((ret = mbedtls_gcm_update(&ctx, rest, in_buffer, out_buffer)) == 0) {
-                    fwrite(out_buffer, sizeof(char), rest, outfile);
+                    size_t bytes_written = fwrite(out_buffer, sizeof(char), rest, outfile);
+                    if (bytes_written != rest) {
+                        e2ees_notify_log(
+                            NULL, DEBUG_LOG, "[Error] Failed to write expected bytes to outfile.\n");
+                        ret = -1;
+                    }
                 }
             }
         }
