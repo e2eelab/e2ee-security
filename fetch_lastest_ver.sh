@@ -11,15 +11,13 @@ clean_ver() {
 }
 
 version=""
-pushd protos/src/e2ees
-  git fetch origin
-  git pull --no-commit --rebase=false --log origin master
-popd
-#git fetch origin
-#git pull --no-commit --rebase=false --log origin master
-git fetch origin
+pushd protos/src/e2ees > /dev/null
+  git fetch origin > /dev/null 2>&1
+  git pull --no-commit --rebase=false --log origin master > /dev/null 2>&1
+popd > /dev/null
+git fetch origin > /dev/null 2>&1
 version=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))
-git checkout "$version"
+git checkout "$version" > /dev/null 2>&1
 version=$(clean_ver $version)
 
 echo $version
